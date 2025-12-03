@@ -1,341 +1,350 @@
-import express from "express";
-import fetch from "node-fetch";
-import { createProxyMiddleware } from "http-proxy-middleware";
+import express from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import fetch from 'node-fetch';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ====================
-// CONFIGURAÇÃO DO SITE
-// ====================
-const TARGET_SITE = "http://br2.bronxyshost.com:4009/gruposwpp";
-const BASE_PATH = ""; // Vazio porque seu site está na raiz
-const SITE_NAME = "Fabi Bot";
+// Configurações
+const TARGET_SITE = 'http://br2.bronxyshost.com:4009';
 
-console.log(`🌐 Configurando proxy para: ${TARGET_SITE}`);
+console.log(`
+🎭 PROXY MÁSCARA TRANSPARENTE
+=============================
+🎯 Site Original: ${TARGET_SITE}
+📍 Proxy Local:   http://localhost:${PORT}
+🔗 Modo:          Máscara completa
+`);
 
 // ====================
-// MIDDLEWARE DE LOG
+// 1. MIDDLEWARE DE LOG SIMPLES
 // ====================
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} | ${req.method} ${req.url}`);
+  console.log(`[${new Date().toLocaleTimeString('pt-BR')}] ${req.method} ${req.originalUrl}`);
   next();
 });
 
 // ====================
-// ROTAS ESTÁTICAS
+// 2. CONFIGURAÇÃO DO PROXY TRANSPARENTE
 // ====================
-// Arquivos estáticos locais (se você tiver)
-app.use('/local', express.static('public'));
-
-// ====================
-// PROXY INTELIGENTE
-// ====================
-app.use('*', async (req, res) => {
-  try {
-    // 1. Construir URL de destino
-    let targetUrl;
+const transparentProxy = createProxyMiddleware({
+  target: TARGET_SITE,
+  changeOrigin: true, // CRUCIAL: muda o Host header
+  ws: true, // Para WebSockets
+  xfwd: true, // Adiciona headers X-Forwarded-*
+  
+  // NÃO modificar caminhos - deixa tudo passar
+  pathRewrite: {
+    '^/': '/' // Mantém tudo igual
+  },
+  
+  // Modificar headers para ser transparente
+  onProxyReq: (proxyReq, req, res) => {
+    // Log da requisição
+    console.log(`🌐 ${req.method} ${req.originalUrl} -> ${TARGET_SITE}${req.originalUrl}`);
     
-    // Remover /gruposwpp da URL se existir (para compatibilidade)
-    let cleanUrl = req.originalUrl;
-    if (cleanUrl.startsWith('/gruposwpp')) {
-      cleanUrl = cleanUrl.replace('/gruposwpp', '');
+    // Headers para parecer que é o site original
+    proxyReq.setHeader('Host', new URL(TARGET_SITE).host);
+    proxyReq.setHeader('Origin', TARGET_SITE);
+    proxyReq.setHeader('Referer', `${TARGET_SITE}/`);
+    proxyReq.setHeader('X-Real-IP', req.ip);
+    proxyReq.setHeader('X-Forwarded-Proto', req.protocol);
+    
+    // Se for AJAX/JSON, manter headers
+    if (req.headers['content-type']?.includes('application/json')) {
+      proxyReq.setHeader('Content-Type', 'application/json');
     }
+  },
+  
+  // Modificar resposta
+  onProxyRes: (proxyRes, req, res) => {
+    // Log da resposta
+    console.log(`✅ ${proxyRes.statusCode} ${req.originalUrl} (${proxyRes.headers['content-type']?.split(';')[0] || 'unknown'})`);
     
-    targetUrl = `${TARGET_SITE}${cleanUrl}`;
+    // REMOVER headers de segurança que bloqueiam
+    delete proxyRes.headers['x-frame-options'];
+    delete proxyRes.headers['content-security-policy'];
+    delete proxyRes.headers['x-content-type-options'];
     
-    console.log(`🔗 Proxy: ${cleanUrl} -> ${targetUrl}`);
+    // Permitir iframe (para embed se necessário)
+    proxyRes.headers['x-frame-options'] = 'ALLOWALL';
     
-    // 2. Fazer a requisição
-    const response = await fetch(targetUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': req.headers.accept || '*/*',
-        'Accept-Language': req.headers['accept-language'] || 'pt-BR,pt;q=0.9,en;q=0.8',
-        'Referer': TARGET_SITE,
-        'Origin': TARGET_SITE
-      },
-      redirect: 'manual' // Lidar com redirecionamentos manualmente
-    });
-
-    // 3. Lidar com redirecionamentos
-    if ([301, 302, 303, 307, 308].includes(response.status)) {
-      const location = response.headers.get('location');
-      if (location) {
-        // Se for redirecionamento interno, mantém no proxy
-        if (location.startsWith('/')) {
-          return res.redirect(location);
-        }
-        // Se for redirecionamento externo, redireciona diretamente
-        return res.redirect(response.status, location);
-      }
-    }
-
-    // 4. Se não conseguir acessar o site
-    if (!response.ok) {
-      console.warn(`⚠️ Site retornou ${response.status} para ${targetUrl}`);
-      return handleError(res, response.status);
-    }
-
-    // 5. Obter tipo de conteúdo
-    const contentType = response.headers.get('content-type') || '';
-    res.set('Content-Type', contentType);
-
-    // ====================
-    // PROCESSAR HTML
-    // ====================
+    // Corrigir CORS para permitir tudo
+    proxyRes.headers['access-control-allow-origin'] = '*';
+    proxyRes.headers['access-control-allow-methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
+    proxyRes.headers['access-control-allow-headers'] = '*';
+    
+    // Para HTML, vamos modificar algumas coisas
+    const contentType = proxyRes.headers['content-type'] || '';
     if (contentType.includes('text/html')) {
-      let html = await response.text();
+      // Vamos modificar o HTML depois
+      let body = '';
+      const originalWrite = res.write;
+      const originalEnd = res.end;
       
-      // 5.1 CORRIGIR TITLE e META
-      html = html.replace(
-        /<title>.*?<\/title>/i,
-        `<title>${SITE_NAME} - Proxy</title>`
-      );
+      // Capturar o corpo da resposta
+      res.write = function(chunk) {
+        body += chunk.toString();
+        return true;
+      };
       
-      // 5.2 CORRIGIR LINKS ABSOLUTOS
-      html = html.replace(
-        /(href|src|action)=["'](\/[^"'?#][^"']*)["']/g,
-        (match, attr, path) => {
-          // Ignorar links que já são absolutos ou protocolos
-          if (path.startsWith('//') || 
-              path.startsWith('http://') || 
-              path.startsWith('https://') ||
-              path.startsWith('mailto:') ||
-              path.startsWith('tel:') ||
-              path.startsWith('data:') ||
-              path.startsWith('javascript:')) {
-            return match;
-          }
-          
-          // Ignorar âncoras
-          if (path.startsWith('#')) {
-            return match;
-          }
-          
-          // Adicionar base path
-          return `${attr}="${BASE_PATH}${path}"`;
+      res.end = function(chunk) {
+        if (chunk) {
+          body += chunk.toString();
         }
-      );
-      
-      // 5.3 CORRIGIR URLs EM CSS
-      html = html.replace(
-        /url\(['"]?(\/[^"'?#][^"']*)['"]?\)/g,
-        (match, path) => {
-          if (path.startsWith('//') || path.startsWith('http')) {
-            return match;
-          }
-          return `url('${BASE_PATH}${path}')`;
-        }
-      );
-      
-      // 5.4 ADICIONAR BASE TAG SE NÃO EXISTIR
-      if (!html.includes('<base href')) {
-        html = html.replace(
-          /<head>/i,
-          `<head>\n<base href="${BASE_PATH}/">`
-        );
-      }
-      
-      // 5.5 CORRIGIR FORMS
-      html = html.replace(
-        /<form([^>]*)action="(\/[^"]*)"([^>]*)>/g,
-        (match, before, action, after) => {
-          return `<form${before}action="${BASE_PATH}${action}"${after}>`;
-        }
-      );
-      
-      // 5.6 INJETAR SCRIPT DE DETECÇÃO (opcional)
-      html = html.replace(
-        /<\/head>/i,
-        `<script>
-          // Detectar se está dentro do proxy
-          window.IS_PROXY = true;
-          window.ORIGINAL_SITE = "${TARGET_SITE}";
-          
-          // Função para corrigir links dinamicamente
-          document.addEventListener('click', function(e) {
-            const link = e.target.closest('a[href^="/"]');
-            if (link && !link.href.includes('${TARGET_SITE}')) {
-              e.preventDefault();
-              const newHref = '${BASE_PATH}' + link.getAttribute('href');
-              window.location.href = newHref;
-            }
-          });
-          
-          console.log('🚀 Proxy ativo: ${SITE_NAME}');
-        </script>
-        </head>`
-      );
-      
-      return res.send(html);
+        
+        // Modificar o HTML
+        const modifiedBody = modifyHTML(body, req);
+        
+        // Restaurar métodos originais
+        res.write = originalWrite;
+        res.end = originalEnd;
+        
+        // Enviar HTML modificado
+        res.setHeader('Content-Length', Buffer.byteLength(modifiedBody));
+        res.end(modifiedBody);
+      };
     }
+  },
+  
+  // Tratar erros
+  onError: (err, req, res) => {
+    console.error(`❌ Erro no proxy: ${err.message}`);
     
-    // ====================
-    // PROCESSAR CSS
-    // ====================
-    if (contentType.includes('text/css')) {
-      let css = await response.text();
-      
-      // Corrigir URLs dentro do CSS
-      css = css.replace(
-        /url\(['"]?(\/[^"'?#][^"']*)['"]?\)/g,
-        (match, path) => {
-          return `url('${BASE_PATH}${path}')`;
-        }
-      );
-      
-      return res.send(css);
-    }
-    
-    // ====================
-    // PROCESSAR JAVASCRIPT
-    // ====================
-    if (contentType.includes('application/javascript') || 
-        contentType.includes('text/javascript')) {
-      let js = await response.text();
-      
-      // Corrigir fetch/AJAX requests
-      js = js.replace(
-        /fetch\(['"]\/([^'"]*)['"]/g,
-        `fetch('${BASE_PATH}/$1'`
-      );
-      
-      // Corrigir outras requisições
-      js = js.replace(
-        /["']\/(api|assets|images|css|js|fonts)\//g,
-        `"${BASE_PATH}/$1/`
-      );
-      
-      return res.send(js);
-    }
-    
-    // ====================
-    // OUTROS ARQUIVOS
-    // ====================
-    // Para imagens, fonts, etc - passar diretamente
-    const buffer = await response.buffer();
-    return res.send(buffer);
-    
-  } catch (error) {
-    console.error('❌ ERRO NO PROXY:', error.message);
-    return handleError(res, 500, error.message);
+    // Tentar fallback direto
+    res.redirect(`${TARGET_SITE}${req.originalUrl}`);
   }
 });
 
 // ====================
-// FUNÇÕES AUXILIARES
+// 3. FUNÇÃO PARA MODIFICAR HTML
 // ====================
-function handleError(res, status, message = '') {
-  switch(status) {
-    case 404:
-      return res.status(404).send(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>${SITE_NAME} - Página não encontrada</title>
-          <style>
-            body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-            h1 { color: #ff4757; }
-            a { color: #3742fa; text-decoration: none; }
-          </style>
-        </head>
-        <body>
-          <h1>🔍 Página não encontrada</h1>
-          <p>A página que você procura não existe no proxy.</p>
-          <p><a href="${BASE_PATH}/">Voltar para a página inicial</a></p>
-          <p style="margin-top: 50px; color: #666; font-size: 12px;">
-            Proxy: ${SITE_NAME} | Original: ${TARGET_SITE}
-          </p>
-        </body>
-        </html>
-      `);
-      
-    case 500:
-    default:
-      return res.status(500).send(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>${SITE_NAME} - Erro no Proxy</title>
-          <style>
-            body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-            h1 { color: #ff4757; }
-            code { background: #f1f2f6; padding: 5px; border-radius: 3px; }
-          </style>
-        </head>
-        <body>
-          <h1>⚡ Erro no Proxy</h1>
-          <p>Não foi possível carregar a página através do proxy.</p>
-          <p><code>${message}</code></p>
-          <p>Tente novamente em alguns instantes.</p>
-          <p style="margin-top: 50px; color: #666; font-size: 12px;">
-            Proxy: ${SITE_NAME} | Original: ${TARGET_SITE}
-          </p>
-        </body>
-        </html>
-      `);
+function modifyHTML(html, req) {
+  let modified = html;
+  
+  // 1. Corrigir URLs absolutas que apontam para o site original
+  modified = modified.replace(
+    new RegExp(`href=["']${TARGET_SITE}`, 'g'),
+    'href="/'
+  );
+  
+  modified = modified.replace(
+    new RegExp(`src=["']${TARGET_SITE}`, 'g'),
+    'src="/'
+  );
+  
+  // 2. Corrigir action de forms
+  modified = modified.replace(
+    new RegExp(`action=["']${TARGET_SITE}`, 'g'),
+    'action="/'
+  );
+  
+  // 3. Corrigir URLs em JavaScript (fetch, ajax)
+  modified = modified.replace(
+    new RegExp(`fetch\\(["']${TARGET_SITE}`, 'g'),
+    'fetch("/'
+  );
+  
+  modified = modified.replace(
+    new RegExp(`["']${TARGET_SITE}`, 'g'),
+    '"/'
+  );
+  
+  // 4. Adicionar base tag se não existir
+  if (!modified.includes('<base href')) {
+    modified = modified.replace(
+      /<head>/i,
+      `<head>\n<base href="/">`
+    );
   }
+  
+  // 5. Injeta um script para corrigir URLs dinamicamente
+  const proxyScript = `
+    <script>
+      // Script do Proxy Máscara
+      (function() {
+        console.log('🔗 Proxy Máscara ativo - Site: ${TARGET_SITE}');
+        
+        // Corrigir todas as URLs dinamicamente
+        document.addEventListener('DOMContentLoaded', function() {
+          // Corrigir links
+          document.querySelectorAll('a[href^="${TARGET_SITE}"]').forEach(link => {
+            link.href = link.href.replace('${TARGET_SITE}', '/');
+          });
+          
+          // Corrigir imagens
+          document.querySelectorAll('img[src^="${TARGET_SITE}"]').forEach(img => {
+            img.src = img.src.replace('${TARGET_SITE}', '/');
+          });
+          
+          // Corrigir scripts
+          document.querySelectorAll('script[src^="${TARGET_SITE}"]').forEach(script => {
+            script.src = script.src.replace('${TARGET_SITE}', '/');
+          });
+          
+          // Interceptar fetch/AJAX
+          const originalFetch = window.fetch;
+          window.fetch = function(url, options) {
+            if (typeof url === 'string' && url.startsWith('${TARGET_SITE}')) {
+              url = url.replace('${TARGET_SITE}', '/');
+            }
+            return originalFetch.call(this, url, options);
+          };
+          
+          // Interceptar XMLHttpRequest
+          const originalOpen = XMLHttpRequest.prototype.open;
+          XMLHttpRequest.prototype.open = function(method, url) {
+            if (typeof url === 'string' && url.startsWith('${TARGET_SITE}')) {
+              url = url.replace('${TARGET_SITE}', '/');
+            }
+            return originalOpen.apply(this, arguments);
+          };
+        });
+        
+        // Corrigir URLs na mudança de página (SPA)
+        const originalPushState = history.pushState;
+        history.pushState = function(state, title, url) {
+          if (url && url.startsWith('${TARGET_SITE}')) {
+            url = url.replace('${TARGET_SITE}', '/');
+          }
+          return originalPushState.call(this, state, title, url);
+        };
+        
+        // Corrigir URLs na substituição de estado
+        const originalReplaceState = history.replaceState;
+        history.replaceState = function(state, title, url) {
+          if (url && url.startsWith('${TARGET_SITE}')) {
+            url = url.replace('${TARGET_SITE}', '/');
+          }
+          return originalReplaceState.call(this, state, title, url);
+        };
+      })();
+    </script>
+  `;
+  
+  // Injetar script antes do </body>
+  if (modified.includes('</body>')) {
+    modified = modified.replace('</body>', `${proxyScript}\n</body>`);
+  } else {
+    modified += proxyScript;
+  }
+  
+  return modified;
 }
 
 // ====================
-// ROTA DE SAÚDE
+// 4. ROTAS ESPECIAIS PARA DEBUG
 // ====================
-app.get('/proxy-health', async (req, res) => {
+
+// Health check
+app.get('/_proxy/health', async (req, res) => {
   try {
-    const test = await fetch(TARGET_SITE, { timeout: 5000 });
+    const response = await fetch(TARGET_SITE, { timeout: 3000 });
     res.json({
-      status: 'healthy',
       proxy: 'active',
       target: TARGET_SITE,
-      target_status: test.status,
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime()
+      target_status: response.status,
+      timestamp: new Date().toISOString()
     });
   } catch (error) {
     res.status(500).json({
-      status: 'unhealthy',
       error: error.message,
-      target: TARGET_SITE
+      proxy: 'active_but_target_down'
     });
   }
 });
 
-// ====================
-// ROTA DE INFORMAÇÕES
-// ====================
-app.get('/proxy-info', (req, res) => {
+// Info do proxy
+app.get('/_proxy/info', (req, res) => {
   res.json({
-    name: SITE_NAME,
+    name: 'Proxy Máscara Transparente',
     target: TARGET_SITE,
-    base_path: BASE_PATH,
+    mode: 'transparent_mirror',
     version: '1.0.0',
-    features: ['html_rewrite', 'css_rewrite', 'js_rewrite', 'auto_base_tag']
+    description: 'Proxy que espelha completamente o site original'
   });
 });
 
-// ====================
-// INICIAR SERVIDOR
-// ====================
-app.listen(PORT, () => {
-  console.log(`
-  🚀 PROXY INICIADO COM SUCESSO!
-  ================================
-  📍 Local:    http://localhost:${PORT}
-  🎯 Target:   ${TARGET_SITE}
-  🏷️  Nome:    ${SITE_NAME}
-  📂 Base:     ${BASE_PATH || '/'}
-  ⏰ Início:   ${new Date().toLocaleString()}
+// Testar endpoint específico (para debug de grupos)
+app.get('/_proxy/test/:endpoint', async (req, res) => {
+  const endpoint = req.params.endpoint;
+  const url = `${TARGET_SITE}/${endpoint}`;
   
-  🔗 Health:   http://localhost:${PORT}/proxy-health
-  📊 Info:     http://localhost:${PORT}/proxy-info
-  
-  💡 Dica: Acesse http://localhost:${PORT} para ver seu site através do proxy!
-  `);
+  try {
+    const response = await fetch(url);
+    const data = await response.text();
+    
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Teste: /${endpoint}</title>
+        <style>
+          body { font-family: monospace; padding: 20px; }
+          pre { background: #f5f5f5; padding: 20px; border-radius: 5px; overflow-x: auto; }
+        </style>
+      </head>
+      <body>
+        <h1>Testando: ${url}</h1>
+        <p><strong>Status:</strong> ${response.status}</p>
+        <p><strong>Tipo:</strong> ${response.headers.get('content-type')}</p>
+        <p><strong>Tamanho:</strong> ${data.length} bytes</p>
+        <hr>
+        <h3>Conteúdo (primeiros 2000 chars):</h3>
+        <pre>${data.substring(0, 2000)}</pre>
+      </body>
+      </html>
+    `);
+  } catch (error) {
+    res.status(500).send(`Erro: ${error.message}`);
+  }
 });
 
 // ====================
-// HANDLE SHUTDOWN
+// 5. APLICAR PROXY EM TUDO (exceto rotas especiais)
+// ====================
+app.use('*', (req, res, next) => {
+  // Ignorar rotas de debug
+  if (req.originalUrl.startsWith('/_proxy/')) {
+    return next();
+  }
+  
+  // Aplicar proxy transparente em tudo
+  return transparentProxy(req, res, next);
+});
+
+// ====================
+// 6. INICIAR SERVIDOR
+// ====================
+app.listen(PORT, () => {
+  console.log(`
+✅ PROXY MÁSCARA INICIADO!
+=========================
+🔗 Acesse o site através do proxy:
+   http://localhost:${PORT}
+
+🎯 O proxy irá mostrar:
+   ${TARGET_SITE}
+
+🔧 Rotas de debug:
+   • http://localhost:${PORT}/_proxy/health
+   • http://localhost:${PORT}/_proxy/info
+   • http://localhost:${PORT}/_proxy/test/grupos.json
+
+⚡ Tudo deve funcionar:
+   ✓ Grupos
+   ✓ Imagens  
+   ✓ Chat
+   ✓ Rankings
+   ✓ Tigrinho
+   ✓ Configurações
+
+⏰ Iniciado em: ${new Date().toLocaleString('pt-BR')}
+`);
+});
+
+// ====================
+// 7. MANIPULAÇÃO DE SINAIS
 // ====================
 process.on('SIGINT', () => {
   console.log('\n\n🛑 Proxy encerrado pelo usuário');
