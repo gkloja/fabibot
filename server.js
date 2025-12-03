@@ -8,12 +8,20 @@ app.use(async (req, res) => {
     const targetUrl = "http://br2.bronxyshost.com:4009/gruposwpp" + req.url;
 
     const response = await fetch(targetUrl);
-    const body = await response.text();
 
-    res.set("Content-Type", response.headers.get("content-type"));
-    res.send(body);
+    // Copiar cabeçalhos originais
+    response.headers.forEach((value, name) => {
+      res.setHeader(name, value);
+    });
+
+    // Ler como binário (vídeo, imagem, css, js — tudo funciona)
+    const buffer = await response.buffer();
+
+    res.status(response.status);
+    res.send(buffer);
 
   } catch (err) {
+    console.error("Erro proxy:", err);
     res.status(500).send("Erro ao carregar o site.");
   }
 });
