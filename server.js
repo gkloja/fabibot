@@ -1,30 +1,32 @@
 import express from "express";
 import fetch from "node-fetch";
+import path from "path";
 
 const app = express();
 
-// Caminho base da API/Servidor que você quer espelhar
+// Servir arquivos do seu site normalmente
+app.use(express.static(path.join(process.cwd(), "public")));
+app.use(express.urlencoded({ extended: true }));
+
+// -------------------------
+// PROXY APENAS PARA /externo
+// -------------------------
 const BASE_URL = "http://br2.bronxyshost.com:4009";
 
-app.use(async (req, res) => {
+app.use("/externo", async (req, res) => {
   try {
-    // Junta a URL acessada localmente com a URL remota
-    const targetUrl = BASE_URL + req.url;
+    const targetUrl = BASE_URL + req.url.replace("/externo", "");
 
     const response = await fetch(targetUrl);
-
-    // Repassa content-type
     const contentType = response.headers.get("content-type");
     if (contentType) res.setHeader("Content-Type", contentType);
 
-    // Se for HTML → apenas repassa sem alterar nada
-    if (contentType && contentType.includes("text/html")) {
+    if (contentType.includes("text/html")) {
       const html = await response.text();
       res.send(html);
       return;
     }
 
-    // Arquivos binários (imagens, pdf, etc.)
     const buffer = await response.buffer();
     res.send(buffer);
 
@@ -34,6 +36,19 @@ app.use(async (req, res) => {
   }
 });
 
-// Porta do servidor
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log("Proxy rodando na porta " + port));
+// -------------------------
+// SUAS ROTAS AQUI FUNCIONAM NORMAL
+// -------------------------
+app.post("/users/login", (req, res) => {
+  const { username, password } = req.body;
+
+  if (username === "admin" && password === "123") {
+    return res.send("Logado com sucesso!");
+  }
+
+  res.send("Login incorreto.");
+});
+
+// -------------------------
+const port = 3000;
+app.listen(port, () => console.log("Rodando na porta " + port));
