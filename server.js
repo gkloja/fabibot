@@ -3,17 +3,19 @@ import fetch from "node-fetch";
 import cookieParser from "cookie-parser";
 
 const app = express();
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-const BASE = "http://br2.bronxyshost.com:4009"; // 🌐 seu site real
+// 🌐 URL DO SEU SITE REAL
+const BASE = "http://br2.bronxyshost.com:4009";
 
 app.use(async (req, res) => {
   try {
     const targetUrl = BASE + req.url;
 
-    // --- Enviar headers originais ---
+    // --- Enviar headers do cliente para o servidor original ---
     const headers = {
       ...req.headers,
       host: "br2.bronxyshost.com:4009",
@@ -26,35 +28,39 @@ app.use(async (req, res) => {
       redirect: "manual",
     };
 
-    // Enviar body em POST, PUT, PATCH etc
-    if (req.method !== "GET" && req.method !== "HEAD") {
-      options.body = req.rawBody || JSON.stringify(req.body);
+    // --- Enviar body corretamente em POST/PUT/PATCH ---
+    if (!["GET", "HEAD"].includes(req.method)) {
+      if (req.is("application/json")) {
+        options.body = JSON.stringify(req.body);
+      } else {
+        // Body url-encoded
+        options.body = new URLSearchParams(req.body).toString();
+        headers["Content-Type"] = "application/x-www-form-urlencoded";
+      }
     }
 
-    // --- Faz a request para o site original ---
+    // --- Faz request para o site original ---
     const response = await fetch(targetUrl, options);
 
-    // --- Repassar cookies para o usuário ---
+    // --- Repassar cookies para o navegador do usuário ---
     const setCookie = response.headers.raw()["set-cookie"];
     if (setCookie) {
-      setCookie.forEach((cookie) => {
-        res.append("Set-Cookie", cookie);
-      });
+      setCookie.forEach((cookie) => res.append("Set-Cookie", cookie));
     }
 
-    // Tipo da resposta
+    // --- Tipo da resposta ---
     const contentType = response.headers.get("content-type");
-    if (contentType) res.set("Content-Type", contentType);
+    if (contentType) res.setHeader("Content-Type", contentType);
 
-    // HTML → envia direto
+    // --- HTML → enviar como texto normal ---
     if (contentType && contentType.includes("text/html")) {
-      let html = await response.text();
+      const html = await response.text();
       return res.send(html);
     }
 
-    // Outros arquivos
+    // --- Outros tipos (imagens, css, js etc) ---
     const buffer = await response.buffer();
-    res.send(buffer);
+    return res.send(buffer);
 
   } catch (err) {
     console.error("PROXY ERRO:", err);
@@ -63,4 +69,6 @@ app.use(async (req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log("Proxy rodando na porta " + port));
+app.listen(port, () =>
+  console.log("Proxy rodando na porta " + port)
+);
