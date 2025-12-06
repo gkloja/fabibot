@@ -18,6 +18,48 @@ const MASK = "https://fabibot.onrender.com";
 
 // ========== CONFIGURAÇÃO SEO COMPLETA ==========
 
+// ADICIONE ISSO NO INÍCIO, ANTES DAS OUTRAS ROTAS
+
+// Middleware para adicionar meta tag de verificação em TODAS as páginas
+app.use((req, res, next) => {
+  // Salvar função original de 'send'
+  const originalSend = res.send;
+  
+  // Sobrescrever função send
+  res.send = function(body) {
+    // Só modificar se for HTML
+    if (typeof body === 'string' && body.includes('</head>')) {
+      // Adicione esta linha com SEU código de verificação
+      const verificationCode = '<meta name="google-site-verification" content="ABCdEfGhIjKlMnOpQrStUvWxYz1234567890" />';
+      
+      // Inserir antes do </head>
+      body = body.replace('</head>', verificationCode + '\n</head>');
+    }
+    
+    // Chamar função original
+    originalSend.call(this, body);
+  };
+  
+  next();
+});
+
+// OU método alternativo mais simples:
+app.get("/google-verification.html", (req, res) => {
+  res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Verification</title>
+    <meta name="google-site-verification" content="ABCdEfGhIjKlMnOpQrStUvWxYz1234567890" />
+</head>
+<body>
+    <h1>Google Search Console Verification</h1>
+    <p>Site: https://fabibot.onrender.com</p>
+</body>
+</html>
+  `);
+});
+
 // 1. Robots.txt
 app.get("/robots.txt", (req, res) => {
   res.type('text/plain');
