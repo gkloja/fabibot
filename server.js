@@ -113,27 +113,8 @@ app.get("/sitemap.xml", (req, res) => {
     <priority>0.9</priority>
   </url>
   
-  <url>
-    <loc>https://fabibot.onrender.com/musicas</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
   
-  <url>
-    <loc>https://fabibot.onrender.com/jogos</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://fabibot.onrender.com/ranking</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
+
   <!-- Páginas institucionais -->
   <url>
     <loc>https://fabibot.onrender.com/sobre</loc>
