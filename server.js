@@ -114,7 +114,14 @@ app.get("/sitemap.xml", (req, res) => {
   </url>
   
   
-
+  
+  <url>
+    <loc>https://fabibot.onrender.com/corrida</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
   <!-- Páginas institucionais -->
   <url>
     <loc>https://fabibot.onrender.com/sobre</loc>
