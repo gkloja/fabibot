@@ -98,58 +98,87 @@ app.get("/sitemap.xml", (req, res) => {
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   
-  <!-- Páginas principais -->
+  <!-- PÁGINA PRINCIPAL (SEMPRE EXISTE) -->
   <url>
     <loc>https://fabibot.onrender.com/</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>2024-12-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   
+  <!-- LOGIN (QUASE SEMPRE EXISTE) -->
+  <url>
+    <loc>https://fabibot.onrender.com/login</loc>
+    <lastmod>2024-12-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- CADASTRO (QUASE SEMPRE EXISTE) -->
+  <url>
+    <loc>https://fabibot.onrender.com/register</loc>
+    <lastmod>2024-12-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- CHAT (SE TIVER NO SEU SITE) -->
   <url>
     <loc>https://fabibot.onrender.com/chat</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>2024-12-07</lastmod>
     <changefreq>always</changefreq>
     <priority>0.9</priority>
   </url>
   
   
   
+  <!-- ALTERNATIVA PARA PERFIL -->
   <url>
     <loc>https://fabibot.onrender.com/corrida</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2024-12-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
   
-  <!-- Páginas institucionais -->
+  
+    <url>
+    <loc>https://fabibot.onrender.com/removermarca</loc>
+    <lastmod>2024-12-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <!-- RANKING -->
+
+  
+  <!-- PÁGINAS INSTITUCIONAIS (CRIAR SE NÃO EXISTIREM) -->
   <url>
-    <loc>https://fabibot.onrender.com/sobre</loc>
-    <lastmod>${today}</lastmod>
+    <loc>https://fabibot.onrender.com/about</loc>
+    <lastmod>2024-12-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://fabibot.onrender.com/ajuda</loc>
-    <lastmod>${today}</lastmod>
+    <loc>https://fabibot.onrender.com/sobre</loc>
+    <lastmod>2024-12-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://fabibot.onrender.com/politica-de-privacidade</loc>
-    <lastmod>${today}</lastmod>
+    <loc>https://fabibot.onrender.com/privacy</loc>
+    <lastmod>2024-12-07</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   
   <url>
-    <loc>https://fabibot.onrender.com/termos-de-uso</loc>
-    <lastmod>${today}</lastmod>
+    <loc>https://fabibot.onrender.com/terms</loc>
+    <lastmod>2024-12-07</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+
 </urlset>`);
 });
 
