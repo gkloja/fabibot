@@ -1,6 +1,7 @@
 {
   "name": "proxy-https",
   "version": "1.0.0",
+  "description": "Servidor Proxy HTTPS para IPTV com Express",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -8,6 +9,7 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "cookie-parser": "^1.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
