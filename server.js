@@ -54,7 +54,7 @@ app.get("/google-verification.html", (req, res) => {
 </head>
 <body>
     <h1>Google Search Console Verification</h1>
-    <p>Site: https://fabibot.onrender.com</p>
+    <p>Site: https://fabibot.vercel.app</p>
 </body>
 </html>
   `);
@@ -68,7 +68,7 @@ Allow: /
 Disallow: /admin/
 Disallow: /private/
 
-Sitemap: https://fabibot.onrender.com/sitemap.xml
+Sitemap: https://fabibot.vercel.app/sitemap.xml
 
 User-agent: Googlebot
 Allow: /
@@ -100,7 +100,7 @@ app.get("/sitemap.xml", (req, res) => {
   
   <!-- PÁGINA PRINCIPAL (SEMPRE EXISTE) -->
   <url>
-    <loc>https://fabibot.onrender.com/</loc>
+    <loc>https://fabibot.vercel.app/</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -108,7 +108,7 @@ app.get("/sitemap.xml", (req, res) => {
   
   <!-- LOGIN (QUASE SEMPRE EXISTE) -->
   <url>
-    <loc>https://fabibot.onrender.com/login</loc>
+    <loc>https://fabibot.vercel.app/login</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -116,7 +116,7 @@ app.get("/sitemap.xml", (req, res) => {
   
   <!-- CADASTRO (QUASE SEMPRE EXISTE) -->
   <url>
-    <loc>https://fabibot.onrender.com/register</loc>
+    <loc>https://fabibot.vercel.app/register</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -124,7 +124,7 @@ app.get("/sitemap.xml", (req, res) => {
   
   <!-- CHAT (SE TIVER NO SEU SITE) -->
   <url>
-    <loc>https://fabibot.onrender.com/chat</loc>
+    <loc>https://fabibot.vercel.app/chat</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>always</changefreq>
     <priority>0.9</priority>
@@ -134,7 +134,7 @@ app.get("/sitemap.xml", (req, res) => {
   
   <!-- ALTERNATIVA PARA PERFIL -->
   <url>
-    <loc>https://fabibot.onrender.com/corrida</loc>
+    <loc>https://fabibot.vercel.app/corrida</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -142,7 +142,7 @@ app.get("/sitemap.xml", (req, res) => {
   
   
     <url>
-    <loc>https://fabibot.onrender.com/removermarca</loc>
+    <loc>https://fabibot.vercel.app/removermarca</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -152,28 +152,28 @@ app.get("/sitemap.xml", (req, res) => {
   
   <!-- PÁGINAS INSTITUCIONAIS (CRIAR SE NÃO EXISTIREM) -->
   <url>
-    <loc>https://fabibot.onrender.com/about</loc>
+    <loc>https://fabibot.vercel.app/about</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://fabibot.onrender.com/sobre</loc>
+    <loc>https://fabibot.vercel.app/sobre</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://fabibot.onrender.com/privacy</loc>
+    <loc>https://fabibot.vercel.app/privacy</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   
   <url>
-    <loc>https://fabibot.onrender.com/terms</loc>
+    <loc>https://fabibot.vercel.app/terms</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
