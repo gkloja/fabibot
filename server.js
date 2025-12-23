@@ -9,7 +9,7 @@ app.use(express.json({ limit: '20mb' }));
 app.use(cookieParser());
 
 const BASE = "http://br2.bronxyshost.com:4009";
-const MASK = "https://fabibot.onrender.com";
+const MASK = "https://fabibot.vercel.app";
 
 // ===== ROTA ESPECIAL PARA /alterar-foto =====
 // Esta rota APENAS ENCAMINHA para o backend original
