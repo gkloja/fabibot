@@ -61,6 +61,53 @@ app.options("/series/*", (req, res) => {
   res.setHeader("Access-Control-Allow-Headers", "Range");
   res.status(204).end();
 });
+// ===== ROTA PARA FILMES =====
+app.get("/movie/*", async (req, res) => {
+  try {
+    const targetUrl = BASE + req.url;
+    console.log("🎬 Proxy filme:", targetUrl);
+    
+    const response = await fetch(targetUrl, {
+      headers: {
+        "Host": "cavalo.cc",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "video/mp4, video/webm, video/ogg, */*",
+        "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+        "Range": req.headers["range"] || "",
+        "Referer": "http://cavalo.cc/",
+        "Origin": "http://cavalo.cc",
+        "Connection": "keep-alive"
+      },
+      redirect: "follow"
+    });
+
+    const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
+    headersToCopy.forEach(header => {
+      const value = response.headers.get(header);
+      if (value) res.setHeader(header, value);
+    });
+
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Range");
+    res.setHeader("Access-Control-Expose-Headers", "Content-Length, Content-Range");
+
+    res.status(response.status);
+    response.body.pipe(res);
+    
+  } catch (error) {
+    console.error("❌ Erro no filme:", error);
+    res.status(500).send("Erro ao carregar filme");
+  }
+});
+
+// ===== ROTA OPTIONS PARA FILMES =====
+app.options("/movie/*", (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Range");
+  res.status(204).end();
+});
 
 // ===== HEALTH CHECK =====
 app.get("/health", (req, res) => {
