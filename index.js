@@ -39,11 +39,17 @@ async function renovarToken(caminhoOriginal) {
     }
     
     const token = tokenMatch[1];
-    console.log(`✅ Token renovado: ${token.substring(0, 20)}...`);
+    console.log(`✅ Token encontrado: ${token.substring(0, 20)}...`);
     
-    // Procura pelo IP nos scripts (geralmente está em algum lugar)
-    const ipMatch = html.match(/\d+\.\d+\.\d+\.\d+/);
-    const ip = ipMatch ? ipMatch[0] : "130.250.189.249"; // IP padrão
+    // Procura pelo IP (agora DINÂMICO!)
+    const ipMatch = html.match(/(\d+\.\d+\.\d+\.\d+)/g);
+    let ip = "209.131.121.24"; // IP padrão para filme
+    
+    if (ipMatch && ipMatch.length > 0) {
+      // Pega o último IP (geralmente é o do servidor de vídeo)
+      ip = ipMatch[ipMatch.length - 1];
+      console.log(`🌐 IP detectado: ${ip}`);
+    }
     
     // Extrai parâmetros adicionais
     const ucMatch = html.match(/uc=([^"&\s]+)/);
@@ -69,6 +75,7 @@ async function renovarToken(caminhoOriginal) {
 app.get("/*", async (req, res) => {
   console.log("\n" + "=".repeat(60));
   console.log(`🔍 REQUISIÇÃO: ${req.path}`);
+  console.log(`📌 Tipo: ${req.path.includes('/movie/') ? 'FILME' : 'SÉRIE'}`);
   
   try {
     let videoUrl;
@@ -107,7 +114,7 @@ app.get("/*", async (req, res) => {
       });
       
       console.log(`📥 Status: ${response.status}`);
-      
+
       // Se funcionou, envia o vídeo
       if (response.ok) {
         // Copiar headers importantes
@@ -127,7 +134,7 @@ app.get("/*", async (req, res) => {
         return;
       }
       
-      console.log(`⚠️ Tentativa ${tentativas} falhou`);
+      console.log(`⚠️ Tentativa ${tentativas} falhou (${response.status})`);
     }
     
     // Se todas as tentativas falharam
@@ -171,7 +178,8 @@ app.listen(PORT, () => {
   console.log("\n" + "🚀".repeat(30));
   console.log(`🚀 PROXY INTELIGENTE RODANDO`);
   console.log(`🎭 MASK: ${MASK}`);
-  console.log(`✅ Teste: ${MASK}/series/Altairplay2024/4995NFTSybwa/361267.mp4`);
+  console.log(`✅ SÉRIE: ${MASK}/series/Altairplay2024/4995NFTSybwa/361267.mp4`);
+  console.log(`✅ FILME: ${MASK}/movie/Altairplay2024/4995NFTSybwa/100008.mp4`);
   console.log(`🔄 Renovação automática de tokens ATIVADA`);
   console.log("🚀".repeat(30) + "\n");
 });
