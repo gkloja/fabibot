@@ -11,13 +11,12 @@ app.use(cookieParser());
 const BASE = "http://cavalo.cc:80";
 const MASK = "https://fabibot-taupe.vercel.app";
 
-// ===== ROTA PRINCIPAL PARA VÍDEOS (SÉRIES/FILMES) =====
-app.get("/series/*", async (req, res) => {
+// ===== FUNÇÃO REUTILIZÁVEL PARA PROXY DE VÍDEO =====
+async function proxyVideo(req, res, tipo) {
   try {
     const targetUrl = BASE + req.url;
-    console.log("🎬 Proxy vídeo:", targetUrl);
+    console.log(`🎬 Proxy ${tipo}:`, targetUrl);
     
-    // Headers idênticos aos do Chrome
     const response = await fetch(targetUrl, {
       headers: {
         "Host": "cavalo.cc",
@@ -31,6 +30,12 @@ app.get("/series/*", async (req, res) => {
       },
       redirect: "follow"
     });
+
+    // Se não encontrou o recurso
+    if (response.status === 404) {
+      console.log(`❌ 404 - Recurso não encontrado: ${targetUrl}`);
+      return res.status(404).send("Vídeo não encontrado");
+    }
 
     // Copiar headers importantes
     const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
@@ -49,19 +54,36 @@ app.get("/series/*", async (req, res) => {
     response.body.pipe(res);
     
   } catch (error) {
-    console.error("❌ Erro no vídeo:", error);
+    console.error(`❌ Erro no ${tipo}:`, error);
     res.status(500).send("Erro ao carregar vídeo");
   }
+}
+
+// ===== ROTA PARA SÉRIES =====
+app.get("/series/*", async (req, res) => {
+  await proxyVideo(req, res, "série");
 });
 
-// ===== ROTA OPTIONS PARA CORS =====
+// ===== ROTA PARA FILMES =====
+app.get("/movie/*", async (req, res) => {
+  await proxyVideo(req, res, "filme");
+});
+
+// ===== ROTA OPTIONS PARA SÉRIES =====
 app.options("/series/*", (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Range");
   res.status(204).end();
 });
-// ===== ROTA PARA FILMES =====
+
+// ===== ROTA OPTIONS PARA FILMES =====
+app.options("/movie/*", (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Range");
+  res.status(204).end();
+});
 
 // ===== HEALTH CHECK =====
 app.get("/health", (req, res) => {
@@ -74,6 +96,7 @@ app.listen(PORT, () => {
   🚀 Proxy de vídeos rodando na porta ${PORT}
   🔗 Encaminhando para: ${BASE}
   🎭 URL da máscara: ${MASK}
-  ✅ Exemplo: ${MASK}/series/Altairplay2024/4995NFTSybwa/361267.mp4
+  ✅ Séries: ${MASK}/series/Altairplay2024/4995NFTSybwa/361267.mp4
+  ✅ Filmes: ${MASK}/movie/Altairplay2024/4995NFTSybwa/100008.mp4
   `);
 });
