@@ -13,7 +13,6 @@ app.use(cookieParser());
 // ===== FUNÇÃO PARA OBTER TOKEN NOVO =====
 async function obterTokenNovo(caminho) {
   try {
-    // Converte /series/.../361267.mp4 para /series/.../361267
     const paginaUrl = BASE + caminho.replace('.mp4', '');
     console.log(`🔄 Obtendo token novo de: ${paginaUrl}`);
     
@@ -29,20 +28,14 @@ async function obterTokenNovo(caminho) {
     });
     
     const html = await response.text();
-    console.log(`📄 HTML recebido (primeiros 200 chars):`, html.substring(0, 200));
     
-    // Tenta encontrar o token no HTML
-    // Geralmente está em algum script ou meta tag
     const tokenMatch = html.match(/token=([a-zA-Z0-9_.-]+)/);
     if (tokenMatch) {
-      console.log(`✅ Token encontrado:`, tokenMatch[1].substring(0, 20) + '...');
       return tokenMatch[1];
     }
     
-    // Tenta encontrar a URL completa do vídeo
     const videoMatch = html.match(/video[":\s]+[^"']*?(http[^"'\s]+)/);
     if (videoMatch) {
-      console.log(`✅ URL de vídeo encontrada:`, videoMatch[1]);
       return videoMatch[1];
     }
     
@@ -53,13 +46,12 @@ async function obterTokenNovo(caminho) {
   }
 }
 
-// ===== PROXY INTELIGENTE =====
-app.get("/series/*", async (req, res) => {
+// ===== FUNÇÃO REUTILIZÁVEL DE PROXY =====
+async function proxyHandler(req, res, tipo) {
   console.log("\n" + "=".repeat(60));
-  console.log(`🎬 REQUISIÇÃO: ${req.path}`);
+  console.log(`🎬 ${tipo.toUpperCase()}: ${req.path}`);
   
   try {
-    // Tenta com a URL original primeiro
     let targetUrl = BASE + req.path + (req.url.includes('?') ? '?' + req.url.split('?')[1] : '');
     console.log(`🎯 TENTANDO 1: ${targetUrl}`);
     
@@ -75,20 +67,17 @@ app.get("/series/*", async (req, res) => {
       redirect: "follow"
     });
 
-    // Se deu 404, pode ser token expirado
     if (response.status === 404) {
       console.log(`⚠️ 404 - Tentando renovar token...`);
       
-      // Tenta obter token novo
       const tokenNovo = await obterTokenNovo(req.path);
       
       if (tokenNovo) {
-        // Se tokenNovo for URL completa
         if (tokenNovo.startsWith('http')) {
           targetUrl = tokenNovo;
         } else {
-          // Se for só o token, constrói URL
-          targetUrl = `http://209.131.121.28/deliver/${req.path.split('/').pop()}?token=${tokenNovo}`;
+          const arquivo = req.path.split('/').pop();
+          targetUrl = `http://209.131.121.28/deliver/${arquivo}?token=${tokenNovo}`;
         }
         
         console.log(`🎯 TENTANDO 2: ${targetUrl}`);
@@ -104,19 +93,17 @@ app.get("/series/*", async (req, res) => {
       }
     }
 
-    // Se ainda assim falhou
     if (!response.ok) {
       return res.status(response.status).send(`
         <html>
           <body>
-            <h1>${response.status} - Vídeo indisponível</h1>
-            <p>O token pode ter expirado. <a href="${req.path}">Tente novamente</a></p>
+            <h1>${response.status} - ${tipo} indisponível</h1>
+            <p>Token pode ter expirado. <a href="${req.path}">Tente novamente</a></p>
           </body>
         </html>
       `);
     }
 
-    // Copiar headers
     const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
     headersToCopy.forEach(header => {
       const value = response.headers.get(header);
@@ -134,10 +121,21 @@ app.get("/series/*", async (req, res) => {
     console.error(`❌ ERRO:`, error);
     res.status(500).send("Erro interno");
   }
-});
+}
+
+// ===== ROTAS =====
+app.get("/series/*", (req, res) => proxyHandler(req, res, "série"));
+app.get("/movie/*", (req, res) => proxyHandler(req, res, "filme")); // ✅ ADICIONADO!
 
 // ===== OPTIONS =====
 app.options("/series/*", (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Range");
+  res.status(204).end();
+});
+
+app.options("/movie/*", (req, res) => { // ✅ ADICIONADO!
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Range");
@@ -149,11 +147,25 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", base: BASE, mask: MASK });
 });
 
+// ===== 404 =====
+app.use((req, res) => {
+  res.status(404).send(`
+    <html>
+      <body>
+        <h1>404 - Rota não encontrada</h1>
+        <p>Use /series/ ou /movie/</p>
+      </body>
+    </html>
+  `);
+});
+
 app.listen(PORT, () => {
   console.log(`
   🚀 PROXY INTELIGENTE RODANDO
   🎯 BASE: ${BASE}
   🎭 MASK: ${MASK}
+  ✅ SÉRIES: ${MASK}/series/...
+  ✅ FILMES: ${MASK}/movie/...
   🔄 Renovação automática de tokens ativada!
   `);
 });
