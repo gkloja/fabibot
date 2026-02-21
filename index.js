@@ -15,8 +15,10 @@ const MASK = "https://fabibot-taupe.vercel.app";
 async function proxyVideo(req, res, tipo) {
   try {
     const targetUrl = BASE + req.url;
-    console.log(`🎬 Proxy ${tipo}:`, targetUrl);
+    console.log("=".repeat(50));
+    console.log(`🎬 Proxy ${tipo}: ${targetUrl}`);
     
+    // FAZER A REQUISIÇÃO COM SUPORTE A REDIRECIONAMENTO
     const response = await fetch(targetUrl, {
       headers: {
         "Host": "cavalo.cc",
@@ -28,7 +30,20 @@ async function proxyVideo(req, res, tipo) {
         "Origin": "http://cavalo.cc",
         "Connection": "keep-alive"
       },
-      redirect: "follow"
+      redirect: "follow", // SEGUIR REDIRECIONAMENTOS
+      follow: 5 // MÁXIMO DE 5 REDIRECIONAMENTOS
+    });
+
+    // LOG DA URL FINAL (APÓS REDIRECIONAMENTOS)
+    console.log(`🔄 URL final: ${response.url}`);
+    console.log(`📊 Status: ${response.status} ${response.statusText}`);
+    
+    // Log dos headers da resposta
+    console.log("📋 Headers da resposta:");
+    const headersToLog = ["content-type", "content-length", "content-range", "location"];
+    headersToLog.forEach(header => {
+      const value = response.headers.get(header);
+      if (value) console.log(`   ${header}: ${value}`);
     });
 
     // Se não encontrou o recurso
@@ -37,8 +52,14 @@ async function proxyVideo(req, res, tipo) {
       return res.status(404).send("Vídeo não encontrado");
     }
 
-    // Copiar headers importantes
-    const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
+    // Se precisar de autenticação
+    if (response.status === 401 || response.status === 403) {
+      console.log(`❌ ${response.status} - Sem autorização`);
+      return res.status(response.status).send("Acesso negado ao vídeo");
+    }
+
+    // Copiar headers importantes para o cliente
+    const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges", "location"];
     headersToCopy.forEach(header => {
       const value = response.headers.get(header);
       if (value) res.setHeader(header, value);
@@ -51,11 +72,16 @@ async function proxyVideo(req, res, tipo) {
     res.setHeader("Access-Control-Expose-Headers", "Content-Length, Content-Range");
 
     res.status(response.status);
+    
+    // Stream do vídeo para o cliente
     response.body.pipe(res);
+    
+    console.log(`✅ Vídeo sendo transmitido para o cliente`);
+    console.log("=".repeat(50));
     
   } catch (error) {
     console.error(`❌ Erro no ${tipo}:`, error);
-    res.status(500).send("Erro ao carregar vídeo");
+    res.status(500).send("Erro ao carregar vídeo: " + error.message);
   }
 }
 
@@ -87,7 +113,36 @@ app.options("/movie/*", (req, res) => {
 
 // ===== HEALTH CHECK =====
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", base: BASE, mask: MASK });
+  res.json({ 
+    status: "ok", 
+    base: BASE, 
+    mask: MASK,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// ===== ROTA PARA TESTE DIRETO =====
+app.get("/test", async (req, res) => {
+  const testUrl = "http://cavalo.cc:80/series/Altairplay2024/4995NFTSybwa/361267.mp4";
+  
+  try {
+    const response = await fetch(testUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+      },
+      redirect: "follow"
+    });
+    
+    res.json({
+      url: testUrl,
+      status: response.status,
+      redirected: response.redirected,
+      finalUrl: response.url,
+      headers: Object.fromEntries(response.headers)
+    });
+  } catch (error) {
+    res.json({ error: error.message });
+  }
 });
 
 const PORT = process.env.PORT || 3000;
@@ -98,5 +153,6 @@ app.listen(PORT, () => {
   🎭 URL da máscara: ${MASK}
   ✅ Séries: ${MASK}/series/Altairplay2024/4995NFTSybwa/361267.mp4
   ✅ Filmes: ${MASK}/movie/Altairplay2024/4995NFTSybwa/100008.mp4
+  🔍 Teste: ${MASK}/test
   `);
 });
