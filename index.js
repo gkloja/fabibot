@@ -1,4 +1,3 @@
-
 import express from "express";
 import fetch from "node-fetch";
 import cookieParser from "cookie-parser";
@@ -6,139 +5,152 @@ import cookieParser from "cookie-parser";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const BASE = "http://cavalo.cc:80";
 const MASK = "https://fabibot-taupe.vercel.app";
 
 app.use(cookieParser());
 
-// ===== FUNÇÃO PARA OBTER TOKEN NOVO =====
-async function obterTokenNovo(caminho) {
+// ===== FUNÇÃO PARA RENOVAR TOKEN =====
+async function renovarToken(caminhoOriginal) {
   try {
-    // Converte /series/.../361267.mp4 para /series/.../361267
-    const paginaUrl = BASE + caminho.replace('.mp4', '');
-    console.log(`🔄 Obtendo token novo de: ${paginaUrl}`);
+    // Acessa a página do vídeo (sem .mp4) para gerar novo token
+    const pageUrl = `http://cavalo.cc:80${caminhoOriginal.replace('.mp4', '')}`;
+    console.log(`🔄 Renovando token via: ${pageUrl}`);
     
-    const response = await fetch(paginaUrl, {
+    const pageResponse = await fetch(pageUrl, {
       headers: {
         "Host": "cavalo.cc",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
         "Referer": "http://cavalo.cc/",
-        "Origin": "http://cavalo.cc"
+        "Origin": "http://cavalo.cc",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1"
       }
     });
+
+    const html = await pageResponse.text();
     
-    const html = await response.text();
-    console.log(`📄 HTML recebido (primeiros 200 chars):`, html.substring(0, 200));
-    
-    // Tenta encontrar o token no HTML
-    // Geralmente está em algum script ou meta tag
+    // Procura pelo token no HTML
     const tokenMatch = html.match(/token=([a-zA-Z0-9_.-]+)/);
-    if (tokenMatch) {
-      console.log(`✅ Token encontrado:`, tokenMatch[1].substring(0, 20) + '...');
-      return tokenMatch[1];
+    if (!tokenMatch) {
+      console.log("❌ Token não encontrado no HTML");
+      return null;
     }
     
-    // Tenta encontrar a URL completa do vídeo
-    const videoMatch = html.match(/video[":\s]+[^"']*?(http[^"'\s]+)/);
-    if (videoMatch) {
-      console.log(`✅ URL de vídeo encontrada:`, videoMatch[1]);
-      return videoMatch[1];
-    }
+    const token = tokenMatch[1];
+    console.log(`✅ Token renovado: ${token.substring(0, 20)}...`);
     
-    return null;
+    // Procura pelo IP nos scripts (geralmente está em algum lugar)
+    const ipMatch = html.match(/\d+\.\d+\.\d+\.\d+/);
+    const ip = ipMatch ? ipMatch[0] : "130.250.189.249"; // IP padrão
+    
+    // Extrai parâmetros adicionais
+    const ucMatch = html.match(/uc=([^"&\s]+)/);
+    const pcMatch = html.match(/pc=([^"&\s]+)/);
+    
+    const uc = ucMatch ? ucMatch[1] : "QWx0YWlycGxheTIwMjQ=";
+    const pc = pcMatch ? pcMatch[1] : "NDk5NU5GVFN5Yndh";
+    
+    // Constrói a URL completa
+    const arquivo = caminhoOriginal.split('/').pop();
+    const videoUrl = `http://${ip}/deliver/${arquivo}?token=${token}&uc=${uc}&pc=${pc}`;
+    
+    console.log(`🎯 Nova URL: ${videoUrl}`);
+    return videoUrl;
+    
   } catch (error) {
-    console.error(`❌ Erro ao obter token:`, error);
+    console.error("❌ Erro na renovação:", error);
     return null;
   }
 }
 
-// ===== PROXY INTELIGENTE =====
-app.get("/series/*", async (req, res) => {
+// ===== PROXY PRINCIPAL =====
+app.get("/*", async (req, res) => {
   console.log("\n" + "=".repeat(60));
-  console.log(`🎬 REQUISIÇÃO: ${req.path}`);
+  console.log(`🔍 REQUISIÇÃO: ${req.path}`);
   
   try {
-    // Tenta com a URL original primeiro
-    let targetUrl = BASE + req.path + (req.url.includes('?') ? '?' + req.url.split('?')[1] : '');
-    console.log(`🎯 TENTANDO 1: ${targetUrl}`);
+    let videoUrl;
+    let tentativas = 0;
+    const maxTentativas = 2;
     
-    let response = await fetch(targetUrl, {
-      headers: {
-        "Host": "cavalo.cc",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Accept": "video/mp4,*/*",
-        "Range": req.headers["range"] || "",
-        "Referer": "http://cavalo.cc/",
-        "Origin": "http://cavalo.cc"
-      },
-      redirect: "follow"
-    });
-
-    // Se deu 404, pode ser token expirado
-    if (response.status === 404) {
-      console.log(`⚠️ 404 - Tentando renovar token...`);
+    while (tentativas < maxTentativas) {
+      tentativas++;
+      console.log(`\n📌 Tentativa ${tentativas}:`);
       
-      // Tenta obter token novo
-      const tokenNovo = await obterTokenNovo(req.path);
-      
-      if (tokenNovo) {
-        // Se tokenNovo for URL completa
-        if (tokenNovo.startsWith('http')) {
-          targetUrl = tokenNovo;
-        } else {
-          // Se for só o token, constrói URL
-          targetUrl = `http://209.131.121.28/deliver/${req.path.split('/').pop()}?token=${tokenNovo}`;
+      if (tentativas === 1) {
+        // Primeira tentativa: usa o cavalo.cc diretamente
+        videoUrl = `http://cavalo.cc:80${req.path}`;
+        console.log(`🎯 Tentando URL original: ${videoUrl}`);
+      } else {
+        // Segunda tentativa: renova o token
+        console.log(`🔄 Tentando renovar token...`);
+        videoUrl = await renovarToken(req.path);
+        if (!videoUrl) {
+          break;
         }
-        
-        console.log(`🎯 TENTANDO 2: ${targetUrl}`);
-        
-        response = await fetch(targetUrl, {
-          headers: {
-            "Host": new URL(targetUrl).host,
-            "User-Agent": "Mozilla/5.0",
-            "Range": req.headers["range"] || "",
-            "Referer": "http://cavalo.cc/"
-          }
-        });
       }
+      
+      const response = await fetch(videoUrl, {
+        headers: {
+          "Host": new URL(videoUrl).host,
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "video/mp4, video/webm, video/ogg, */*",
+          "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+          "Range": req.headers["range"] || "",
+          "Referer": "http://cavalo.cc/",
+          "Origin": "http://cavalo.cc",
+          "Connection": "keep-alive"
+        },
+        redirect: "follow"
+      });
+      
+      console.log(`📥 Status: ${response.status}`);
+      
+      // Se funcionou, envia o vídeo
+      if (response.ok) {
+        // Copiar headers importantes
+        const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
+        headersToCopy.forEach(header => {
+          const value = response.headers.get(header);
+          if (value) res.setHeader(header, value);
+        });
+
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Range");
+
+        res.status(response.status);
+        response.body.pipe(res);
+        console.log(`✅ Vídeo enviado com sucesso!`);
+        return;
+      }
+      
+      console.log(`⚠️ Tentativa ${tentativas} falhou`);
     }
-
-    // Se ainda assim falhou
-    if (!response.ok) {
-      return res.status(response.status).send(`
-        <html>
-          <body>
-            <h1>${response.status} - Vídeo indisponível</h1>
-            <p>O token pode ter expirado. <a href="${req.path}">Tente novamente</a></p>
-          </body>
-        </html>
-      `);
-    }
-
-    // Copiar headers
-    const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
-    headersToCopy.forEach(header => {
-      const value = response.headers.get(header);
-      if (value) res.setHeader(header, value);
-    });
-
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Range");
-
-    res.status(response.status);
-    response.body.pipe(res);
+    
+    // Se todas as tentativas falharam
+    res.status(404).send(`
+      <html>
+        <head><title>Vídeo não encontrado</title></head>
+        <body style="font-family: Arial; text-align: center; padding: 50px;">
+          <h1>🎬 Vídeo indisponível no momento</h1>
+          <p>O token pode ter expirado. Tente novamente em alguns segundos.</p>
+          <p><a href="${req.path}">Clique aqui para tentar novamente</a></p>
+          <p><small>Path: ${req.path}</small></p>
+        </body>
+      </html>
+    `);
     
   } catch (error) {
-    console.error(`❌ ERRO:`, error);
-    res.status(500).send("Erro interno");
+    console.error("❌ Erro grave:", error);
+    res.status(500).send("Erro interno no servidor");
   }
 });
 
 // ===== OPTIONS =====
-app.options("/series/*", (req, res) => {
+app.options("/*", (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Range");
@@ -147,14 +159,19 @@ app.options("/series/*", (req, res) => {
 
 // ===== HEALTH CHECK =====
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", base: BASE, mask: MASK });
+  res.json({ 
+    status: "ok", 
+    mask: MASK,
+    time: new Date().toISOString()
+  });
 });
 
+// ===== INICIAR SERVIDOR =====
 app.listen(PORT, () => {
-  console.log(`
-  🚀 PROXY INTELIGENTE RODANDO
-  🎯 BASE: ${BASE}
-  🎭 MASK: ${MASK}
-  🔄 Renovação automática de tokens ativada!
-  `);
+  console.log("\n" + "🚀".repeat(30));
+  console.log(`🚀 PROXY INTELIGENTE RODANDO`);
+  console.log(`🎭 MASK: ${MASK}`);
+  console.log(`✅ Teste: ${MASK}/series/Altairplay2024/4995NFTSybwa/361267.mp4`);
+  console.log(`🔄 Renovação automática de tokens ATIVADA`);
+  console.log("🚀".repeat(30) + "\n");
 });
