@@ -439,6 +439,88 @@ app.get("/ajuda", (req, res) => {
 });
 
 // ===== ROTA ESPECIAL PARA /alterar-foto =====
+
+// ===== ROTA ESPECIAL PARA VÍDEOS (MANTÉM HOST ORIGINAL) =====
+app.get("/deliver/*", async (req, res) => {
+  try {
+    const videoPath = req.path; // /deliver/361267.mp4
+    const queryString = req.url.split('?')[1] || '';
+    
+    // URL completa para o servidor original
+    const targetUrl = `http://209.131.121.25${videoPath}?${queryString}`;
+    
+    console.log(`🎬 Proxy de vídeo: ${targetUrl}`);
+    
+    // FAZER A REQUISIÇÃO MANTENDO O HOST ORIGINAL
+    const response = await fetch(targetUrl, {
+      method: req.method,
+      headers: {
+        // ⚠️ CRÍTICO: Manter o Host original do servidor de vídeo
+        "Host": "209.131.121.25",
+        "User-Agent": req.headers["user-agent"] || "Mozilla/5.0",
+        "Accept": req.headers["accept"] || "*/*",
+        "Range": req.headers["range"] || "", // Para permitir seek no vídeo
+        "Referer": "http://209.131.121.25/",
+        "Connection": "keep-alive"
+      }
+    });
+    
+    // IMPORTANTE: Copiar headers de resposta para o cliente
+    const contentType = response.headers.get("content-type");
+    if (contentType) res.setHeader("Content-Type", contentType);
+    
+    const contentLength = response.headers.get("content-length");
+    if (contentLength) res.setHeader("Content-Length", contentLength);
+    
+    const contentRange = response.headers.get("content-range");
+    if (contentRange) res.setHeader("Content-Range", contentRange);
+    
+    const acceptRanges = response.headers.get("accept-ranges");
+    if (acceptRanges) res.setHeader("Accept-Ranges", acceptRanges);
+    
+    // Copiar status code
+    res.status(response.status);
+    
+    // Stream do vídeo diretamente para o cliente
+    response.body.pipe(res);
+    
+  } catch (error) {
+    console.error("❌ Erro no proxy de vídeo:", error);
+    res.status(500).send("Erro ao carregar vídeo");
+  }
+});
+
+// ===== ROTA PARA OUTROS ARQUIVOS DE MÍDIA =====
+app.get("/*.mp4", async (req, res) => {
+  // Redireciona para a rota /deliver se necessário
+  const videoPath = req.path;
+  const queryString = req.url.split('?')[1] || '';
+  const targetUrl = `http://209.131.121.25${videoPath}?${queryString}`;
+  
+  try {
+    const response = await fetch(targetUrl, {
+      headers: {
+        "Host": "209.131.121.25",
+        "User-Agent": req.headers["user-agent"] || "Mozilla/5.0",
+        "Range": req.headers["range"] || ""
+      }
+    });
+    
+    // Copiar headers
+    res.setHeader("Content-Type", response.headers.get("content-type") || "video/mp4");
+    res.setHeader("Accept-Ranges", "bytes");
+    
+    const contentRange = response.headers.get("content-range");
+    if (contentRange) res.setHeader("Content-Range", contentRange);
+    
+    res.status(response.status);
+    response.body.pipe(res);
+    
+  } catch (error) {
+    console.error("❌ Erro no proxy de MP4:", error);
+    res.status(500).send("Erro ao carregar vídeo");
+  }
+});
 app.post("/alterar-foto", async (req, res) => {
   console.log("📤 Encaminhando upload para backend original...");
   console.log("Content-Type recebido:", req.headers["content-type"]);
