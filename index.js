@@ -8,8 +8,8 @@ app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 app.use(express.json({ limit: '20mb' }));
 app.use(cookieParser());
 
-const BASE = "http://br2.bronxyshost.com:4009";
-const MASK = "https://fabibot.vercel.app";
+const BASE = "http://cavalo.cc:80";
+const MASK = "https://marujoflix.vercel.app";
 
 // ===== ROTA ESPECIAL PARA /alterar-foto =====
 // Esta rota APENAS ENCAMINHA para o backend original
@@ -54,7 +54,7 @@ app.get("/google-verification.html", (req, res) => {
 </head>
 <body>
     <h1>Google Search Console Verification</h1>
-    <p>Site: https://fabibot.vercel.app</p>
+    <p>Site: https://marujoflix.vercel.app</p>
 </body>
 </html>
   `);
@@ -68,7 +68,7 @@ Allow: /
 Disallow: /admin/
 Disallow: /private/
 
-Sitemap: https://fabibot.vercel.app/sitemap.xml
+Sitemap: https://marujoflix.vercel.app/sitemap.xml
 
 User-agent: Googlebot
 Allow: /
@@ -100,7 +100,7 @@ app.get("/sitemap.xml", (req, res) => {
   
   <!-- PÁGINA PRINCIPAL (SEMPRE EXISTE) -->
   <url>
-    <loc>https://fabibot.vercel.app/</loc>
+    <loc>https://marujoflix.vercel.app/</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -108,7 +108,7 @@ app.get("/sitemap.xml", (req, res) => {
   
   <!-- LOGIN (QUASE SEMPRE EXISTE) -->
   <url>
-    <loc>https://fabibot.vercel.app/login</loc>
+    <loc>https://marujoflix.vercel.app/login</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -116,7 +116,7 @@ app.get("/sitemap.xml", (req, res) => {
   
   <!-- CADASTRO (QUASE SEMPRE EXISTE) -->
   <url>
-    <loc>https://fabibot.vercel.app/register</loc>
+    <loc>https://marujoflix.vercel.app/register</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -124,7 +124,7 @@ app.get("/sitemap.xml", (req, res) => {
   
   <!-- CHAT (SE TIVER NO SEU SITE) -->
   <url>
-    <loc>https://fabibot.vercel.app/chat</loc>
+    <loc>https://marujoflix.vercel.app/chat</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>always</changefreq>
     <priority>0.9</priority>
@@ -134,7 +134,7 @@ app.get("/sitemap.xml", (req, res) => {
   
   <!-- ALTERNATIVA PARA PERFIL -->
   <url>
-    <loc>https://fabibot.vercel.app/corrida</loc>
+    <loc>https://marujoflix.vercel.app/corrida</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -142,7 +142,7 @@ app.get("/sitemap.xml", (req, res) => {
   
   
     <url>
-    <loc>https://fabibot.vercel.app/removermarca</loc>
+    <loc>https://marujoflix.vercel.app/removermarca</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -152,28 +152,28 @@ app.get("/sitemap.xml", (req, res) => {
   
   <!-- PÁGINAS INSTITUCIONAIS (CRIAR SE NÃO EXISTIREM) -->
   <url>
-    <loc>https://fabibot.vercel.app/about</loc>
+    <loc>https://marujoflix.vercel.app/about</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://fabibot.vercel.app/sobre</loc>
+    <loc>https://marujoflix.vercel.app/sobre</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://fabibot.vercel.app/privacy</loc>
+    <loc>https://marujoflix.vercel.app/privacy</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   
   <url>
-    <loc>https://fabibot.vercel.app/terms</loc>
+    <loc>https://marujoflix.vercel.app/terms</loc>
     <lastmod>2024-12-07</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
@@ -189,9 +189,9 @@ app.get("/sobre", (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sobre o FabiBot - Plataforma Completa de Entretenimento Online</title>
-    <meta name="description" content="Conheça o FabiBot: chat online grátis, player de músicas, jogos e ranking. A maior comunidade brasileira de entretenimento digital.">
-    <meta name="keywords" content="FabiBot, sobre, chat online, músicas, jogos, entretenimento">
+    <title>Sobre o marujoflix - Plataforma Completa de Entretenimento Online</title>
+    <meta name="description" content="Conheça o marujoflix: chat online grátis, player de músicas, jogos e ranking. A maior comunidade brasileira de entretenimento digital.">
+    <meta name="keywords" content="marujoflix, sobre, chat online, músicas, jogos, entretenimento">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -276,9 +276,9 @@ app.get("/sobre", (req, res) => {
 </head>
 <body>
     <div class="container">
-        <h1>🎮 Sobre o FabiBot</h1>
+        <h1>🎮 Sobre o marujoflix</h1>
         
-        <p>Bem-vindo ao <strong>FabiBot</strong>, a plataforma de entretenimento online mais completa do Brasil! Criada para conectar pessoas através da diversão digital.</p>
+        <p>Bem-vindo ao <strong>marujoflix</strong>, a plataforma de entretenimento online mais completa do Brasil! Criada para conectar pessoas através da diversão digital.</p>
         
         <h2>✨ O Que Oferecemos</h2>
         
@@ -324,7 +324,7 @@ app.get("/sobre", (req, res) => {
             <a href="/" class="btn">🎯 Experimente Grátis</a>
         </div>
         
-        <a href="/" class="back-link">← Voltar para o FabiBot</a>
+        <a href="/" class="back-link">← Voltar para o marujoflix</a>
     </div>
 </body>
 </html>`);
@@ -337,8 +337,8 @@ app.get("/politica-de-privacidade", (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Política de Privacidade - FabiBot</title>
-    <meta name="description" content="Política de Privacidade do FabiBot. Saiba como protegemos seus dados e informações pessoais.">
+    <title>Política de Privacidade - marujoflix</title>
+    <meta name="description" content="Política de Privacidade do marujoflix. Saiba como protegemos seus dados e informações pessoais.">
     <style>
         body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.8; }
         h1, h2 { color: #667eea; }
@@ -346,7 +346,7 @@ app.get("/politica-de-privacidade", (req, res) => {
     </style>
 </head>
 <body>
-    <h1>🔒 Política de Privacidade do FabiBot</h1>
+    <h1>🔒 Política de Privacidade do marujoflix</h1>
     <p class="date">Última atualização: 06 de dezembro de 2024</p>
     
     <h2>1. Coleta de Informações</h2>
@@ -361,7 +361,7 @@ app.get("/politica-de-privacidade", (req, res) => {
     <h2>4. Google AdSense</h2>
     <p>Terceiros, incluindo o Google, usam cookies para veicular anúncios...</p>
     
-    <p><a href="/">← Voltar ao FabiBot</a></p>
+    <p><a href="/">← Voltar ao marujoflix</a></p>
 </body>
 </html>`);
 });
@@ -373,18 +373,18 @@ app.get("/termos-de-uso", (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Termos de Uso - FabiBot</title>
-    <meta name="description" content="Termos e Condições de Uso do FabiBot. Leia atentamente antes de utilizar nossa plataforma.">
+    <title>Termos de Uso - marujoflix</title>
+    <meta name="description" content="Termos e Condições de Uso do marujoflix. Leia atentamente antes de utilizar nossa plataforma.">
     <style>
         body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.8; }
         h1, h2 { color: #667eea; }
     </style>
 </head>
 <body>
-    <h1>📄 Termos de Uso do FabiBot</h1>
+    <h1>📄 Termos de Uso do marujoflix</h1>
     
     <h2>1. Aceitação dos Termos</h2>
-    <p>Ao acessar o FabiBot, você concorda com estes termos...</p>
+    <p>Ao acessar o marujoflix, você concorda com estes termos...</p>
     
     <h2>2. Uso Adequado</h2>
     <p>Você concorda em não usar o serviço para atividades ilegais...</p>
@@ -392,7 +392,7 @@ app.get("/termos-de-uso", (req, res) => {
     <h2>3. Contas de Usuário</h2>
     <p>Você é responsável por manter sua conta segura...</p>
     
-    <p><a href="/">← Voltar ao FabiBot</a></p>
+    <p><a href="/">← Voltar ao marujoflix</a></p>
 </body>
 </html>`);
 });
@@ -404,8 +404,8 @@ app.get("/ajuda", (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajuda do FabiBot - Perguntas Frequentes</title>
-    <meta name="description" content="Central de Ajuda do FabiBot. Tire todas suas dúvidas sobre chat, músicas, jogos e mais.">
+    <title>Ajuda do marujoflix - Perguntas Frequentes</title>
+    <meta name="description" content="Central de Ajuda do marujoflix. Tire todas suas dúvidas sobre chat, músicas, jogos e mais.">
     <style>
         body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
         .faq-item { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
@@ -414,7 +414,7 @@ app.get("/ajuda", (req, res) => {
     </style>
 </head>
 <body>
-    <h1>❓ Central de Ajuda - FabiBot</h1>
+    <h1>❓ Central de Ajuda - marujoflix</h1>
     
     <div class="faq-item">
         <div class="question" onclick="toggleAnswer(this)">Como usar o chat online?</div>
@@ -433,7 +433,7 @@ app.get("/ajuda", (req, res) => {
         }
     </script>
     
-    <p><a href="/">← Voltar ao FabiBot</a></p>
+    <p><a href="/">← Voltar ao marujoflix</a></p>
 </body>
 </html>`);
 });
