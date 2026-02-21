@@ -8,7 +8,7 @@ app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 app.use(express.json({ limit: '20mb' }));
 app.use(cookieParser());
 
-const BASE = "http://209.131.121.25";
+const BASE = "http://cavalo.cc:80";
 const MASK = "https://fabibot-taupe.vercel.app";
 
 // ========== CONFIGURAÇÃO SEO COMPLETA ==========
