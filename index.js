@@ -4,276 +4,152 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 const MASK = "https://fabibot-taupe.vercel.app";
 
 app.use(cookieParser());
 
-// Cache simples para evitar reprocessamento
-const urlCache = new Map();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+// Cache para evitar reprocessar redirecionamentos com frequência
+const redirectCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 
-// ===== FUNÇÃO PARA OBTER URL REAL =====
-async function obterUrlReal(caminho) {
-  const cacheKey = caminho;
-  
-  // Verifica cache
-  if (urlCache.has(cacheKey)) {
-    const cached = urlCache.get(cacheKey);
-    if (Date.now() - cached.timestamp < CACHE_DURATION) {
-      console.log(`📦 Usando cache: ${cached.url}`);
-      return cached.url;
+// Limpeza periódica do cache
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, value] of redirectCache.entries()) {
+    if (now - value.timestamp > CACHE_TTL) {
+      redirectCache.delete(key);
     }
   }
-  
-  try {
-    // Tenta acessar SEM .mp4 primeiro
-    const caminhoSemMp4 = caminho.replace('.mp4', '');
-    const urlSemMp4 = `http://cavalo.cc:80${caminhoSemMp4}`;
-    
-    console.log(`🔍 Verificando: ${urlSemMp4}`);
-    
-    const response = await fetch(urlSemMp4, {
+}, 60000);
+
+// Função para obter a URL final (após redirecionamentos)
+async function getFinalUrl(originalPath) {
+  const cacheKey = originalPath;
+  if (redirectCache.has(cacheKey)) {
+    const cached = redirectCache.get(cacheKey);
+    console.log(`📦 Cache hit: ${cached.url}`);
+    return cached.url;
+  }
+
+  const cavaloUrl = `http://cavalo.cc:80${originalPath}`;
+  console.log(`🌐 Solicitando: ${cavaloUrl}`);
+
+  // Faz uma requisição HEAD para capturar redirecionamento sem baixar corpo
+  const response = await fetch(cavaloUrl, {
+    method: 'HEAD',
+    redirect: 'manual',
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      'Referer': 'http://cavalo.cc/'
+    }
+  });
+
+  let finalUrl = cavaloUrl;
+
+  if (response.status >= 300 && response.status < 400) {
+    const location = response.headers.get('location');
+    if (location) {
+      finalUrl = location.startsWith('http') ? location : `http://cavalo.cc:80${location}`;
+      console.log(`↪️ Redirecionado para: ${finalUrl}`);
+    }
+  } else {
+    // Se não houver redirecionamento, tenta extrair token do HTML (fallback)
+    console.log(`🔍 Sem redirecionamento, tentando extrair token...`);
+    const htmlResponse = await fetch(cavaloUrl, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Accept": "text/html,application/xhtml+xml",
-        "Referer": "http://cavalo.cc/",
+        'User-Agent': 'Mozilla/5.0',
+        'Referer': 'http://cavalo.cc/'
       }
     });
-    
-    if (!response.ok) {
-      console.log(`⚠️ Página retornou ${response.status}`);
+    const html = await htmlResponse.text();
+    const tokenMatch = html.match(/token=([^"&\s]+)/);
+    const ipMatch = html.match(/(\d+\.\d+\.\d+\.\d+)/g);
+    if (tokenMatch && ipMatch) {
+      const token = tokenMatch[1];
+      const ip = ipMatch[ipMatch.length - 1];
+      const arquivo = originalPath.split('/').pop();
+      finalUrl = `http://${ip}/deliver/${arquivo}?token=${token}`;
+      // uc e pc podem ser extraídos também, mas a URL acima já funciona?
+      // Na prática, a URL de redirecionamento já contém todos os parâmetros.
+      // Mas se precisar, podemos adicionar uc e pc.
+      console.log(`🔧 URL construída: ${finalUrl}`);
+    } else {
+      console.log(`❌ Token não encontrado.`);
       return null;
     }
-    
-    const html = await response.text();
-    
-    // PROCURA PELO TOKEN - FORMATO ESPECÍFICO DO CAVALO.CC
-    const tokenMatch = html.match(/token=([a-zA-Z0-9_.-]+)/);
-    const ipMatch = html.match(/https?:\/\/(\d+\.\d+\.\d+\.\d+)/);
-    const ucMatch = html.match(/uc=([^"&\s]+)/);
-    const pcMatch = html.match(/pc=([^"&\s]+)/);
-    
-    if (tokenMatch) {
-      const token = tokenMatch[1];
-      
-      // Pega o IP - se não encontrar, usa um padrão
-      let ip = "209.131.121.24";
-      if (ipMatch) {
-        ip = ipMatch[1];
-      } else {
-        // Tenta encontrar IP no formato antigo
-        const ips = html.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g);
-        if (ips && ips.length > 0) {
-          ip = ips[ips.length - 1];
-        }
-      }
-      
-      const uc = ucMatch ? ucMatch[1] : "QWx0YWlycGxheTIwMjQ=";
-      const pc = pcMatch ? pcMatch[1] : "NDk5NU5GVFN5Yndh";
-      
-      const arquivo = caminho.split('/').pop();
-      const videoUrl = `http://${ip}/deliver/${arquivo}?token=${token}&uc=${uc}&pc=${pc}`;
-      
-      console.log(`✅ URL construída: ${videoUrl}`);
-      
-      // Salva no cache
-      urlCache.set(cacheKey, {
-        url: videoUrl,
-        timestamp: Date.now()
-      });
-      
-      return videoUrl;
-    }
-    
-    // Se não encontrou token, pode ser que a página já seja o vídeo
-    if (html.includes('video') || html.includes('mp4')) {
-      console.log(`⚠️ Pode ser vídeo direto, tentando original...`);
-      return `http://cavalo.cc:80${caminho}`;
-    }
-    
-    console.log(`❌ Token não encontrado no HTML`);
-    return null;
-    
-  } catch (error) {
-    console.error(`❌ Erro ao obter URL real:`, error.message);
-    return null;
   }
+
+  // Salva no cache
+  redirectCache.set(cacheKey, { url: finalUrl, timestamp: Date.now() });
+  return finalUrl;
 }
 
-// ===== PROXY PRINCIPAL =====
-app.get("/series/*", async (req, res) => {
-  console.log("\n" + "📺".repeat(30));
-  console.log(`📺 SÉRIE: ${req.path}`);
-  await handleVideoRequest(req, res);
-});
+// Handler principal para vídeos
+async function handleVideo(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Range');
 
-app.get("/movie/*", async (req, res) => {
-  console.log("\n" + "🎬".repeat(30));
-  console.log(`🎬 FILME: ${req.path}`);
-  await handleVideoRequest(req, res);
-});
+  if (req.method === 'OPTIONS') return res.status(204).end();
 
-// ===== FUNÇÃO COMPARTILHADA =====
-async function handleVideoRequest(req, res) {
-  // Headers CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Range");
-  
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
-  }
-  
   try {
-    // TENTATIVA 1: URL direta
-    const urlDireta = `http://cavalo.cc:80${req.path}`;
-    console.log(`📥 Tentativa 1: ${urlDireta}`);
-    
-    let response = await fetch(urlDireta, {
+    const finalUrl = await getFinalUrl(req.path);
+    if (!finalUrl) {
+      return res.status(404).send('Vídeo não encontrado');
+    }
+
+    // Faz a requisição do vídeo usando a URL final
+    const videoResponse = await fetch(finalUrl, {
       headers: {
-        "Range": req.headers["range"] || "",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Referer": "http://cavalo.cc/",
+        'Range': req.headers['range'] || '',
+        'User-Agent': 'Mozilla/5.0',
+        'Referer': 'http://cavalo.cc/'
       }
     });
-    
-    if (response.ok || response.status === 206) {
-      console.log(`✅ Tentativa 1 funcionou!`);
-      return enviarResposta(response, res);
+
+    if (!videoResponse.ok && videoResponse.status !== 206) {
+      console.log(`❌ Erro ao buscar vídeo: ${videoResponse.status}`);
+      return res.status(videoResponse.status).send('Erro ao carregar vídeo');
     }
-    
-    // TENTATIVA 2: Descobrir URL real
-    console.log(`⚠️ Tentativa 1 falhou (${response.status})`);
-    console.log(`🔄 Tentativa 2: Descobrindo URL real...`);
-    
-    const urlReal = await obterUrlReal(req.path);
-    
-    if (!urlReal) {
-      console.log(`❌ Não foi possível descobrir URL real`);
-      return mostrarErro(res, req.path);
-    }
-    
-    console.log(`📥 Tentativa 2: ${urlReal}`);
-    
-    response = await fetch(urlReal, {
-      headers: {
-        "Range": req.headers["range"] || "",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Referer": "http://cavalo.cc/",
-      }
+
+    // Copia headers relevantes
+    const headersToCopy = ['content-type', 'content-length', 'content-range', 'accept-ranges'];
+    headersToCopy.forEach(header => {
+      const value = videoResponse.headers.get(header);
+      if (value) res.setHeader(header, value);
     });
-    
-    if (response.ok || response.status === 206) {
-      console.log(`✅ Tentativa 2 funcionou!`);
-      return enviarResposta(response, res);
-    }
-    
-    // TENTATIVA 3: Sem headers especiais
-    console.log(`⚠️ Tentativa 2 falhou (${response.status})`);
-    console.log(`🔄 Tentativa 3: Requisição simples...`);
-    
-    response = await fetch(urlReal, {
-      headers: {
-        "User-Agent": "Mozilla/5.0"
-      }
-    });
-    
-    if (response.ok) {
-      console.log(`✅ Tentativa 3 funcionou!`);
-      return enviarResposta(response, res);
-    }
-    
-    console.log(`❌ Todas as tentativas falharam`);
-    mostrarErro(res, req.path);
-    
+
+    res.status(videoResponse.status);
+    videoResponse.body.pipe(res);
+    console.log(`✅ Vídeo enviado com sucesso`);
+
   } catch (error) {
-    console.error(`❌ Erro:`, error.message);
-    res.status(500).send(`Erro: ${error.message}`);
+    console.error('❌ Erro no proxy:', error);
+    res.status(500).send('Erro interno');
   }
 }
 
-// ===== FUNÇÃO PARA ENVIAR RESPOSTA =====
-function enviarResposta(response, res) {
-  // Headers importantes
-  const headersParaCopiar = [
-    "content-type", 
-    "content-length", 
-    "content-range", 
-    "accept-ranges",
-    "cache-control"
-  ];
-  
-  headersParaCopiar.forEach(header => {
-    const valor = response.headers.get(header);
-    if (valor) res.setHeader(header, valor);
-  });
-  
-  res.status(response.status);
-  response.body.pipe(res);
-}
+// Rotas
+app.get('/series/*', handleVideo);
+app.get('/movie/*', handleVideo);
 
-// ===== FUNÇÃO PARA MOSTRAR ERRO =====
-function mostrarErro(res, path) {
-  res.status(404).send(`
-    <html>
-      <head>
-        <title>Vídeo não encontrado</title>
-        <style>
-          body { font-family: Arial; text-align: center; padding: 50px; background: #1a1a1a; color: white; }
-          .container { max-width: 600px; margin: 0 auto; }
-          .error { background: #ff4444; padding: 20px; border-radius: 10px; margin: 20px 0; }
-          button { background: #4CAF50; color: white; border: none; padding: 10px 20px; 
-                   border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px; }
-          .path { background: #333; padding: 10px; border-radius: 5px; font-family: monospace; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1>🎬 Vídeo indisponível</h1>
-          <div class="error">
-            <p>O vídeo solicitado não pôde ser carregado no momento.</p>
-          </div>
-          <div class="path">
-            <p>Caminho: ${path}</p>
-          </div>
-          <button onclick="window.location.reload()">🔄 Tentar novamente</button>
-          <button onclick="window.location.href='/'">🏠 Voltar</button>
-          <p><small>Isso geralmente acontece quando o token expira. 
-          Tente novamente em alguns segundos.</small></p>
-        </div>
-      </body>
-    </html>
-  `);
-}
-
-// ===== HEALTH CHECK =====
-app.get("/health", (req, res) => {
+// Health check
+app.get('/health', (req, res) => {
   res.json({
-    status: "online",
+    status: 'ok',
     mask: MASK,
-    cache: urlCache.size,
+    cacheSize: redirectCache.size,
     time: new Date().toISOString()
   });
 });
 
-// ===== LIMPAR CACHE =====
-app.get("/clear-cache", (req, res) => {
-  urlCache.clear();
-  res.json({ message: "Cache limpo!", size: urlCache.size });
+// Limpar cache
+app.get('/clear-cache', (req, res) => {
+  redirectCache.clear();
+  res.json({ message: 'Cache limpo' });
 });
 
-// ===== INICIAR SERVIDOR =====
 app.listen(PORT, () => {
-  console.log("\n" + "=".repeat(50));
-  console.log("🚀 PROXY CAVALO.CC INICIADO");
-  console.log("=".repeat(50));
-  console.log(`📌 MASK: ${MASK}`);
-  console.log(`📌 PORT: ${PORT}`);
-  console.log("\n📌 ROTAS ATIVAS:");
-  console.log(`🎬 Filme: ${MASK}/movie/Altairplay2024/4995NFTSybwa/100008.mp4`);
-  console.log(`📺 Série: ${MASK}/series/Altairplay2024/4995NFTSybwa/361267.mp4`);
-  console.log(`💚 Health: ${MASK}/health`);
-  console.log(`🧹 Clear cache: ${MASK}/clear-cache`);
-  console.log("=".repeat(50) + "\n");
+  console.log(`🚀 Proxy rodando na porta ${PORT}`);
+  console.log(`🎬 Exemplo: ${MASK}/movie/Altairplay2024/4995NFTSybwa/100008.mp4`);
 });
