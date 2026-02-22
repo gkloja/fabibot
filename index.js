@@ -3,7 +3,6 @@ import fetch from "node-fetch";
 import cookieParser from "cookie-parser";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 const MASK = "https://fabibot-taupe.vercel.app";
 
 app.use(cookieParser());
@@ -39,15 +38,35 @@ async function fetchWithCookies(url, options = {}) {
   return response;
 }
 
-// ===== PROXY PRINCIPAL - IGUAL AO ORIGINAL! =====
+// ===== HEALTH CHECK (PRIMEIRO, ANTES DE TUDO) =====
+app.get("/health", (req, res) => {
+  console.log("✅ Health check acessado");
+  res.json({ 
+    status: "ok", 
+    mask: MASK, 
+    time: new Date().toISOString(),
+    cookies: cookieJar,
+    message: "Proxy funcionando!"
+  });
+});
+
+// ===== DEBUG (OPCIONAL) =====
+app.get("/debug/*", (req, res) => {
+  res.json({
+    path: req.path,
+    url: req.url,
+    method: req.method,
+    headers: req.headers,
+    query: req.query,
+    time: new Date().toISOString(),
+    cookieJar: cookieJar
+  });
+});
+
+// ===== PROXY PRINCIPAL =====
 app.get("/*", async (req, res) => {
   console.log("\n" + "=".repeat(60));
   console.log(`🔍 REQUISIÇÃO: ${req.path}`);
-  
-  // Ignorar rotas especiais
-  if (req.path === '/health' || req.path === '/favicon.ico') {
-    return res.status(404).send('Rota não encontrada');
-  }
   
   // OPTIONS para CORS
   if (req.method === 'OPTIONS') {
@@ -58,11 +77,9 @@ app.get("/*", async (req, res) => {
   }
 
   try {
-    // 🔥 FAZ EXATAMENTE O QUE O ORIGINAL FAZ!
     const urlOriginal = `http://cavalo.cc:80${req.path}`;
     console.log(`🎯 Acessando: ${urlOriginal}`);
     
-    // fetch com redirect: "follow" faz ele seguir redirecionamentos automaticamente
     const response = await fetchWithCookies(urlOriginal, {
       method: req.method,
       headers: {
@@ -72,22 +89,19 @@ app.get("/*", async (req, res) => {
         "Referer": "http://cavalo.cc/",
         "Origin": "http://cavalo.cc"
       },
-      redirect: "follow"  // 👈 ISSO É CRÍTICO! Segue redirecionamentos
+      redirect: "follow"
     });
 
     console.log(`📥 Status final: ${response.status}`);
     console.log(`📍 URL final: ${response.url}`);
 
-    // Se funcionou, envia o vídeo
     if (response.ok || response.status === 206) {
-      // Headers importantes
       const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
       headersToCopy.forEach(header => {
         const value = response.headers.get(header);
         if (value) res.setHeader(header, value);
       });
 
-      // CORS
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
       res.setHeader("Access-Control-Allow-Headers", "Range");
@@ -99,25 +113,28 @@ app.get("/*", async (req, res) => {
       return;
     }
     
-    // Se falhou
     console.log(`❌ Falhou: ${response.status}`);
     res.status(response.status).send(`Erro ${response.status}`);
     
   } catch (error) {
     console.error("❌ Erro:", error);
-    res.status(500).send("Erro interno");
+    res.status(500).json({ 
+      error: "Erro interno", 
+      message: error.message,
+      path: req.path 
+    });
   }
 });
 
-// ===== HEALTH CHECK =====
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", mask: MASK, time: new Date().toISOString() });
+// ===== 404 PARA ROTAS NÃO ENCONTRADAS =====
+app.use((req, res) => {
+  console.log(`❌ 404 - Rota não encontrada: ${req.path}`);
+  res.status(404).json({ 
+    error: "Rota não encontrada", 
+    path: req.path,
+    available: ["/health", "/debug/*", "/* (proxy)"]
+  });
 });
 
-app.listen(PORT, () => {
-  console.log("\n" + "🚀".repeat(30));
-  console.log(`🚀 PROXY SIMPLES RODANDO NA PORTA ${PORT}`);
-  console.log(`🎭 MASK: ${MASK}`);
-  console.log(`✅ Exemplo: ${MASK}/series/Altairplay2024/4995NFTSybwa/361267.mp4`);
-  console.log("🚀".repeat(30) + "\n");
-});
+// ===== EXPORTAR PARA O VERCEL (NÃO USAR app.listen) =====
+export default app;
