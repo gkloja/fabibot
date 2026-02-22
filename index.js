@@ -10,7 +10,7 @@ app.use(cookieParser());
 // Cookie jar para manter sessão entre requisições
 let cookieJar = {};
 
-// Headers completos do Chrome (incluindo Sec-Fetch-*)
+// Headers completos do Chrome
 const CHROME_HEADERS = {
   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
   "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -45,6 +45,39 @@ async function fetchWithCookies(url, options = {}) {
   return response;
 }
 
+// Função para resolver URL relativa
+function resolveURL(base, relative) {
+  try {
+    return new URL(relative, base).href;
+  } catch {
+    return relative;
+  }
+}
+
+// Função para seguir redirecionamentos recursivamente
+async function followRedirects(url, options, maxRedirects = 5) {
+  let currentUrl = url;
+  let response;
+  for (let i = 0; i < maxRedirects; i++) {
+    response = await fetchWithCookies(currentUrl, options);
+    if (response.status === 301 || response.status === 302 || response.status === 303 || response.status === 307 || response.status === 308) {
+      const location = response.headers.get("location");
+      if (!location) break;
+      currentUrl = resolveURL(currentUrl, location);
+      console.log(`↪️ Redirecionando para: ${currentUrl}`);
+      // Atualizar headers para a nova URL (mudar Host, Referer, etc.)
+      options.headers = {
+        ...options.headers,
+        "Host": new URL(currentUrl).hostname,
+        "Referer": url // ou currentUrl anterior?
+      };
+      continue;
+    }
+    break;
+  }
+  return response;
+}
+
 // ===== PROXY PRINCIPAL =====
 app.get("/*", async (req, res) => {
   console.log("\n" + "=".repeat(60));
@@ -67,61 +100,60 @@ app.get("/*", async (req, res) => {
     const urlOriginal = `http://cavalo.cc:80${req.path}`;
     console.log(`1️⃣ Acessando original: ${urlOriginal}`);
     
-    // Primeira requisição (pode redirecionar ou dar 404 se token expirado)
-    let response = await fetchWithCookies(urlOriginal, {
+    // Primeira tentativa com retry em caso de 404
+    let response = await followRedirects(urlOriginal, {
       headers: {
         "Host": "cavalo.cc",
         "Referer": "http://cavalo.cc/",
-        "Origin": "http://cavalo.cc"
+        "Origin": "http://cavalo.cc",
+        "Range": req.headers["range"] || ""
       }
     });
 
-    // Se for 404, pode ser token expirado; tenta novamente após 1s (o servidor pode gerar novo token)
+    // Se for 404, pode ser token expirado; tentar novamente após 1s
     if (response.status === 404) {
       console.log("⚠️ 404, tentando novamente em 1s...");
       await new Promise(resolve => setTimeout(resolve, 1000));
-      response = await fetchWithCookies(urlOriginal, {
+      response = await followRedirects(urlOriginal, {
         headers: {
           "Host": "cavalo.cc",
           "Referer": "http://cavalo.cc/",
-          "Origin": "http://cavalo.cc"
-        }
-      });
-    }
-
-    // Se redirecionou (302), pegar a nova URL
-    if (response.status === 302 || response.status === 301) {
-      const location = response.headers.get("location");
-      console.log(`2️⃣ Redirecionou para: ${location}`);
-      
-      // Segunda requisição com headers completos e cookies
-      const response2 = await fetchWithCookies(location, {
-        headers: {
-          "Host": new URL(location).hostname,
-          "Referer": urlOriginal,
           "Origin": "http://cavalo.cc",
           "Range": req.headers["range"] || ""
         }
       });
-
-      console.log(`3️⃣ Status final: ${response2.status}`);
-
-      if (response2.ok || response2.status === 206) {
-        const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
-        headersToCopy.forEach(header => {
-          const value = response2.headers.get(header);
-          if (value) res.setHeader(header, value);
-        });
-
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.status(response2.status);
-        response2.body.pipe(res);
-        console.log(`✅ Vídeo enviado!`);
-        return;
-      }
     }
 
-    // Se chegou aqui, algo deu errado
+    // Se ainda assim for 404, retornar erro amigável
+    if (response.status === 404) {
+      console.log("❌ 404 após retentativa");
+      return res.status(404).send(`
+        <html>
+          <body style="font-family: Arial; text-align: center; padding: 50px;">
+            <h1>🎬 Vídeo temporariamente indisponível</h1>
+            <p>O servidor de origem retornou 404. Tente novamente em alguns segundos.</p>
+            <p><a href="${req.path}">Clique aqui para tentar novamente</a></p>
+          </body>
+        </html>
+      `);
+    }
+
+    // Se a resposta for bem-sucedida (200 ou 206), enviar o conteúdo
+    if (response.ok || response.status === 206) {
+      const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
+      headersToCopy.forEach(header => {
+        const value = response.headers.get(header);
+        if (value) res.setHeader(header, value);
+      });
+
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.status(response.status);
+      response.body.pipe(res);
+      console.log(`✅ Vídeo sendo enviado!`);
+      return;
+    }
+
+    // Qualquer outro status, retornar como está
     res.status(response.status).send(`Erro ${response.status}`);
     
   } catch (error) {
