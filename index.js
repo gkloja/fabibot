@@ -9,10 +9,10 @@ const MASK = "https://fabibot-taupe.vercel.app";
 
 app.use(cookieParser());
 
-// ===== FUNÇÃO PARA RENOVAR TOKEN =====
+// ===== FUNÇÃO PARA RENOVAR TOKEN (AGORA RETORNA COOKIES) =====
 async function renovarToken(caminhoOriginal) {
   try {
-    // Acessa a página do vídeo (sem .mp4) para gerar novo token
+    // Acessa a página do vídeo (sem .mp4) para gerar novo token e obter cookies
     const pageUrl = `http://cavalo.cc:80${caminhoOriginal.replace('.mp4', '')}`;
     console.log(`🔄 Renovando token via: ${pageUrl}`);
     
@@ -28,6 +28,14 @@ async function renovarToken(caminhoOriginal) {
         "Upgrade-Insecure-Requests": "1"
       }
     });
+
+    // Captura os cookies definidos pela página
+    const setCookieHeaders = pageResponse.headers.raw()['set-cookie'];
+    let cookies = '';
+    if (setCookieHeaders) {
+      cookies = setCookieHeaders.join('; ');
+      console.log(`🍪 Cookies obtidos: ${cookies.substring(0, 100)}...`);
+    }
 
     const html = await pageResponse.text();
     
@@ -63,7 +71,9 @@ async function renovarToken(caminhoOriginal) {
     const videoUrl = `http://${ip}/deliver/${arquivo}?token=${token}&uc=${uc}&pc=${pc}`;
     
     console.log(`🎯 Nova URL: ${videoUrl}`);
-    return videoUrl;
+    
+    // Retorna a URL e os cookies para serem usados na requisição do vídeo
+    return { videoUrl, cookies };
     
   } catch (error) {
     console.error("❌ Erro na renovação:", error);
@@ -79,6 +89,7 @@ app.get("/*", async (req, res) => {
   
   try {
     let videoUrl;
+    let cookies = '';
     let tentativas = 0;
     const maxTentativas = 2;
     
@@ -91,25 +102,35 @@ app.get("/*", async (req, res) => {
         videoUrl = `http://cavalo.cc:80${req.path}`;
         console.log(`🎯 Tentando URL original: ${videoUrl}`);
       } else {
-        // Segunda tentativa: renova o token
+        // Segunda tentativa: renova o token e obtém cookies
         console.log(`🔄 Tentando renovar token...`);
-        videoUrl = await renovarToken(req.path);
-        if (!videoUrl) {
+        const resultado = await renovarToken(req.path);
+        if (!resultado) {
           break;
         }
+        videoUrl = resultado.videoUrl;
+        cookies = resultado.cookies;
+      }
+      
+      // Monta os headers para a requisição do vídeo
+      const headers = {
+        "Host": new URL(videoUrl).host,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "video/mp4, video/webm, video/ogg, */*",
+        "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+        "Range": req.headers["range"] || "",
+        "Referer": "http://cavalo.cc/",
+        "Origin": "http://cavalo.cc",
+        "Connection": "keep-alive"
+      };
+      
+      // Se temos cookies (na segunda tentativa), inclui no header
+      if (cookies) {
+        headers["Cookie"] = cookies;
       }
       
       const response = await fetch(videoUrl, {
-        headers: {
-          "Host": new URL(videoUrl).host,
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-          "Accept": "video/mp4, video/webm, video/ogg, */*",
-          "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
-          "Range": req.headers["range"] || "",
-          "Referer": "http://cavalo.cc/",
-          "Origin": "http://cavalo.cc",
-          "Connection": "keep-alive"
-        },
+        headers: headers,
         redirect: "follow"
       });
       
@@ -178,8 +199,8 @@ app.listen(PORT, () => {
   console.log("\n" + "🚀".repeat(30));
   console.log(`🚀 PROXY INTELIGENTE RODANDO`);
   console.log(`🎭 MASK: ${MASK}`);
-  console.log(`✅ SÉRIE: ${MASK}/series/Altairplay2024/4995NFTSybwa/361267.mp4`);
+  console.log(`✅ SÉRIE: https://fabibot-taupe.vercel.app/series/Altairplay2024/4995NFTSybwa/361267.mp4`);
   console.log(`✅ FILME: ${MASK}/movie/Altairplay2024/4995NFTSybwa/100008.mp4`);
-  console.log(`🔄 Renovação automática de tokens ATIVADA`);
+  console.log(`🔄 Renovação automática de tokens ATIVADA (com cookies)`);
   console.log("🚀".repeat(30) + "\n");
 });
