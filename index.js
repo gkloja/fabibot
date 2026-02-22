@@ -7,138 +7,78 @@ const MASK = "https://fabibot-taupe.vercel.app";
 
 app.use(cookieParser());
 
-// Cookie jar para manter sessão
-let cookieJar = {};
-
-// Headers base simulando Chrome
-const baseHeaders = {
+// Headers fixos do Chrome
+const CHROME_HEADERS = {
   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
   "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
   "Accept-Encoding": "gzip, deflate",
-  "Connection": "keep-alive"
+  "Connection": "keep-alive",
+  "Upgrade-Insecure-Requests": "1"
 };
 
-// ===== FUNÇÃO PARA FAZER REQUISIÇÕES COM COOKIES =====
-async function fetchWithCookies(url, options = {}) {
-  const headers = { ...baseHeaders, ...options.headers };
-  const domain = new URL(url).hostname;
-  
-  if (cookieJar[domain]) {
-    headers["Cookie"] = cookieJar[domain];
-  }
-  
-  const response = await fetch(url, { ...options, headers, redirect: "follow" });
-  
-  const setCookie = response.headers.raw()["set-cookie"];
-  if (setCookie) {
-    cookieJar[domain] = setCookie.map(c => c.split(';')[0]).join('; ');
-  }
-  
-  return response;
-}
-
-// ===== FUNÇÃO GENÉRICA DE PROXY =====
-async function proxyHandler(req, res, tipo) {
+// ===== PROXY SIMPLES =====
+app.get("/*", async (req, res) => {
   console.log("\n" + "=".repeat(60));
-  console.log(`🎬 ${tipo}: ${req.path}`);
-  
+  console.log(`🔍 ${req.path}`);
+
+  // Health check
+  if (req.path === '/health') {
+    return res.json({ status: "ok", mask: MASK });
+  }
+
   try {
+    // 1. FAZ EXATAMENTE O QUE O NAVEGADOR FAZ
     const urlOriginal = `http://cavalo.cc:80${req.path}`;
-    console.log(`🎯 Acessando: ${urlOriginal}`);
+    console.log(`1️⃣ Acessando: ${urlOriginal}`);
     
-    const response = await fetchWithCookies(urlOriginal, {
+    // 2. PRIMEIRA REQUISIÇÃO (pode redirecionar)
+    const response1 = await fetch(urlOriginal, {
       headers: {
-        "Host": "cavalo.cc",
-        "Accept": "video/mp4,*/*",
-        "Range": req.headers["range"] || "",
-        "Referer": "http://cavalo.cc/"
+        ...CHROME_HEADERS,
+        "Host": "cavalo.cc"
       },
-      redirect: "follow"
+      redirect: "manual" // Não seguir automaticamente para ver o redirecionamento
     });
 
-    console.log(`📥 Status: ${response.status}`);
+    // 3. SE REDIRECIONOU (302), PEGAR A NOVA URL
+    if (response1.status === 302 || response1.status === 301) {
+      const location = response1.headers.get("location");
+      console.log(`2️⃣ Redirecionou para: ${location}`);
+      
+      // 4. FAZER REQUISIÇÃO PARA A URL DO REDIRECIONAMENTO
+      const response2 = await fetch(location, {
+        headers: {
+          ...CHROME_HEADERS,
+          "Host": new URL(location).hostname,
+          "Range": req.headers["range"] || ""
+        }
+      });
 
-    if (response.ok || response.status === 206) {
+      console.log(`3️⃣ Status final: ${response2.status}`);
+
+      // 5. COPIAR HEADERS E ENVIAR VÍDEO
       const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
       headersToCopy.forEach(header => {
-        const value = response.headers.get(header);
+        const value = response2.headers.get(header);
         if (value) res.setHeader(header, value);
       });
 
       res.setHeader("Access-Control-Allow-Origin", "*");
-      res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", "Range");
-      res.setHeader("Access-Control-Expose-Headers", "Content-Length, Content-Range");
-
-      res.status(response.status);
-      response.body.pipe(res);
-      console.log(`✅ ${tipo} enviado!`);
+      res.status(response2.status);
+      response2.body.pipe(res);
+      console.log(`✅ Vídeo enviado!`);
       return;
     }
-    
-    res.status(response.status).send(`Erro ${response.status}`);
+
+    // Se não redirecionou, envia a resposta original
+    res.status(response1.status).send(await response1.text());
     
   } catch (error) {
-    console.error(`❌ Erro no ${tipo}:`, error);
+    console.error("❌ Erro:", error);
     res.status(500).send("Erro interno");
   }
-}
-
-// ===== HEALTH CHECK =====
-app.get("/health", (req, res) => {
-  res.json({ 
-    status: "ok", 
-    mask: MASK, 
-    time: new Date().toISOString(),
-    rotas: ["/series/*", "/movie/*", "/*.ts", "/health"]
-  });
 });
 
-// ===== ROTA PARA SÉRIES =====
-app.get("/series/*", (req, res) => proxyHandler(req, res, "SÉRIE"));
-
-// ===== ROTA PARA FILMES =====
-app.get("/movie/*", (req, res) => proxyHandler(req, res, "FILME"));
-
-// ===== ROTA PARA ARQUIVOS .ts (LIVES) =====
-app.get("/*.ts", (req, res) => proxyHandler(req, res, "LIVE"));
-
-// ===== OPTIONS PARA CORS =====
-app.options("/series/*", (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Range");
-  res.status(204).end();
-});
-
-app.options("/movie/*", (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Range");
-  res.status(204).end();
-});
-
-app.options("/*.ts", (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Range");
-  res.status(204).end();
-});
-
-// ===== 404 =====
-app.use((req, res) => {
-  console.log(`❌ 404: ${req.path}`);
-  res.status(404).json({
-    error: "Rota não encontrada",
-    path: req.path,
-    rotas_disponiveis: [
-      "/health",
-      "/series/.../arquivo.mp4",
-      "/movie/.../arquivo.mp4",
-      "/.../arquivo.ts"
-    ]
-  });
-});
-
-// ===== EXPORTAR PARA VERCEL =====
+// ===== EXPORTAR =====
 export default app;
