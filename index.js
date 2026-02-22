@@ -8,11 +8,37 @@ const MASK = "https://fabibot-taupe.vercel.app";
 
 app.use(cookieParser());
 
-// 🔥 ATUALIZADO com os valores MAIS RECENTES
-const TOKEN_PADRAO = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjAwMDEiLCJleHAiOjE3NzE3NTQwNTZ9.eyJ1YyI6IlFXeDBZV2x5Y0d4aGVUSXdNalE9IiwicGMiOiJORGs1TlU1R1ZGTjVZbmRoIiwic3QiOiIzNjEyNjcubXA0IiwiaXAiOiIxODcuMjcuMTQ0LjE0OSJ9.vkgTUCdFSe4jwtR7nm4-JJEYnOGrBSzP3LROTHo5v3Q";
-const UC_PADRAO = "QWx0YWlycGxheTIwMjQ=";
-const PC_PADRAO = "NDk5NU5GVFN5Yndh";
-const IP_PADRAO = "209.131.121.26"; // 👈 IP NOVO!
+// ===== BANCO DE DADOS DE FALLBACKS =====
+// Formato: { ip, token, uc, pc, vezesUsado, ultimoUso }
+let fallbacks = [
+  // Série 361267 - IP 28 (primeiro)
+  {
+    ip: "209.131.121.28",
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjAwMDEiLCJleHAiOjE3NzE3NTI1MjF9.eyJ1YyI6IlFXeDBZV2x5Y0d4aGVUSXdNalE9IiwicGMiOiJORGs1TlU1R1ZGTjVZbmRoIiwic3QiOiIzNjEyNjcubXA0IiwiaXAiOiIxODcuMjcuMTQ0LjE0OSJ9.j9dsiMIQkCEEsOAoRcmmzNFnWq8wPLMFmHncd3Z4n10",
+    uc: "QWx0YWlycGxheTIwMjQ=",
+    pc: "NDk5NU5GVFN5Yndh",
+    vezesUsado: 1,
+    ultimoUso: Date.now()
+  },
+  // Série 361267 - IP 26
+  {
+    ip: "209.131.121.26",
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjAwMDEiLCJleHAiOjE3NzE3NTQwNTZ9.eyJ1YyI6IlFXeDBZV2x5Y0d4aGVUSXdNalE9IiwicGMiOiJORGs1TlU1R1ZGTjVZbmRoIiwic3QiOiIzNjEyNjcubXA0IiwiaXAiOiIxODcuMjcuMTQ0LjE0OSJ9.vkgTUCdFSe4jwtR7nm4-JJEYnOGrBSzP3LROTHo5v3Q",
+    uc: "QWx0YWlycGxheTIwMjQ=",
+    pc: "NDk5NU5GVFN5Yndh",
+    vezesUsado: 1,
+    ultimoUso: Date.now()
+  },
+  // Série 361267 - IP 249 (ATUAL)
+  {
+    ip: "130.250.189.249",
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjAwMDEiLCJleHAiOjE3NzE3NTUzODB9.eyJ1YyI6IlFXeDBZV2x5Y0d4aGVUSXdNalE9IiwicGMiOiJORGs1TlU1R1ZGTjVZbmRoIiwic3QiOiIzNjEyNjcubXA0IiwiaXAiOiIxODcuMjcuMTU1Ljk2In0.CKdqjiWdMhwgmfVcHmbA5C8TU2QVgVsl_jDv2svEIuw",
+    uc: "QWx0YWlycGxheTIwMjQ=",
+    pc: "NDk5NU5GVFN5Yndh",
+    vezesUsado: 1,
+    ultimoUso: Date.now()
+  }
+];
 
 // Cookie jar para manter sessão
 let cookieJar = {};
@@ -61,7 +87,6 @@ async function renovarToken(caminhoOriginal) {
     });
 
     const html = await pageResponse.text();
-    console.log(`📄 HTML recebido (primeiros 200 chars): ${html.substring(0, 200)}`);
     
     // Procura pelo token
     const tokenMatch = html.match(/token=([a-zA-Z0-9_.-]+)/);
@@ -71,24 +96,33 @@ async function renovarToken(caminhoOriginal) {
     }
     
     const token = tokenMatch[1];
-    console.log(`✅ Token encontrado: ${token.substring(0, 20)}...`);
     
     // Procura pelo IP
     const ipMatch = html.match(/(\d+\.\d+\.\d+\.\d+)/g);
-    const ip = ipMatch ? ipMatch[ipMatch.length - 1] : IP_PADRAO;
-    console.log(`🌐 IP encontrado: ${ip}`);
+    const ip = ipMatch ? ipMatch[ipMatch.length - 1] : null;
     
     // Parâmetros adicionais
     const ucMatch = html.match(/uc=([^"&\s]+)/);
     const pcMatch = html.match(/pc=([^"&\s]+)/);
-    const uc = ucMatch ? ucMatch[1] : UC_PADRAO;
-    const pc = pcMatch ? pcMatch[1] : PC_PADRAO;
+    const uc = ucMatch ? ucMatch[1] : null;
+    const pc = pcMatch ? pcMatch[1] : null;
+    
+    // Salvar no banco de fallbacks se encontrou tudo
+    if (ip && token && uc && pc) {
+      // Verificar se já existe
+      const existe = fallbacks.some(f => f.ip === ip && f.token === token);
+      if (!existe) {
+        fallbacks.push({
+          ip, token, uc, pc,
+          vezesUsado: 1,
+          ultimoUso: Date.now()
+        });
+        console.log(`💾 Novo fallback salvo: ${ip} - ${token.substring(0,20)}...`);
+      }
+    }
     
     const arquivo = caminhoOriginal.split('/').pop();
-    const novaUrl = `http://${ip}/deliver/${arquivo}?token=${token}&uc=${uc}&pc=${pc}`;
-    console.log(`🎯 Nova URL gerada: ${novaUrl}`);
-    
-    return novaUrl;
+    return `http://${ip}/deliver/${arquivo}?token=${token}&uc=${uc}&pc=${pc}`;
     
   } catch (error) {
     console.error("❌ Erro na renovação:", error);
@@ -96,10 +130,39 @@ async function renovarToken(caminhoOriginal) {
   }
 }
 
-// ===== FUNÇÃO PARA GERAR URL FALLBACK =====
-function gerarUrlFallback(caminhoOriginal) {
+// ===== FUNÇÃO PARA TENTAR TODOS OS FALLBACKS =====
+async function tentarTodosFallbacks(caminhoOriginal) {
   const arquivo = caminhoOriginal.split('/').pop();
-  return `http://${IP_PADRAO}/deliver/${arquivo}?token=${TOKEN_PADRAO}&uc=${UC_PADRAO}&pc=${PC_PADRAO}`;
+  
+  // Ordenar por mais recente primeiro
+  const fallbacksOrdenados = [...fallbacks].sort((a, b) => b.ultimoUso - a.ultimoUso);
+  
+  for (const fb of fallbacksOrdenados) {
+    const url = `http://${fb.ip}/deliver/${arquivo}?token=${fb.token}&uc=${fb.uc}&pc=${fb.pc}`;
+    console.log(`🔄 Tentando fallback: ${fb.ip} (usado ${fb.vezesUsado}x)`);
+    
+    try {
+      const response = await fetchWithCookies(url, {
+        headers: {
+          "Host": fb.ip,
+          "Accept": "video/mp4,*/*",
+          "Range": "bytes=0-", // Teste rápido
+          "Referer": "http://cavalo.cc/"
+        }
+      });
+      
+      if (response.ok || response.status === 206) {
+        console.log(`✅ Fallback funcionou: ${fb.ip}`);
+        fb.vezesUsado++;
+        fb.ultimoUso = Date.now();
+        return { response, url };
+      }
+    } catch (e) {
+      console.log(`❌ Fallback falhou: ${fb.ip}`);
+    }
+  }
+  
+  return null;
 }
 
 // ===== PROXY PRINCIPAL =====
@@ -121,48 +184,56 @@ app.get("/*", async (req, res) => {
   }
 
   try {
-    let response;
-    let tentativas = [
-      { tipo: "original", url: `http://cavalo.cc:80${req.path}` },
-      { tipo: "renovado", url: null },
-      { tipo: "fallback", url: gerarUrlFallback(req.path) }
-    ];
-
-    for (let i = 0; i < tentativas.length; i++) {
-      const tentativa = tentativas[i];
-      
-      if (tentativa.tipo === "renovado" && req.path.includes('.mp4')) {
-        console.log(`🔄 Tentando renovar token...`);
-        tentativa.url = await renovarToken(req.path);
-        if (!tentativa.url) continue;
+    let result = null;
+    
+    // Tentativa 1: URL original
+    console.log(`🎯 Tentativa 1: Original`);
+    const urlOriginal = `http://cavalo.cc:80${req.path}`;
+    let response = await fetchWithCookies(urlOriginal, {
+      headers: {
+        "Host": "cavalo.cc",
+        "Accept": "video/mp4,*/*",
+        "Range": req.headers["range"] || "",
+        "Referer": "http://cavalo.cc/"
       }
-      
-      if (!tentativa.url) continue;
-      
-      console.log(`🎯 Tentativa ${i+1} (${tentativa.tipo}): ${tentativa.url}`);
-      
-      response = await fetchWithCookies(tentativa.url, {
-        headers: {
-          "Host": new URL(tentativa.url).host,
-          "Accept": tentativa.url.includes('.mp4') ? "video/mp4,*/*" : "*/*",
-          "Range": req.headers["range"] || "",
-          "Referer": "http://cavalo.cc/",
-          "Origin": "http://cavalo.cc"
+    });
+
+    if (response.ok || response.status === 206) {
+      result = { response };
+    }
+    
+    // Tentativa 2: Renovar token
+    if (!result && req.path.includes('.mp4')) {
+      console.log(`🎯 Tentativa 2: Renovar token`);
+      const novaUrl = await renovarToken(req.path);
+      if (novaUrl) {
+        response = await fetchWithCookies(novaUrl, {
+          headers: {
+            "Host": new URL(novaUrl).host,
+            "Accept": "video/mp4,*/*",
+            "Range": req.headers["range"] || ""
+          }
+        });
+        if (response.ok || response.status === 206) {
+          result = { response };
         }
-      });
-
-      console.log(`📥 Status: ${response.status}`);
-
-      if (response.ok || response.status === 206) {
-        console.log(`✅ Tentativa ${i+1} funcionou!`);
-        break;
+      }
+    }
+    
+    // Tentativa 3: Todos os fallbacks salvos
+    if (!result) {
+      console.log(`🎯 Tentativa 3: Buscando nos fallbacks (${fallbacks.length} salvos)`);
+      const fallbackResult = await tentarTodosFallbacks(req.path);
+      if (fallbackResult) {
+        result = fallbackResult;
       }
     }
 
-    if (response && (response.ok || response.status === 206)) {
+    // Se funcionou, envia o vídeo
+    if (result && result.response) {
       const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
       headersToCopy.forEach(header => {
-        const value = response.headers.get(header);
+        const value = result.response.headers.get(header);
         if (value) res.setHeader(header, value);
       });
 
@@ -171,17 +242,18 @@ app.get("/*", async (req, res) => {
       res.setHeader("Access-Control-Allow-Headers", "Range");
       res.setHeader("Access-Control-Expose-Headers", "Content-Length, Content-Range");
 
-      res.status(response.status);
-      response.body.pipe(res);
+      res.status(result.response.status);
+      result.response.body.pipe(res);
       console.log(`✅ Vídeo sendo enviado!`);
       return;
     }
     
+    // Se todas falharam
     res.status(404).send(`
       <html>
         <body style="font-family: Arial; text-align: center; padding: 50px;">
           <h1>🎬 Vídeo indisponível</h1>
-          <p>Todas as tentativas falharam.</p>
+          <p>Tentamos ${fallbacks.length} fallbacks diferentes.</p>
           <p><a href="${req.path}">Tentar novamente</a></p>
           <p><small>Path: ${req.path}</small></p>
         </body>
@@ -194,17 +266,36 @@ app.get("/*", async (req, res) => {
   }
 });
 
+// ===== ROTA PARA VER FALLBACKS SALVOS =====
+app.get("/fallbacks", (req, res) => {
+  res.json({
+    total: fallbacks.length,
+    fallbacks: fallbacks.map(f => ({
+      ip: f.ip,
+      token: f.token.substring(0, 20) + "...",
+      uc: f.uc,
+      pc: f.pc,
+      vezesUsado: f.vezesUsado,
+      ultimoUso: new Date(f.ultimoUso).toISOString()
+    }))
+  });
+});
+
 // ===== HEALTH CHECK =====
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", mask: MASK, time: new Date().toISOString() });
+  res.json({ 
+    status: "ok", 
+    mask: MASK, 
+    fallbacks: fallbacks.length,
+    time: new Date().toISOString() 
+  });
 });
 
 app.listen(PORT, () => {
   console.log("\n" + "🚀".repeat(30));
-  console.log(`🚀 PROXY RODANDO NA PORTA ${PORT}`);
+  console.log(`🚀 PROXY INTELIGENTE RODANDO NA PORTA ${PORT}`);
   console.log(`🎭 MASK: ${MASK}`);
+  console.log(`💾 Fallbacks salvos: ${fallbacks.length}`);
   console.log(`✅ Exemplo: ${MASK}/series/Altairplay2024/4995NFTSybwa/361267.mp4`);
-  console.log(`🌐 IP Padrão: ${IP_PADRAO}`);
-  console.log(`🔄 Fallback ativado com token atualizado`);
   console.log("🚀".repeat(30) + "\n");
 });
