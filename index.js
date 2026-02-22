@@ -7,19 +7,15 @@ const MASK = "https://fabibot-taupe.vercel.app";
 
 app.use(cookieParser());
 
-// Cookie jar para manter sessão
 let cookieJar = {};
 
-// Headers base simulando Chrome
 const baseHeaders = {
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
   "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
   "Accept-Encoding": "gzip, deflate",
-  "Connection": "keep-alive",
-  "Upgrade-Insecure-Requests": "1"
+  "Connection": "keep-alive"
 };
 
-// ===== FUNÇÃO PARA FAZER REQUISIÇÕES COM COOKIES =====
 async function fetchWithCookies(url, options = {}) {
   const headers = { ...baseHeaders, ...options.headers };
   const domain = new URL(url).hostname;
@@ -38,62 +34,44 @@ async function fetchWithCookies(url, options = {}) {
   return response;
 }
 
-// ===== HEALTH CHECK (PRIMEIRO, ANTES DE TUDO) =====
+// Health check
 app.get("/health", (req, res) => {
-  console.log("✅ Health check acessado");
-  res.json({ 
-    status: "ok", 
-    mask: MASK, 
-    time: new Date().toISOString(),
-    cookies: cookieJar,
-    message: "Proxy funcionando!"
-  });
+  res.json({ status: "ok", mask: MASK, time: new Date().toISOString() });
 });
 
-// ===== DEBUG (OPCIONAL) =====
-app.get("/debug/*", (req, res) => {
-  res.json({
-    path: req.path,
-    url: req.url,
-    method: req.method,
-    headers: req.headers,
-    query: req.query,
-    time: new Date().toISOString(),
-    cookieJar: cookieJar
-  });
+// Proxy para séries
+app.get("/series/*", async (req, res) => {
+  console.log(`🎬 Série: ${req.path}`);
+  await proxyVideo(req, res);
 });
 
-// ===== PROXY PRINCIPAL =====
-app.get("/*", async (req, res) => {
-  console.log("\n" + "=".repeat(60));
-  console.log(`🔍 REQUISIÇÃO: ${req.path}`);
-  
-  // OPTIONS para CORS
-  if (req.method === 'OPTIONS') {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Range");
-    return res.status(204).end();
-  }
+// Proxy para filmes
+app.get("/movie/*", async (req, res) => {
+  console.log(`🎬 Filme: ${req.path}`);
+  await proxyVideo(req, res);
+});
 
+// Proxy para qualquer .mp4
+app.get("/*.mp4", async (req, res) => {
+  console.log(`🎬 MP4: ${req.path}`);
+  await proxyVideo(req, res);
+});
+
+// Função genérica de proxy
+async function proxyVideo(req, res) {
   try {
     const urlOriginal = `http://cavalo.cc:80${req.path}`;
-    console.log(`🎯 Acessando: ${urlOriginal}`);
+    console.log(`🎯 Proxy: ${urlOriginal}`);
     
     const response = await fetchWithCookies(urlOriginal, {
-      method: req.method,
       headers: {
         "Host": "cavalo.cc",
-        "Accept": req.path.includes('.mp4') ? "video/mp4,*/*" : "*/*",
+        "Accept": "video/mp4,*/*",
         "Range": req.headers["range"] || "",
-        "Referer": "http://cavalo.cc/",
-        "Origin": "http://cavalo.cc"
+        "Referer": "http://cavalo.cc/"
       },
       redirect: "follow"
     });
-
-    console.log(`📥 Status final: ${response.status}`);
-    console.log(`📍 URL final: ${response.url}`);
 
     if (response.ok || response.status === 206) {
       const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
@@ -103,38 +81,24 @@ app.get("/*", async (req, res) => {
       });
 
       res.setHeader("Access-Control-Allow-Origin", "*");
-      res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", "Range");
-      res.setHeader("Access-Control-Expose-Headers", "Content-Length, Content-Range");
-
       res.status(response.status);
       response.body.pipe(res);
-      console.log(`✅ Vídeo sendo enviado!`);
-      return;
+    } else {
+      res.status(response.status).send(`Erro ${response.status}`);
     }
-    
-    console.log(`❌ Falhou: ${response.status}`);
-    res.status(response.status).send(`Erro ${response.status}`);
-    
   } catch (error) {
     console.error("❌ Erro:", error);
-    res.status(500).json({ 
-      error: "Erro interno", 
-      message: error.message,
-      path: req.path 
-    });
+    res.status(500).send("Erro interno");
   }
-});
+}
 
-// ===== 404 PARA ROTAS NÃO ENCONTRADAS =====
+// 404
 app.use((req, res) => {
-  console.log(`❌ 404 - Rota não encontrada: ${req.path}`);
   res.status(404).json({ 
     error: "Rota não encontrada", 
     path: req.path,
-    available: ["/health", "/debug/*", "/* (proxy)"]
+    available: ["/health", "/series/*", "/movie/*", "/*.mp4"]
   });
 });
 
-// ===== EXPORTAR PARA O VERCEL (NÃO USAR app.listen) =====
 export default app;
