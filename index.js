@@ -8,11 +8,11 @@ const MASK = "https://fabibot-taupe.vercel.app";
 
 app.use(cookieParser());
 
-// Token padrão para fallback (série 361267)
-const TOKEN_PADRAO = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjAwMDEiLCJleHAiOjE3NzE3NTI1MjF9.eyJ1YyI6IlFXeDBZV2x5Y0d4aGVUSXdNalE9IiwicGMiOiJORGs1TlU1R1ZGTjVZbmRoIiwic3QiOiIzNjEyNjcubXA0IiwiaXAiOiIxODcuMjcuMTQ0LjE0OSJ9.j9dsiMIQkCEEsOAoRcmmzNFnWq8wPLMFmHncd3Z4n10";
+// 🔥 ATUALIZADO com os valores MAIS RECENTES
+const TOKEN_PADRAO = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjAwMDEiLCJleHAiOjE3NzE3NTQwNTZ9.eyJ1YyI6IlFXeDBZV2x5Y0d4aGVUSXdNalE9IiwicGMiOiJORGs1TlU1R1ZGTjVZbmRoIiwic3QiOiIzNjEyNjcubXA0IiwiaXAiOiIxODcuMjcuMTQ0LjE0OSJ9.vkgTUCdFSe4jwtR7nm4-JJEYnOGrBSzP3LROTHo5v3Q";
 const UC_PADRAO = "QWx0YWlycGxheTIwMjQ=";
 const PC_PADRAO = "NDk5NU5GVFN5Yndh";
-const IP_PADRAO = "209.131.121.28";
+const IP_PADRAO = "209.131.121.26"; // 👈 IP NOVO!
 
 // Cookie jar para manter sessão
 let cookieJar = {};
@@ -61,6 +61,7 @@ async function renovarToken(caminhoOriginal) {
     });
 
     const html = await pageResponse.text();
+    console.log(`📄 HTML recebido (primeiros 200 chars): ${html.substring(0, 200)}`);
     
     // Procura pelo token
     const tokenMatch = html.match(/token=([a-zA-Z0-9_.-]+)/);
@@ -70,10 +71,12 @@ async function renovarToken(caminhoOriginal) {
     }
     
     const token = tokenMatch[1];
+    console.log(`✅ Token encontrado: ${token.substring(0, 20)}...`);
     
     // Procura pelo IP
     const ipMatch = html.match(/(\d+\.\d+\.\d+\.\d+)/g);
     const ip = ipMatch ? ipMatch[ipMatch.length - 1] : IP_PADRAO;
+    console.log(`🌐 IP encontrado: ${ip}`);
     
     // Parâmetros adicionais
     const ucMatch = html.match(/uc=([^"&\s]+)/);
@@ -82,7 +85,10 @@ async function renovarToken(caminhoOriginal) {
     const pc = pcMatch ? pcMatch[1] : PC_PADRAO;
     
     const arquivo = caminhoOriginal.split('/').pop();
-    return `http://${ip}/deliver/${arquivo}?token=${token}&uc=${uc}&pc=${pc}`;
+    const novaUrl = `http://${ip}/deliver/${arquivo}?token=${token}&uc=${uc}&pc=${pc}`;
+    console.log(`🎯 Nova URL gerada: ${novaUrl}`);
+    
+    return novaUrl;
     
   } catch (error) {
     console.error("❌ Erro na renovação:", error);
@@ -118,7 +124,7 @@ app.get("/*", async (req, res) => {
     let response;
     let tentativas = [
       { tipo: "original", url: `http://cavalo.cc:80${req.path}` },
-      { tipo: "renovado", url: null }, // Será preenchido se necessário
+      { tipo: "renovado", url: null },
       { tipo: "fallback", url: gerarUrlFallback(req.path) }
     ];
 
@@ -148,11 +154,11 @@ app.get("/*", async (req, res) => {
       console.log(`📥 Status: ${response.status}`);
 
       if (response.ok || response.status === 206) {
-        break; // Funcionou!
+        console.log(`✅ Tentativa ${i+1} funcionou!`);
+        break;
       }
     }
 
-    // Se funcionou, envia o vídeo
     if (response && (response.ok || response.status === 206)) {
       const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
       headersToCopy.forEach(header => {
@@ -171,7 +177,6 @@ app.get("/*", async (req, res) => {
       return;
     }
     
-    // Se todas falharam
     res.status(404).send(`
       <html>
         <body style="font-family: Arial; text-align: center; padding: 50px;">
@@ -199,6 +204,7 @@ app.listen(PORT, () => {
   console.log(`🚀 PROXY RODANDO NA PORTA ${PORT}`);
   console.log(`🎭 MASK: ${MASK}`);
   console.log(`✅ Exemplo: ${MASK}/series/Altairplay2024/4995NFTSybwa/361267.mp4`);
-  console.log(`🔄 Fallback ativado com token padrão`);
+  console.log(`🌐 IP Padrão: ${IP_PADRAO}`);
+  console.log(`🔄 Fallback ativado com token atualizado`);
   console.log("🚀".repeat(30) + "\n");
 });
