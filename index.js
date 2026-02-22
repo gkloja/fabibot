@@ -1,5 +1,4 @@
 import express from "express";
-import express from "express";
 import fetch from "node-fetch";
 import cookieParser from "cookie-parser";
 
@@ -83,4 +82,3 @@ app.get("/*", async (req, res) => {
 
 // ===== EXPORTAR =====
 export default app;
-
