@@ -7,7 +7,10 @@ const MASK = "https://fabibot-taupe.vercel.app";
 
 app.use(cookieParser());
 
-// Headers fixos do Chrome
+// Cookie jar para manter sessão
+let cookieJar = {};
+
+// Headers base simulando Chrome
 const CHROME_HEADERS = {
   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
   "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -17,48 +20,48 @@ const CHROME_HEADERS = {
   "Upgrade-Insecure-Requests": "1"
 };
 
-// Cache para tokens que funcionaram
-let tokenCache = new Map();
-
-// ===== FUNÇÃO PARA SEGUIR REDIRECIONAMENTOS =====
-async function seguirRedirecionamentos(url, headers, tentativa = 1) {
-  console.log(`🔄 Tentativa ${tentativa}: ${url}`);
-  
-  const response = await fetch(url, {
-    headers: headers,
-    redirect: "manual"
-  });
-
-  // Se redirecionou (302), seguir
-  if (response.status === 302 || response.status === 301) {
-    const location = response.headers.get("location");
-    console.log(`➡️ Redirecionando para: ${location}`);
-    
-    // Guardar no cache
-    tokenCache.set(url, {
-      redirectUrl: location,
-      timestamp: Date.now()
-    });
-    
-    // Fazer requisição para a nova URL
-    return await fetch(location, {
-      headers: {
-        ...CHROME_HEADERS,
-        "Host": new URL(location).hostname
-      }
-    });
+// Função para fetch com cookies e redirect follow
+async function fetchWithCookies(url, options = {}) {
+  const headers = { ...CHROME_HEADERS, ...options.headers };
+  const domain = new URL(url).hostname;
+  if (cookieJar[domain]) {
+    headers["Cookie"] = cookieJar[domain];
   }
-  
-  // Se deu 404, mas temos cache, tentar o cache
-  if (response.status === 404 && tentativa < 3) {
-    console.log(`⚠️ 404 na tentativa ${tentativa}, tentando novamente...`);
-    
-    // Esperar 1 segundo e tentar de novo
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return await seguirRedirecionamentos(url, headers, tentativa + 1);
+
+  const response = await fetch(url, { ...options, headers, redirect: "follow" });
+
+  // Salvar cookies recebidos
+  const setCookie = response.headers.raw()["set-cookie"];
+  if (setCookie) {
+    cookieJar[domain] = setCookie.map(c => c.split(';')[0]).join('; ');
   }
-  
+
   return response;
+}
+
+// Função de retry com backoff exponencial
+async function fetchWithRetry(url, options, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetchWithCookies(url, options);
+      // Se for 404, tenta novamente (pode ser token expirado)
+      if (response.status === 404) {
+        console.log(`⚠️ Tentativa ${i+1} retornou 404, tentando novamente...`);
+        if (i === maxRetries - 1) return response; // última tentativa falhou
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // backoff
+        continue;
+      }
+      // Se for OK ou 206 (partial content), retorna
+      if (response.ok || response.status === 206) return response;
+      // Outros erros (500, etc) também podem ser tentados novamente?
+      return response; // por enquanto, retorna qualquer outro status
+    } catch (err) {
+      console.log(`⚠️ Erro na tentativa ${i+1}: ${err.message}`);
+      if (i === maxRetries - 1) throw err;
+      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+    }
+  }
+  throw new Error("Max retries reached");
 }
 
 // ===== PROXY PRINCIPAL =====
@@ -71,87 +74,60 @@ app.get("/*", async (req, res) => {
     return res.json({ status: "ok", mask: MASK });
   }
 
+  // OPTIONS
+  if (req.method === 'OPTIONS') {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Range");
+    return res.status(204).end();
+  }
+
   try {
     const urlOriginal = `http://cavalo.cc:80${req.path}`;
-    
-    // Verificar se temos cache para esta URL
-    const cached = tokenCache.get(urlOriginal);
-    if (cached && (Date.now() - cached.timestamp) < 3600000) { // Cache válido por 1 hora
-      console.log(`💾 Usando cache: ${cached.redirectUrl}`);
-      
-      const response = await fetch(cached.redirectUrl, {
-        headers: {
-          ...CHROME_HEADERS,
-          "Host": new URL(cached.redirectUrl).hostname,
-          "Range": req.headers["range"] || ""
-        }
-      });
+    console.log(`🎯 Acessando: ${urlOriginal}`);
 
-      if (response.ok || response.status === 206) {
-        const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
-        headersToCopy.forEach(header => {
-          const value = response.headers.get(header);
-          if (value) res.setHeader(header, value);
-        });
-
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.status(response.status);
-        response.body.pipe(res);
-        console.log(`✅ Vídeo enviado (cache)!`);
-        return;
+    // Faz a requisição com retry
+    const response = await fetchWithRetry(urlOriginal, {
+      headers: {
+        "Host": "cavalo.cc",
+        "Range": req.headers["range"] || ""
       }
-    }
-
-    // Seguir redirecionamentos
-    const response = await seguirRedirecionamentos(urlOriginal, {
-      ...CHROME_HEADERS,
-      "Host": "cavalo.cc"
     });
 
-    if (response.ok || response.status === 206) {
-      const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
-      headersToCopy.forEach(header => {
-        const value = response.headers.get(header);
-        if (value) res.setHeader(header, value);
-      });
-
-      res.setHeader("Access-Control-Allow-Origin", "*");
-      res.status(response.status);
-      response.body.pipe(res);
-      console.log(`✅ Vídeo enviado!`);
-      return;
-    }
-
-    // Se falhou, tenta mais uma vez após 2 segundos
+    // Se ainda assim for 404, retorna mensagem amigável
     if (response.status === 404) {
-      console.log(`⏳ 404, tentando novamente em 2 segundos...`);
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const retryResponse = await seguirRedirecionamentos(urlOriginal, {
-        ...CHROME_HEADERS,
-        "Host": "cavalo.cc"
-      });
-
-      if (retryResponse.ok || retryResponse.status === 206) {
-        const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
-        headersToCopy.forEach(header => {
-          const value = retryResponse.headers.get(header);
-          if (value) res.setHeader(header, value);
-        });
-
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.status(retryResponse.status);
-        retryResponse.body.pipe(res);
-        console.log(`✅ Vídeo enviado (após retentativa)!`);
-        return;
-      }
+      console.log(`❌ 404 após todas tentativas`);
+      return res.status(404).send(`
+        <html>
+          <body style="font-family: Arial; text-align: center; padding: 50px;">
+            <h1>🎬 Vídeo temporariamente indisponível</h1>
+            <p>O servidor de origem retornou 404. Tente novamente em alguns segundos.</p>
+            <p><a href="${req.path}">Clique aqui para tentar novamente</a></p>
+          </body>
+        </html>
+      `);
     }
-    
-    res.status(response.status).send(`Erro ${response.status}`);
-    
+
+    // Copiar headers importantes
+    const headersToCopy = ["content-type", "content-length", "content-range", "accept-ranges"];
+    headersToCopy.forEach(header => {
+      const value = response.headers.get(header);
+      if (value) res.setHeader(header, value);
+    });
+
+    // CORS
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Range");
+    res.setHeader("Access-Control-Expose-Headers", "Content-Length, Content-Range");
+
+    res.status(response.status);
+    response.body.pipe(res);
+    console.log(`✅ Vídeo sendo enviado!`);
+
   } catch (error) {
-    console.error("❌ Erro:", error);
-    res.status(500).send("Erro interno");
+    console.error("❌ Erro fatal:", error);
+    res.status(500).send("Erro interno no proxy");
   }
 });
 
