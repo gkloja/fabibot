@@ -20,7 +20,7 @@
       "dest": "/index.js"
     },
     {
-      "src": "/(.*)\\.mp4",
+      "src": "/(.*)\\.ts",
       "dest": "/index.js"
     },
     {
