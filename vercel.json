@@ -6,26 +6,10 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/health",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/series/(.*)",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/movie/(.*)",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/(.*)\\.ts",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.js"
+      "source": "/(.*)",
+      "destination": "/index.js"
     }
   ]
 }
