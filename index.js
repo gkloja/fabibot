@@ -20,7 +20,7 @@ const MASK = "https://fabibot.vercel.app";
 
 // ADICIONE ISSO NO INÍCIO, ANTES DAS OUTRAS ROTAS
 
-// Middleware para adicionar meta tag de verificação em TODAS as páginas
+// Middleware para adicionar meta tag de verificação e Vercel Analytics em TODAS as páginas
 app.use((req, res, next) => {
   // Salvar função original de 'send'
   const originalSend = res.send;
@@ -32,8 +32,14 @@ app.use((req, res, next) => {
       // Adicione esta linha com SEU código de verificação
       const verificationCode = '<meta name="google-site-verification" content="ABCdEfGhIjKlMnOpQrStUvWxYz1234567890" />';
       
+      // Adicionar Vercel Web Analytics
+      const analyticsScript = `<script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>`;
+      
       // Inserir antes do </head>
-      body = body.replace('</head>', verificationCode + '\n</head>');
+      body = body.replace('</head>', verificationCode + '\n' + analyticsScript + '\n</head>');
     }
     
     // Chamar função original
