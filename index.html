@@ -7417,12 +7417,16 @@ let cfgPainelJaInicializado = false;
 
 // ===== Configurações do grupo (espelha o EJS) =====
 const CFG_NOMES = {
-  sogrupo: "👥 Só responde em grupos",
-  soadm: "👑 Somente Administrador usa a Robô",
+  visuUnica: "👁️ Revelar Visualizações Únicas",
+  x9: "🎯 Somente o Dono Promove",
+  soinsta: "📸 Somente link de Instagram permitido",
+  sogrupo: "👥 Somente link de Grupo de WhatsApp permitido",
+  soinstaface: "📱 Somente link de Instagram e Facebook permitidos",
   modovoz: "🎙 Comando por Voz",
   antipolitica: "🏛️ Bloqueia mensagens sobre política",
   antirepeticoes: "🔁 Bloqueia mensagens repetidas",
   antistatus: "📢 Impede compartilhamento de Status",
+  soadm: "👑 Somente Administrador usa a Robô",
   antiimg: "🖼️ Bloquear Imagens",
   antivideo: "🎥 Bloquear Vídeos",
   antiaudio: "🔊 Bloquear Áudios",
@@ -7451,8 +7455,31 @@ const CFG_NOMES = {
   oliberal: "🗞️ Notícias O Liberal",
   futebol: "⚽ Notícias de Futebol (ge.globo)"
 };
-const CFG_ORDEM = ["sogrupo","soadm","modovoz","antipolitica","antirepeticoes","antistatus","antiimg","antivideo","antiaudio","antisticker","antidoc","antictt","antiloc","antilinkgp","level","antilinkhard","antifake","antispam","antinotas","antiporno","simi1","fabidomal","fabimeme","autosticker","jogos","sistemGold","nsfw","registrarFIGUS","autodl","Odelete","jovempan","oliberal","futebol"];
-const CFG_BADGES = { antipolitica:"hot", antiporno:"hot", antinotas:"hot", autosticker:"hot", antirepeticoes:"hot", sogrupo:"novo" };
+// Ordem base igual ao EJS
+const CFG_ORDEM_BASE = ["sistemGold","visuUnica","x9","soadm","soinsta","sogrupo","soinstaface","modovoz","antipolitica","antirepeticoes","antistatus","antiimg","antivideo","antiaudio","antisticker","antidoc","antictt","antiloc","antilinkgp","level","antilinkhard","antifake","antispam","antinotas","antiporno","simi1","fabidomal","fabimeme","autosticker","autodl","Odelete","jogos","registrarFIGUS","jovempan","oliberal","futebol","nsfw"];
+// Selos: hot primeiro, depois novo (igual EJS)
+const CFG_BADGES = {
+  antipolitica: "hot",
+  antiporno: "hot",
+  antinotas: "hot",
+  autosticker: "hot",
+  antirepeticoes: "hot",
+  sogrupo: "novo",
+  modovoz: "novo",
+  autodl: "novo",
+  jovempan: "novo",
+  oliberal: "novo",
+  futebol: "novo"
+};
+const CFG_ORDEM = (function () {
+  const peso = { hot: 0, novo: 1 };
+  return [...CFG_ORDEM_BASE].sort((a, b) => {
+    const pa = CFG_BADGES[a] !== undefined ? peso[CFG_BADGES[a]] : 2;
+    const pb = CFG_BADGES[b] !== undefined ? peso[CFG_BADGES[b]] : 2;
+    if (pa !== pb) return pa - pb;
+    return CFG_ORDEM_BASE.indexOf(a) - CFG_ORDEM_BASE.indexOf(b);
+  });
+})();
 
 function cfgRenderizarOpcoes(cfg0) {
   cfg0 = cfg0 || {};
