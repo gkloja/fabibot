@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+
 <script>
   // ===== PROXY Cloudflare + backend real =====
   // Front estático → Worker → seu servidor (connect)
@@ -63,35 +64,17 @@ function withAuth(path) {
   }
 </script>
 
-
-<script>
-  // ===== PROXY Cloudflare + backend real =====
-  // Front estático → Worker → seu servidor (connect)
-  // Formato que já funciona no index do Fabi Bot:
-  // orange-hill.../br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009/...
-  window.PROXY_HOST = window.PROXY_HOST || "https://orange-hill-2e61.gbscabral15.workers.dev";
-  window.API_BACKEND = window.API_BACKEND || "http://br2.bronxyshost.com:4009";
-
-  function apiUrl(path) {
-    let target;
-    if (!path) {
-      target = window.API_BACKEND;
-    } else if (path.startsWith("http://") || path.startsWith("https://")) {
-      target = path;
-    } else if (path.startsWith("/")) {
-      target = window.API_BACKEND.replace(/\/$/, "") + path;
-    } else {
-      target = window.API_BACKEND.replace(/\/$/, "") + "/" + path;
-    }
-    // Remove protocolo do host no path do worker (padrão do index)
-    const hostPath = window.API_BACKEND.replace(/^https?:\/\//, "");
-    return window.PROXY_HOST + "/" + hostPath + "/proxy?url=" + encodeURIComponent(target);
-  }
-</script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conectar WhatsApp | Fabi Bot</title>
+    <meta name="description" content="Conecte a Fabi Bot ao WhatsApp: pareamento por código, sessões, carteira e planos. Automação para seus grupos em minutos.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://fabibot.vercel.app/conectar.html">
+<link rel="icon" type="image/jpeg" href="/flogo.jpg">
+<meta property="og:title" content="Conectar WhatsApp | Fabi Bot">
+<meta property="og:description" content="Pareie sua sessão WhatsApp com a Fabi Bot de forma rápida e segura.">
+<meta property="og:image" content="/flogo.jpg">
+<meta property="og:url" content="https://fabibot.vercel.app/conectar.html">
+<title>Conectar WhatsApp | Fabi Bot</title>
     
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -1134,8 +1117,249 @@ h1, h2, h3, h4, h5, h6, .navbar-brand, .stats-number, .card-title {
 }
 .fb-contact-pill:hover { color: #fff; background: rgba(37,211,102,.22); }
     
-.float-private-btn, .private-modal, #privateModal, #openPrivateModal { display: none !important; }
-#cpfGroup, .consulta-group, .fb-type-grid { display:none!important; }
+/* ========== FABI CONSOLE PRO ========== */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif !important;
+  background: #05070d !important;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(37,99,235,.25), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(16,185,129,.12), transparent 45%),
+    radial-gradient(ellipse 50% 30% at 50% 100%, rgba(37,99,235,.08), transparent) !important;
+  color: #e8eaed !important;
+  min-height: 100vh;
+}
+
+.navbar-whatsapp {
+  background: rgba(8, 12, 22, 0.85) !important;
+  backdrop-filter: blur(16px) saturate(1.4);
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,.35) !important;
+  padding: 10px 0 !important;
+}
+.navbar-brand span { font-weight: 800; letter-spacing: -0.02em; }
+.navbar-brand .text-gradient {
+  background: linear-gradient(135deg, #60a5fa, #34d399);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.navbar-brand img {
+  width: 36px; height: 36px; border-radius: 10px;
+  box-shadow: 0 0 0 2px rgba(37,99,235,.4), 0 0 20px rgba(37,99,235,.35);
+}
+
+.btn-nav-home, .btn-nav-login, .btn-nav-out {
+  border-radius: 999px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  padding: 7px 14px !important;
+}
+.btn-nav-home {
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  color: #e5e7eb !important;
+}
+.btn-nav-home:hover { background: rgba(37,99,235,.25) !important; border-color: rgba(37,99,235,.5) !important; color: #fff !important; }
+.btn-nav-login {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  border: none !important; color: #fff !important;
+  box-shadow: 0 4px 14px rgba(37,99,235,.35);
+}
+.btn-nav-out {
+  background: transparent !important;
+  border: 1px solid rgba(239,68,68,.4) !important;
+  color: #fca5a5 !important;
+}
+.btn-nav-out:hover { background: rgba(239,68,68,.15) !important; }
+
+.fb-user-chip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 4px 12px 4px 4px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 999px;
+}
+.fb-user-chip img {
+  width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
+  border: 2px solid rgba(52,211,153,.5);
+}
+.fb-user-meta { line-height: 1.15; }
+.fb-user-meta strong { display: block; font-size: 13px; color: #fff; }
+.fb-user-meta small { font-size: 11px; color: #34d399; }
+
+.main-container { max-width: 1100px !important; padding: 28px 16px 60px !important; }
+
+.fb-page-hero {
+  text-align: center;
+  padding: 36px 16px 28px !important;
+  margin-bottom: 8px;
+  position: relative;
+}
+.fb-page-hero::after {
+  content: '';
+  position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+  width: 120px; height: 3px; border-radius: 3px;
+  background: linear-gradient(90deg, transparent, #2563eb, #34d399, transparent);
+}
+.fb-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+  color: #93c5fd; background: rgba(37,99,235,.12);
+  border: 1px solid rgba(37,99,235,.3); padding: 6px 14px; border-radius: 999px;
+  margin-bottom: 14px;
+}
+.fb-eyebrow-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: #34d399;
+  box-shadow: 0 0 0 0 rgba(52,211,153,.5); animation: fbPulse 1.8s infinite;
+}
+@keyframes fbPulse {
+  0% { box-shadow: 0 0 0 0 rgba(52,211,153,.5); }
+  70% { box-shadow: 0 0 0 8px rgba(52,211,153,0); }
+  100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); }
+}
+.fb-page-hero h1 {
+  font-size: clamp(1.6rem, 4vw, 2.2rem) !important;
+  font-weight: 800 !important; letter-spacing: -0.03em;
+  color: #f8fafc !important; margin-bottom: 10px !important;
+}
+.fb-page-hero h1 span {
+  background: linear-gradient(135deg, #60a5fa, #34d399);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.fb-page-hero p { color: #94a3b8 !important; max-width: 520px; margin: 0 auto; font-size: 15px; }
+
+.card-whatsapp {
+  background: linear-gradient(165deg, rgba(17,20,28,.95), rgba(10,12,18,.98)) !important;
+  border: 1px solid rgba(255,255,255,.07) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.04) !important;
+  overflow: hidden;
+  margin-bottom: 22px !important;
+  transition: transform .25s ease, border-color .25s ease;
+}
+.card-whatsapp:hover {
+  border-color: rgba(37,99,235,.25) !important;
+}
+.card-header-whatsapp {
+  background: linear-gradient(135deg, rgba(37,99,235,.9), rgba(29,78,216,.85)) !important;
+  padding: 16px 22px !important;
+  border: none !important;
+}
+.card-header-whatsapp h4, .card-header-whatsapp h5 {
+  font-weight: 700 !important; font-size: 1.05rem !important;
+  letter-spacing: -0.01em; margin: 0 !important;
+}
+
+.stats-box {
+  background: rgba(255,255,255,.03) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  border-radius: 16px !important;
+  padding: 18px 14px !important;
+  transition: .2s;
+}
+.stats-box:hover {
+  background: rgba(37,99,235,.08) !important;
+  border-color: rgba(37,99,235,.3) !important;
+  transform: translateY(-2px);
+}
+.stats-number {
+  font-size: 1.65rem !important; font-weight: 800 !important;
+  background: linear-gradient(135deg, #fff, #93c5fd);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.stats-label {
+  color: #94a3b8 !important; font-size: 11px !important;
+  letter-spacing: .8px; font-weight: 600;
+}
+
+.btn-whatsapp, .btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  border: none !important; border-radius: 12px !important;
+  font-weight: 700 !important; padding: 12px 20px !important;
+  box-shadow: 0 8px 20px rgba(37,99,235,.3);
+  transition: .2s !important;
+}
+.btn-whatsapp:hover, .btn-primary:hover {
+  transform: translateY(-2px); box-shadow: 0 12px 28px rgba(37,99,235,.45) !important;
+}
+.btn-success {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border: none !important; border-radius: 12px !important; font-weight: 700 !important;
+  box-shadow: 0 8px 20px rgba(16,185,129,.25);
+}
+
+.session-item {
+  background: rgba(255,255,255,.03) !important;
+  border: 1px solid rgba(255,255,255,.07) !important;
+  border-left: 3px solid #2563eb !important;
+  border-radius: 14px !important;
+  margin-bottom: 12px;
+  transition: .2s;
+}
+.session-item:hover {
+  border-color: rgba(37,99,235,.4) !important;
+  background: rgba(37,99,235,.06) !important;
+  transform: translateX(4px);
+}
+
+.transacao-item {
+  background: rgba(255,255,255,.03) !important;
+  border-radius: 12px !important;
+  border-left-width: 3px !important;
+  color: #e5e7eb;
+}
+
+.fb-update-banner {
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, rgba(245,158,11,.12), rgba(37,99,235,.1)) !important;
+  border: 1px solid rgba(245,158,11,.35) !important;
+}
+
+.code-display {
+  background: linear-gradient(135deg, #1e3a8a, #312e81) !important;
+  border-radius: 14px !important;
+  letter-spacing: 4px !important;
+  box-shadow: 0 10px 30px rgba(30,58,138,.4);
+}
+
+.modal-content {
+  background: #0f1419 !important;
+  border: 1px solid rgba(255,255,255,.1) !important;
+  border-radius: 20px !important;
+  color: #e5e7eb !important;
+}
+.modal-header {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  border-radius: 20px 20px 0 0 !important;
+  border: none !important;
+}
+.form-control, .form-select {
+  background: rgba(255,255,255,.04) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  color: #f1f5f9 !important;
+  border-radius: 10px !important;
+}
+.form-control:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37,99,235,.25) !important;
+  background: rgba(255,255,255,.06) !important;
+  color: #fff !important;
+}
+.form-label { color: #94a3b8 !important; font-weight: 600; font-size: 13px; }
+.form-text, .text-muted { color: #64748b !important; }
+
+.empty-state i { color: #334155 !important; }
+.empty-state { color: #64748b !important; }
+
+/* Hide leftovers */
+.float-private-btn, .private-modal, #privateModal, #openPrivateModal,
+[onclick*="abrirModalInfoPrivado"] { display: none !important; }
+
+@media (max-width: 576px) {
+  .fb-page-hero { padding: 24px 12px 20px !important; }
+  .stats-number { font-size: 1.35rem !important; }
+}
+
 </style>
 </head>
 <body>
@@ -1148,123 +1372,22 @@ h1, h2, h3, h4, h5, h6, .navbar-brand, .stats-number, .card-title {
 -->
 
   
-  <!-- Botão Flutuante - Modo Privado -->
-
-
-<!-- Descrição -->
-                <div style="background: rgba(111, 66, 193, 0.1); border-radius: 16px; padding: 14px; margin-bottom: 20px; border-left: 3px solid #6f42c1;">
-                    <p style="color: rgba(255,255,255,0.9); font-size: 13px; margin-bottom: 0; line-height: 1.5;">
-                        Sua robô funciona <strong style="color: #c4b5fd;">exclusivamente quando VOCÊ fala consigo mesmo no privado</strong>. 
-                        Ninguém mais consegue usar seu número, nem sabe que você está conectado.
-                    </p>
-                </div>
-                
-                <!-- Funcionalidades -->
-                <div style="margin-bottom: 20px;">
-                    <div class="modal-feature">
-                        <div class="modal-feature-icon">
-                            <i class="fas fa-headphones"></i>
-                        </div>
-                        <div class="modal-feature-text">
-                            <h6>Comandos no Privado</h6>
-                            <p>Use <span class="cmd-badge">/play música</span> para baixar músicas diretamente no seu privado</p>
-                        </div>
-                    </div>
-                    
-                    <div class="modal-feature">
-                        <div class="modal-feature-icon">
-                            <i class="fas fa-eye-slash"></i>
-                        </div>
-                        <div class="modal-feature-text">
-                            <h6>Revela Visualização Única</h6>
-                            <p>Mencione qualquer mensagem de <strong>visualização única</strong> e a robô revela no seu privado</p>
-                        </div>
-                    </div>
-                    
-                    <div class="modal-feature">
-                        <div class="modal-feature-icon">
-                            <i class="fas fa-shield-virus"></i>
-                        </div>
-                        <div class="modal-feature-text">
-                            <h6>Proteção Contra Travas</h6>
-                            <p>Bloqueia automaticamente ataques de travamento no seu privado</p>
-                        </div>
-                    </div>
-                    
-                    <div class="modal-feature">
-                        <div class="modal-feature-icon">
-                            <i class="fas fa-ban"></i>
-                        </div>
-                        <div class="modal-feature-text">
-                            <h6>Anti-Spam +18</h6>
-                            <p>Filtro automático para conteúdo adulto e spam indesejado</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Em breve -->
-                <div style="background: rgba(255, 215, 0, 0.08); border-radius: 12px; padding: 10px 14px; margin-bottom: 20px;">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="fas fa-clock" style="color: #FFD700; font-size: 12px;"></i>
-                        <span style="color: rgba(255,255,255,0.7); font-size: 12px;">
-                            <strong style="color: #FFD700;">Em breve:</strong> Mais funções exclusivas para seu número privado!
-                        </span>
-                    </div>
-                </div>
-                
-                <!-- Botão de ação -->
-                <a href="/conectarpv" class="btn-modal-private">
-                    <i class="fas fa-rocket me-2"></i> Conhecer Planos
-                    <i class="fas fa-arrow-right ms-2"></i>
-                </a>
-                
-                <!-- Info adicional -->
-                <p class="text-center mt-3 mb-0" style="color: rgba(255,255,255,0.35); font-size: 10px;">
-                    <i class="fas fa-shield-alt me-1"></i> Ativação em 1 clique
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
+  
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-whatsapp">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-whatsapp sticky-top">
+        <div class="container-fluid px-3 px-md-4">
             <a class="navbar-brand" href="conectar.html">
-                <img src="/flogo.jpg" alt="Fabi Bot" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'"> <strong>Fabi Bot</strong>
+                <img src="/flogo.jpg" alt="Fabi Bot" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'">
+                <span>Fabi<span class="text-gradient">Bot</span></span>
             </a>
-            <div class="d-flex align-items-center gap-2" id="fbUserNav">
-                <a href="index.html" class="btn btn-outline-light btn-sm">
-                    <i class="fas fa-home"></i> Início
-                </a>
-                <a href="login.html?redirect=conectar.html" class="btn btn-light btn-sm">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </a>
+            <div class="d-flex align-items-center gap-2 ms-auto" id="fbUserNav">
+                <a href="index.html" class="btn btn-nav-home btn-sm"><i class="fas fa-home"></i> <span class="d-none d-sm-inline">Início</span></a>
+                <a href="login.html?redirect=conectar.html" class="btn btn-nav-login btn-sm"><i class="fas fa-sign-in-alt"></i> Login</a>
             </div>
         </div>
     </nav>
-    <style>
-      #fbUserNav .fb-user-chip {
-        display: flex; align-items: center; gap: 10px; padding: 4px 10px 4px 4px;
-        background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
-        border-radius: 999px; color: #fff;
-      }
-      #fbUserNav .fb-user-chip img {
-        width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
-        border: 2px solid rgba(37,99,235,.8);
-      }
-      #fbUserNav .fb-user-meta { line-height: 1.15; }
-      #fbUserNav .fb-user-meta strong { display:block; font-size: 13px; }
-      #fbUserNav .fb-user-meta small { font-size: 11px; opacity: .75; }
-    </style>
     
-    <!-- Notificação de Transações Processadas -->
-<div class="container mt-3">
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i>
-        
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-</div>
+    <!-- notificação sucesso dinâmica -->
 
 <!-- Notificação se houver transações pendentes -->
 <div class="container mt-3" id="pendentesNotification" style="display: none;">
@@ -1373,8 +1496,10 @@ h1, h2, h3, h4, h5, h6, .navbar-brand, .stats-number, .card-title {
 </div>
       
       <!-- ============================================= -->
+<!-- ============================================= -->
 
-<!-- Central de Consultas removida -->
+      <!-- ========================================== -->
+
 
         <!-- Informações -->
         <!-- Seção de Vídeos Tutoriais -->
@@ -1650,18 +1775,7 @@ h1, h2, h3, h4, h5, h6, .navbar-brand, .stats-number, .card-title {
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
            <div class="modal-body">
-    <!-- Botão para abrir informações do Modo Privado -->
-    <div class="text-center mb-3">
-        <button type="button" 
-                onclick="abrirModalInfoPrivado()"
-                style="background: linear-gradient(135deg, #6f42c1, #5a32a3); border: none; border-radius: 40px; padding: 10px 20px; color: white; font-size: 13px; font-weight: 600; width: 100%; transition: all 0.3s; box-shadow: 0 2px 8px rgba(111, 66, 193, 0.3);"
-                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(111, 66, 193, 0.5)';"
-                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(111, 66, 193, 0.3)';">
-            <i class="fas fa-shield-alt me-2"></i>
-            Conheça o Modo Privado
-            <i class="fas fa-arrow-right ms-2"></i>
-        </button>
-    </div>
+    
     
 <!-- AVISO SOBRE ADICIONAR NÚMERO 9 -->
 <div class="alert mb-3" style="background: rgba(30, 30, 50, 0.95); border: 1px solid rgba(255, 193, 7, 0.5); border-radius: 12px;">
@@ -2253,7 +2367,7 @@ let transacaoAtual = null;
 
 // ========== FUNÇÕES DE ATUALIZAÇÃO (APENAS LEITURA) ==========
 function carregarCarteira() {
-    fetch(apiUrl('/api/carteira/saldo'))
+    fetch(apiUrl(withAuth('/api/carteira/saldo')))
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -2299,18 +2413,9 @@ function ativarModoPrivado(botJid) {
     .catch(error => console.error('Erro:', error));
 }
 
-function abrirModalInfoPrivado() {
-    // Fecha o modal atual
-    const currentModal = bootstrap.Modal.getInstance(document.getElementById('novaSessaoModal'));
-    if (currentModal) {
-        currentModal.hide();
-    }
-    // Abre o modal de informações
-    const infoModal = new bootstrap.Modal(document.getElementById('privateModal'));
-    infoModal.show();
-}
+function abrirModalInfoPrivado() { /* removido */ }
 function carregarTransacoes() {
-    fetch(apiUrl('/api/carteira/transacoes'))
+    fetch(apiUrl(withAuth('/api/carteira/transacoes')))
         .then(response => response.json())
         .then(data => {
             if (data.success && data.transacoes.length > 0) {
@@ -2354,7 +2459,7 @@ function carregarTransacoes() {
 }
 
 function carregarContagemPendentes() {
-    fetch(apiUrl('/api/carteira/pendentes'))
+    fetch(apiUrl(withAuth('/api/carteira/pendentes')))
         .then(response => response.json())
         .then(data => {
             if (data.success && data.totalPendentes > 0) {
@@ -2477,7 +2582,7 @@ function verificarErroRede(error) {
         }
     });
     setTimeout(() => {
-        if (window.location.href.indexOf('/conectar') === -1) {
+        if (window.location.href.indexOf('conectar') === -1) {
             /* stay on static page */ window.location.reload();
         }
     }, 3000);
@@ -2584,7 +2689,7 @@ function criarNovaSessao() {
     fetch(apiUrl('/api/sessoes/nova'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ numero, nome, modoPrivado })
+        body: JSON.stringify({ numero, nome, modoPrivado, ...authBodyFields() })
     })
     .then(response => response.json())
     .then(data => {
@@ -2775,7 +2880,8 @@ async function cancelarPareamentoAtual(sessaoNome) {
         const resp = await fetch(apiUrl(`/api/sessoes/${encodeURIComponent(sessao)}/cancelar`), { method: 'POST' });
         const data = await resp.json().catch(() => ({}));
         if (data.success) {
-            toastr.success('Pareamento cancelado. A sessão não será recriada automaticamente.', 'Cancelado');
+            toastr.success(data.sessaoDevolvida ? 'Pareamento cancelado e 1 sessão devolvida à sua conta.' : (data.message || 'Pareamento cancelado.'), 'Cancelado');
+            if (typeof carregarCarteira === 'function') carregarCarteira();
             const modalEl = document.getElementById('codigoImediatoModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
             if (modal) modal.hide();
@@ -2846,7 +2952,7 @@ function gerarDeposito() {
     fetch(apiUrl('/api/carteira/deposito'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ valor })
+        body: JSON.stringify({ valor, ...authBodyFields() })
     })
     .then(response => response.json())
     .then(data => {
@@ -2908,7 +3014,7 @@ function pagarComSaldo() {
     fetch(apiUrl('/api/planos/comprar-com-saldo'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(planoSelecionado)
+        body: JSON.stringify({ ...planoSelecionado, ...authBodyFields() })
     })
     .then(response => response.json())
     .then(data => {
@@ -2936,7 +3042,7 @@ function pagarComPix() {
     fetch(apiUrl('/api/planos/gerar-pix'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(planoSelecionado)
+        body: JSON.stringify({ ...planoSelecionado, ...authBodyFields() })
     })
     .then(response => response.json())
     .then(data => {
@@ -3834,24 +3940,7 @@ function mostrarResultado(data) {
     mostrarSucesso(data);
 }
 
-// ==============================================
-// BOTÃO FLUTUANTE - MODAL MODO PRIVADO
-// ==============================================
-
-// Abrir modal
-document.getElementById('openPrivateModal').addEventListener('click', function() {
-    const modal = new bootstrap.Modal(document.getElementById('privateModal'));
-    modal.show();
-});
-
-// Remover pulsação após primeiro clique (opcional)
-let hasClicked = false;
-document.getElementById('openPrivateModal').addEventListener('click', function() {
-    if (!hasClicked) {
-        this.classList.remove('pulse');
-        hasClicked = true;
-    }
-});
+// Modo Privado removido
 // ========== INICIALIZAÇÃO ==========
 $(document).ready(function() {
     // Carregar dados iniciais
@@ -3937,51 +4026,48 @@ $(document).ready(function() {
 });</script>
 
 <script>
-(function() {
-  function getSessao() {
+(function () {
+  function getSess() {
     try {
-      var a = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
+      const a = localStorage.getItem("fabi_session");
       if (a) return JSON.parse(a);
+      const b = localStorage.getItem("neconecta_user_session");
+      if (b) return JSON.parse(b);
     } catch (e) {}
     return null;
   }
-  function resolverFoto(s) {
-    if (!s) return '/flogo.jpg';
-    var av = s.avatar || s.foto || s.fotoPerfil || '';
-    if (!av || av === '/flogo.jpg' || av === 'flogo.jpg') {
-      return 'https://dl.dropboxusercontent.com/scl/fi/pe6liwd0tixj39cn1o5o4/1752896153979.jpeg?rlkey=9dchim7lrqdo2zpl1f1usultf&dl=0';
-    }
-    if (av.startsWith('http')) return av;
-    return av;
+  function foto(s) {
+    var av = (s && (s.avatar || s.foto || s.fotoPerfil)) || "";
+    if (!av || av === "/flogo.jpg" || av === "flogo.jpg")
+      return "https://dl.dropboxusercontent.com/scl/fi/pe6liwd0tixj39cn1o5o4/1752896153979.jpeg?rlkey=9dchim7lrqdo2zpl1f1usultf&dl=0";
+    return av.startsWith("http") ? av : av;
   }
   function renderUserNav() {
-    var el = document.getElementById('fbUserNav');
+    const el = document.getElementById("fbUserNav");
     if (!el) return;
-    var s = getSessao();
-    var homeBtn = '<a href="index.html" class="btn btn-outline-light btn-sm"><i class="fas fa-home"></i> Início</a>';
+    const home = '<a href="index.html" class="btn btn-nav-home btn-sm"><i class="fas fa-home"></i> <span class="d-none d-sm-inline">Início</span></a>';
+    const s = getSess();
     if (s && (s.logado || s.id || s.nome)) {
-      var nome = s.nome || s.id || 'Usuário';
-      var av = resolverFoto(s);
-      el.innerHTML = homeBtn +
+      const nome = (s.nome || s.id || "Usuário").replace(/</g, "");
+      const av = foto(s);
+      el.innerHTML = home +
         '<div class="fb-user-chip">' +
-          '<img src="' + av + '" alt="' + nome.replace(/"/g,'') + '" onerror="this.src=\\'/flogo.jpg\\'">' +
-          '<div class="fb-user-meta d-none d-sm-block"><strong>' + nome.replace(/</g,'') + '</strong><small>Logado</small></div>' +
+          '<img src="' + av + '" alt="" onerror="this.src=\\'/flogo.jpg\\'">' +
+          '<div class="fb-user-meta d-none d-md-block"><strong>' + nome + '</strong><small>Conectado</small></div>' +
         '</div>' +
-        '<button type="button" class="btn btn-outline-light btn-sm" id="fbLogoutBtn" title="Sair"><i class="fas fa-sign-out-alt"></i></button>';
-      var btn = document.getElementById('fbLogoutBtn');
-      if (btn) btn.onclick = function() {
-        localStorage.removeItem('fabi_session');
-        localStorage.removeItem('neconecta_user_session');
-        location.href = 'login.html?redirect=conectar.html';
+        '<button type="button" class="btn btn-nav-out btn-sm" id="fbLogoutBtn" title="Sair"><i class="fas fa-sign-out-alt"></i></button>';
+      const btn = document.getElementById("fbLogoutBtn");
+      if (btn) btn.onclick = function () {
+        localStorage.removeItem("fabi_session");
+        localStorage.removeItem("neconecta_user_session");
+        location.href = "login.html?redirect=conectar.html";
       };
     } else {
-      el.innerHTML = homeBtn +
-        '<a href="login.html?redirect=conectar.html" class="btn btn-light btn-sm"><i class="fas fa-sign-in-alt"></i> Login</a>';
+      el.innerHTML = home +
+        '<a href="login.html?redirect=conectar.html" class="btn btn-nav-login btn-sm"><i class="fas fa-sign-in-alt"></i> Login</a>';
     }
   }
-  document.addEventListener('DOMContentLoaded', renderUserNav);
+  document.addEventListener("DOMContentLoaded", renderUserNav);
 })();
 </script>
-
 </body>
-</html>
