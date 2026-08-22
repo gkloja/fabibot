@@ -9,11 +9,14 @@
 <title>Fabi Bot – Gerenciador de Grupos WhatsApp com Automação</title>
 
 <!-- META TAGS ESSENCIAIS -->
-<meta name="description" content="Fabi Bot: O bot de WhatsApp mais completo! Figurinhas automáticas, download de músicas/vídeos, IA integrada, sistema de Golds exclusivo, rankings e jogos. Mais que um bot - um sistema completo de entretenimento e automação para grupos.">
-<meta name="keywords" content="Fabi Bot, WhatsApp Bot, automação, grupos, divulgação de grupos, ferramentas inteligentes, baixar música, Bot de whatsapp, Robô para WhatsApp">
+<meta name="description" content="Fabi Bot – automação para grupos de WhatsApp: figurinhas, download de músicas e vídeos, anti-spam, boas-vindas, ranking, jogos e IA. Conecte em minutos e gerencie seu grupo com inteligência.">
+<meta name="keywords" content="Fabi Bot, bot WhatsApp, robô WhatsApp, automação grupo WhatsApp, figurinhas WhatsApp, baixar música WhatsApp, anti spam WhatsApp, gerenciador de grupos, FabiBot">
+<meta name="application-name" content="Fabi Bot">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
 <meta name="author" content="Fabi Bot">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-<meta name="theme-color" content="#2563eb">
+<meta name="theme-color" content="#16a34a">
 <meta name="language" content="Portuguese">
 <meta name="geo.region" content="BR">
 <meta name="geo.placename" content="Brasil">
@@ -27,7 +30,7 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2351298778216089" crossorigin="anonymous"></script>
 <!-- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) -->
 <meta property="og:title" content="Fabi Bot – Gerenciador de Grupos WhatsApp">
-<meta property="og:description" content="Automatize e proteja seus grupos do WhatsApp com a Fabi Bot. Sistema de Golds, ranking, comandos e muito mais.">
+<meta property="og:description" content="Automação para WhatsApp: figurinhas, downloads, anti-spam, ranking e IA. Conecte a Fabi Bot e transforme seu grupo.">
 <meta property="og:image" content="https://fabibot.vercel.app/flogo.jpg">
 <meta property="og:image:secure_url" content="https://fabibot.vercel.app/flogo.jpg">
 <meta property="og:image:type" content="image/jpeg">
@@ -55,8 +58,10 @@
 <link rel="dns-prefetch" href="https://www.gstatic.com">
 
 <!-- FAVICON -->
-<link rel="icon" type="image/png" href="https://fabibot.vercel.app/flogo.jpg">
-<link rel="apple-touch-icon" href="https://fabibot.vercel.app/flogo.jpg">
+<link rel="icon" type="image/jpeg" href="/flogo.jpg">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <!-- ========== SCHEMA.ORG JSON-LD ========== -->
 
 <!-- Schema: WebSite -->
@@ -87,6 +92,30 @@
     "sameAs": [],
     "description": "Fabi Bot - automação e gerenciamento de grupos de WhatsApp.",
     "email": "contato@fabibot.com.br"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Fabi Bot",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web, WhatsApp",
+  "url": "https://fabibot.vercel.app",
+  "image": "https://fabibot.vercel.app/flogo.jpg",
+  "description": "Bot de WhatsApp para automação de grupos: figurinhas, downloads, anti-spam, boas-vindas, ranking e jogos.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL"
+  },
+  "inLanguage": "pt-BR",
+  "author": {
+    "@type": "Organization",
+    "name": "Fabi Bot",
+    "url": "https://fabibot.vercel.app"
+  }
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -6689,7 +6718,7 @@ body.light-mode .command-badge-mobile {
     <div class="container nav-content">
         <div class="logo" onclick="mudarSecao('feed')" style="flex-direction: column; align-items: flex-start; gap: 2px;">
             <div style="display: flex; align-items: center; gap: 8px;">
-                <img src="flogo.jpg" alt="Fabi Bot" onerror="this.onerror=null;this.src='https://fabibot.vercel.app/flogo.jpg'">
+                <img src="/flogo.jpg" alt="Fabi Bot" onerror="this.onerror=null;this.src='https://fabibot.vercel.app/flogo.jpg'">
                 <h1>Fabi<span>Bot</span></h1>
             </div>
             <!-- Indicador de online abaixo da logo -->

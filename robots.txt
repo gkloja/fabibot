@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /conectar.html
+Allow: /login.html
+
+Disallow: /api/
+Disallow: /connect.js
+
+Sitemap: https://fabibot.vercel.app/sitemap.xml

@@ -1,0 +1,14 @@
+{
+  "name": "Fabi Bot – Automação para WhatsApp",
+  "short_name": "FabiBot",
+  "description": "Gerenciador de grupos WhatsApp com automação, figurinhas, downloads, IA e sistema de Golds.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#22c55e",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
