@@ -9,9 +9,13 @@ index.html
 conectar.html
 login.html
 flogo.jpg
+flogo.webp
+og-image.jpg
 icon-192.png
 icon-512.png
 apple-touch-icon.png
+favicon-16x16.png
+favicon-32x32.png
 robots.txt
 sitemap.xml
 site.webmanifest
@@ -27,6 +31,7 @@ O backend (`connect.js`) continua no **seu servidor**. O site só usa o proxy Cl
 2. Envie o sitemap: `https://fabibot.vercel.app/sitemap.xml`
 3. Confirme a verificação (meta já existe no `index.html`)
 4. Aguarde indexação (pode levar dias)
+5. Use a ferramenta de inspeção de URL após o deploy
 
 ## URLs
 
@@ -37,3 +42,13 @@ O backend (`connect.js`) continua no **seu servidor**. O site só usa o proxy Cl
 | Login | `/login` ou `/login.html` |
 
 Regras em `vercel.json` redirecionam `/conectar` → `conectar.html`.
+
+## Otimizações feitas (Ago/2026)
+
+- Ícones PWA (192, 512, apple-touch) gerados
+- Logo comprimida (~1,5 MB → ~110 KB)
+- OG image 1200×630 para compartilhamento
+- JSON-LD (WebSite, Organization, SoftwareApplication, WebPage)
+- Meta tags completas na `conectar.html`
+- Tutoriais no topo da página de conexão
+- Remoção de código JS solto que vazava na tela

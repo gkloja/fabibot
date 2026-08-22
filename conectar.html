@@ -1,16 +1,79 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Conectar WhatsApp | Fabi Bot – Pareamento em minutos</title>
+    <meta name="description" content="Conecte a Fabi Bot ao WhatsApp em minutos: pareamento por código, sessões, carteira digital e planos. Automação completa para seus grupos.">
+    <meta name="keywords" content="conectar Fabi Bot, pareamento WhatsApp, bot WhatsApp, sessão WhatsApp, automação grupo">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="author" content="Fabi Bot">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="application-name" content="Fabi Bot">
+    <link rel="canonical" href="https://fabibot.vercel.app/conectar.html">
+
+    <!-- Icons / PWA -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Conectar WhatsApp | Fabi Bot">
+    <meta property="og:description" content="Pareie sua sessão WhatsApp com a Fabi Bot de forma rápida e segura. Código de pareamento em segundos.">
+    <meta property="og:image" content="https://fabibot.vercel.app/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:alt" content="Fabi Bot - Conectar WhatsApp">
+    <meta property="og:url" content="https://fabibot.vercel.app/conectar.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="Fabi Bot">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Conectar WhatsApp | Fabi Bot">
+    <meta name="twitter:description" content="Pareie sua sessão WhatsApp com a Fabi Bot de forma rápida e segura.">
+    <meta name="twitter:image" content="https://fabibot.vercel.app/og-image.jpg">
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Conectar WhatsApp | Fabi Bot",
+      "description": "Pareie sua sessão WhatsApp com a Fabi Bot: código de pareamento, sessões, carteira e planos.",
+      "url": "https://fabibot.vercel.app/conectar.html",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Fabi Bot",
+        "url": "https://fabibot.vercel.app"
+      },
+      "inLanguage": "pt-BR"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Fabi Bot",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web, WhatsApp",
+      "url": "https://fabibot.vercel.app",
+      "image": "https://fabibot.vercel.app/og-image.jpg",
+      "description": "Bot de WhatsApp para automação de grupos: figurinhas, downloads, anti-spam, boas-vindas, ranking e jogos.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
+      "inLanguage": "pt-BR"
+    }
+    </script>
 
 <script>
   // ===== PROXY Cloudflare + backend real =====
-  // Front estático → Worker → seu servidor (connect)
-  // Formato que já funciona no index do Fabi Bot:
-  // orange-hill.../br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009/...
   window.PROXY_HOST = window.PROXY_HOST || "https://orange-hill-2e61.gbscabral15.workers.dev";
   window.API_BACKEND = window.API_BACKEND || "http://br2.bronxyshost.com:4009";
-
 
 function getSessaoLocal() {
     try {
@@ -31,7 +94,6 @@ function authQuery() {
     const str = q.toString();
     return str ? ('?' + str) : '';
 }
-
 function authBodyFields() {
     const s = getSessaoLocal() || {};
     const o = {};
@@ -40,14 +102,12 @@ function authBodyFields() {
     else if (s.id) { o.nomeConta = s.id; o.nome = s.id; }
     return o;
 }
-
 function withAuth(path) {
     const q = authQuery();
     if (!q) return path;
     return path.includes('?') ? (path + '&' + q.slice(1)) : (path + q);
 }
-
-  function apiUrl(path) {
+function apiUrl(path) {
     let target;
     if (!path) {
       target = window.API_BACKEND;
@@ -58,24 +118,11 @@ function withAuth(path) {
     } else {
       target = window.API_BACKEND.replace(/\/$/, "") + "/" + path;
     }
-    // Remove protocolo do host no path do worker (padrão do index)
     const hostPath = window.API_BACKEND.replace(/^https?:\/\//, "");
     return window.PROXY_HOST + "/" + hostPath + "/proxy?url=" + encodeURIComponent(target);
-  }
+}
 </script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Conecte a Fabi Bot ao WhatsApp: pareamento por código, sessões, carteira e planos. Automação para seus grupos em minutos.">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://fabibot.vercel.app/conectar.html">
-<link rel="icon" type="image/jpeg" href="/flogo.jpg">
-<meta property="og:title" content="Conectar WhatsApp | Fabi Bot">
-<meta property="og:description" content="Pareie sua sessão WhatsApp com a Fabi Bot de forma rápida e segura.">
-<meta property="og:image" content="/flogo.jpg">
-<meta property="og:url" content="https://fabibot.vercel.app/conectar.html">
-<title>Conectar WhatsApp | Fabi Bot</title>
-    
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
