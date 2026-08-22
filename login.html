@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login – Fabi Bot</title>
+<style>
+  :root { --primary: #2563eb; --card: #111214; --border: #232323; --text: #E5E7EB; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 10% 0%, #0d1424 0%, #060608 55%);
+    color: var(--text); padding: 20px;
+  }
+  .box {
+    width: 100%; max-width: 400px; background: var(--card);
+    border: 1px solid var(--border); border-radius: 16px; padding: 28px 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.45);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; justify-content: center; }
+  .brand img { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; }
+  h1 { margin: 0; font-size: 1.25rem; font-weight: 800; }
+  label { display: block; font-size: 13px; margin: 12px 0 6px; color: #9CA3AF; }
+  input {
+    width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);
+    background: #0d0f12; color: var(--text); font-size: 15px;
+  }
+  input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.25); }
+  button {
+    width: 100%; margin-top: 14px; padding: 13px; border: none; border-radius: 10px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff;
+    font-weight: 700; font-size: 15px; cursor: pointer;
+  }
+  button:disabled { opacity: .6; cursor: wait; }
+  .hint { font-size: 12px; color: #9CA3AF; margin-top: 10px; line-height: 1.45; }
+  .msg { margin-top: 14px; padding: 10px; border-radius: 8px; font-size: 13px; text-align: center; display: none; white-space: pre-wrap; }
+  .msg.error { display: block; background: rgba(239,68,68,.15); color: #fca5a5; border: 1px solid #ef4444; }
+  .msg.ok { display: block; background: rgba(16,185,129,.15); color: #6ee7b7; border: 1px solid #10b981; }
+  .links { text-align: center; margin-top: 18px; font-size: 13px; color: #9CA3AF; }
+  .links a { color: #60a5fa; text-decoration: none; }
+</style>
+</head>
+<body>
+  <div class="box">
+    <div class="brand">
+      <img src="https://fabibot.vercel.app/flogo.jpg" alt="Fabi Bot" onerror="this.style.display='none'">
+      <h1>Fabi Bot — Login</h1>
+    </div>
+    <div id="msg" class="msg"></div>
+    <form id="loginForm">
+      <label for="username">Usuário</label>
+      <input id="username" name="username" type="text" required autocomplete="username" placeholder="Seu usuário">
+      <label for="password">Senha</label>
+      <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="Sua senha">
+      
+      <button type="submit" id="btn">Entrar</button>
+    </form>
+    <div class="links">
+      Não tem conta? <a href="https://chat.whatsapp.com/JgJTVYqRpMvBftNLR91U47" target="_blank" rel="noopener">Registre-se no grupo</a>
+      <br><br>
+      <a href="index.html">← Voltar ao site</a>
+    </div>
+  </div>
+<script>
+(function () {
+  const PROXY_HOST = "https://orange-hill-2e61.gbscabral15.workers.dev";
+  const BACKEND = "http://br2.bronxyshost.com:4009";
+
+  // Dois formatos de URL do Worker (alguns workers usam path, outros só query)
+  function urlsFor(path) {
+    const target = BACKEND.replace(/\/$/, "") + path;
+    const hostPath = BACKEND.replace(/^https?:\/\//, "");
+    return [
+      PROXY_HOST + "/" + hostPath + "/proxy?url=" + encodeURIComponent(target),
+      PROXY_HOST + "/proxy?url=" + encodeURIComponent(target)
+    ];
+  }
+
+  const params = new URLSearchParams(location.search);
+  const redirectTo = params.get("redirect") || "index.html";
+
+  const msg = document.getElementById("msg");
+  const form = document.getElementById("loginForm");
+  const btn = document.getElementById("btn");
+
+  function show(text, ok) {
+    msg.className = "msg " + (ok ? "ok" : "error");
+    msg.textContent = text;
+  }
+
+  async function tryLogin(username, password) {
+    const body = JSON.stringify({ username, password });
+    const headers = { "Content-Type": "application/json", "Accept": "application/json" };
+    let lastErr = null;
+
+    for (const url of urlsFor("/api/login")) {
+      try {
+        const res = await fetch(url, { method: "POST", headers, body, mode: "cors" });
+        const ct = res.headers.get("content-type") || "";
+        let data = null;
+        if (ct.includes("json")) {
+          data = await res.json();
+        } else {
+          const text = await res.text();
+          lastErr = "HTTP " + res.status + " (não-JSON): " + text.slice(0, 120);
+          continue;
+        }
+        return { res, data, url };
+      } catch (e) {
+        lastErr = e.message || String(e);
+      }
+    }
+    throw new Error(lastErr || "Falha de rede");
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    btn.textContent = "Entrando...";
+    msg.className = "msg";
+
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (location.protocol === "file:") {
+      show("Abra o login pelo site (https://...), não pelo arquivo local (file://).", false);
+      btn.disabled = false;
+      btn.textContent = "Entrar";
+      return;
+    }
+
+    try {
+      const { res, data } = await tryLogin(username, password);
+
+      if (res.ok && data && data.success) {
+        const u = data.user || {};
+        try { localStorage.removeItem("fabi_session"); localStorage.removeItem("neconecta_user_session"); } catch(_){}
+        const sess = {
+          logado: true,
+          id: u.id || u.nome || username,
+          nome: u.nome || username,
+          email: u.email || "",
+          numero: u.numero || "",
+          golds: u.golds || u.dinheiro || 0,
+          rank: 0,
+          avatar: u.avatar || u.foto || u.fotoPerfil || "https://dl.dropboxusercontent.com/scl/fi/pe6liwd0tixj39cn1o5o4/1752896153979.jpeg?rlkey=9dchim7lrqdo2zpl1f1usultf&dl=0",
+          provider: "servidor",
+          at: Date.now()
+        };
+        localStorage.setItem("fabi_session", JSON.stringify(sess));
+        // Mesma sessão que o index usa
+        localStorage.setItem("neconecta_user_session", JSON.stringify({
+          id: sess.id,
+          nome: sess.nome,
+          email: sess.email,
+          avatar: sess.avatar,
+          provider: "servidor",
+          seguidores: [],
+          seguindo: []
+        }));
+        show("Login ok! Redirecionando...", true);
+        setTimeout(() => { location.href = redirectTo; }, 400);
+        return;
+      }
+
+      show((data && (data.message || data.error)) || ("Falha no login (HTTP " + res.status + ")"), false);
+    } catch (err) {
+      console.error(err);
+      show("Erro de conexão: " + (err.message || err) + "\n\nConfira se o Worker orange-hill está no ar e se você está em HTTPS (não file://).", false);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Entrar";
+    }
+  });
+})();
+</script>
+</body>
+</html>
