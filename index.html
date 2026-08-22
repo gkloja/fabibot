@@ -13339,10 +13339,17 @@ function mostrarSeguindoDeOutroUsuario(usuarioId, usuarioNome) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // PARAR PING ANTES DE SAIR
-            pararOnlinePing();
-            localStorage.removeItem(USER_SESSION_KEY);
-            window.location.href = '/logout';
+            try { if (typeof pararOnlinePing === 'function') pararOnlinePing(); } catch(e) {}
+            try {
+                localStorage.removeItem(USER_SESSION_KEY);
+                localStorage.removeItem('fabi_session');
+                localStorage.removeItem('neconecta_user_session');
+                localStorage.removeItem('grupoSelecionadoAdmin');
+            } catch(e) {}
+            window.SERVER_SESSION = { logado: false, id: '', nome: '', numero: '', email: '', avatar: '', golds: 0, rank: 0, ip: '' };
+            if (typeof currentUser !== 'undefined') currentUser = null;
+            // Site estático: não existe /logout no Vercel
+            window.location.href = 'login.html';
         }
     });
 }
