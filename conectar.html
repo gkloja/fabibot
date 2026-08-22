@@ -1208,7 +1208,7 @@ h1, h2, h3, h4, h5, h6, .navbar-brand, .stats-number, .card-title {
                 </div>
                 
                 <!-- Botão de ação -->
-                <a href="/conectarpv" class="btn-modal-private">
+                <a href="conectar.html" class="btn-modal-private">
                     <i class="fas fa-rocket me-2"></i> Conhecer Planos
                     <i class="fas fa-arrow-right ms-2"></i>
                 </a>
@@ -1225,7 +1225,7 @@ h1, h2, h3, h4, h5, h6, .navbar-brand, .stats-number, .card-title {
     <nav class="navbar navbar-expand-lg navbar-dark navbar-whatsapp">
         <div class="container-fluid">
             <a class="navbar-brand" href="conectar.html">
-                <img src="https://fabibot.vercel.app/flogo.jpg" alt="Fabi Bot"> <strong>Fabi Bot</strong>
+                <img src="flogo.jpg" alt="Fabi Bot" onerror="this.onerror=null;this.src='https://fabibot.vercel.app/flogo.jpg'"> <strong>Fabi Bot</strong>
             </a>
             
             <div class="d-flex align-items-center ms-auto" id="fbUserNav"></div>
@@ -2624,7 +2624,7 @@ function verificarErroRede(error) {
         }
     });
     setTimeout(() => {
-        if (window.location.href.indexOf('/conectar') === -1) {
+        if (window.location.href.indexOf('conectar') === -1) {
             /* stay on static page */ window.location.reload();
         }
     }, 3000);

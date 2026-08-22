@@ -6689,7 +6689,7 @@ body.light-mode .command-badge-mobile {
     <div class="container nav-content">
         <div class="logo" onclick="mudarSecao('feed')" style="flex-direction: column; align-items: flex-start; gap: 2px;">
             <div style="display: flex; align-items: center; gap: 8px;">
-                <img src="https://fabibot.vercel.app/flogo.jpg" alt="Fabi Bot">
+                <img src="flogo.jpg" alt="Fabi Bot" onerror="this.onerror=null;this.src='https://fabibot.vercel.app/flogo.jpg'">
                 <h1>Fabi<span>Bot</span></h1>
             </div>
             <!-- Indicador de online abaixo da logo -->
@@ -6817,7 +6817,7 @@ body.light-mode .command-badge-mobile {
         
         <!-- 🔓 USUÁRIO LOGADO: SEM VÍDEO, APENAS BOTÕES -->
         <div class="fz-intro-actions">
-            <a href="/conectar" class="fz-btn fz-btn-accent"><i class="fas fa-handshake"></i> Conectar Robô</a>
+            <a href="conectar.html" class="fz-btn fz-btn-accent"><i class="fas fa-handshake"></i> Conectar Robô</a>
             <button type="button" class="fz-btn fz-btn-accent" onclick="mudarSecao('configurar')"><i class="fas fa-cog"></i> Configurar Grupo</button>
             <button type="button" class="fz-btn fz-btn-accent" onclick="mudarSecao('comunidades'); abrirRankingAoVivo();" title="Ver ranking ao vivo dos grupos"><i class="fas fa-chart-line"></i> Rank Ao Vivo!</button>
         </div>
@@ -6828,8 +6828,8 @@ body.light-mode .command-badge-mobile {
         </div>
 
         <div class="fz-intro-video-wrap" id="introVideoWrap">
-            <video id="fabibot-video" class="fz-intro-video" preload="metadata" poster="https://fabibot.vercel.app/flogo.jpg" controls>
-                <source src="/fabibot.mp4" type="video/mp4">
+            <video id="fabibot-video" class="fz-intro-video" preload="metadata" poster="flogo.jpg" controls playsinline>
+                <source src="fabibot.mp4" type="video/mp4">
                 Seu navegador não suporta vídeos HTML5.
             </video>
             <p class="fz-intro-video-caption">Assista e veja como automatizar seu grupo com inteligência e diversão! <a href="login.html">Já tem conta? Entrar</a></p>
