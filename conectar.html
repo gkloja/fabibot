@@ -1434,74 +1434,6 @@ body {
             </div>
         </div>
 
-        <!-- Seção Carteira Digital -->
-<div class="card-whatsapp mb-4">
-    <div class="card-header-whatsapp">
-        <h4 class="mb-0">
-            <i class="fas fa-wallet"></i> Carteira Digital & Planos
-        </h4>
-    </div>
-    <div class="card-body">
-        <!-- Saldo do usuário -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="stats-box">
-                    <div class="stats-number" id="saldoUsuario">R$ 0,00</div>
-                    <div class="stats-label">Saldo Disponível</div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stats-box">
-                    <div class="stats-number" id="sessoesAtivas">0</div>
-                    <div class="stats-label">Sessões Disponíveis</div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stats-box">
-                    <div class="stats-number" id="planoAtual">Nenhum</div>
-                    <div class="stats-label">Plano Atual</div>
-                </div>
-            </div>
-            <!-- Adicione este item na linha 33 do HTML, depois do plano atual -->
-<div class="col-md-4">
-    <div class="stats-box">
-        <div class="stats-number" id="tempoRestante">-</div>
-        <div class="stats-label">Tempo Restante</div>
-    </div>
-</div>
-        </div>
-
-        <!-- Botões de ação -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <button class="btn btn-success btn-lg w-100 mb-2" onclick="abrirModalDeposito()">
-                    <i class="fas fa-plus-circle"></i> Adicionar Saldo
-                </button>
-            </div>
-            <div class="col-md-6">
-                <button class="btn btn-whatsapp btn-lg w-100" onclick="abrirModalPlanos()">
-                    <i class="fas fa-crown"></i> Ver Planos
-                </button>
-            </div>
-        </div>
-
-        <!-- Últimas Transações -->
-        <h6 class="mb-3">
-            <i class="fas fa-history"></i> Últimas Transações
-        </h6>
-        <div id="listaTransacoes" class="mb-3">
-            <!-- Transações serão carregadas aqui -->
-        </div>
-    </div>
-</div>
-      
-      <!-- ============================================= -->
-<!-- ============================================= -->
-
-      <!-- ========================================== -->
-
-
-        <!-- Informações -->
         <!-- Seção de Vídeos Tutoriais -->
 <div class="card-whatsapp mb-4">
     <div class="card-header-whatsapp">
@@ -1590,6 +1522,76 @@ body {
                 </div>
             </div>
         </div>
+
+
+        <!-- Seção Carteira Digital -->
+<div class="card-whatsapp mb-4">
+    <div class="card-header-whatsapp">
+        <h4 class="mb-0">
+            <i class="fas fa-wallet"></i> Carteira Digital & Planos
+        </h4>
+    </div>
+    <div class="card-body">
+        <!-- Saldo do usuário -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="stats-box">
+                    <div class="stats-number" id="saldoUsuario">R$ 0,00</div>
+                    <div class="stats-label">Saldo Disponível</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-box">
+                    <div class="stats-number" id="sessoesAtivas">0</div>
+                    <div class="stats-label">Sessões Disponíveis</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-box">
+                    <div class="stats-number" id="planoAtual">Nenhum</div>
+                    <div class="stats-label">Plano Atual</div>
+                </div>
+            </div>
+            <!-- Adicione este item na linha 33 do HTML, depois do plano atual -->
+<div class="col-md-4">
+    <div class="stats-box">
+        <div class="stats-number" id="tempoRestante">-</div>
+        <div class="stats-label">Tempo Restante</div>
+    </div>
+</div>
+        </div>
+
+        <!-- Botões de ação -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <button class="btn btn-success btn-lg w-100 mb-2" onclick="abrirModalDeposito()">
+                    <i class="fas fa-plus-circle"></i> Adicionar Saldo
+                </button>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-whatsapp btn-lg w-100" onclick="abrirModalPlanos()">
+                    <i class="fas fa-crown"></i> Ver Planos
+                </button>
+            </div>
+        </div>
+
+        <!-- Últimas Transações -->
+        <h6 class="mb-3">
+            <i class="fas fa-history"></i> Últimas Transações
+        </h6>
+        <div id="listaTransacoes" class="mb-3">
+            <!-- Transações serão carregadas aqui -->
+        </div>
+    </div>
+</div>
+      
+      <!-- ============================================= -->
+<!-- ============================================= -->
+
+      <!-- ========================================== -->
+
+
+        <!-- Informações -->
 <!-- Códigos Disponíveis -->
     // Calcular tempo atual no servidor
     const agora = Date.now();
@@ -4029,37 +4031,44 @@ $(document).ready(function() {
 (function () {
   function getSess() {
     try {
-      const a = localStorage.getItem("fabi_session");
-      if (a) return JSON.parse(a);
-      const b = localStorage.getItem("neconecta_user_session");
-      if (b) return JSON.parse(b);
-    } catch (e) {}
-    return null;
+      var raw = localStorage.getItem("fabi_session") || localStorage.getItem("neconecta_user_session");
+      if (!raw) return null;
+      var s = JSON.parse(raw);
+      return s && typeof s === "object" ? s : null;
+    } catch (e) {
+      return null;
+    }
   }
   function foto(s) {
     var av = (s && (s.avatar || s.foto || s.fotoPerfil)) || "";
-    if (!av || av === "/flogo.jpg" || av === "flogo.jpg")
+    if (!av || av === "/flogo.jpg" || av === "flogo.jpg") {
       return "https://dl.dropboxusercontent.com/scl/fi/pe6liwd0tixj39cn1o5o4/1752896153979.jpeg?rlkey=9dchim7lrqdo2zpl1f1usultf&dl=0";
-    return av.startsWith("http") ? av : av;
+    }
+    return String(av);
   }
   function renderUserNav() {
-    const el = document.getElementById("fbUserNav");
+    var el = document.getElementById("fbUserNav");
     if (!el) return;
-    const home = '<a href="index.html" class="btn btn-nav-home btn-sm"><i class="fas fa-home"></i> <span class="d-none d-sm-inline">Início</span></a>';
-    const s = getSess();
-    if (s && (s.logado || s.id || s.nome)) {
-      const nome = (s.nome || s.id || "Usuário").replace(/</g, "");
-      const av = foto(s);
+    var home = '<a href="index.html" class="btn btn-nav-home btn-sm"><i class="fas fa-home"></i> <span class="d-none d-sm-inline">Início</span></a>';
+    var s = getSess();
+    var logado = !!(s && (s.logado || s.id || s.nome || s.username || s.numero));
+    if (logado) {
+      var nome = String(s.nome || s.id || s.username || "Usuário").replace(/[<>]/g, "");
+      var av = foto(s).replace(/"/g, "");
       el.innerHTML = home +
         '<div class="fb-user-chip">' +
-          '<img src="' + av + '" alt="" onerror="this.src=\\'/flogo.jpg\\'">' +
+          '<img src="' + av + '" alt="' + nome + '">' +
           '<div class="fb-user-meta d-none d-md-block"><strong>' + nome + '</strong><small>Conectado</small></div>' +
         '</div>' +
         '<button type="button" class="btn btn-nav-out btn-sm" id="fbLogoutBtn" title="Sair"><i class="fas fa-sign-out-alt"></i></button>';
-      const btn = document.getElementById("fbLogoutBtn");
+      var img = el.querySelector(".fb-user-chip img");
+      if (img) img.onerror = function () { this.onerror = null; this.src = "/flogo.jpg"; };
+      var btn = document.getElementById("fbLogoutBtn");
       if (btn) btn.onclick = function () {
-        localStorage.removeItem("fabi_session");
-        localStorage.removeItem("neconecta_user_session");
+        try {
+          localStorage.removeItem("fabi_session");
+          localStorage.removeItem("neconecta_user_session");
+        } catch (e) {}
         location.href = "login.html?redirect=conectar.html";
       };
     } else {
@@ -4067,7 +4076,13 @@ $(document).ready(function() {
         '<a href="login.html?redirect=conectar.html" class="btn btn-nav-login btn-sm"><i class="fas fa-sign-in-alt"></i> Login</a>';
     }
   }
-  document.addEventListener("DOMContentLoaded", renderUserNav);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", renderUserNav);
+  } else {
+    renderUserNav();
+  }
+  window.addEventListener("storage", function () { renderUserNav(); });
 })();
 </script>
 </body>
+</html>
