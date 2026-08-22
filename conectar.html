@@ -1116,7 +1116,11 @@ h1, h2, h3, h4, h5, h6, .navbar-brand, .stats-number, .card-title {
     text-decoration: none;
 }
 .fb-contact-pill:hover { color: #fff; background: rgba(37,211,102,.22); }
-    </style>
+    
+/* hide private mode */
+.float-private-btn, .private-modal, #privateModal, #openPrivateModal,
+[href*="conectarpv"], .btn-modal-private { display: none !important; }
+</style>
 </head>
 <body>
 
@@ -1128,235 +1132,8 @@ h1, h2, h3, h4, h5, h6, .navbar-brand, .stats-number, .card-title {
 -->
 
   
-  <!-- Botão Flutuante - Modo Privado -->
-<button class="float-private-btn pulse" id="openPrivateModal">
-    <i class="fas fa-shield-alt"></i>
-    <span class="float-tooltip">
-        <i class="fas fa-lock me-1"></i> Modo Privado
-    </span>
-</button>
+  
 
-<!-- Modal - Modo Privado -->
-<div class="modal fade private-modal" id="privateModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="d-flex align-items-center gap-2">
-                    <div style="background: linear-gradient(135deg, #6f42c1, #5a32a3); width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-shield-alt text-white"></i>
-                    </div>
-                    <div>
-                        <h5 class="mb-0" style="font-weight: 700;">Modo Privado</h5>
-                        <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin-bottom: 0;">Assistente pessoal exclusivo</p>
-                    </div>
-                </div>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            
-            <div class="modal-body">
-                <!-- Descrição -->
-                <div style="background: rgba(111, 66, 193, 0.1); border-radius: 16px; padding: 14px; margin-bottom: 20px; border-left: 3px solid #6f42c1;">
-                    <p style="color: rgba(255,255,255,0.9); font-size: 13px; margin-bottom: 0; line-height: 1.5;">
-                        Sua robô funciona <strong style="color: #c4b5fd;">exclusivamente quando VOCÊ fala consigo mesmo no privado</strong>. 
-                        Ninguém mais consegue usar seu número, nem sabe que você está conectado.
-                    </p>
-                </div>
-                
-                <!-- Funcionalidades -->
-                <div style="margin-bottom: 20px;">
-                    <div class="modal-feature">
-                        <div class="modal-feature-icon">
-                            <i class="fas fa-headphones"></i>
-                        </div>
-                        <div class="modal-feature-text">
-                            <h6>Comandos no Privado</h6>
-                            <p>Use <span class="cmd-badge">/play música</span> para baixar músicas diretamente no seu privado</p>
-                        </div>
-                    </div>
-                    
-                    <div class="modal-feature">
-                        <div class="modal-feature-icon">
-                            <i class="fas fa-eye-slash"></i>
-                        </div>
-                        <div class="modal-feature-text">
-                            <h6>Revela Visualização Única</h6>
-                            <p>Mencione qualquer mensagem de <strong>visualização única</strong> e a robô revela no seu privado</p>
-                        </div>
-                    </div>
-                    
-                    <div class="modal-feature">
-                        <div class="modal-feature-icon">
-                            <i class="fas fa-shield-virus"></i>
-                        </div>
-                        <div class="modal-feature-text">
-                            <h6>Proteção Contra Travas</h6>
-                            <p>Bloqueia automaticamente ataques de travamento no seu privado</p>
-                        </div>
-                    </div>
-                    
-                    <div class="modal-feature">
-                        <div class="modal-feature-icon">
-                            <i class="fas fa-ban"></i>
-                        </div>
-                        <div class="modal-feature-text">
-                            <h6>Anti-Spam +18</h6>
-                            <p>Filtro automático para conteúdo adulto e spam indesejado</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Em breve -->
-                <div style="background: rgba(255, 215, 0, 0.08); border-radius: 12px; padding: 10px 14px; margin-bottom: 20px;">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="fas fa-clock" style="color: #FFD700; font-size: 12px;"></i>
-                        <span style="color: rgba(255,255,255,0.7); font-size: 12px;">
-                            <strong style="color: #FFD700;">Em breve:</strong> Mais funções exclusivas para seu número privado!
-                        </span>
-                    </div>
-                </div>
-                
-                <!-- Botão de ação -->
-                <a href="conectar.html" class="btn-modal-private">
-                    <i class="fas fa-rocket me-2"></i> Conhecer Planos
-                    <i class="fas fa-arrow-right ms-2"></i>
-                </a>
-                
-                <!-- Info adicional -->
-                <p class="text-center mt-3 mb-0" style="color: rgba(255,255,255,0.35); font-size: 10px;">
-                    <i class="fas fa-shield-alt me-1"></i> Ativação em 1 clique
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-whatsapp">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="conectar.html">
-                <img src="/flogo.jpg" alt="Fabi Bot" onerror="this.onerror=null;this.src='/flogo.jpg'"> <strong>Fabi Bot</strong>
-            </a>
-            
-            <div class="d-flex align-items-center ms-auto" id="fbUserNav"></div>
-        </div>
-    </nav>
-    
-    <!-- Notificação de Transações Processadas -->
-<div class="container mt-3">
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i>
-        
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-</div>
-
-<!-- Notificação se houver transações pendentes -->
-<div class="container mt-3" id="pendentesNotification" style="display: none;">
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <i class="fas fa-clock me-2"></i>
-        Você tem <span id="contadorPendentes">0</span> pagamento(s) pendente(s).
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        <div class="mt-2">
-            <button class="btn btn-sm btn-outline-warning" onclick="verificarPendentes()">
-                <i class="fas fa-sync-alt"></i> Verificar Agora
-            </button>
-        </div>
-    </div>
-</div>
-
-    <!-- Conteúdo Principal -->
-    <div class="main-container">
-        <!-- Cabeçalho -->
-        <div class="fb-page-hero">
-            <span class="fb-eyebrow"><span class="fb-eyebrow-dot"></span> Console de Conexão</span>
-            <h1>Sua central de comando <span>Fabi Bot</span></h1>
-            <p>Pareie números, acompanhe sessões em tempo real e gerencie sua carteira — tudo em um só lugar.</p>
-        </div>
-
-        <!-- Banner de atualização + suporte -->
-        <div class="fb-update-banner">
-            <span class="fb-update-badge"><i class="fas fa-bolt"></i> Atualização importante</span>
-            <h5><i class="fas fa-bell me-1"></i> Se a notificação do código não chegar no WhatsApp…</h5>
-            <p>
-                <strong style="color:#fde68a;">Entre manualmente no WhatsApp</strong> e cole o código de pareamento.
-                Não fique esperando a notificação — em alguns aparelhos ela não aparece.
-            </p>
-            <a class="fb-video-link" href="https://youtube.com/shorts/8WX6RRF-6R4?si=VxEOOtgQQ4nl4ESj" target="_blank" rel="noopener">
-                <i class="fab fa-youtube text-danger"></i> Ver vídeo rápido: como colocar o código manualmente
-            </a>
-            <div class="fb-support-card">
-                <div class="support-text">
-                    <div><i class="fas fa-headset me-1" style="color:#93b4ff;"></i> Precisa de ajuda para conectar?</div>
-                    <div>Fale direto com o suporte: <strong>+55 21 98904-7220</strong></div>
-                </div>
-                <a class="btn-wa-support" href="https://wa.me/5521989047220?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20para%20conectar%20a%20Fabi%20Bot" target="_blank" rel="noopener">
-                    <i class="fab fa-whatsapp"></i> WhatsApp Suporte
-                </a>
-            </div>
-        </div>
-
-        <!-- Seção Carteira Digital -->
-<div class="card-whatsapp mb-4">
-    <div class="card-header-whatsapp">
-        <h4 class="mb-0">
-            <i class="fas fa-wallet"></i> Carteira Digital & Planos
-        </h4>
-    </div>
-    <div class="card-body">
-        <!-- Saldo do usuário -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="stats-box">
-                    <div class="stats-number" id="saldoUsuario">R$ 0,00</div>
-                    <div class="stats-label">Saldo Disponível</div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stats-box">
-                    <div class="stats-number" id="sessoesAtivas">0</div>
-                    <div class="stats-label">Sessões Disponíveis</div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stats-box">
-                    <div class="stats-number" id="planoAtual">Nenhum</div>
-                    <div class="stats-label">Plano Atual</div>
-                </div>
-            </div>
-            <!-- Adicione este item na linha 33 do HTML, depois do plano atual -->
-<div class="col-md-4">
-    <div class="stats-box">
-        <div class="stats-number" id="tempoRestante">-</div>
-        <div class="stats-label">Tempo Restante</div>
-    </div>
-</div>
-        </div>
-
-        <!-- Botões de ação -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <button class="btn btn-success btn-lg w-100 mb-2" onclick="abrirModalDeposito()">
-                    <i class="fas fa-plus-circle"></i> Adicionar Saldo
-                </button>
-            </div>
-            <div class="col-md-6">
-                <button class="btn btn-whatsapp btn-lg w-100" onclick="abrirModalPlanos()">
-                    <i class="fas fa-crown"></i> Ver Planos
-                </button>
-            </div>
-        </div>
-
-        <!-- Últimas Transações -->
-        <h6 class="mb-3">
-            <i class="fas fa-history"></i> Últimas Transações
-        </h6>
-        <div id="listaTransacoes" class="mb-3">
-            <!-- Transações serão carregadas aqui -->
-        </div>
-    </div>
-</div>
-      
-      <!-- ============================================= -->
-<!-- CARD PREMIUM - MODO PRIVADO (COMUNICAÇÃO COMPLETA) -->
 <!-- ============================================= -->
 
       <!-- ========================================== -->
@@ -1805,18 +1582,7 @@ h1, h2, h3, h4, h5, h6, .navbar-brand, .stats-number, .card-title {
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
            <div class="modal-body">
-    <!-- Botão para abrir informações do Modo Privado -->
-    <div class="text-center mb-3">
-        <button type="button" 
-                onclick="abrirModalInfoPrivado()"
-                style="background: linear-gradient(135deg, #6f42c1, #5a32a3); border: none; border-radius: 40px; padding: 10px 20px; color: white; font-size: 13px; font-weight: 600; width: 100%; transition: all 0.3s; box-shadow: 0 2px 8px rgba(111, 66, 193, 0.3);"
-                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(111, 66, 193, 0.5)';"
-                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(111, 66, 193, 0.3)';">
-            <i class="fas fa-shield-alt me-2"></i>
-            Conheça o Modo Privado
-            <i class="fas fa-arrow-right ms-2"></i>
-        </button>
-    </div>
+    
     
 <!-- AVISO SOBRE ADICIONAR NÚMERO 9 -->
 <div class="alert mb-3" style="background: rgba(30, 30, 50, 0.95); border: 1px solid rgba(255, 193, 7, 0.5); border-radius: 12px;">
@@ -2454,16 +2220,7 @@ function ativarModoPrivado(botJid) {
     .catch(error => console.error('Erro:', error));
 }
 
-function abrirModalInfoPrivado() {
-    // Fecha o modal atual
-    const currentModal = bootstrap.Modal.getInstance(document.getElementById('novaSessaoModal'));
-    if (currentModal) {
-        currentModal.hide();
-    }
-    // Abre o modal de informações
-    const infoModal = new bootstrap.Modal(document.getElementById('privateModal'));
-    infoModal.show();
-}
+function abrirModalInfoPrivado() { /* Modo Privado removido */ }
 function carregarTransacoes() {
     fetch(apiUrl(withAuth('/api/carteira/transacoes')))
         .then(response => response.json())
@@ -3995,14 +3752,13 @@ function mostrarResultado(data) {
 // ==============================================
 
 // Abrir modal
-document.getElementById('openPrivateModal').addEventListener('click', function() {
-    const modal = new bootstrap.Modal(document.getElementById('privateModal'));
+
     modal.show();
 });
 
 // Remover pulsação após primeiro clique (opcional)
 let hasClicked = false;
-document.getElementById('openPrivateModal').addEventListener('click', function() {
+document.null.addEventListener('click', function() {
     if (!hasClicked) {
         this.classList.remove('pulse');
         hasClicked = true;

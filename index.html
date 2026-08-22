@@ -7133,7 +7133,7 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
             </div>
 
             <div id="areaAdmin" style="display:none;">
-            <form method="POST" action="#" id="configForm" onsubmit="event.preventDefault(); if(typeof cfgSalvarTodas==='function')cfgSalvarTodas(); return false;">
+            <form method="POST" action="#" id="configForm" onsubmit="event.preventDefault(); return false;">
                               <div class="fz-horario-toggle-row">
     <label class="fz-horario-switch">
         <input type="checkbox" id="fzHorarioAtivo" checked onchange="fzToggleHorarioInputs()">
@@ -7188,6 +7188,7 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
                 <div class="fz-cfg-grid-items" id="checkboxGrid">
                     <p class="fz-cfg-hint" id="cfgPlaceholder">Selecione um grupo para carregar as configurações.</p>
                 </div>
+            </form>
 
 <div class="fz-atividade-wrapper">
     <div class="fz-atividade-tabs">
@@ -8692,10 +8693,10 @@ function fzRenderAdminRank(infoGrupo, registro) {
         </div>
 
         <div class="comandos-tabs">
-            <button class="comandos-tab active" id="tabBuscarComandos" onclick="mudarAbaComandos('buscar')">
+            <button class="comandos-tab active" id="tabBuscarComandos" type="button" onclick="mudarAbaComandos('buscar')">
                 📋 Buscar comandos
             </button>
-            <button class="comandos-tab" id="tabRelatos" onclick="mudarAbaComandos('relatos')">
+            <button class="comandos-tab" id="tabRelatos" type="button" onclick="mudarAbaComandos('relatos')">
                 <span class="comandos-tab-icon-wrap">
                     🐞
                     <span class="badge-count badge-relatos" id="tabRelatosBadge" style="display:none;">0</span>
