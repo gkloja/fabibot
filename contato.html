@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contato e Suporte | Fabi Bot</title>
+  <meta name="description" content="Fale com o suporte da Fabi Bot por WhatsApp ou e-mail. Ajuda para conectar, planos e dúvidas sobre o painel.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://fabibot.vercel.app/contato.html">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta property="og:title" content="Contato e Suporte | Fabi Bot">
+  <meta property="og:description" content="Fale com o suporte da Fabi Bot por WhatsApp ou e-mail. Ajuda para conectar, planos e dúvidas sobre o painel.">
+  <meta property="og:image" content="https://fabibot.vercel.app/og-image.jpg">
+  <meta property="og:url" content="https://fabibot.vercel.app/contato.html">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Fabi Bot">
+  <meta name="theme-color" content="#16a34a">
+  <style>
+    :root {
+      --bg: #060608;
+      --card: #111214;
+      --border: #232323;
+      --text: #E5E7EB;
+      --muted: #9CA3AF;
+      --primary: #22c55e;
+      --primary2: #16a34a;
+      --link: #93c5fd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(ellipse 80% 50% at 20% -10%, rgba(34,197,94,.12), transparent 50%),
+                  radial-gradient(ellipse 60% 40% at 90% 10%, rgba(37,99,235,.08), transparent 45%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(8,12,22,.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+    }
+    .nav-inner {
+      max-width: 880px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; color: #fff; text-decoration: none;
+    }
+    .brand img { width: 32px; height: 32px; border-radius: 8px; }
+    .brand span span { color: var(--primary); }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 13px; }
+    .nav-links a { color: var(--muted); text-decoration: none; }
+    .nav-links a:hover { color: #fff; }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 16px 60px; }
+    .card {
+      background: linear-gradient(165deg, rgba(17,20,28,.95), rgba(10,12,18,.98));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 22px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+    }
+    h1 {
+      font-size: clamp(1.45rem, 3vw, 1.9rem);
+      font-weight: 800; letter-spacing: -.02em;
+      margin-bottom: 8px; color: #fff;
+    }
+    .meta { color: var(--muted); font-size: 13px; margin-bottom: 22px; }
+    h2 {
+      font-size: 1.1rem; color: #fff; margin: 26px 0 10px;
+      padding-top: 8px; border-top: 1px solid var(--border);
+    }
+    h2:first-of-type { border-top: none; padding-top: 0; }
+    p, li { color: var(--text); font-size: 15px; margin-bottom: 10px; }
+    ul, ol { padding-left: 1.25rem; margin-bottom: 14px; }
+    li { margin-bottom: 6px; }
+    .note {
+      background: rgba(34,197,94,.08);
+      border: 1px solid rgba(34,197,94,.25);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 14px;
+      color: #bbf7d0;
+      margin: 16px 0;
+    }
+    .warn {
+      background: rgba(245,158,11,.1);
+      border: 1px solid rgba(245,158,11,.3);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 14px;
+      color: #fde68a;
+      margin: 16px 0;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--primary2));
+      color: #fff !important; text-decoration: none !important;
+      font-weight: 700; font-size: 14px;
+      padding: 11px 18px; border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(34,197,94,.25);
+    }
+    .btn:hover { filter: brightness(1.05); }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text) !important;
+      box-shadow: none;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .footer {
+      max-width: 880px; margin: 0 auto; padding: 0 16px 40px;
+      color: var(--muted); font-size: 12px;
+      display: flex; flex-wrap: wrap; gap: 10px 16px;
+      border-top: 1px solid var(--border); padding-top: 20px;
+    }
+    .footer a { color: var(--muted); }
+    .footer a:hover { color: #fff; }
+    strong { color: #fff; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/">
+        <img src="/flogo.jpg" alt="Fabi Bot" width="32" height="32">
+        <span>Fabi<span>Bot</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/">Início</a>
+        <a href="/conectar.html">Conectar</a>
+        <a href="/sobre.html">Sobre</a>
+        <a href="/contato.html">Contato</a>
+        <a href="/privacidade.html">Privacidade</a>
+        <a href="/termos.html">Termos</a>
+      </div>
+    </div>
+  </nav>
+  <main class="wrap">
+    <article class="card">
+
+      <h1>Contato e Suporte</h1>
+      <p class="meta">Estamos prontos para ajudar você a conectar e usar a Fabi Bot.</p>
+
+      <h2>Suporte principal (WhatsApp)</h2>
+      <p>Atendimento humano para conexão, códigos de pareamento, planos e dúvidas do painel:</p>
+      <p style="font-size:1.15rem;margin:14px 0;">
+        <strong><a href="https://wa.me/5521989047220?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20a%20Fabi%20Bot" target="_blank" rel="noopener">+55 21 98904-7220</a></strong>
+      </p>
+      <a class="btn" href="https://wa.me/5521989047220?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20a%20Fabi%20Bot" target="_blank" rel="noopener">Abrir WhatsApp</a>
+
+      <h2>E-mail</h2>
+      <p>Para assuntos gerais, privacidade (LGPD) e parcerias:</p>
+      <p><a href="mailto:contato@fabibot.com.br">contato@fabibot.com.br</a></p>
+
+      <h2>Antes de chamar o suporte</h2>
+      <ul>
+        <li>Assista aos tutoriais na página <a href="/conectar.html">Conectar</a> (vídeos de configuração e pareamento).</li>
+        <li>Se o código não chegar por notificação, abra o WhatsApp manualmente e cole o código.</li>
+        <li>Tenha em mãos o número da sessão e uma descrição objetiva do problema.</li>
+      </ul>
+
+      <h2>Horário</h2>
+      <p>O suporte via WhatsApp costuma responder em horário comercial (Brasília), podendo haver atendimento em outros horários conforme disponibilidade.</p>
+
+      <div class="note">
+        Para exercer direitos de privacidade (acesso, correção, exclusão de dados), escreva para <strong>contato@fabibot.com.br</strong> com o assunto “LGPD”.
+      </div>
+
+      <div class="actions">
+        <a class="btn btn-outline" href="/sobre.html">Sobre a Fabi Bot</a>
+        <a class="btn btn-outline" href="/privacidade.html">Privacidade</a>
+      </div>
+
+    </article>
+  </main>
+  <footer class="footer">
+    <a href="/">Início</a>
+    <a href="/conectar.html">Conectar</a>
+    <a href="/sobre.html">Sobre</a>
+    <a href="/contato.html">Contato</a>
+    <a href="/privacidade.html">Privacidade</a>
+    <a href="/termos.html">Termos</a>
+    <span>© 2026 Fabi Bot</span>
+  </footer>
+</body>
+</html>
