@@ -7563,6 +7563,10 @@ async function cfgCarregarConfigGrupo(grupoID) {
     const data = await resp.json();
     const cfg = (data && data.config && (data.config[0] || data.config)) || {};
     cfgRenderizarOpcoes(cfg);
+    try {
+      const estados = Array.isArray(cfg.estadosG1) ? cfg.estadosG1 : [];
+      g1RenderRegioes(estados);
+    } catch (e) { console.warn('g1 render', e); g1RenderRegioes([]); }
     const input = document.getElementById("grupoIDInput");
     if (input) input.value = grupoID;
   } catch (e) {
@@ -7704,8 +7708,9 @@ function cfgPainelSelecionarGrupo(id, card) {
         Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Carregando configurações do grupo...', showConfirmButton: false, timer: 1200 });
     }
     setTimeout(() => {
-        window.location.href = '/?grupo=' + encodeURIComponent(id);
-    }, 400);
+        if (typeof cfgCarregarConfigGrupo === 'function') cfgCarregarConfigGrupo(id);
+        else window.location.href = 'index.html?grupo=' + encodeURIComponent(id);
+    }, 200);
 }
 // ==================== G1: SELEÇÃO DE ESTADOS ====================
 function g1AtualizarContador() {
@@ -7724,6 +7729,78 @@ function g1AtualizarContador() {
         if (badge) badge.textContent = `${marcados}/${totalRegiao}`;
         regiaoEl.classList.toggle('fz-g1-regiao-tem-selecionado', marcados > 0);
     });
+}
+
+
+// ===== G1 estados (espelha connect.js / EJS) =====
+const ESTADOS_G1 = {
+  para: { nome: 'Pará', sigla: 'PA', regiao: 'Norte' },
+  amazonas: { nome: 'Amazonas', sigla: 'AM', regiao: 'Norte' },
+  acre: { nome: 'Acre', sigla: 'AC', regiao: 'Norte' },
+  rondonia: { nome: 'Rondônia', sigla: 'RO', regiao: 'Norte' },
+  roraima: { nome: 'Roraima', sigla: 'RR', regiao: 'Norte' },
+  tocantins: { nome: 'Tocantins', sigla: 'TO', regiao: 'Norte' },
+  amapa: { nome: 'Amapá', sigla: 'AP', regiao: 'Norte' },
+  bahia: { nome: 'Bahia', sigla: 'BA', regiao: 'Nordeste' },
+  pernambuco: { nome: 'Pernambuco', sigla: 'PE', regiao: 'Nordeste' },
+  ceara: { nome: 'Ceará', sigla: 'CE', regiao: 'Nordeste' },
+  maranhao: { nome: 'Maranhão', sigla: 'MA', regiao: 'Nordeste' },
+  paraiba: { nome: 'Paraíba', sigla: 'PB', regiao: 'Nordeste' },
+  piaui: { nome: 'Piauí', sigla: 'PI', regiao: 'Nordeste' },
+  rioGrandeDoNorte: { nome: 'Rio Grande do Norte', sigla: 'RN', regiao: 'Nordeste' },
+  sergipe: { nome: 'Sergipe', sigla: 'SE', regiao: 'Nordeste' },
+  alagoas: { nome: 'Alagoas', sigla: 'AL', regiao: 'Nordeste' },
+  saoPaulo: { nome: 'São Paulo', sigla: 'SP', regiao: 'Sudeste' },
+  rioDeJaneiro: { nome: 'Rio de Janeiro', sigla: 'RJ', regiao: 'Sudeste' },
+  minasGerais: { nome: 'Minas Gerais', sigla: 'MG', regiao: 'Sudeste' },
+  espiritoSanto: { nome: 'Espírito Santo', sigla: 'ES', regiao: 'Sudeste' },
+  parana: { nome: 'Paraná', sigla: 'PR', regiao: 'Sul' },
+  santaCatarina: { nome: 'Santa Catarina', sigla: 'SC', regiao: 'Sul' },
+  rioGrandeDoSul: { nome: 'Rio Grande do Sul', sigla: 'RS', regiao: 'Sul' },
+  goias: { nome: 'Goiás', sigla: 'GO', regiao: 'Centro-Oeste' },
+  matoGrosso: { nome: 'Mato Grosso', sigla: 'MT', regiao: 'Centro-Oeste' },
+  matoGrossoDoSul: { nome: 'Mato Grosso do Sul', sigla: 'MS', regiao: 'Centro-Oeste' },
+  distritoFederal: { nome: 'Distrito Federal', sigla: 'DF', regiao: 'Centro-Oeste' }
+};
+const G1_REGIOES_ORDEM = ['Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul'];
+
+function g1RenderRegioes(estadosAtivos) {
+  const container = document.getElementById('g1RegioesContainer');
+  if (!container) return;
+  const ativos = Array.isArray(estadosAtivos) ? estadosAtivos : [];
+  const porRegiao = {};
+  Object.entries(ESTADOS_G1).forEach(([key, v]) => {
+    if (!porRegiao[v.regiao]) porRegiao[v.regiao] = [];
+    porRegiao[v.regiao].push({ key, ...v });
+  });
+  let html = '';
+  G1_REGIOES_ORDEM.forEach(regiao => {
+    const lista = porRegiao[regiao] || [];
+    if (!lista.length) return;
+    const regiaoId = 'g1-regiao-' + regiao.toLowerCase().replace(/\s+/g, '-');
+    const sel = lista.filter(e => ativos.includes(e.key)).length;
+    const iniciaAberta = sel > 0;
+    html += `<div class="fz-g1-regiao" id="${regiaoId}">
+      <button type="button" class="fz-g1-regiao-header${iniciaAberta ? ' fz-g1-regiao-aberta' : ''}" onclick="g1ToggleRegiao('${regiaoId}')">
+        <span class="fz-g1-regiao-titulo">${regiao}</span>
+        <span class="fz-g1-regiao-info">
+          <span class="fz-g1-regiao-contador">${sel}/${lista.length}</span>
+          <span class="fz-g1-regiao-label">Ver estados</span>
+          <i class="fas fa-chevron-down fz-g1-regiao-chevron"></i>
+        </span>
+      </button>
+      <div class="fz-g1-estados-grid" style="display:${iniciaAberta ? 'grid' : 'none'};">
+        ${lista.map(e => `
+          <label class="fz-g1-estado-chip">
+            <input type="checkbox" class="g1-estado-checkbox" value="${e.key}"
+              ${ativos.includes(e.key) ? 'checked' : ''} onchange="g1AtualizarContador()">
+            <span>${e.sigla} · ${e.nome}</span>
+          </label>`).join('')}
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+  g1AtualizarContador();
 }
 
 function g1ToggleTodos(marcar) {
@@ -7758,7 +7835,7 @@ async function g1SalvarEstados() {
     }
 
     try {
-        const resp = await fetch('/alterarEstadosG1', {
+        const resp = await fetch(API_URL + '/alterarEstadosG1', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ grupoID, estados: selecionados.length ? selecionados : 'nenhum' })
