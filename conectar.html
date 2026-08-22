@@ -3747,23 +3747,8 @@ function mostrarResultado(data) {
     mostrarSucesso(data);
 }
 
-// ==============================================
-// BOTÃO FLUTUANTE - MODAL MODO PRIVADO
-// ==============================================
 
-// Abrir modal
 
-    modal.show();
-});
-
-// Remover pulsação após primeiro clique (opcional)
-let hasClicked = false;
-document.null.addEventListener('click', function() {
-    if (!hasClicked) {
-        this.classList.remove('pulse');
-        hasClicked = true;
-    }
-});
 // ========== INICIALIZAÇÃO ==========
 $(document).ready(function() {
     // Carregar dados iniciais
