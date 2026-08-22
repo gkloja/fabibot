@@ -6652,6 +6652,9 @@ body.light-mode .command-badge-mobile {
     font-size: 12.5px;
     line-height: 1.5;
 }
+
+/* hide-watch-imagem */
+#watchPageContainer, [data-section="watch"], #imagemContainer, #imagemPageContainer { display: none !important; }
 </style>
 </head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
@@ -6733,7 +6736,6 @@ body.light-mode .command-badge-mobile {
     <a href="#" data-section="comunidades">Comunidades</a>
     <a href="#" data-section="configurar">Configurar</a>
     <a href="#" data-section="chat">Chat</a>
-    <a href="#" data-section="watch">Assistir</a>
     <a href="#" data-section="radio">Música</a>
     <a href="#" data-section="comandos" class="menu-relatos-badge">
         Comandos
@@ -6810,16 +6812,10 @@ body.light-mode .command-badge-mobile {
     <button class="bottom-nav-mais-item" data-section="perfil" onclick="mudarSecao('perfil'); toggleMaisMenu(false);">
         <i class="fas fa-user"></i><span>Perfil</span>
     </button>
-    <button class="bottom-nav-mais-item" data-section="watch" onclick="mudarSecao('watch'); toggleMaisMenu(false);">
-        <i class="fas fa-play-circle"></i><span>Assistir</span>
-    </button>
-    <button class="bottom-nav-mais-item" data-section="radio" onclick="mudarSecao('radio'); toggleMaisMenu(false);">
+<button class="bottom-nav-mais-item" data-section="radio" onclick="mudarSecao('radio'); toggleMaisMenu(false);">
         <i class="fas fa-headphones-alt"></i><span>Música</span>
     </button>
-    <button class="bottom-nav-mais-item" data-section="imagem" onclick="mudarSecao('imagem'); toggleMaisMenu(false);">
-        <i class="fas fa-image"></i><span>Gerar Imagem</span>
-    </button>
-    <button class="bottom-nav-mais-item" onclick="window.open('https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x', '_blank'); toggleMaisMenu(false);">
+<button class="bottom-nav-mais-item" onclick="window.open('https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x', '_blank'); toggleMaisMenu(false);">
         <i class="fab fa-whatsapp" style="color:#25D366;"></i><span>Canal do WhatsApp</span>
     </button>
 </div>
@@ -6848,7 +6844,7 @@ body.light-mode .command-badge-mobile {
         <div class="fz-intro-actions">
             <a href="conectar.html" class="fz-btn fz-btn-accent"><i class="fas fa-handshake"></i> Conectar Robô</a>
             <button type="button" class="fz-btn fz-btn-accent" onclick="mudarSecao('configurar')"><i class="fas fa-cog"></i> Configurar Grupo</button>
-            <button type="button" class="fz-btn fz-btn-accent" onclick="mudarSecao('comunidades'); abrirRankingAoVivo();" title="Ver ranking ao vivo dos grupos"><i class="fas fa-chart-line"></i> Rank Ao Vivo!</button>
+            <button type="button" class="fz-btn fz-btn-accent" type="button" onclick="event.preventDefault(); mudarSecao('comunidades'); abrirRankingAoVivo(); return false;" title="Ver ranking ao vivo dos grupos"><i class="fas fa-chart-line"></i> Rank Ao Vivo!</button>
         </div>
         
         <!-- 🔒 VISITANTE (NÃO LOGADO): VÍDEO + BOTÃO DE ENTRAR -->
@@ -7101,7 +7097,7 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
             </div>
 
             <div id="areaAdmin" style="display:none;">
-            <form method="POST" action="/alterarConfig" id="configForm">
+            <form method="POST" action="#" id="configForm" onsubmit="event.preventDefault(); if(typeof cfgSalvarTodas==='function')cfgSalvarTodas(); return false;">
                               <div class="fz-horario-toggle-row">
     <label class="fz-horario-switch">
         <input type="checkbox" id="fzHorarioAtivo" checked onchange="fzToggleHorarioInputs()">
@@ -7129,7 +7125,7 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
         <span id="fzHorarioStatusTexto">Carregando status...</span>
     </div>
 
-    <button class="fz-horario-save-btn" id="btnSalvarHorario" onclick="salvarHorarioGrupo()">
+    <button type="button" class="fz-horario-save-btn" id="btnSalvarHorario" onclick="salvarHorarioGrupo()">
         <i class="fas fa-floppy-disk"></i> Salvar Horário
     </button>
 </div>
@@ -8870,7 +8866,7 @@ function fzRenderAdminRank(infoGrupo, registro) {
             <span class="gradient-text">Pódio dos Campeões</span>
         </h3>
         <p class="podium-subtitle">Os grupos que mais colecionaram medalhas nos rankings diários de Mais Ativos e Mais Golds</p>
-        <button class="podium-ranking-btn" onclick="abrirRankingAoVivo()">
+        <button type="button" class="podium-ranking-btn" onclick="event.preventDefault(); abrirRankingAoVivo(); return false;">
             <i class="fas fa-arrow-up"></i> Ver Ranking Ao Vivo
         </button>
     </div>
@@ -12365,7 +12361,7 @@ async function buscarMusica() {
     document.getElementById('musicResultCard').style.display = 'none';
 
     try {
-        const resp = await fetch('/play', {
+        const resp = await fetch(API_URL + '/play', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -12398,7 +12394,11 @@ async function buscarMusica() {
         document.getElementById('musicResultTitle').textContent = data.title || 'Música encontrada';
         document.getElementById('musicResultMeta').textContent =
             `${data.source?.video || 'Busca'} → ${data.source?.audio || 'áudio'} · ${data.stats?.total_time || '?'}s`;
-        document.getElementById('musicBtnBaixar').href = data.download;
+        {
+            let dl = data.download || '';
+            if (dl && dl.startsWith('/') && !dl.startsWith('//')) dl = API_URL + dl;
+            document.getElementById('musicBtnBaixar').href = dl;
+        }
         document.getElementById('musicResultCard').style.display = 'flex';
         setOuvirBtnEstado('padrao');
 
@@ -12449,7 +12449,7 @@ function tocarResultadoAtual() {
 
     setOuvirBtnEstado('carregando');
 
-    audio.src = musicaAtual.download;
+    audio.src = (musicaAtual.download && musicaAtual.download.startsWith('/') && !musicaAtual.download.startsWith('//') ? API_URL + musicaAtual.download : musicaAtual.download);
     audio.load();
     audio.play().catch(() => {
         setOuvirBtnEstado('padrao');
@@ -17513,6 +17513,8 @@ function toggleMaisMenu(force) {
 }
 
 function mudarSecao(section) {
+    if (section === 'watch' || section === 'imagem') { section = 'feed'; }
+
     if (section === 'criar') {
         abrirModalCriarPost();
         return;
@@ -17533,7 +17535,7 @@ function mudarSecao(section) {
 
     // "Assistir" e "Música" agora vivem dentro do menu "Mais" do rodapé
     const maisBtn = document.getElementById('maisNavBtn');
-    if (maisBtn) maisBtn.classList.toggle('active', section === 'watch' || section === 'radio' || section === 'imagem' || section === 'perfil');
+    if (maisBtn) maisBtn.classList.toggle('active', section === 'radio' || section === 'perfil');
     document.querySelectorAll('.bottom-nav-mais-item').forEach(i => {
         i.classList.toggle('active', i.dataset.section === section);
     });
@@ -18312,10 +18314,16 @@ let rankingAoVivoAbaAtual = 'ativos';
 let rankingAoVivoCache = null;
 
 function abrirRankingAoVivo() {
+    try { if (typeof event !== 'undefined' && event && event.preventDefault) event.preventDefault(); } catch(e) {}
     const modal = document.getElementById('rankingAoVivoModal');
-    if (!modal) return;
+    if (!modal) {
+        console.warn('rankingAoVivoModal não encontrado');
+        return false;
+    }
     modal.style.display = 'flex';
+    modal.style.zIndex = '9999';
     carregarRankingAoVivo();
+    return false;
 }
 
 function trocarAbaRankingAoVivo(categoria) {
@@ -18947,17 +18955,9 @@ window.addEventListener('beforeunload', () => {
         mudarSecao('configurar'); // abre a aba de configuração de verdade
         window.history.replaceState({}, '', window.location.pathname); // limpa a URL
     }
-    if (params.get('secao') === 'imagem') {
-        mudarSecao('imagem'); // abre direto a aba de gerar imagem
-        window.history.replaceState({}, '', window.location.pathname); // limpa a URL
-    }
     if (params.get('secao') === 'radio') {
-        mudarSecao('radio'); // abre direto a aba de música
-        window.history.replaceState({}, '', window.location.pathname); // limpa a URL
-    }
-    if (params.get('secao') === 'watch') {
-        mudarSecao('watch'); // abre direto a aba de assistir/buscar filmes
-        window.history.replaceState({}, '', window.location.pathname); // limpa a URL
+        mudarSecao('radio');
+        window.history.replaceState({}, '', window.location.pathname);
     }
 });
 </script>
