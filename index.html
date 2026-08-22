@@ -6841,19 +6841,19 @@ body.light-mode .command-badge-mobile {
 
         
         <!-- 🔓 USUÁRIO LOGADO: SEM VÍDEO, APENAS BOTÕES -->
-        <div class="fz-intro-actions">
+        <div class="fz-intro-actions" id="introActionsLogado" style="display:none;">
             <a href="conectar.html" class="fz-btn fz-btn-accent"><i class="fas fa-handshake"></i> Conectar Robô</a>
             <button type="button" class="fz-btn fz-btn-accent" onclick="mudarSecao('configurar')"><i class="fas fa-cog"></i> Configurar Grupo</button>
-            <button type="button" class="fz-btn fz-btn-accent" type="button" onclick="event.preventDefault(); mudarSecao('comunidades'); abrirRankingAoVivo(); return false;" title="Ver ranking ao vivo dos grupos"><i class="fas fa-chart-line"></i> Rank Ao Vivo!</button>
+            <button type="button" class="fz-btn fz-btn-accent" onclick="event.preventDefault(); mudarSecao('comunidades'); abrirRankingAoVivo(); return false;" title="Ver ranking ao vivo dos grupos"><i class="fas fa-chart-line"></i> Rank Ao Vivo!</button>
         </div>
         
         <!-- 🔒 VISITANTE (NÃO LOGADO): VÍDEO + BOTÃO DE ENTRAR -->
-        <div class="fz-intro-actions">
+        <div class="fz-intro-actions" id="introActionsVisitante" style="display:none;">
             <a href="login.html" class="fz-btn fz-btn-accent"><i class="fas fa-right-to-bracket"></i> Entrar</a>
         </div>
 
-        <div class="fz-intro-video-wrap" id="introVideoWrap">
-            <video id="fabibot-video" class="fz-intro-video" preload="metadata" poster="flogo.jpg" controls playsinline>
+        <div class="fz-intro-video-wrap" id="introVideoWrap" style="display:none;">
+            <video id="fabibot-video" class="fz-intro-video" preload="metadata" poster="/flogo.jpg" controls playsinline>
                 <source src="fabibot.mp4" type="video/mp4">
                 Seu navegador não suporta vídeos HTML5.
             </video>
@@ -6862,6 +6862,42 @@ body.light-mode .command-badge-mobile {
         
     </div>
 </section>
+<script>
+(function atualizarIntroPorSessao() {
+  function aplicar() {
+    var logado = false;
+    try {
+      if (window.SERVER_SESSION && window.SERVER_SESSION.logado) logado = true;
+      if (!logado) {
+        var raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
+        if (raw) {
+          var j = JSON.parse(raw);
+          if (j && (j.logado || j.id || j.nome)) logado = true;
+        }
+      }
+    } catch (e) {}
+    var logadoEl = document.getElementById('introActionsLogado');
+    var visitEl = document.getElementById('introActionsVisitante');
+    var videoEl = document.getElementById('introVideoWrap');
+    if (logado) {
+      if (logadoEl) logadoEl.style.display = 'flex';
+      if (visitEl) visitEl.style.display = 'none';
+      if (videoEl) {
+        videoEl.style.display = 'none';
+        var v = document.getElementById('fabibot-video');
+        if (v) { try { v.pause(); v.removeAttribute('src'); v.load(); } catch(e) {} }
+      }
+    } else {
+      if (logadoEl) logadoEl.style.display = 'none';
+      if (visitEl) visitEl.style.display = 'flex';
+      if (videoEl) videoEl.style.display = 'block';
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', aplicar);
+  else aplicar();
+  window.atualizarIntroPorSessao = aplicar;
+})();
+</script>
 
 <style>
 .fz-intro-section { background: linear-gradient(180deg, #0A0A0A 0%, #111111 100%); padding: 48px 0 40px; border-bottom: 1px solid #222; }
@@ -18914,6 +18950,7 @@ mudarSecao = function(section) {
     carregarRelatosBugs()
     initRelatosChips()
     const sessaoRestaurada = restaurarSessao();
+    try { if (typeof atualizarIntroPorSessao === 'function') atualizarIntroPorSessao(); } catch(e) {}
     
     if (sessaoRestaurada) {
         console.log('✅ Sessão restaurada!');
