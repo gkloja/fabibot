@@ -1372,7 +1372,6 @@ body {
 -->
 
   
-  
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-whatsapp sticky-top">
         <div class="container-fluid px-3 px-md-4">
@@ -1585,125 +1584,7 @@ body {
     </div>
 </div>
       
-      <!-- ============================================= -->
-<!-- ============================================= -->
 
-      <!-- ========================================== -->
-
-
-        <!-- Informações -->
-<!-- Códigos Disponíveis -->
-    // Calcular tempo atual no servidor
-    const agora = Date.now();
-    const limiteSegundos = 70; // 1 minuto e 10 segundos
-    
-    // Filtrar códigos com menos de 70 segundos
-    const codigosValidos = sessoesComCodigo.filter(sessao => {
-        if (!sessao.pairing?.timestamp) return false;
-        
-        const dataCodigo = new Date(sessao.pairing.timestamp).getTime();
-        const diferencaMs = agora - dataCodigo;
-        const diferencaSegundos = Math.floor(diferencaMs / 1000);
-        
-        return diferencaSegundos < limiteSegundos;
-    });
-
-
-<div class="card-whatsapp">
-    <div class="card-header-whatsapp">
-        <h5 class="mb-0">
-            <i class="fas fa-copy"></i> Códigos para Conectar
-            <span class="badge bg-light text-dark ms-2">0/0</span>
-            <small class="ms-2 text-warning">
-                <i class="fas fa-clock"></i>Mostrando apenas códigos com menos de 1:10
-            </small>
-        </h5>
-    </div>
-    <div class="card-body">
-        <div class="row">
-                const sessionName = sessao.sessionName || sessao.status?.session;
-                const numero = sessao.config?.numero || sessionName;
-                const pairingCode = sessao.pairing?.code;
-                const dataCodigo = new Date(sessao.pairing.timestamp).getTime();
-                const diferencaMs = agora - dataCodigo;
-                const diferencaSegundos = Math.floor(diferencaMs / 1000);
-                const segundosRestantes = limiteSegundos - diferencaSegundos;
-            
-            <div class="col-md-6 mb-4">
-                <div class="card border">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="card-title mb-0">
-                                <i class="fab fa-whatsapp text-success"></i>
-                                
-                            </h6>
-                            <span class="badge ">
-                                <i class="fas fa-clock"></i> 0s
-                            </span>
-                        </div>
-                        
-                        <div class="code-display mb-3" 
-                             onclick="copiarCodigo('', '')">
-                            
-                        </div>
-                        
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
-                                <i class="fas fa-clock"></i>
-                                Gerado há 0 segundos
-                            </small>
-                            
-                            <button class="btn btn-sm btn-outline-success"
-                                    onclick="copiarCodigo('', '')">
-                                <i class="fas fa-copy"></i> Copiar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Mensagem quando não há códigos válidos (vai aparecer e depois mostrar o resto da página normalmente) -->
-<div class="card-whatsapp">
-    <div class="card-header-whatsapp">
-        <h5 class="mb-0">
-            <i class="fas fa-copy"></i> Códigos para Conectar
-        </h5>
-    </div>
-    <div class="card-body">
-        <div class="text-center py-4">
-            <i class="fas fa-clock fa-2x text-muted mb-3"></i>
-            <h5>Nenhum código válido no momento</h5>
-            <p class="text-muted mb-0">
-                Não há códigos gerados nos últimos 1 minuto e 10 segundos.
-            </p>
-        </div>
-    </div>
-</div>
-
-<!-- Quando não há sessoesComCodigo -->
-<div class="card-whatsapp">
-    <div class="card-header-whatsapp">
-        <h5 class="mb-0">
-            <i class="fas fa-copy"></i> Códigos para Conectar
-        </h5>
-    </div>
-    <div class="card-body">
-        <div class="empty-state">
-            <i class="fas fa-barcode fa-3x mb-3 text-muted"></i>
-            <h4>Nenhum código disponível</h4>
-            <p class="mb-4">
-                Crie uma nova sessão para gerar um código de conexão.
-            </p>
-            <button class="btn btn-whatsapp" data-bs-toggle="modal" data-bs-target="#novaSessaoModal">
-                <i class="fas fa-plus-circle"></i> Criar Primeira Sessão
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- O RESTANTE DA PÁGINA CONTINUA AQUI EXATAMENTE COMO ESTAVA -->
 <div class="card-whatsapp mb-4">
     <div class="card-header-whatsapp">
         <div class="d-flex justify-content-between align-items-center">
