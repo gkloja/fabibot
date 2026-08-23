@@ -138,7 +138,80 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- ========== OneSignal — Push Fabi Bot ========== -->
+<!-- ========== OneSignal — Push Fabi Bot (tema escuro) ========== -->
+<style>
+  /* Prompt de notificação no visual Fabi Bot */
+  #onesignal-slidedown-container {
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif !important;
+  }
+  #onesignal-slidedown-dialog,
+  #onesignal-popover-dialog {
+    background: linear-gradient(165deg, #11141c 0%, #0a0c12 100%) !important;
+    color: #e8eaed !important;
+    border: 1px solid rgba(37, 99, 235, 0.35) !important;
+    border-radius: 18px !important;
+    box-shadow:
+      0 24px 60px rgba(0, 0, 0, 0.55),
+      0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 0 40px rgba(37, 99, 235, 0.15) !important;
+    padding: 1.4em 1.5em 1.25em !important;
+    max-width: 420px !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-body-message,
+  #onesignal-popover-dialog .popover-body-message {
+    color: #e2e8f0 !important;
+    font-size: 14.5px !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-body-icon img,
+  #onesignal-popover-dialog .popover-body-icon img {
+    border-radius: 14px !important;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.4), 0 8px 20px rgba(0, 0, 0, 0.35) !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-button,
+  #onesignal-popover-dialog .popover-button {
+    border-radius: 999px !important;
+    font-weight: 700 !important;
+    font-size: 13.5px !important;
+    padding: 0.7em 1.4em !important;
+    letter-spacing: 0.01em !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-button.primary,
+  #onesignal-popover-dialog .popover-button.primary {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4) !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-button.primary:hover,
+  #onesignal-popover-dialog .popover-button.primary:hover {
+    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.5) !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-button.secondary,
+  #onesignal-popover-dialog .popover-button.secondary {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #94a3b8 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-button.secondary:hover,
+  #onesignal-popover-dialog .popover-button.secondary:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #e2e8f0 !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-footer,
+  #onesignal-popover-dialog .popover-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    margin-top: 1em !important;
+    padding-top: 1em !important;
+  }
+  .onesignal-bell-launcher-button {
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35) !important;
+  }
+</style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -146,6 +219,7 @@
     try {
       await OneSignal.init({
         appId: "6ba779b7-14c6-4a31-b955-0c8567a9039b",
+        safari_web_id: "web.onesignal.auto.5136aa20-d33c-4de6-8d7f-c3f8c4b264dc",
         serviceWorkerPath: "OneSignalSDKWorker.js",
         serviceWorkerParam: { scope: "/" },
         allowLocalhostAsSecureOrigin: true,
@@ -6991,7 +7065,7 @@ body.light-mode .command-badge-mobile {
 </div>
         <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
 <div class="right-nav">
-    <button class="icon-btn" id="musicPlayerBtn" onclick="mudarSecao('radio')" title="Abrir Música">
+    <button class="icon-btn" id="musicPlayerBtn" onclick="toggleMusicNavbar()" title="Música de fundo">
         <i class="fas fa-music" id="musicIcon"></i>
     </button>
     <button class="icon-btn" id="darkModeHeaderBtn" onclick="toggleDarkMode()" title="Alternar modo escuro/claro">
@@ -9135,45 +9209,22 @@ function fzRenderAdminRank(infoGrupo, registro) {
             <i class="fas fa-share-alt"></i>
         </button>
         <div class="music-search-header">
-            <i class="fas fa-compact-disc"></i>
-            <h2><i class="fas fa-music"></i> Buscar Música</h2>
-            <p>Digite o nome da música ou artista e escolha o que quer ouvir</p>
+            <i class="fas fa-headphones"></i>
+            <h2><i class="fas fa-music"></i> Música de fundo</h2>
+            <p>Escolha uma estação grátis e deixe tocando enquanto usa o site</p>
         </div>
         <div id="musicaStatusMsg" style="display:none; text-align:center; font-size:12px; margin-top:-8px; margin-bottom:12px; color:#10b981;"></div>
-        <div class="music-search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" id="musicSearchInput" placeholder="Ex: Anitta - Envolver" maxlength="80"
-                onkeydown="if(event.key === 'Enter'){ event.preventDefault(); buscarMusica(); }">
-            <button class="music-search-btn" id="musicSearchBtn" onclick="buscarMusica()">
-                <i class="fas fa-search"></i> Buscar
-            </button>
-        </div>
         <div id="musicSearchStatus" class="music-status"></div>
     </div>
 
-    <div id="musicResultCard" class="music-result-card" style="display:none;">
-        <img id="musicResultThumb" class="music-result-thumb" src="" alt="">
-        <div class="music-result-info">
-            <div id="musicResultTitle" class="music-result-title">—</div>
-            <div id="musicResultMeta" class="music-result-meta">—</div>
-            <div class="music-result-actions">
-                <button class="music-btn-ouvir" id="musicBtnOuvir" onclick="tocarResultadoAtual()">
-                    <i class="fas fa-play"></i> Ouvir agora
-                </button>
-                <a class="music-btn-baixar" id="musicBtnBaixar" href="#" download target="_blank" rel="noopener" onclick="mostrarDownloadCarregando(this)">
-                    <i class="fas fa-download"></i> Baixar
-                </a>
-            </div>
-        </div>
-    </div>
+    <h3 class="radio-section-title" style="margin-top: 8px;">
+        <i class="fas fa-broadcast-tower"></i> Estações ao vivo
+    </h3>
+    <div id="musicStationsList"></div>
 
-    <div id="musicHistorySection" style="display:none;">
-        <h3 class="radio-section-title">
-            <i class="fas fa-clock-rotate-left"></i> Pesquisas recentes
-            <span class="music-history-clear" onclick="limparHistoricoMusica()">limpar</span>
-        </h3>
-        <div id="musicHistoryList"></div>
-    </div>
+    <p style="font-size: 11px; color: var(--text2); text-align: center; margin-top: 16px; line-height: 1.5;">
+        Streams gratuitos via <strong>SomaFM</strong> · O botão 🎵 na barra fica verde e pulsa enquanto toca — toque nele para pausar.
+    </p>
 </div>
 
 <div class="music-player-bar" id="musicPlayerBar">
@@ -12831,79 +12882,62 @@ function mostrarRanking() {
         }
     });
 }
-// ==================== BUSCA E PLAYER DE MÚSICA (ABA NO MENU) ====================
+// ==================== MÚSICA DE FUNDO (estações grátis) ====================
 
-const MUSIC_HISTORY_KEY = 'fabibot_music_history';
-const MUSIC_GUEST_KEY = 'fabibot_music_guest_id';
-let musicaAtual = null;       // { title, thumb, download, source }
-let musicaBuscando = false;
-let isMusicPlaying = false;
-
-function getMusicUserId() {
-    // Identificador exigido pela API /play (usuário do site)
-    return 'site';
-}
-
-function getMusicUserNome() {
-    // Nome/identificador de quem está pedindo, exigido pela API (mín. 3 caracteres)
-    const nome = (typeof currentUser !== 'undefined' && currentUser && (currentUser.nome || currentUser.id)) || '';
-    if (nome && nome.length >= 3) return nome;
-
-    let guestId = localStorage.getItem(MUSIC_GUEST_KEY);
-    if (!guestId) {
-        guestId = 'visitante_' + Math.random().toString(36).substring(2, 9);
-        localStorage.setItem(MUSIC_GUEST_KEY, guestId);
+const ESTACOES_FUNDO = [
+    {
+        id: 'groovesalad',
+        nome: 'Groove Salad',
+        meta: 'Chill · downtempo · foco',
+        emoji: '🥗',
+        stream: 'https://ice1.somafm.com/groovesalad-128-mp3',
+        thumb: 'https://api.dicebear.com/7.x/shapes/svg?seed=groove&backgroundColor=10b981'
+    },
+    {
+        id: 'lush',
+        nome: 'Lush',
+        meta: 'Ambient com vocais suaves',
+        emoji: '🌙',
+        stream: 'https://ice1.somafm.com/lush-128-mp3',
+        thumb: 'https://api.dicebear.com/7.x/shapes/svg?seed=lush&backgroundColor=8b5cf6'
+    },
+    {
+        id: 'dronezone',
+        nome: 'Drone Zone',
+        meta: 'Ambient profundo · relax',
+        emoji: '🌌',
+        stream: 'https://ice1.somafm.com/dronezone-128-mp3',
+        thumb: 'https://api.dicebear.com/7.x/shapes/svg?seed=drone&backgroundColor=3b82f6'
+    },
+    {
+        id: 'beatblender',
+        nome: 'Beat Blender',
+        meta: 'Electronic · deep house',
+        emoji: '🎛️',
+        stream: 'https://ice1.somafm.com/beatblender-128-mp3',
+        thumb: 'https://api.dicebear.com/7.x/shapes/svg?seed=beat&backgroundColor=f59e0b'
+    },
+    {
+        id: 'indiepop',
+        nome: 'Indie Pop Rocks',
+        meta: 'Indie pop · animado',
+        emoji: '🎸',
+        stream: 'https://ice1.somafm.com/indiepop-128-mp3',
+        thumb: 'https://api.dicebear.com/7.x/shapes/svg?seed=indie&backgroundColor=ef4444'
+    },
+    {
+        id: 'space',
+        nome: 'Space Station',
+        meta: 'Space ambient · sci-fi',
+        emoji: '🚀',
+        stream: 'https://ice1.somafm.com/spacestation-128-mp3',
+        thumb: 'https://api.dicebear.com/7.x/shapes/svg?seed=space&backgroundColor=6366f1'
     }
-    return guestId;
-}
+];
 
-function getMusicHistory() {
-    try {
-        return JSON.parse(localStorage.getItem(MUSIC_HISTORY_KEY) || '[]');
-    } catch { return []; }
-}
-
-function salvarNoHistoricoMusica(item) {
-    let historico = getMusicHistory().filter(h => h.download !== item.download);
-    historico.unshift({ ...item, timestamp: Date.now() });
-    historico = historico.slice(0, 8);
-    localStorage.setItem(MUSIC_HISTORY_KEY, JSON.stringify(historico));
-    renderMusicHistory();
-}
-
-function limparHistoricoMusica() {
-    localStorage.removeItem(MUSIC_HISTORY_KEY);
-    renderMusicHistory();
-}
-
-function renderMusicHistory() {
-    const section = document.getElementById('musicHistorySection');
-    const container = document.getElementById('musicHistoryList');
-    if (!section || !container) return;
-
-    const historico = getMusicHistory();
-    if (historico.length === 0) { section.style.display = 'none'; return; }
-
-    section.style.display = 'block';
-    container.innerHTML = historico.map((item, idx) => `
-        <div class="radio-station-card" onclick='tocarHistoricoMusica(${idx})'>
-            <img class="radio-station-card-logo" src="${item.thumb || ''}" alt=""
-                 onerror="this.src='https://cdn-icons-png.flaticon.com/512/2965/2965874.png'">
-            <div class="radio-station-card-info">
-                <div class="radio-station-card-name">${item.title}</div>
-                <div class="radio-station-card-meta">${item.source?.video || 'Música'} · toque para ouvir de novo</div>
-            </div>
-            <i class="fas fa-play" style="color:#10b981;font-size:14px;"></i>
-        </div>
-    `).join('');
-}
-
-function tocarHistoricoMusica(idx) {
-    const item = getMusicHistory()[idx];
-    if (!item) return;
-    musicaAtual = item;
-    tocarResultadoAtual();
-}
+let musicaAtual = null;
+let isMusicPlaying = false;
+let estacaoAtivaId = null;
 
 function setMusicStatus(msg, tipo) {
     const el = document.getElementById('musicSearchStatus');
@@ -12915,125 +12949,96 @@ function setMusicStatus(msg, tipo) {
         : msg;
 }
 
-async function buscarMusica() {
-    if (musicaBuscando) return;
-    const input = document.getElementById('musicSearchInput');
-    const btn = document.getElementById('musicSearchBtn');
-    const query = (input?.value || '').trim();
+function updateMusicNavbarBtn(playing) {
+    const btn = document.getElementById('musicPlayerBtn');
+    if (!btn) return;
+    btn.classList.toggle('playing', !!playing);
+    btn.title = playing ? 'Pausar música de fundo' : 'Música de fundo';
+    const icon = document.getElementById('musicIcon') || btn.querySelector('i');
+    if (icon) {
+        icon.className = playing ? 'fas fa-pause' : 'fas fa-music';
+    }
+}
 
-    if (query.length < 2) {
-        setMusicStatus('⚠️ Digite o nome de uma música ou artista.', 'error');
+function toggleMusicNavbar() {
+    if (isMusicPlaying) {
+        const audio = document.getElementById('radioAudioPlayer');
+        if (audio) audio.pause();
         return;
     }
-
-    musicaBuscando = true;
-    if (btn) { btn.disabled = true; }
-    setMusicStatus('Procurando a melhor versão da sua música...', 'loading');
-    document.getElementById('musicResultCard').style.display = 'none';
-
-    try {
-        const resp = await fetch(API_URL + '/play', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                query,
-                userId: getMusicUserId(),
-                User: getMusicUserNome()
-            })
-        });
-
-        const data = await resp.json();
-
-        if (!resp.ok || !data.success) {
-            const mensagens = {
-                RATE_LIMIT_EXCEDIDO: '⏳ Você já tem uma busca em andamento. Aguarde ela terminar.',
-                QUERY_INVALIDA: '⚠️ Informe o nome da música corretamente.',
-                FALHA: data.message || '😕 Não encontramos essa música agora. Tente outro nome.'
-            };
-            setMusicStatus(mensagens[data.error] || data.message || '😕 Não foi possível buscar a música agora.', 'error');
-            return;
-        }
-
-        musicaAtual = {
-            title: data.title,
-            thumb: data.thumb,
-            download: data.download,
-            source: data.source
-        };
-
-        document.getElementById('musicResultThumb').src = data.thumb || '';
-        document.getElementById('musicResultTitle').textContent = data.title || 'Música encontrada';
-        document.getElementById('musicResultMeta').textContent =
-            `${data.source?.video || 'Busca'} → ${data.source?.audio || 'áudio'} · ${data.stats?.total_time || '?'}s`;
-        {
-            let dl = data.download || '';
-            if (dl && dl.startsWith('/') && !dl.startsWith('//')) dl = API_URL + dl;
-            document.getElementById('musicBtnBaixar').href = dl;
-        }
-        document.getElementById('musicResultCard').style.display = 'flex';
-        setOuvirBtnEstado('padrao');
-
-        setMusicStatus('✅ Música encontrada! Escolha "Ouvir agora" para tocar.', 'success');
-        salvarNoHistoricoMusica(musicaAtual);
-    } catch (err) {
-        console.error('Erro ao buscar música:', err);
-        setMusicStatus('❌ Falha de conexão. Tente novamente em instantes.', 'error');
-    } finally {
-        musicaBuscando = false;
-        if (btn) { btn.disabled = false; }
+    const audio = document.getElementById('radioAudioPlayer');
+    if (audio && audio.src && musicaAtual) {
+        audio.play().catch(() => mudarSecao('radio'));
+        return;
     }
+    mudarSecao('radio');
 }
 
-function mostrarDownloadCarregando(el) {
-    if (!el || el.classList.contains('loading') || !el.getAttribute('href') || el.getAttribute('href') === '#') return;
-    const htmlOriginal = el.innerHTML;
-    el.classList.add('loading');
-    el.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Baixando...';
-    setTimeout(() => {
-        el.classList.remove('loading');
-        el.innerHTML = htmlOriginal;
-    }, 4000);
+function renderEstacoesFundo() {
+    const list = document.getElementById('musicStationsList');
+    if (!list) return;
+    list.innerHTML = ESTACOES_FUNDO.map(st => {
+        const active = estacaoAtivaId === st.id && isMusicPlaying;
+        return `
+        <div class="radio-station-card ${active ? 'active' : ''}" onclick="tocarEstacaoFundo('${st.id}')">
+            <div class="radio-station-card-logo" style="display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(16,185,129,0.12);">${st.emoji}</div>
+            <div class="radio-station-card-info">
+                <div class="radio-station-card-name">${st.nome}</div>
+                <div class="radio-station-card-meta">${st.meta}</div>
+            </div>
+            <i class="fas ${active ? 'fa-pause' : 'fa-play'}" style="color:#10b981;font-size:14px;"></i>
+        </div>`;
+    }).join('');
 }
 
-function setOuvirBtnEstado(estado) {
-    // estado: 'carregando' | 'tocando' | 'padrao'
-    const btn = document.getElementById('musicBtnOuvir');
-    if (!btn) return;
-    btn.classList.remove('loading', 'playing');
-    btn.disabled = false;
-    if (estado === 'carregando') {
-        btn.disabled = true;
-        btn.classList.add('loading');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Carregando...';
-    } else if (estado === 'tocando') {
-        btn.classList.add('playing');
-        btn.innerHTML = '<i class="fas fa-pause"></i> Tocando';
-    } else {
-        btn.innerHTML = '<i class="fas fa-play"></i> Ouvir agora';
-    }
-}
-
-function tocarResultadoAtual() {
-    if (!musicaAtual) return;
+function tocarEstacaoFundo(id) {
+    const st = ESTACOES_FUNDO.find(e => e.id === id);
+    if (!st) return;
     const audio = document.getElementById('radioAudioPlayer');
     if (!audio) return;
 
-    setOuvirBtnEstado('carregando');
+    if (estacaoAtivaId === id && isMusicPlaying) {
+        audio.pause();
+        return;
+    }
 
-    audio.src = (musicaAtual.download && musicaAtual.download.startsWith('/') && !musicaAtual.download.startsWith('//') ? API_URL + musicaAtual.download : musicaAtual.download);
+    musicaAtual = st;
+    estacaoAtivaId = id;
+    setMusicStatus('Conectando à estação...', 'loading');
+
+    audio.src = st.stream;
     audio.load();
-    audio.play().catch(() => {
-        setOuvirBtnEstado('padrao');
+    audio.play().catch(err => {
+        console.warn('Play bloqueado ou falhou:', err);
+        setMusicStatus('⚠️ Toque de novo para iniciar o áudio (bloqueio do navegador).', 'error');
+        updateMusicNavbarBtn(false);
     });
 
-    document.getElementById('musicPlayerThumb').src = musicaAtual.thumb || '';
-    document.getElementById('musicPlayerTitle').textContent = musicaAtual.title || 'Tocando agora';
-    document.getElementById('musicPlayerBar').classList.add('show');
+    const thumb = document.getElementById('musicPlayerThumb');
+    if (thumb) {
+        thumb.src = st.thumb || '';
+        thumb.alt = st.nome;
+    }
+    const title = document.getElementById('musicPlayerTitle');
+    if (title) title.textContent = st.emoji + ' ' + st.nome;
+    document.getElementById('musicPlayerBar')?.classList.add('show');
+
+    const seek = document.getElementById('musicPlayerSeek');
+    if (seek) { seek.value = 0; seek.disabled = true; }
+    const timeEl = document.getElementById('musicPlayerTime');
+    if (timeEl) timeEl.textContent = 'AO VIVO';
+    const durEl = document.getElementById('musicPlayerDuration');
+    if (durEl) durEl.textContent = '∞';
+
+    renderEstacoesFundo();
 }
 
 function toggleMusicaPlay() {
     const audio = document.getElementById('radioAudioPlayer');
-    if (!audio || !audio.src) return;
+    if (!audio || !audio.src) {
+        mudarSecao('radio');
+        return;
+    }
     if (isMusicPlaying) {
         audio.pause();
     } else {
@@ -13050,9 +13055,8 @@ function changeMusicaVolume(v) {
     if (audio) audio.volume = v / 100;
 }
 
-function seekMusica(percent) {
-    const audio = document.getElementById('radioAudioPlayer');
-    if (audio && audio.duration) audio.currentTime = (percent / 100) * audio.duration;
+function seekMusica() {
+    // Streams ao vivo não suportam seek
 }
 
 function formatarTempoMusica(segundos) {
@@ -13066,50 +13070,46 @@ function initRadio() {
     const audio = document.getElementById('radioAudioPlayer');
     if (!audio) return;
 
-    audio.volume = 0.8;
+    audio.volume = 0.75;
 
     audio.addEventListener('waiting', () => {
-        // Ainda buffering/carregando os dados do áudio
-        setOuvirBtnEstado('carregando');
         const playBtn = document.getElementById('musicPlayerPlayBtn');
         if (playBtn) playBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        setMusicStatus('Buffering...', 'loading');
     });
     audio.addEventListener('playing', () => {
-        // Áudio realmente começou a tocar (dados suficientes já chegaram)
         isMusicPlaying = true;
-        setOuvirBtnEstado('tocando');
+        updateMusicNavbarBtn(true);
         const playBtn = document.getElementById('musicPlayerPlayBtn');
         if (playBtn) playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        setMusicStatus(musicaAtual ? `▶ Tocando: ${musicaAtual.nome}` : '▶ Tocando', 'success');
+        renderEstacoesFundo();
     });
     audio.addEventListener('pause', () => {
         isMusicPlaying = false;
+        updateMusicNavbarBtn(false);
         const playBtn = document.getElementById('musicPlayerPlayBtn');
         if (playBtn) playBtn.innerHTML = '<i class="fas fa-play"></i>';
-        setOuvirBtnEstado('padrao');
+        setMusicStatus(musicaAtual ? `Pausado · ${musicaAtual.nome}` : '', '');
+        renderEstacoesFundo();
     });
     audio.addEventListener('ended', () => {
-        setOuvirBtnEstado('padrao');
-    });
-    audio.addEventListener('timeupdate', () => {
-        if (!audio.duration) return;
-        const seek = document.getElementById('musicPlayerSeek');
-        if (seek) seek.value = (audio.currentTime / audio.duration) * 100;
-        const timeEl = document.getElementById('musicPlayerTime');
-        if (timeEl) timeEl.textContent = formatarTempoMusica(audio.currentTime);
-        const durEl = document.getElementById('musicPlayerDuration');
-        if (durEl) durEl.textContent = formatarTempoMusica(audio.duration);
+        isMusicPlaying = false;
+        updateMusicNavbarBtn(false);
+        renderEstacoesFundo();
     });
     audio.addEventListener('error', () => {
-        setOuvirBtnEstado('padrao');
+        isMusicPlaying = false;
+        updateMusicNavbarBtn(false);
         const playBtn = document.getElementById('musicPlayerPlayBtn');
         if (playBtn) playBtn.innerHTML = '<i class="fas fa-play"></i>';
-        setMusicStatus('⚠️ Não foi possível reproduzir esse link. Busque novamente.', 'error');
+        setMusicStatus('⚠️ Não foi possível conectar a esta estação. Tente outra.', 'error');
+        renderEstacoesFundo();
     });
 }
 
 function carregarRadioPage() {
-    renderMusicHistory();
-    document.getElementById('musicSearchInput')?.focus();
+    renderEstacoesFundo();
 }
 // ==================== SISTEMA DE ONLINE ====================
 
@@ -18397,7 +18397,7 @@ async function compartilharGerarImagem() {
 // Compartilha um link que já abre o site direto na aba "Música"
 async function compartilharMusica() {
     const link = `${window.location.origin}${window.location.pathname}?secao=radio`;
-    const textoCompartilhar = 'Ouça e baixe músicas de graça na Fabi Bot! 🎵';
+    const textoCompartilhar = 'Música de fundo grátis na Fabi Bot — lofi, chill e mais 🎵';
 
     if (navigator.share) {
         try {
