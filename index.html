@@ -163,6 +163,10 @@
         color: #F5F5F5;
         overflow-x: hidden;
         transition: background 0.3s ease, color 0.3s ease;
+        padding-bottom: 24px;
+    }
+    @media (max-width: 768px) {
+        body { padding-bottom: 88px; } /* espaço pro bottom-nav fixo */
     }
     
     /* ========== MODO CLARO (PADRÃO PRINCIPAL) ========== */
@@ -683,147 +687,204 @@
     .login-btn:hover { background: #111; color: white; }
 
     /* ========== FOOTER ========== */
-    /* ========== FOOTER PREMIUM ========== */
+    /* ========== FOOTER PREMIUM v2 ========== */
     .footer {
         position: relative;
-        margin-top: 64px;
-        padding: 0 0 28px;
+        margin-top: 72px;
+        padding: 0 0 36px;
         background:
-            radial-gradient(ellipse 70% 80% at 10% 0%, rgba(34,197,94,0.12), transparent 55%),
-            radial-gradient(ellipse 50% 60% at 90% 20%, rgba(37,99,235,0.10), transparent 50%),
-            linear-gradient(180deg, #07070a 0%, #0a0a0f 100%);
-        border-top: 1px solid transparent;
-        border-image: linear-gradient(90deg, transparent, rgba(34,197,94,0.45), rgba(37,99,235,0.35), transparent) 1;
+            radial-gradient(ellipse 90% 70% at 50% -30%, rgba(34,197,94,0.18), transparent 55%),
+            radial-gradient(ellipse 50% 50% at 0% 100%, rgba(37,99,235,0.12), transparent 45%),
+            radial-gradient(ellipse 40% 40% at 100% 80%, rgba(168,85,247,0.08), transparent 40%),
+            #050508;
+        border-top: none;
         overflow: hidden;
+        z-index: 5;
     }
     body.light-mode .footer {
         background:
-            radial-gradient(ellipse 70% 80% at 10% 0%, rgba(34,197,94,0.08), transparent 55%),
-            linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-        border-image: linear-gradient(90deg, transparent, #16a34a, #2563eb, transparent) 1;
+            radial-gradient(ellipse 90% 70% at 50% -30%, rgba(34,197,94,0.10), transparent 55%),
+            linear-gradient(180deg, #f8fafc, #eef2ff);
     }
-    .footer::before {
-        content: '';
-        position: absolute; inset: 0;
-        background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
-        background-size: 22px 22px;
-        pointer-events: none; opacity: 0.5;
+    .footer-glow-line {
+        height: 2px;
+        width: 100%;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            #22c55e 20%,
+            #3b82f6 50%,
+            #a855f7 80%,
+            transparent 100%);
+        opacity: 0.9;
+        box-shadow: 0 0 20px rgba(34,197,94,0.45);
     }
-    .footer-inner { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; padding: 40px 20px 0; }
-    .footer-top {
-        display: grid;
-        grid-template-columns: 1.4fr 1fr 1fr 1fr;
-        gap: 32px 28px;
-        padding-bottom: 32px;
+    .footer-inner {
+        position: relative; z-index: 1;
+        max-width: 1100px; margin: 0 auto;
+        padding: 48px 20px 0;
     }
-    @media (max-width: 900px) {
-        .footer-top { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
+    .footer-hero {
+        display: flex; flex-wrap: wrap; align-items: center;
+        justify-content: space-between; gap: 20px;
+        padding: 28px 24px;
+        margin-bottom: 36px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(34,197,94,0.12), rgba(37,99,235,0.08));
+        border: 1px solid rgba(34,197,94,0.22);
+        backdrop-filter: blur(8px);
     }
-    @media (max-width: 520px) {
-        .footer-top { grid-template-columns: 1fr; gap: 24px; }
+    body.light-mode .footer-hero {
+        background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(37,99,235,0.06));
+        border-color: rgba(22,163,74,0.25);
     }
-    .footer-brand { max-width: 320px; }
-    .footer-brand-logo {
-        display: flex; align-items: center; gap: 12px;
-        margin-bottom: 14px; text-decoration: none;
+    .footer-hero-text h3 {
+        font-size: 1.25rem; font-weight: 800; color: #fff;
+        margin-bottom: 6px; letter-spacing: -0.02em;
     }
-    .footer-brand-logo img {
-        width: 48px; height: 48px; border-radius: 14px;
-        object-fit: cover;
-        box-shadow: 0 0 0 2px rgba(34,197,94,0.35), 0 8px 24px rgba(0,0,0,0.35);
+    body.light-mode .footer-hero-text h3 { color: #0f172a; }
+    .footer-hero-text p {
+        font-size: 13px; color: #94a3b8; max-width: 420px; line-height: 1.5;
     }
-    .footer-brand-logo strong {
-        font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.02em;
-    }
-    body.light-mode .footer-brand-logo strong { color: #0f172a; }
-    .footer-brand-logo strong span { color: #22c55e; }
-    .footer-tagline {
-        font-size: 13px; line-height: 1.55; color: #94a3b8; margin-bottom: 18px;
-    }
-    body.light-mode .footer-tagline { color: #64748b; }
+    body.light-mode .footer-hero-text p { color: #64748b; }
+    .footer-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
     .footer-cta {
         display: inline-flex; align-items: center; gap: 8px;
         background: linear-gradient(135deg, #22c55e, #16a34a);
         color: #fff !important; text-decoration: none !important;
         font-weight: 700; font-size: 13px;
-        padding: 10px 16px; border-radius: 999px;
-        box-shadow: 0 8px 22px rgba(34,197,94,0.28);
-        transition: transform 0.2s, filter 0.2s;
+        padding: 12px 18px; border-radius: 999px;
+        box-shadow: 0 10px 28px rgba(34,197,94,0.35);
+        transition: 0.2s;
     }
-    .footer-cta:hover { transform: translateY(-1px); filter: brightness(1.06); }
+    .footer-cta:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    .footer-cta-ghost {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: transparent;
+        border: 1px solid rgba(255,255,255,0.15);
+        color: #e2e8f0 !important; text-decoration: none !important;
+        font-weight: 600; font-size: 13px;
+        padding: 11px 16px; border-radius: 999px;
+        transition: 0.2s;
+    }
+    body.light-mode .footer-cta-ghost {
+        border-color: #cbd5e1; color: #0f172a !important;
+    }
+    .footer-cta-ghost:hover { border-color: #22c55e; color: #22c55e !important; }
+    .footer-top {
+        display: grid;
+        grid-template-columns: 1.35fr repeat(3, 1fr);
+        gap: 28px;
+        padding-bottom: 36px;
+    }
+    @media (max-width: 900px) {
+        .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 520px) {
+        .footer-top { grid-template-columns: 1fr; }
+        .footer-hero { padding: 20px 16px; }
+    }
+    .footer-brand-logo {
+        display: flex; align-items: center; gap: 12px;
+        margin-bottom: 14px; text-decoration: none;
+    }
+    .footer-brand-logo img {
+        width: 52px; height: 52px; border-radius: 16px; object-fit: cover;
+        box-shadow: 0 0 0 2px rgba(34,197,94,0.4), 0 12px 28px rgba(0,0,0,0.4);
+    }
+    .footer-brand-logo strong {
+        font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.03em;
+    }
+    body.light-mode .footer-brand-logo strong { color: #0f172a; }
+    .footer-brand-logo strong span { color: #22c55e; }
+    .footer-tagline {
+        font-size: 13px; line-height: 1.6; color: #94a3b8; margin-bottom: 16px;
+    }
+    body.light-mode .footer-tagline { color: #64748b; }
     .footer-col h4 {
-        color: #e2e8f0; margin-bottom: 14px; font-size: 12px;
-        text-transform: uppercase; letter-spacing: 0.12em; font-weight: 800;
+        color: #f1f5f9; margin-bottom: 14px; font-size: 11px;
+        text-transform: uppercase; letter-spacing: 0.14em; font-weight: 800;
     }
     body.light-mode .footer-col h4 { color: #0f172a; }
     .footer-col a {
-        display: flex; align-items: center; gap: 8px;
-        color: #94a3b8; text-decoration: none; margin-bottom: 10px;
-        font-size: 13px; font-weight: 500; transition: 0.2s;
+        display: flex; align-items: center; gap: 9px;
+        color: #94a3b8; text-decoration: none; margin-bottom: 11px;
+        font-size: 13.5px; font-weight: 500; transition: 0.18s;
     }
     body.light-mode .footer-col a { color: #64748b; }
-    .footer-col a:hover { color: #22c55e; transform: translateX(3px); }
-    .footer-col a i { width: 16px; text-align: center; opacity: 0.85; font-size: 12px; }
-    .footer-social {
-        display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px;
-    }
+    .footer-col a:hover { color: #4ade80; transform: translateX(4px); }
+    .footer-col a i { width: 18px; text-align: center; font-size: 13px; opacity: 0.9; }
+    .footer-social { display: flex; gap: 10px; margin-top: 8px; }
     .footer-social a {
-        width: 40px; height: 40px; border-radius: 12px;
+        width: 42px; height: 42px; border-radius: 14px; margin: 0 !important;
         display: inline-flex; align-items: center; justify-content: center;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
-        color: #e2e8f0 !important; margin: 0 !important; transform: none !important;
-        transition: 0.2s;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #e2e8f0 !important; transform: none !important;
+        transition: 0.2s; font-size: 16px;
     }
     body.light-mode .footer-social a {
         background: #fff; border-color: #e2e8f0; color: #0f172a !important;
     }
     .footer-social a:hover {
-        background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.4);
-        color: #22c55e !important; transform: translateY(-2px) !important;
+        background: rgba(34,197,94,0.18) !important;
+        border-color: #22c55e !important;
+        color: #22c55e !important;
+        transform: translateY(-3px) !important;
     }
     .footer-bottom {
         display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-        gap: 12px; padding: 18px 0 8px;
-        border-top: 1px solid rgba(255,255,255,0.08);
+        gap: 14px; padding: 20px 0 10px;
+        border-top: 1px solid rgba(255,255,255,0.07);
         color: #64748b; font-size: 12px;
     }
-    body.light-mode .footer-bottom { border-top-color: #e2e8f0; color: #64748b; }
-    .footer-bottom-links { display: flex; flex-wrap: wrap; gap: 6px 14px; }
-    .footer-bottom-links a { color: #94a3b8; text-decoration: none; font-weight: 500; }
+    body.light-mode .footer-bottom { border-top-color: #e2e8f0; }
+    .footer-bottom-links { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+    .footer-bottom-links a {
+        color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 12px;
+    }
     body.light-mode .footer-bottom-links a { color: #64748b; }
     .footer-bottom-links a:hover { color: #22c55e; }
     .footer-badge {
         display: inline-flex; align-items: center; gap: 6px;
-        font-size: 11px; font-weight: 600; color: #86efac;
-        background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);
-        padding: 5px 10px; border-radius: 999px;
+        font-size: 11px; font-weight: 700; color: #86efac;
+        background: rgba(34,197,94,0.12);
+        border: 1px solid rgba(34,197,94,0.3);
+        padding: 5px 11px; border-radius: 999px;
     }
-    body.light-mode .footer-badge { color: #15803d; background: rgba(34,197,94,0.12); }
+    .footer-badge .dot {
+        width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
+        box-shadow: 0 0 8px #22c55e; animation: footerPulse 1.6s ease infinite;
+    }
+    @keyframes footerPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(0.85); }
+    }
+    body.light-mode .footer-badge { color: #15803d; }
 
-    /* Feed "Ver mais" */
+    /* Feed Ver mais */
     .feed-ver-mais-wrap {
-        text-align: center; padding: 8px 0 28px;
+        text-align: center; padding: 16px 0 32px;
+        clear: both;
     }
     .btn-feed-ver-mais {
         display: inline-flex; align-items: center; gap: 10px;
-        background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(34,197,94,0.12));
-        border: 1px solid rgba(37,99,235,0.35);
-        color: #e2e8f0; font-weight: 700; font-size: 14px;
-        padding: 12px 22px; border-radius: 999px; cursor: pointer;
+        background: linear-gradient(135deg, rgba(37,99,235,0.2), rgba(34,197,94,0.15));
+        border: 1px solid rgba(34,197,94,0.4);
+        color: #f1f5f9; font-weight: 700; font-size: 14px;
+        padding: 13px 24px; border-radius: 999px; cursor: pointer;
         font-family: inherit; transition: 0.2s;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
     }
     body.light-mode .btn-feed-ver-mais {
-        background: #eff6ff; border-color: #93c5fd; color: #1e3a8a;
+        background: #ecfdf5; border-color: #86efac; color: #14532d;
     }
     .btn-feed-ver-mais:hover {
-        transform: translateY(-1px);
+        transform: translateY(-2px);
         border-color: #22c55e;
-        box-shadow: 0 8px 24px rgba(34,197,94,0.15);
+        box-shadow: 0 12px 28px rgba(34,197,94,0.25);
     }
-    .btn-feed-ver-mais i { font-size: 13px; opacity: 0.9; }
 
-    /* ========== UTILITÁRIOS ========== */
+/* ========== UTILITÁRIOS ========== */
     .loading-spinner { text-align: center; padding: 40px 20px; }
     .spinner { width: 32px; height: 32px; border: 3px solid #333; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -7241,6 +7302,7 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
                 <div class="skeleton-post"><div style="display: flex;"><div class="skeleton-avatar"></div><div style="flex:1"><div class="skeleton-line"></div><div class="skeleton-line skeleton-line-50"></div></div></div><div class="skeleton-line" style="margin-top: 12px;"></div><div class="skeleton-line"></div></div>
                 <div class="skeleton-post"><div style="display: flex;"><div class="skeleton-avatar"></div><div style="flex:1"><div class="skeleton-line"></div><div class="skeleton-line skeleton-line-50"></div></div></div><div class="skeleton-line" style="margin-top: 12px;"></div><div class="skeleton-line"></div></div>
             </div>
+            <div id="feedLoadMore" class="feed-ver-mais-wrap" style="display:none;"></div>
         </main>
 
 <div class="vagas-container" id="vagasContainer" style="display: none;"></div>
@@ -9263,52 +9325,61 @@ function fzRenderAdminRank(infoGrupo, registro) {
         </div>
     </div>
 </div>
-<footer class="footer">
+<footer class="footer" id="siteFooter">
+    <div class="footer-glow-line"></div>
     <div class="footer-inner">
+        <div class="footer-hero">
+            <div class="footer-hero-text">
+                <h3>Pronto para automatizar seu grupo?</h3>
+                <p>Conecte a Fabi Bot em minutos e libere figurinhas, anti-spam, ranking e muito mais no WhatsApp.</p>
+            </div>
+            <div class="footer-hero-actions">
+                <a class="footer-cta" href="/conectar.html"><i class="fab fa-whatsapp"></i> Conectar WhatsApp</a>
+                <a class="footer-cta-ghost" href="/contato.html"><i class="fas fa-headset"></i> Falar com suporte</a>
+            </div>
+        </div>
         <div class="footer-top">
             <div class="footer-brand">
                 <a href="/" class="footer-brand-logo">
-                    <img src="/flogo.jpg" alt="Fabi Bot" width="48" height="48">
+                    <img src="/flogo.jpg" alt="Fabi Bot" width="52" height="52">
                     <strong>Fabi<span>Bot</span></strong>
                 </a>
                 <p class="footer-tagline">
                     Automação que conecta. Inteligência que transforma.
-                    Gerencie grupos de WhatsApp com figurinhas, anti-spam, ranking e muito mais.
+                    A central de comando para grupos de WhatsApp no Brasil.
                 </p>
-                <a class="footer-cta" href="/conectar.html">
-                    <i class="fab fa-whatsapp"></i> Conectar agora
-                </a>
+                <div class="footer-social">
+                    <a href="https://wa.me/5521989047220" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener" title="Canal" aria-label="Canal"><i class="fas fa-bullhorn"></i></a>
+                    <a href="mailto:contato@fabibot.com.br" title="E-mail" aria-label="E-mail"><i class="fas fa-envelope"></i></a>
+                </div>
             </div>
             <div class="footer-col">
                 <h4>Produto</h4>
-                <a href="/conectar.html"><i class="fas fa-plug"></i> Conectar WhatsApp</a>
-                <a href="#" onclick="mudarSecao('feed');return false;"><i class="fas fa-rss"></i> Feed da comunidade</a>
-                <a href="#" onclick="mudarSecao('comunidades');return false;"><i class="fas fa-users"></i> Comunidades</a>
-                <a href="#" onclick="mudarSecao('empregos');return false;"><i class="fas fa-briefcase"></i> Vagas</a>
+                <a href="/conectar.html"><i class="fas fa-plug"></i> Conectar</a>
+                <a href="#" onclick="mudarSecao('feed'); window.scrollTo({top:0,behavior:'smooth'}); return false;"><i class="fas fa-rss"></i> Feed</a>
+                <a href="#" onclick="mudarSecao('comunidades'); return false;"><i class="fas fa-users"></i> Comunidades</a>
+                <a href="#" onclick="mudarSecao('configurar'); return false;"><i class="fas fa-sliders"></i> Configurações</a>
             </div>
             <div class="footer-col">
                 <h4>Empresa</h4>
-                <a href="/sobre.html"><i class="fas fa-circle-info"></i> Sobre nós</a>
-                <a href="/contato.html"><i class="fas fa-headset"></i> Contato &amp; suporte</a>
-                <a href="https://wa.me/5521989047220" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-                <a href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener"><i class="fas fa-bullhorn"></i> Canal oficial</a>
+                <a href="/sobre.html"><i class="fas fa-circle-info"></i> Sobre</a>
+                <a href="/contato.html"><i class="fas fa-headset"></i> Contato</a>
+                <a href="https://wa.me/5521989047220" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Suporte</a>
+                <a href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener"><i class="fas fa-hashtag"></i> Canal</a>
             </div>
             <div class="footer-col">
                 <h4>Legal</h4>
                 <a href="/privacidade.html"><i class="fas fa-shield-halved"></i> Privacidade</a>
-                <a href="/termos.html"><i class="fas fa-file-contract"></i> Termos de uso</a>
-                <a href="#" onclick="showLegalModal('Denunciar');return false;"><i class="fas fa-flag"></i> Denunciar</a>
-                <div class="footer-social" style="margin-top:16px;">
-                    <a href="https://wa.me/5521989047220" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    <a href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener" title="Canal" aria-label="Canal"><i class="fas fa-hashtag"></i></a>
-                    <a href="mailto:contato@fabibot.com.br" title="E-mail" aria-label="E-mail"><i class="fas fa-envelope"></i></a>
-                </div>
+                <a href="/termos.html"><i class="fas fa-file-contract"></i> Termos</a>
+                <a href="/ads.txt"><i class="fas fa-ad"></i> ads.txt</a>
+                <a href="#" onclick="showLegalModal('Denunciar'); return false;"><i class="fas fa-flag"></i> Denunciar</a>
             </div>
         </div>
         <div class="footer-bottom">
-            <div>
-                <span>© 2026 Fabi Bot · Feito no Brasil</span>
-                <span class="footer-badge" style="margin-left:10px;"><i class="fas fa-bolt"></i> Online</span>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;">
+                <span>© 2026 Fabi Bot · Brasil</span>
+                <span class="footer-badge"><span class="dot"></span> Sistemas online</span>
             </div>
             <div class="footer-bottom-links">
                 <a href="/sobre.html">Sobre</a>
@@ -13262,6 +13333,9 @@ async function carregarFeedCompleto() {
     switch (currentSection) {
         case 'feed': await carregarPosts(); break;
         case 'empregos': await carregarVagas(); break;
+        case 'comunidades':
+            if (comunidadesContainer) { comunidadesContainer.style.display = 'block'; try { initComunidades(); } catch(e) {} }
+            break;
         case 'chat': await carregarChat(); break;
         case 'watch': carregarWatchRooms(); break;
         case 'radio': carregarRadioPage(); break;
@@ -13835,53 +13909,75 @@ function mostrarSeguindoDeOutroUsuario(usuarioId, usuarioNome) {
     window.FEED_PAGE_SIZE = 5;
     window.feedVisibleCount = window.FEED_PAGE_SIZE;
 
+    function getPostsAprovados() {
+        const list = posts || [];
+        const filtered = list.filter(p => {
+            const s = (p.status || p.estado || '').toString().toLowerCase();
+            // aceita approved / aprovado / vazio / pending publicado
+            if (!s || s === 'approved' || s === 'aprovado' || s === 'ok' || s === 'published' || s === 'publicado') return true;
+            if (s === 'rejected' || s === 'rejeitado' || s === 'denied' || s === 'banido') return false;
+            // se a API não usa status, mostra tudo
+            return true;
+        });
+        // se filtro zerar mas há posts, mostra todos
+        return filtered.length ? filtered : list;
+    }
+
     function renderizarFeed(reset) {
-    const container = document.getElementById('postsContainer');
-    if (!container) return;
-    const aprovados = (posts || []).filter(p => p.status === 'approved');
+        const container = document.getElementById('postsContainer');
+        const loadMore = document.getElementById('feedLoadMore');
+        if (!container) return;
 
-    if (reset) window.feedVisibleCount = window.FEED_PAGE_SIZE;
-    
-    if (aprovados.length === 0) {
-        container.innerHTML = `
-            <div class="login-prompt">
-                <i class="fas fa-newspaper"></i>
-                <h3>✨ Seja o primeiro a postar!</h3>
-                <p>Compartilhe oportunidades, notícias e conecte-se com a comunidade.</p>
-                ${!currentUser ? 
-                    '<button class="login-btn" onclick="loginGoogle()"><i class="fas fa-right-to-bracket"></i> Entrar para postar</button>' : 
-                    '<button class="btn-primary" onclick="abrirModalCriarPost()">Criar primeiro post</button>'}
-            </div>`;
-        return;
+        const aprovados = getPostsAprovados();
+        if (reset) window.feedVisibleCount = window.FEED_PAGE_SIZE || 5;
+        if (!window.feedVisibleCount) window.feedVisibleCount = window.FEED_PAGE_SIZE || 5;
+
+        if (aprovados.length === 0) {
+            container.innerHTML = `
+                <div class="login-prompt">
+                    <i class="fas fa-newspaper"></i>
+                    <h3>✨ Seja o primeiro a postar!</h3>
+                    <p>Compartilhe oportunidades, notícias e conecte-se com a comunidade.</p>
+                    ${!currentUser ?
+                        '<button class="login-btn" onclick="loginGoogle()"><i class="fas fa-right-to-bracket"></i> Entrar para postar</button>' :
+                        '<button class="btn-primary" onclick="abrirModalCriarPost()">Criar primeiro post</button>'}
+                </div>`;
+            if (loadMore) { loadMore.style.display = 'none'; loadMore.innerHTML = ''; }
+            return;
+        }
+
+        const visible = aprovados.slice(0, window.feedVisibleCount);
+        const restante = Math.max(0, aprovados.length - visible.length);
+        container.innerHTML = visible.map(post => renderPost(post)).join('');
+
+        if (loadMore) {
+            if (restante > 0) {
+                loadMore.style.display = 'block';
+                loadMore.innerHTML = `
+                    <button type="button" class="btn-feed-ver-mais" onclick="carregarMaisFeed()">
+                        <i class="fas fa-chevron-down"></i>
+                        Ver mais posts
+                        <span style="opacity:.8;font-weight:600;">(+${restante})</span>
+                    </button>`;
+            } else {
+                loadMore.style.display = 'none';
+                loadMore.innerHTML = '';
+            }
+        }
+
+        setTimeout(() => { try { verificarPostNaUrl(); } catch (e) {} }, 300);
+        try { atualizarBadgeVendas(); } catch (e) {}
     }
 
-    const visible = aprovados.slice(0, window.feedVisibleCount);
-    const restante = aprovados.length - visible.length;
-
-    let html = visible.map(post => renderPost(post)).join('');
-    if (restante > 0) {
-        html += `
-        <div class="feed-ver-mais-wrap">
-            <button type="button" class="btn-feed-ver-mais" onclick="carregarMaisFeed()">
-                <i class="fas fa-chevron-down"></i>
-                Ver mais posts
-                <span style="opacity:.75;font-weight:600;">(+${restante})</span>
-            </button>
-        </div>`;
+    function carregarMaisFeed() {
+        window.feedVisibleCount = (window.feedVisibleCount || window.FEED_PAGE_SIZE || 5) + (window.FEED_PAGE_SIZE || 5);
+        renderizarFeed(false);
+        // rola suavemente até o botão / novos posts
+        const loadMore = document.getElementById('feedLoadMore');
+        if (loadMore) loadMore.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-    container.innerHTML = html;
-    
-    setTimeout(() => { try { verificarPostNaUrl(); } catch(e) {} }, 300);
-    atualizarBadgeVendas();
-}
 
-function carregarMaisFeed() {
-    window.feedVisibleCount = (window.feedVisibleCount || window.FEED_PAGE_SIZE) + window.FEED_PAGE_SIZE;
-    renderizarFeed(false);
-}
-
-// ==================== ABA "VENDAS" (itens à venda) ====================
-function renderizarVendas() {
+    // function renderizarVendas() {
     const container = document.getElementById('vendasContainer');
     if (!container) return;
 
@@ -17895,6 +17991,11 @@ function mudarSecao(section) {
     if (imagemContainer) imagemContainer.style.display = 'none';
     if (configurarContainer) configurarContainer.style.display = 'none';
     if (comandosContainer) comandosContainer.style.display = 'none';
+    const comunidadesContainer = document.getElementById('comunidadesContainer');
+    if (comunidadesContainer) comunidadesContainer.style.display = 'none';
+    // Garante rodapé sempre visível
+    const siteFooter = document.getElementById('siteFooter');
+    if (siteFooter) siteFooter.style.display = 'block';
 
     // A intro (vídeo/botões) só aparece na seção Feed, para não repetir nas demais
     if (introSection) introSection.style.display = (section === 'feed') ? 'block' : 'none';
