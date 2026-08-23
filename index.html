@@ -13334,7 +13334,10 @@ async function carregarFeedCompleto() {
         case 'feed': await carregarPosts(); break;
         case 'empregos': await carregarVagas(); break;
         case 'comunidades':
-            if (comunidadesContainer) { comunidadesContainer.style.display = 'block'; try { initComunidades(); } catch(e) {} }
+            {
+                const c = document.getElementById('comunidadesContainer');
+                if (c) { c.style.display = 'block'; try { initComunidades(); } catch(e) {} }
+            }
             break;
         case 'chat': await carregarChat(); break;
         case 'watch': carregarWatchRooms(); break;
@@ -13977,7 +13980,7 @@ function mostrarSeguindoDeOutroUsuario(usuarioId, usuarioNome) {
         if (loadMore) loadMore.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    // function renderizarVendas() {
+    function renderizarVendas() {
     const container = document.getElementById('vendasContainer');
     if (!container) return;
 
@@ -18038,6 +18041,12 @@ function mudarSecao(section) {
             if (vendasContainer) {
                 vendasContainer.style.display = 'block';
                 renderizarVendas();
+            }
+            break;
+        case 'comunidades':
+            if (comunidadesContainer) {
+                comunidadesContainer.style.display = 'block';
+                try { initComunidades(); } catch (e) { console.warn(e); }
             }
             break;
         case 'chat': 
