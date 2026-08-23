@@ -7429,11 +7429,17 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
                 <i class="fas fa-magnifying-glass"></i>
                 <input id="searchInput" type="text" placeholder="Buscar grupo por nome ou ID..." oninput="cfgPainelAtualizarLista()">
             </div>
+            <div class="fz-cfg-filter-bar" id="cfgFilterBar">
+                <button type="button" class="fz-cfg-filter-btn active" data-filter="todos" onclick="cfgPainelSetFilter('todos')">Todos os grupos</button>
+                <button type="button" class="fz-cfg-filter-btn" data-filter="admin" onclick="cfgPainelSetFilter('admin')">Onde sou admin</button>
+                <span class="fz-cfg-filter-count" id="cfgFilterCount"></span>
+            </div>
 
             <div id="cyberGrid" class="fz-cfg-grid"></div>
 
             <div class="fz-cfg-pagination">
                 <button id="btnPrev" onclick="cfgPainelMudaPagina(-1)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <span id="cfgPageInfo" style="align-self:center;color:#94a3b8;font-size:12px;font-weight:600;"></span>
                 <button id="btnNext" onclick="cfgPainelMudaPagina(1)">Próximo <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
@@ -7524,6 +7530,21 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
 .fz-cfg-search input { width: 100%; padding: 12px 14px 12px 42px; background: #0e0e0e; border: 1px solid #333; border-radius: 14px; color: #fff; outline: none; font-size: 14px; }
 .fz-cfg-search input:focus { border-color: var(--primary); box-shadow: 0 0 12px rgba(37,99,235,0.4); }
 .fz-cfg-search i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--primary-light); opacity: .8; }
+.fz-cfg-filter-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; }
+.fz-cfg-filter-btn {
+  border: 1px solid #333; background: #0e0e0e; color: #a0a0a0;
+  padding: 8px 14px; border-radius: 999px; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: .2s;
+}
+.fz-cfg-filter-btn:hover { border-color: var(--primary); color: #fff; }
+.fz-cfg-filter-btn.active {
+  background: linear-gradient(135deg, rgba(37,99,235,.25), rgba(34,197,94,.15));
+  border-color: var(--primary); color: #fff;
+}
+.fz-cfg-filter-count { margin-left: auto; font-size: 12px; color: #94a3b8; font-weight: 600; }
+body.light-mode .fz-cfg-filter-btn { background: #f3f4f6; border-color: #e5e7eb; color: #4b5563; }
+body.light-mode .fz-cfg-filter-btn.active { color: #111827; border-color: #2563eb; }
+
 .fz-cfg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 16px; min-height: 140px; }
 .fz-cfg-grid .cyber-card { position: relative; background: rgba(255,255,255,0.04); border: 1px solid #2a2a2a; border-radius: 16px; padding: 16px; color: #fff; cursor: pointer; transition: transform .2s ease, border-color .2s ease; overflow: hidden; }
 .fz-cfg-grid .cyber-card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: 0 0 18px rgba(37,99,235,0.35); }
@@ -7606,10 +7627,12 @@ body.light-mode .fz-cfg-not-admin { color: #6b7280; }
 
 <script>
 // ==================== PAINEL "CONFIGURAR GRUPO" (portado do index.html) ====================
-let cfgGruposOriginais = [];
+let cfgGruposOriginais = [];   // lista completa da API
+let cfgGruposAdmin = [];       // só onde o número logado é admin
 let cfgGruposFiltrados = [];
 let cfgPaginaAtual = 1;
-const cfgPorPagina = 8;
+let cfgFiltroAtual = 'todos';  // 'todos' | 'admin'
+const cfgPorPagina = 12;
 let cfgPainelJaInicializado = false;
 
 
@@ -7875,25 +7898,27 @@ async function cfgPainelCarregarGrupos() {
         let lista = await resp.json();
         if (!Array.isArray(lista)) lista = [];
 
-        // Se logado, prioriza grupos em que o número do usuário é admin
+        // Guarda TODOS os grupos; filtro "Onde sou admin" é opcional na UI
+        cfgGruposOriginais = lista;
         const numUser = (typeof cfgObterNumeroUsuario === "function" ? cfgObterNumeroUsuario() : "") || String(
             (window.SERVER_SESSION && window.SERVER_SESSION.numero) ||
             (typeof currentUser !== "undefined" && currentUser && currentUser.numero) ||
             ""
         ).replace(/\D/g, "");
 
+        cfgGruposAdmin = [];
         if (numUser) {
-            const meus = lista.filter(g => {
-                const admins = (g.administradores || g.admins || []).map(a => String(a).replace(/\D/g, ""));
+            cfgGruposAdmin = lista.filter(g => {
+                if (typeof cfgUsuarioEhAdminDoGrupo === "function") {
+                    return cfgUsuarioEhAdminDoGrupo(g, numUser);
+                }
+                const admins = [].concat(g.administradores || [], g.admins || []).map(a => String(a).replace(/\D/g, ""));
                 return admins.some(a => a && (a === numUser || a.endsWith(numUser) || numUser.endsWith(a)));
             });
-            // se encontrou grupos do user, mostra só eles; senão mostra todos (fallback)
-            cfgGruposOriginais = meus.length ? meus : lista;
-        } else {
-            cfgGruposOriginais = lista;
         }
 
-        cfgGruposFiltrados = cfgGruposOriginais;
+        // Mantém filtro escolhido (padrão: todos)
+        if (!cfgFiltroAtual) cfgFiltroAtual = 'todos';
         cfgPainelAtualizarLista();
     } catch (err) {
         console.error("Erro ao carregar grupos para configuração:", err);
@@ -7902,12 +7927,33 @@ async function cfgPainelCarregarGrupos() {
     }
 }
 
+function cfgPainelSetFilter(filtro) {
+    cfgFiltroAtual = (filtro === 'admin') ? 'admin' : 'todos';
+    document.querySelectorAll('.fz-cfg-filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === cfgFiltroAtual);
+    });
+    cfgPaginaAtual = 1;
+    cfgPainelAtualizarLista();
+}
+
 function cfgPainelAtualizarLista() {
     const termo = (document.getElementById("searchInput")?.value || '').toLowerCase();
-    cfgGruposFiltrados = cfgGruposOriginais.filter(g =>
-        g.nome?.toLowerCase().includes(termo) || String(g.grupoID).includes(termo)
+    const base = (cfgFiltroAtual === 'admin' && cfgGruposAdmin.length)
+        ? cfgGruposAdmin
+        : cfgGruposOriginais;
+
+    cfgGruposFiltrados = base.filter(g =>
+        (g.nome || '').toLowerCase().includes(termo) || String(g.grupoID || '').includes(termo)
     );
-    cfgPaginaAtual = 1;
+    const countEl = document.getElementById('cfgFilterCount');
+    if (countEl) {
+        const total = cfgGruposOriginais.length;
+        const adminN = cfgGruposAdmin.length;
+        countEl.textContent = cfgFiltroAtual === 'admin'
+            ? `${cfgGruposFiltrados.length} admin · ${total} no total`
+            : `${cfgGruposFiltrados.length} de ${total} grupos` + (adminN ? ` · ${adminN} onde sou admin` : '');
+    }
+    if (cfgPaginaAtual < 1) cfgPaginaAtual = 1;
     cfgPainelRenderizarPagina();
 }
 
@@ -7941,6 +7987,11 @@ function cfgPainelRenderizarPagina() {
     const btnNext = document.getElementById("btnNext");
     if (btnPrev) btnPrev.disabled = cfgPaginaAtual === 1;
     if (btnNext) btnNext.disabled = inicio + cfgPorPagina >= cfgGruposFiltrados.length;
+    const pageInfo = document.getElementById('cfgPageInfo');
+    if (pageInfo) {
+        const totalPag = Math.max(1, Math.ceil(cfgGruposFiltrados.length / cfgPorPagina));
+        pageInfo.textContent = `Página ${cfgPaginaAtual} de ${totalPag}`;
+    }
 }
 
 function cfgPainelMudaPagina(dir) {
