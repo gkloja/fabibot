@@ -1,0 +1,40 @@
+============================================================
+  ATUALIZAR SCHEMA no conectar.html (copie e substitua)
+============================================================
+
+No arquivo conectar.html, localize o bloco JSON-LD do tipo
+SoftwareApplication e SUBSTITUA pelo texto abaixo.
+
+Também atualize title/description se quiser alinhar:
+
+<title>Conectar Fabi Bot no WhatsApp – Figurinhas, Downloads e Grupos</title>
+<meta name="description" content="Conecte a Fabi Bot ao WhatsApp em minutos. Figurinhas, downloads, jogos, IA e proteção de grupo. Pareamento rápido e seguro.">
+
+--- SCHEMA ---
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Fabi Bot",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "WhatsApp, Web",
+  "url": "https://fabibot.vercel.app",
+  "image": "https://fabibot.vercel.app/og-image.jpg",
+  "description": "Bot de WhatsApp para criar figurinhas, baixar músicas e vídeos, jogar, usar IA e gerenciar grupos com anti-spam.",
+  "featureList": [
+    "Criação de figurinhas",
+    "Download de músicas e vídeos",
+    "Jogos e brincadeiras",
+    "Inteligência Artificial",
+    "Anti-spam e moderação"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock"
+  },
+  "inLanguage": "pt-BR"
+}
+</script>

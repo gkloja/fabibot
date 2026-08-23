@@ -1,8 +1,15 @@
 User-agent: *
 Allow: /
 Allow: /index.html
+Allow: /figurinhas.html
+Allow: /downloads.html
+Allow: /comandos.html
 Allow: /conectar.html
 Allow: /login.html
+Allow: /sobre.html
+Allow: /contato.html
+Allow: /privacidade.html
+Allow: /termos.html
 
 Disallow: /api/
 Disallow: /connect.js

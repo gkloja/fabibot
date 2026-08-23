@@ -2,20 +2,30 @@
   "rewrites": [
     { "source": "/conectar", "destination": "/conectar.html" },
     { "source": "/login", "destination": "/login.html" },
-    { "source": "/index", "destination": "/index.html" }
+    { "source": "/index", "destination": "/index.html" },
+    { "source": "/figurinhas", "destination": "/figurinhas.html" },
+    { "source": "/downloads", "destination": "/downloads.html" },
+    { "source": "/comandos", "destination": "/comandos.html" }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
       ]
     },
     {
-      "source": "/(flogo.jpg|icon-192.png|icon-512.png|apple-touch-icon.png)",
+      "source": "/(flogo.jpg|flogo.webp|og-image.jpg|icon-192.png|icon-512.png|apple-touch-icon.png|favicon-16x16.png|favicon-32x32.png)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(figurinhas.html|downloads.html|comandos.html)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
       ]
     }
   ]
