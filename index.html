@@ -6852,6 +6852,71 @@ body.light-mode .command-badge-mobile {
 /* hide-watch-imagem */
 #watchPageContainer, [data-section="watch"], #imagemContainer, #imagemPageContainer { display: none !important; }
 </style>
+
+<!-- ========== ONESIGNAL PUSH (Fabi Bot) ========== -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  window.FABIBOT_ONESIGNAL_APP_ID = "6ba779b7-14c6-4a31-b955-0c8567a9039b";
+  OneSignalDeferred.push(async function (OneSignal) {
+    try {
+      await OneSignal.init({
+        appId: window.FABIBOT_ONESIGNAL_APP_ID,
+        serviceWorkerPath: "/OneSignalSDKWorker.js",
+        serviceWorkerParam: { scope: "/" },
+        allowLocalhostAsSecureOrigin: true,
+        notifyButton: {
+          enable: true,
+          size: "medium",
+          position: "bottom-left",
+          showCredit: false,
+          text: {
+            "tip.state.unsubscribed": "Ativar notificações da Fabi Bot",
+            "tip.state.subscribed": "Notificações ativas ✓",
+            "tip.state.blocked": "Notificações bloqueadas",
+            "message.prenotify": "Clique para receber alertas",
+            "message.action.subscribed": "Pronto! Você será avisado.",
+            "message.action.resubscribed": "Notificações reativadas",
+            "message.action.unsubscribed": "Você não receberá mais alertas",
+            "dialog.main.title": "Notificações Fabi Bot",
+            "dialog.main.button.subscribe": "Ativar",
+            "dialog.main.button.unsubscribe": "Desativar",
+            "dialog.blocked.title": "Desbloqueie as notificações",
+            "dialog.blocked.message": "Permita notificações nas configurações do navegador para receber alertas de posts, mensagens e status das sessões."
+          }
+        },
+        promptOptions: {
+          slidedown: {
+            prompts: [{
+              type: "push",
+              autoPrompt: true,
+              text: {
+                actionMessage: "Quer receber alertas da Fabi Bot? Novos posts, mensagens e quando uma sessão ficar offline.",
+                acceptButton: "Sim, ativar",
+                cancelButton: "Agora não"
+              },
+              delay: { pageViews: 1, timeDelay: 8 }
+            }]
+          }
+        }
+      });
+
+      window.__oneSignalReady = true;
+      window.OneSignal = OneSignal;
+
+      // Vincula usuário logado (external_user_id) para push direcionado
+      try {
+        if (typeof window.fabiOneSignalSyncUser === "function") {
+          await window.fabiOneSignalSyncUser();
+        }
+      } catch (e) {}
+      console.log("✅ OneSignal Fabi Bot inicializado");
+    } catch (err) {
+      console.warn("OneSignal init:", err);
+    }
+  });
+</script>
+
 </head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
 <body>
@@ -19674,6 +19739,63 @@ window.addEventListener('beforeunload', () => {
     <small style="margin-left: 8px;">(solte para enviar)</small>
 </div>
 
+
+
+<script>
+/* ========== Fabi Bot × OneSignal helpers ========== */
+window.fabiOneSignalGetUserId = function () {
+  try {
+    if (typeof currentUser !== 'undefined' && currentUser && (currentUser.id || currentUser.numero)) {
+      return String(currentUser.id || currentUser.numero).replace(/\s/g, '');
+    }
+  } catch (e) {}
+  try {
+    const keys = ['fabi_session', 'neconecta_user_session'];
+    for (const k of keys) {
+      const raw = localStorage.getItem(k);
+      if (!raw) continue;
+      const s = JSON.parse(raw);
+      if (s && (s.id || s.numero)) return String(s.id || s.numero).replace(/\s/g, '');
+    }
+  } catch (e) {}
+  try {
+    if (window.SERVER_SESSION && (window.SERVER_SESSION.id || window.SERVER_SESSION.numero)) {
+      return String(window.SERVER_SESSION.id || window.SERVER_SESSION.numero).replace(/\s/g, '');
+    }
+  } catch (e) {}
+  return null;
+};
+
+window.fabiOneSignalSyncUser = async function () {
+  const OS = window.OneSignal;
+  if (!OS || !window.__oneSignalReady) return;
+  const uid = window.fabiOneSignalGetUserId();
+  try {
+    if (uid) {
+      await OS.login(String(uid));
+      console.log('🔔 OneSignal login:', uid);
+    } else {
+      await OS.logout();
+    }
+  } catch (e) {
+    console.warn('OneSignal login/logout:', e);
+  }
+};
+
+window.fabiOneSignalPedirPermissao = async function () {
+  try {
+    const OS = window.OneSignal;
+    if (!OS) return;
+    await OS.Notifications.requestPermission();
+  } catch (e) {}
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (typeof window.fabiOneSignalSyncUser === 'function') window.fabiOneSignalSyncUser();
+  }, 2500);
+});
+</script>
 
 </body>
 </html>
