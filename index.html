@@ -18008,8 +18008,6 @@ function mudarSecao(section) {
         siteFooter.style.setProperty('display', 'block', 'important');
         siteFooter.style.setProperty('visibility', 'visible', 'important');
     }
-    const sticky = document.getElementById('footerSticky');
-    if (sticky) sticky.style.display = 'block';
 
     // A intro (vídeo/botões) só aparece na seção Feed, para não repetir nas demais
     if (introSection) introSection.style.display = (section === 'feed') ? 'block' : 'none';
@@ -19534,70 +19532,6 @@ window.addEventListener('beforeunload', () => {
     <small style="margin-left: 8px;">(solte para enviar)</small>
 </div>
 
-
-<!-- Mini rodapé sempre visível -->
-<div id="footerSticky" class="footer-sticky-bar">
-  <div class="footer-sticky-inner">
-    <a href="/sobre.html">Sobre</a>
-    <a href="/contato.html">Contato</a>
-    <a href="/privacidade.html">Privacidade</a>
-    <a href="/termos.html">Termos</a>
-    <a href="/conectar.html" class="footer-sticky-cta"><i class="fab fa-whatsapp"></i> Conectar</a>
-  </div>
-</div>
-<style>
-.footer-sticky-bar {
-  position: fixed;
-  left: 0; right: 0;
-  bottom: 0;
-  z-index: 90;
-  background: rgba(8,10,14,0.92);
-  backdrop-filter: blur(14px);
-  border-top: 1px solid rgba(34,197,94,0.25);
-  padding: 8px 12px;
-  padding-bottom: max(8px, env(safe-area-inset-bottom));
-}
-body.light-mode .footer-sticky-bar {
-  background: rgba(255,255,255,0.95);
-  border-top-color: rgba(22,163,74,0.3);
-}
-.footer-sticky-inner {
-  max-width: 900px;
-  margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 6px 14px;
-  font-size: 12px;
-  font-weight: 600;
-}
-.footer-sticky-inner a {
-  color: #94a3b8;
-  text-decoration: none;
-  transition: color .15s;
-}
-body.light-mode .footer-sticky-inner a { color: #475569; }
-.footer-sticky-inner a:hover { color: #22c55e; }
-.footer-sticky-cta {
-  display: inline-flex !important;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg,#22c55e,#16a34a);
-  color: #fff !important;
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-weight: 700;
-}
-@media (max-width: 768px) {
-  /* sobe para ficar acima do bottom-nav */
-  .footer-sticky-bar { bottom: 62px; }
-  body { padding-bottom: 130px !important; }
-}
-@media (min-width: 769px) {
-  body { padding-bottom: 52px !important; }
-}
-</style>
 
 </body>
 </html>
