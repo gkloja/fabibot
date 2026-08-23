@@ -1429,7 +1429,75 @@ body {
 
 </style>
 
-<!-- ========== OneSignal — Push Fabi Bot ========== -->
+<!-- ========== OneSignal — Push Fabi Bot (tema + login usuário) ========== -->
+<style>
+  #onesignal-slidedown-container {
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif !important;
+  }
+  #onesignal-slidedown-dialog,
+  #onesignal-popover-dialog {
+    background: linear-gradient(165deg, #0f1f1a 0%, #0a1410 100%) !important;
+    color: #e8eaed !important;
+    border: 1px solid rgba(37, 211, 102, 0.35) !important;
+    border-radius: 18px !important;
+    box-shadow:
+      0 24px 60px rgba(0, 0, 0, 0.55),
+      0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 0 40px rgba(37, 211, 102, 0.12) !important;
+    padding: 1.4em 1.5em 1.25em !important;
+    max-width: 420px !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-body-message,
+  #onesignal-popover-dialog .popover-body-message {
+    color: #e2e8f0 !important;
+    font-size: 14.5px !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-body-icon img,
+  #onesignal-popover-dialog .popover-body-icon img {
+    border-radius: 14px !important;
+    box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.4), 0 8px 20px rgba(0, 0, 0, 0.35) !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-button,
+  #onesignal-popover-dialog .popover-button {
+    border-radius: 999px !important;
+    font-weight: 700 !important;
+    font-size: 13.5px !important;
+    padding: 0.7em 1.4em !important;
+    letter-spacing: 0.01em !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-button.primary,
+  #onesignal-popover-dialog .popover-button.primary {
+    background: linear-gradient(135deg, #25D366, #128C7E) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4) !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-button.primary:hover,
+  #onesignal-popover-dialog .popover-button.primary:hover {
+    background: linear-gradient(135deg, #2fe472, #25D366) !important;
+    transform: translateY(-1px) !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-button.secondary,
+  #onesignal-popover-dialog .popover-button.secondary {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #94a3b8 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-button.secondary:hover,
+  #onesignal-popover-dialog .popover-button.secondary:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #e2e8f0 !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-footer,
+  #onesignal-popover-dialog .popover-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    margin-top: 1em !important;
+    padding-top: 1em !important;
+  }
+</style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -1437,6 +1505,7 @@ body {
     try {
       await OneSignal.init({
         appId: "6ba779b7-14c6-4a31-b955-0c8567a9039b",
+        safari_web_id: "web.onesignal.auto.5136aa20-d33c-4de6-8d7f-c3f8c4b264dc",
         serviceWorkerPath: "OneSignalSDKWorker.js",
         serviceWorkerParam: { scope: "/" },
         allowLocalhostAsSecureOrigin: true,
@@ -1449,7 +1518,7 @@ body {
               type: "push",
               autoPrompt: true,
               text: {
-                actionMessage: "Ative avisos da Fabi Bot: sessão offline, feed e chat.",
+                actionMessage: "Ative avisos da Fabi Bot: sessão offline, aluguel e feed.",
                 acceptButton: "Sim, quero",
                 cancelButton: "Agora não"
               },
@@ -1459,10 +1528,24 @@ body {
         },
         welcomeNotification: {
           title: "Fabi Bot",
-          message: "Notificações ativas! Você será avisado se sua sessão cair."
+          message: "Notificações ativas! Você será avisado se sua sessão cair ou o aluguel estiver acabando."
         }
       });
       console.log("✅ OneSignal Fabi Bot (conectar) inicializado");
+      // Liga inscrição ao usuário logado (push individual de aluguel / sessão)
+      try {
+        let raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
+        if (raw) {
+          const s = JSON.parse(raw);
+          const ext = String((s && (s.id || s.numero || s.email)) || '').trim();
+          if (ext && OneSignal.login) {
+            await OneSignal.login(ext);
+            console.log('✅ OneSignal.login (conectar) →', ext);
+          }
+        }
+      } catch (e2) {
+        console.warn('OneSignal.login (conectar):', e2);
+      }
     } catch (e) {
       console.warn("OneSignal init:", e);
     }
