@@ -138,6 +138,46 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<!-- ========== OneSignal — Push Fabi Bot ========== -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function (OneSignal) {
+    try {
+      await OneSignal.init({
+        appId: "6ba779b7-14c6-4a31-b955-0c8567a9039b",
+        serviceWorkerPath: "OneSignalSDKWorker.js",
+        serviceWorkerParam: { scope: "/" },
+        allowLocalhostAsSecureOrigin: true,
+        notifyButton: {
+          enable: false
+        },
+        promptOptions: {
+          slidedown: {
+            prompts: [{
+              type: "push",
+              autoPrompt: true,
+              text: {
+                actionMessage: "Quer receber avisos da Fabi Bot? Feed, sessão offline e chat.",
+                acceptButton: "Sim, quero",
+                cancelButton: "Agora não"
+              },
+              delay: { pageViews: 1, timeDelay: 8 }
+            }]
+          }
+        },
+        welcomeNotification: {
+          title: "Fabi Bot",
+          message: "Notificações ativadas! Você será avisado sobre o feed e sua sessão."
+        }
+      });
+      console.log("✅ OneSignal Fabi Bot inicializado");
+    } catch (e) {
+      console.warn("OneSignal init:", e);
+    }
+  });
+</script>
+
 <!-- ===== SESSÃO DO SERVIDOR (login igual ao Index — sem Firebase/Google) ===== -->
 <!-- O backend deve renderizar esta página via EJS (ou injetar estas mesmas variáveis
      por outro meio), exatamente como já faz em index.html: username, foto, golds,
