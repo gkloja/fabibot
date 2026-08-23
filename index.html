@@ -7753,6 +7753,56 @@ function cfgRenderizarOpcoes(cfg0) {
   cfgPainelIniciarListeners();
 }
 
+
+function cfgObterNumeroUsuario() {
+    const candidates = [];
+    try {
+        if (window.SERVER_SESSION && window.SERVER_SESSION.numero) candidates.push(window.SERVER_SESSION.numero);
+    } catch (e) {}
+    try {
+        if (typeof currentUser !== 'undefined' && currentUser) {
+            if (currentUser.numero) candidates.push(currentUser.numero);
+            if (currentUser.id) candidates.push(currentUser.id);
+            if (currentUser.phone) candidates.push(currentUser.phone);
+        }
+    } catch (e) {}
+    try {
+        const keys = ['fabi_session', 'neconecta_user_session'];
+        for (const k of keys) {
+            const raw = localStorage.getItem(k);
+            if (!raw) continue;
+            const s = JSON.parse(raw);
+            if (s.numero) candidates.push(s.numero);
+            if (s.id) candidates.push(s.id);
+            if (s.phone) candidates.push(s.phone);
+            if (s.user && s.user.numero) candidates.push(s.user.numero);
+        }
+    } catch (e) {}
+    for (const c of candidates) {
+        const n = String(c || '').replace(/\D/g, '');
+        // WhatsApp JIDs sometimes like 5521...; aceita 10+ dígitos
+        if (n.length >= 10) return n;
+    }
+    return '';
+}
+
+function cfgUsuarioEhAdminDoGrupo(grupo, numUser) {
+    if (!grupo || !numUser) return false;
+    const lists = []
+        .concat(grupo.administradores || [])
+        .concat(grupo.admins || [])
+        .concat(grupo.admin || [])
+        .concat(grupo.participantsAdmin || []);
+    const admins = lists.map(a => {
+        if (a && typeof a === 'object') {
+            return String(a.id || a.numero || a.jid || a.user || '').replace(/\D/g, '');
+        }
+        return String(a || '').replace(/\D/g, '');
+    }).filter(Boolean);
+    return admins.some(a => a === numUser || a.endsWith(numUser) || numUser.endsWith(a));
+}
+
+
 async function cfgCarregarConfigGrupo(grupoID) {
   if (!grupoID) return;
   try {
@@ -7826,7 +7876,7 @@ async function cfgPainelCarregarGrupos() {
         if (!Array.isArray(lista)) lista = [];
 
         // Se logado, prioriza grupos em que o número do usuário é admin
-        const numUser = String(
+        const numUser = (typeof cfgObterNumeroUsuario === "function" ? cfgObterNumeroUsuario() : "") || String(
             (window.SERVER_SESSION && window.SERVER_SESSION.numero) ||
             (typeof currentUser !== "undefined" && currentUser && currentUser.numero) ||
             ""
@@ -7901,14 +7951,27 @@ function cfgPainelMudaPagina(dir) {
 function cfgPainelSelecionarGrupo(id, card) {
     localStorage.setItem("grupoSelecionadoAdmin", id);
     document.querySelectorAll(".fz-cfg-grid .cyber-card").forEach(c => c.classList.remove("selected"));
-    card.classList.add("selected");
-    if (typeof Swal !== 'undefined') {
-        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Carregando configurações do grupo...', showConfirmButton: false, timer: 1200 });
+    if (card) card.classList.add("selected");
+    const inputGrupoID = document.getElementById('grupoIDInput');
+    if (inputGrupoID) inputGrupoID.value = id;
+
+    // Feedback imediato
+    const areaAdmin = document.getElementById('areaAdmin');
+    const avisoNaoAdmin = document.getElementById('fzCfgNaoAdmin');
+    if (avisoNaoAdmin) {
+        avisoNaoAdmin.style.display = 'block';
+        avisoNaoAdmin.innerHTML = '<i class="fas fa-spinner fa-spin"></i><p>Verificando permissões e carregando configurações...</p>';
     }
+    if (areaAdmin) areaAdmin.style.display = 'none';
+
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Carregando configurações do grupo...', showConfirmButton: false, timer: 1400 });
+    }
+    // CRÍTICO: verificar admin + carregar toggles (antes só carregava config com painel escondido)
     setTimeout(() => {
-        if (typeof cfgCarregarConfigGrupo === 'function') cfgCarregarConfigGrupo(id);
-        else window.location.href = 'index.html?grupo=' + encodeURIComponent(id);
-    }, 200);
+        if (typeof cfgVerificarAdmin === 'function') cfgVerificarAdmin();
+        else if (typeof cfgCarregarConfigGrupo === 'function') cfgCarregarConfigGrupo(id);
+    }, 150);
 }
 // ==================== G1: SELEÇÃO DE ESTADOS ====================
 function g1AtualizarContador() {
@@ -8100,41 +8163,62 @@ let cfgIsAdmin = false;
 async function cfgVerificarAdmin() {
     const grupoSelecionado = cfgPainelObterGrupoSelecionado();
     const inputGrupoID = document.getElementById('grupoIDInput');
-    if (inputGrupoID) inputGrupoID.value = grupoSelecionado;
+    if (inputGrupoID) inputGrupoID.value = grupoSelecionado || '';
 
     const areaAdmin = document.getElementById('areaAdmin');
     const avisoNaoAdmin = document.getElementById('fzCfgNaoAdmin');
 
     if (!grupoSelecionado) {
         if (areaAdmin) areaAdmin.style.display = 'none';
-        if (avisoNaoAdmin) avisoNaoAdmin.style.display = 'block';
+        if (avisoNaoAdmin) {
+            avisoNaoAdmin.style.display = 'block';
+            avisoNaoAdmin.innerHTML = '<i class="fas fa-lock"></i><p>Selecione um grupo abaixo para carregar as configurações.</p>';
+        }
         return;
     }
 
     try {
-        let usuario = (window.SERVER_SESSION && window.SERVER_SESSION.numero) || '';
-        try {
-            const s = JSON.parse(localStorage.getItem('fabi_session') || '{}');
-            if (s.numero) usuario = s.numero;
-        } catch (e) {}
-        const numUser = String(usuario).replace(/\D/g, '');
+        const numUser = (typeof cfgObterNumeroUsuario === 'function' ? cfgObterNumeroUsuario() : '') || '';
         const resp = await fetch(API_URL + "/grupos.json");
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
         const dados = await resp.json();
+        const lista = Array.isArray(dados) ? dados : [];
 
-        const grupo = dados.find(g =>
-            String(g.groupId) === String(grupoSelecionado) ||
-            String(g.grupoID) === String(grupoSelecionado) ||
-            String(g.grupo) === String(grupoSelecionado) ||
-            String(g.id) === String(grupoSelecionado)
+        const grupo = lista.find(g =>
+            String(g.groupId || '') === String(grupoSelecionado) ||
+            String(g.grupoID || '') === String(grupoSelecionado) ||
+            String(g.grupo || '') === String(grupoSelecionado) ||
+            String(g.id || '') === String(grupoSelecionado)
         );
 
-        if (!grupo) {
-            cfgIsAdmin = false;
-        } else {
-            const admins = (grupo.administradores || grupo.admins || []).map(a => String(a).replace(/\D/g, ''));
+        cfgIsAdmin = false;
+        if (grupo && typeof cfgUsuarioEhAdminDoGrupo === 'function') {
+            cfgIsAdmin = cfgUsuarioEhAdminDoGrupo(grupo, numUser);
+        } else if (grupo) {
+            const admins = [].concat(grupo.administradores || [], grupo.admins || []).map(a => String(a).replace(/\D/g, ''));
             cfgIsAdmin = !!numUser && admins.some(a => a && (a === numUser || a.endsWith(numUser) || numUser.endsWith(a)));
         }
-        // Carrega toggles do grupo
+
+        // Se a lista do painel já foi filtrada como "meus grupos admin", confia na seleção
+        if (!cfgIsAdmin && Array.isArray(window.cfgGruposOriginais) && numUser) {
+            const inMyList = cfgGruposOriginais.some(g => String(g.grupoID) === String(grupoSelecionado));
+            if (inMyList && cfgGruposOriginais.length < (lista.length || 999999)) {
+                cfgIsAdmin = true;
+            }
+        }
+
+        // Sem número logado: orienta login
+        if (!numUser) {
+            cfgIsAdmin = false;
+            if (avisoNaoAdmin) {
+                avisoNaoAdmin.style.display = 'block';
+                avisoNaoAdmin.innerHTML = '<i class="fas fa-right-to-bracket"></i><p>Faça login na Fabi Bot para verificar se você é administrador deste grupo e editar as configurações.</p>';
+            }
+            if (areaAdmin) areaAdmin.style.display = 'none';
+            return;
+        }
+
+        // Sempre tenta carregar config se for admin (mostra toggles)
         if (cfgIsAdmin) {
             await cfgCarregarConfigGrupo(grupoSelecionado);
         }
@@ -8144,7 +8228,14 @@ async function cfgVerificarAdmin() {
     }
 
     if (areaAdmin) areaAdmin.style.display = cfgIsAdmin ? 'block' : 'none';
-    if (avisoNaoAdmin) avisoNaoAdmin.style.display = cfgIsAdmin ? 'none' : 'block';
+    if (avisoNaoAdmin) {
+        if (cfgIsAdmin) {
+            avisoNaoAdmin.style.display = 'none';
+        } else {
+            avisoNaoAdmin.style.display = 'block';
+            avisoNaoAdmin.innerHTML = '<i class="fas fa-lock"></i><p>Você precisa ser <strong>administrador</strong> deste grupo (no WhatsApp) e estar logado com o mesmo número na Fabi Bot para ver e alterar essas configurações.</p>';
+        }
+    }
 
     // 🔥 CARREGAR PAINEL DE ATIVIDADE SE FOR ADMIN
 // 🔥 CARREGAR PAINEL DE ATIVIDADE SE FOR ADMIN
