@@ -246,10 +246,56 @@
         }
       });
       console.log("✅ OneSignal Fabi Bot inicializado");
+      try {
+        if (typeof window.vincularOneSignalUsuario === 'function') {
+          window.vincularOneSignalUsuario();
+        } else {
+          let raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
+          if (raw) {
+            const s = JSON.parse(raw);
+            const ext = String((s && (s.id || s.numero || s.email)) || '').trim();
+            if (ext && OneSignal.login) await OneSignal.login(ext);
+          }
+        }
+      } catch (e2) {
+        console.warn('OneSignal.login:', e2);
+      }
     } catch (e) {
       console.warn("OneSignal init:", e);
     }
   });
+</script>
+
+<script>
+  // external_user_id = id OU número da conta (mesmo valor no push do servidor)
+  window.vincularOneSignalUsuario = async function vincularOneSignalUsuario(user) {
+    try {
+      const u = user || (typeof currentUser !== 'undefined' ? currentUser : null);
+      let s = null;
+      try {
+        s = JSON.parse(localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session') || 'null');
+      } catch (_) {}
+      const ext = String(
+        (u && (u.id || u.numero || u.email)) ||
+        (s && (s.id || s.numero || s.email)) ||
+        ''
+      ).trim();
+      if (!ext) return;
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      window.OneSignalDeferred.push(async function (OneSignal) {
+        try {
+          if (OneSignal.login) {
+            await OneSignal.login(ext);
+            console.log('✅ OneSignal.login →', ext);
+          }
+        } catch (e) {
+          console.warn('OneSignal.login falhou:', e);
+        }
+      });
+    } catch (e) {
+      console.warn('vincularOneSignalUsuario:', e);
+    }
+  };
 </script>
 
 <!-- ===== SESSÃO DO SERVIDOR (login igual ao Index — sem Firebase/Google) ===== -->
@@ -9721,6 +9767,7 @@ function restaurarSessao() {
             };
             
             atualizarPerfilUI();
+            try { if (typeof window.vincularOneSignalUsuario === 'function') window.vincularOneSignalUsuario(currentUser); } catch (e) {}
             
             // ✅ Forçar recarregamento dos posts para sincronizar seguidores do servidor
             setTimeout(async () => {
