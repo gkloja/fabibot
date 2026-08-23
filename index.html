@@ -683,16 +683,145 @@
     .login-btn:hover { background: #111; color: white; }
 
     /* ========== FOOTER ========== */
-    .footer { background: #0A0A0A; border-top: 1px solid #333; padding: 32px 0 16px; margin-top: 40px; }
-    body.light-mode .footer { background: #111; border-top: 2px solid #111; }
-    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px; margin-bottom: 24px; }
-    .footer-col h4 { color: white; margin-bottom: 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
-    body.light-mode .footer-col h4 { color: white; }
-    .footer-col a { display: block; color: #888; text-decoration: none; margin-bottom: 6px; font-size: 11px; transition: 0.2s; font-weight: 500; }
-    body.light-mode .footer-col a { color: #AAA; }
-    .footer-col a:hover { color: white; transform: translateX(4px); }
-    .footer-bottom { text-align: center; padding-top: 16px; border-top: 1px solid #333; color: #888; font-size: 10px; }
-    body.light-mode .footer-bottom { border-top-color: #444; color: #AAA; }
+    /* ========== FOOTER PREMIUM ========== */
+    .footer {
+        position: relative;
+        margin-top: 64px;
+        padding: 0 0 28px;
+        background:
+            radial-gradient(ellipse 70% 80% at 10% 0%, rgba(34,197,94,0.12), transparent 55%),
+            radial-gradient(ellipse 50% 60% at 90% 20%, rgba(37,99,235,0.10), transparent 50%),
+            linear-gradient(180deg, #07070a 0%, #0a0a0f 100%);
+        border-top: 1px solid transparent;
+        border-image: linear-gradient(90deg, transparent, rgba(34,197,94,0.45), rgba(37,99,235,0.35), transparent) 1;
+        overflow: hidden;
+    }
+    body.light-mode .footer {
+        background:
+            radial-gradient(ellipse 70% 80% at 10% 0%, rgba(34,197,94,0.08), transparent 55%),
+            linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        border-image: linear-gradient(90deg, transparent, #16a34a, #2563eb, transparent) 1;
+    }
+    .footer::before {
+        content: '';
+        position: absolute; inset: 0;
+        background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+        background-size: 22px 22px;
+        pointer-events: none; opacity: 0.5;
+    }
+    .footer-inner { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; padding: 40px 20px 0; }
+    .footer-top {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr 1fr;
+        gap: 32px 28px;
+        padding-bottom: 32px;
+    }
+    @media (max-width: 900px) {
+        .footer-top { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
+    }
+    @media (max-width: 520px) {
+        .footer-top { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .footer-brand { max-width: 320px; }
+    .footer-brand-logo {
+        display: flex; align-items: center; gap: 12px;
+        margin-bottom: 14px; text-decoration: none;
+    }
+    .footer-brand-logo img {
+        width: 48px; height: 48px; border-radius: 14px;
+        object-fit: cover;
+        box-shadow: 0 0 0 2px rgba(34,197,94,0.35), 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .footer-brand-logo strong {
+        font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.02em;
+    }
+    body.light-mode .footer-brand-logo strong { color: #0f172a; }
+    .footer-brand-logo strong span { color: #22c55e; }
+    .footer-tagline {
+        font-size: 13px; line-height: 1.55; color: #94a3b8; margin-bottom: 18px;
+    }
+    body.light-mode .footer-tagline { color: #64748b; }
+    .footer-cta {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: #fff !important; text-decoration: none !important;
+        font-weight: 700; font-size: 13px;
+        padding: 10px 16px; border-radius: 999px;
+        box-shadow: 0 8px 22px rgba(34,197,94,0.28);
+        transition: transform 0.2s, filter 0.2s;
+    }
+    .footer-cta:hover { transform: translateY(-1px); filter: brightness(1.06); }
+    .footer-col h4 {
+        color: #e2e8f0; margin-bottom: 14px; font-size: 12px;
+        text-transform: uppercase; letter-spacing: 0.12em; font-weight: 800;
+    }
+    body.light-mode .footer-col h4 { color: #0f172a; }
+    .footer-col a {
+        display: flex; align-items: center; gap: 8px;
+        color: #94a3b8; text-decoration: none; margin-bottom: 10px;
+        font-size: 13px; font-weight: 500; transition: 0.2s;
+    }
+    body.light-mode .footer-col a { color: #64748b; }
+    .footer-col a:hover { color: #22c55e; transform: translateX(3px); }
+    .footer-col a i { width: 16px; text-align: center; opacity: 0.85; font-size: 12px; }
+    .footer-social {
+        display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px;
+    }
+    .footer-social a {
+        width: 40px; height: 40px; border-radius: 12px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        color: #e2e8f0 !important; margin: 0 !important; transform: none !important;
+        transition: 0.2s;
+    }
+    body.light-mode .footer-social a {
+        background: #fff; border-color: #e2e8f0; color: #0f172a !important;
+    }
+    .footer-social a:hover {
+        background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.4);
+        color: #22c55e !important; transform: translateY(-2px) !important;
+    }
+    .footer-bottom {
+        display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+        gap: 12px; padding: 18px 0 8px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        color: #64748b; font-size: 12px;
+    }
+    body.light-mode .footer-bottom { border-top-color: #e2e8f0; color: #64748b; }
+    .footer-bottom-links { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+    .footer-bottom-links a { color: #94a3b8; text-decoration: none; font-weight: 500; }
+    body.light-mode .footer-bottom-links a { color: #64748b; }
+    .footer-bottom-links a:hover { color: #22c55e; }
+    .footer-badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 11px; font-weight: 600; color: #86efac;
+        background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);
+        padding: 5px 10px; border-radius: 999px;
+    }
+    body.light-mode .footer-badge { color: #15803d; background: rgba(34,197,94,0.12); }
+
+    /* Feed "Ver mais" */
+    .feed-ver-mais-wrap {
+        text-align: center; padding: 8px 0 28px;
+    }
+    .btn-feed-ver-mais {
+        display: inline-flex; align-items: center; gap: 10px;
+        background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(34,197,94,0.12));
+        border: 1px solid rgba(37,99,235,0.35);
+        color: #e2e8f0; font-weight: 700; font-size: 14px;
+        padding: 12px 22px; border-radius: 999px; cursor: pointer;
+        font-family: inherit; transition: 0.2s;
+    }
+    body.light-mode .btn-feed-ver-mais {
+        background: #eff6ff; border-color: #93c5fd; color: #1e3a8a;
+    }
+    .btn-feed-ver-mais:hover {
+        transform: translateY(-1px);
+        border-color: #22c55e;
+        box-shadow: 0 8px 24px rgba(34,197,94,0.15);
+    }
+    .btn-feed-ver-mais i { font-size: 13px; opacity: 0.9; }
 
     /* ========== UTILITÁRIOS ========== */
     .loading-spinner { text-align: center; padding: 40px 20px; }
@@ -9135,58 +9264,60 @@ function fzRenderAdminRank(infoGrupo, registro) {
     </div>
 </div>
 <footer class="footer">
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <h4>Institucional</h4>
-                <a href="/sobre.html">Sobre nós</a>
-                <a href="/conectar.html">Conectar WhatsApp</a>
-                <a href="/">Início</a>
+    <div class="footer-inner">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <a href="/" class="footer-brand-logo">
+                    <img src="/flogo.jpg" alt="Fabi Bot" width="48" height="48">
+                    <strong>Fabi<span>Bot</span></strong>
+                </a>
+                <p class="footer-tagline">
+                    Automação que conecta. Inteligência que transforma.
+                    Gerencie grupos de WhatsApp com figurinhas, anti-spam, ranking e muito mais.
+                </p>
+                <a class="footer-cta" href="/conectar.html">
+                    <i class="fab fa-whatsapp"></i> Conectar agora
+                </a>
             </div>
             <div class="footer-col">
-                <h4>Para você</h4>
-                <a href="#" onclick="mudarSecao('empregos')">Vagas</a>
-                <a href="#" onclick="mudarSecao('chat')">Chat</a>
-                <a href="#" onclick="mudarSecao('criar')">Criar post</a>
+                <h4>Produto</h4>
+                <a href="/conectar.html"><i class="fas fa-plug"></i> Conectar WhatsApp</a>
+                <a href="#" onclick="mudarSecao('feed');return false;"><i class="fas fa-rss"></i> Feed da comunidade</a>
+                <a href="#" onclick="mudarSecao('comunidades');return false;"><i class="fas fa-users"></i> Comunidades</a>
+                <a href="#" onclick="mudarSecao('empregos');return false;"><i class="fas fa-briefcase"></i> Vagas</a>
             </div>
             <div class="footer-col">
-                <h4>Suporte</h4>
-                <a href="/contato.html">Contato / FAQ</a>
-                <a href="https://wa.me/5521989047220" target="_blank" rel="noopener">WhatsApp suporte</a>
-                <a href="#" onclick="showLegalModal('Denunciar')">Denunciar</a>
+                <h4>Empresa</h4>
+                <a href="/sobre.html"><i class="fas fa-circle-info"></i> Sobre nós</a>
+                <a href="/contato.html"><i class="fas fa-headset"></i> Contato &amp; suporte</a>
+                <a href="https://wa.me/5521989047220" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                <a href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener"><i class="fas fa-bullhorn"></i> Canal oficial</a>
             </div>
             <div class="footer-col">
                 <h4>Legal</h4>
-                <a href="/termos.html">Termos de Uso</a>
-                <a href="/privacidade.html">Privacidade</a>
-            </div>
-            <div class="footer-col">
-                <h4>Criador</h4>
-                <p style="margin-bottom: 8px; font-size: 12px;">
-                    <i class="fas fa-code"></i> Desenvolvido por <strong>Cabral</strong>
-                </p>
-                <a href="https://wa.me/5521989047220" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 6px;">
-                    <i class="fab fa-whatsapp" style="color: #25D366;"></i> (21) 98904-7220
-                </a>
-            </div>
-            <div class="footer-col">
-                <h4>Siga a Fabi Bot</h4>
-                <a href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 6px;">
-                    <i class="fab fa-whatsapp" style="color: #25D366;"></i> Canal do WhatsApp
-                </a>
+                <a href="/privacidade.html"><i class="fas fa-shield-halved"></i> Privacidade</a>
+                <a href="/termos.html"><i class="fas fa-file-contract"></i> Termos de uso</a>
+                <a href="#" onclick="showLegalModal('Denunciar');return false;"><i class="fas fa-flag"></i> Denunciar</a>
+                <div class="footer-social" style="margin-top:16px;">
+                    <a href="https://wa.me/5521989047220" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener" title="Canal" aria-label="Canal"><i class="fas fa-hashtag"></i></a>
+                    <a href="mailto:contato@fabibot.com.br" title="E-mail" aria-label="E-mail"><i class="fas fa-envelope"></i></a>
+                </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2026 Fabi Bot — Automação e comunidades para WhatsApp</p>
-            <p style="margin-top:6px;">
-                <a href="/sobre.html" style="color:inherit;margin:0 6px;">Sobre</a> ·
-                <a href="/contato.html" style="color:inherit;margin:0 6px;">Contato</a> ·
-                <a href="/privacidade.html" style="color:inherit;margin:0 6px;">Privacidade</a> ·
-                <a href="/termos.html" style="color:inherit;margin:0 6px;">Termos</a>
-            </p>
+            <div>
+                <span>© 2026 Fabi Bot · Feito no Brasil</span>
+                <span class="footer-badge" style="margin-left:10px;"><i class="fas fa-bolt"></i> Online</span>
+            </div>
+            <div class="footer-bottom-links">
+                <a href="/sobre.html">Sobre</a>
+                <a href="/contato.html">Contato</a>
+                <a href="/privacidade.html">Privacidade</a>
+                <a href="/termos.html">Termos</a>
+            </div>
         </div>
     </div>
-
 </footer>
 
 <script>
@@ -13685,7 +13816,7 @@ function mostrarSeguindoDeOutroUsuario(usuarioId, usuarioNome) {
             const res = await fetch(`${API_URL}/cliente06/posts`);
             if (res.ok) {
                 posts = await res.json();
-                renderizarFeed();
+                renderizarFeed(true);
             } else {
                 throw new Error('Falha na rede');
             }
@@ -13700,9 +13831,16 @@ function mostrarSeguindoDeOutroUsuario(usuarioId, usuarioNome) {
         }
     }
 
-    function renderizarFeed() {
+    // Paginação do feed: mostra 5 e expande ao clicar
+    window.FEED_PAGE_SIZE = 5;
+    window.feedVisibleCount = window.FEED_PAGE_SIZE;
+
+    function renderizarFeed(reset) {
     const container = document.getElementById('postsContainer');
-    const aprovados = posts.filter(p => p.status === 'approved');
+    if (!container) return;
+    const aprovados = (posts || []).filter(p => p.status === 'approved');
+
+    if (reset) window.feedVisibleCount = window.FEED_PAGE_SIZE;
     
     if (aprovados.length === 0) {
         container.innerHTML = `
@@ -13716,16 +13854,30 @@ function mostrarSeguindoDeOutroUsuario(usuarioId, usuarioNome) {
             </div>`;
         return;
     }
-    
-    container.innerHTML = aprovados.map(post => renderPost(post)).join('');
-    
-    // ✅ VERIFICAR POST NA URL APÓS RENDERIZAR
-    setTimeout(() => {
-        verificarPostNaUrl();
-    }, 300);
 
-    // 🏷️ Manter o contador da aba "Vendas" sempre atualizado
+    const visible = aprovados.slice(0, window.feedVisibleCount);
+    const restante = aprovados.length - visible.length;
+
+    let html = visible.map(post => renderPost(post)).join('');
+    if (restante > 0) {
+        html += `
+        <div class="feed-ver-mais-wrap">
+            <button type="button" class="btn-feed-ver-mais" onclick="carregarMaisFeed()">
+                <i class="fas fa-chevron-down"></i>
+                Ver mais posts
+                <span style="opacity:.75;font-weight:600;">(+${restante})</span>
+            </button>
+        </div>`;
+    }
+    container.innerHTML = html;
+    
+    setTimeout(() => { try { verificarPostNaUrl(); } catch(e) {} }, 300);
     atualizarBadgeVendas();
+}
+
+function carregarMaisFeed() {
+    window.feedVisibleCount = (window.feedVisibleCount || window.FEED_PAGE_SIZE) + window.FEED_PAGE_SIZE;
+    renderizarFeed(false);
 }
 
 // ==================== ABA "VENDAS" (itens à venda) ====================
@@ -13975,7 +14127,7 @@ const response = await fetch(`${API_URL}/cliente06/posts/${postId}/excluir`, {
         
         if (response.ok) {
             posts = posts.filter(p => p.id !== postId);
-            renderizarFeed();
+            renderizarFeed(true);
             Swal.fire({
                 icon: 'success',
                 title: '✅ Excluído!',
