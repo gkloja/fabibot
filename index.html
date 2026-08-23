@@ -292,7 +292,7 @@
     }
 
     /* ========== CHAT LAYOUT ========== */
-    .chat-layout { display: flex; gap: 20px; margin: 20px 0 80px; min-height: calc(100vh - 200px); }
+    .chat-layout { display: flex; gap: 20px; margin: 20px 0 40px; min-height: 420px; }
     .chat-sidebar { width: 280px; background: #1A1A1A; border-radius: 20px; padding: 16px; border: 1px solid #333; position: sticky; top: 80px; height: fit-content; }
     body.light-mode .chat-sidebar { background: #FFFFFF; border: 2px solid #111827; }
     .chat-sidebar h3 { font-size: 13px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -309,7 +309,7 @@
     .online-status { font-size: 10px; color: var(--success); font-weight: 600; }
     .online-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; display: inline-block; margin-right: 4px; }
 
-    .chat-main { flex: 1; background: #1A1A1A; border-radius: 20px; border: 1px solid #333; display: flex; flex-direction: column; height: calc(100vh - 150px); overflow: hidden; }
+    .chat-main { flex: 1; background: #1A1A1A; border-radius: 20px; border: 1px solid #333; display: flex; flex-direction: column; min-height: 480px; max-height: calc(100vh - 160px); overflow: hidden; }
     body.light-mode .chat-main { background: #FFFFFF; border: 2px solid #111827; }
     .chat-header { padding: 16px 20px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
     body.light-mode .chat-header { border-bottom: 2px solid #111827; }
@@ -690,7 +690,10 @@
     /* ========== FOOTER PREMIUM v2 ========== */
     .footer {
         position: relative;
-        margin-top: 72px;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        margin-top: 48px;
         padding: 0 0 36px;
         background:
             radial-gradient(ellipse 90% 70% at 50% -30%, rgba(34,197,94,0.18), transparent 55%),
@@ -911,7 +914,7 @@
         .container { padding: 0; }
         .main-layout { flex-direction: column; gap: 0; margin-top: 0; }
         .feed-central { max-width: 100%; margin: 0; padding: 0 12px; }
-        .vagas-container, .noticias-container, .perfil-container { min-height: calc(100vh - 130px); padding: 16px; }
+        .vagas-container, .noticias-container, .perfil-container { min-height: 280px; padding: 16px; padding-bottom: 32px; }
     }
     @media (max-width: 768px) {
         .menu { display: none; position: absolute; top: 65px; left: 0; right: 0; background: #0A0A0A; flex-direction: column; padding: 16px; gap: 8px; border-radius: 0 0 20px 20px; border: 1px solid #333; }
@@ -17996,9 +17999,14 @@ function mudarSecao(section) {
     if (comandosContainer) comandosContainer.style.display = 'none';
     const comunidadesContainer = document.getElementById('comunidadesContainer');
     if (comunidadesContainer) comunidadesContainer.style.display = 'none';
-    // Garante rodapé sempre visível
+    // Garante rodapé sempre visível em qualquer seção
     const siteFooter = document.getElementById('siteFooter');
-    if (siteFooter) siteFooter.style.display = 'block';
+    if (siteFooter) {
+        siteFooter.style.setProperty('display', 'block', 'important');
+        siteFooter.style.setProperty('visibility', 'visible', 'important');
+    }
+    const sticky = document.getElementById('footerSticky');
+    if (sticky) sticky.style.display = 'block';
 
     // A intro (vídeo/botões) só aparece na seção Feed, para não repetir nas demais
     if (introSection) introSection.style.display = (section === 'feed') ? 'block' : 'none';
@@ -19522,6 +19530,71 @@ window.addEventListener('beforeunload', () => {
     Gravando... <span id="tempoGravacao">0:00</span>
     <small style="margin-left: 8px;">(solte para enviar)</small>
 </div>
+
+
+<!-- Mini rodapé sempre visível -->
+<div id="footerSticky" class="footer-sticky-bar">
+  <div class="footer-sticky-inner">
+    <a href="/sobre.html">Sobre</a>
+    <a href="/contato.html">Contato</a>
+    <a href="/privacidade.html">Privacidade</a>
+    <a href="/termos.html">Termos</a>
+    <a href="/conectar.html" class="footer-sticky-cta"><i class="fab fa-whatsapp"></i> Conectar</a>
+  </div>
+</div>
+<style>
+.footer-sticky-bar {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: 0;
+  z-index: 90;
+  background: rgba(8,10,14,0.92);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid rgba(34,197,94,0.25);
+  padding: 8px 12px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+body.light-mode .footer-sticky-bar {
+  background: rgba(255,255,255,0.95);
+  border-top-color: rgba(22,163,74,0.3);
+}
+.footer-sticky-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.footer-sticky-inner a {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color .15s;
+}
+body.light-mode .footer-sticky-inner a { color: #475569; }
+.footer-sticky-inner a:hover { color: #22c55e; }
+.footer-sticky-cta {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg,#22c55e,#16a34a);
+  color: #fff !important;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+@media (max-width: 768px) {
+  /* sobe para ficar acima do bottom-nav */
+  .footer-sticky-bar { bottom: 62px; }
+  body { padding-bottom: 130px !important; }
+}
+@media (min-width: 769px) {
+  body { padding-bottom: 52px !important; }
+}
+</style>
 
 </body>
 </html>
