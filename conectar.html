@@ -1619,6 +1619,158 @@ body {
     .fb-float-notify .fb-float-sub { display: none; }
 }
 
+
+/* ===== Planos — design premium ===== */
+#planosModal .modal-dialog { max-width: 1100px; }
+.fb-plans-modal {
+    background: linear-gradient(165deg, #0b1220 0%, #111827 45%, #0f172a 100%) !important;
+    border: 1px solid rgba(148,163,184,.18) !important;
+    border-radius: 22px !important;
+    overflow: hidden;
+    color: #e2e8f0;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55);
+}
+.fb-plans-header {
+    background: radial-gradient(120% 80% at 10% 0%, rgba(37,99,235,.25), transparent 55%),
+                linear-gradient(135deg, rgba(15,23,42,.9), rgba(30,27,75,.6));
+    padding: 22px 26px 12px !important;
+    align-items: flex-start !important;
+}
+.fb-plans-eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: #93c5fd; margin-bottom: 6px;
+}
+.fb-plans-header .modal-title {
+    font-size: 1.45rem; font-weight: 800; color: #fff; letter-spacing: -0.02em;
+}
+.fb-plans-sub { color: #94a3b8; font-size: 13.5px; margin-top: 6px; max-width: 520px; }
+.fb-plans-sub strong { color: #a5b4fc; }
+.fb-plans-body { padding: 8px 22px 22px !important; }
+.fb-plans-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+@media (max-width: 992px) {
+    .fb-plans-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 576px) {
+    .fb-plans-grid { grid-template-columns: 1fr; }
+    .fb-plans-header { padding: 18px 16px 8px !important; }
+    .fb-plans-body { padding: 6px 12px 16px !important; }
+}
+.fb-plan-card {
+    position: relative;
+    display: flex; flex-direction: column;
+    background: linear-gradient(160deg, rgba(30,41,59,.9), rgba(15,23,42,.95));
+    border: 1px solid rgba(148,163,184,.14);
+    border-radius: 18px;
+    padding: 18px 16px 16px;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    min-height: 100%;
+}
+.fb-plan-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(96,165,250,.4);
+    box-shadow: 0 16px 40px rgba(0,0,0,.35);
+}
+.fb-plan-featured {
+    border-color: rgba(99,102,241,.55);
+    background: linear-gradient(160deg, rgba(49,46,129,.55), rgba(15,23,42,.95));
+    box-shadow: 0 12px 36px rgba(79,70,229,.25);
+}
+.fb-plan-annual {
+    border-color: rgba(234,179,8,.4);
+    background: linear-gradient(160deg, rgba(69,26,3,.45), rgba(15,23,42,.95));
+}
+.fb-plan-ribbon {
+    position: absolute; top: 12px; right: 12px;
+    font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+    background: linear-gradient(135deg, #6366f1, #2563eb);
+    color: #fff; padding: 4px 9px; border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(37,99,235,.4);
+}
+.fb-ribbon-gold {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 4px 12px rgba(217,119,6,.45);
+}
+.fb-plan-top {
+    display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px;
+}
+.fb-plan-name {
+    font-size: 15px; font-weight: 800; color: #f8fafc; letter-spacing: -0.01em;
+}
+.fb-plan-time {
+    font-size: 12px; font-weight: 600; color: #94a3b8;
+}
+.fb-plan-price {
+    font-size: 2rem; font-weight: 800; color: #fff; line-height: 1;
+    letter-spacing: -0.03em; margin-bottom: 4px;
+}
+.fb-plan-price .fb-currency {
+    font-size: .95rem; font-weight: 700; color: #94a3b8; margin-right: 2px; vertical-align: super;
+}
+.fb-plan-price .fb-cents { font-size: 1rem; font-weight: 700; color: #cbd5e1; }
+.fb-plan-tagline {
+    font-size: 12px; color: #64748b; margin: 0 0 12px;
+}
+.fb-plan-feats {
+    list-style: none; padding: 0; margin: 0 0 16px;
+    flex: 1;
+}
+.fb-plan-feats li {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12.5px; color: #cbd5e1; padding: 5px 0;
+}
+.fb-plan-feats li i {
+    width: 18px; text-align: center; color: #34d399; font-size: 12px;
+}
+.fb-plan-cta {
+    width: 100%; border: none; border-radius: 12px;
+    padding: 11px 14px; font-weight: 800; font-size: 13px;
+    color: #fff; cursor: pointer;
+    background: linear-gradient(135deg, #334155, #1e293b);
+    border: 1px solid rgba(148,163,184,.2);
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.fb-plan-cta:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-color: transparent;
+    box-shadow: 0 8px 20px rgba(37,99,235,.35);
+    color: #fff;
+}
+.fb-plan-cta-glow {
+    background: linear-gradient(135deg, #6366f1, #2563eb);
+    border-color: transparent;
+    box-shadow: 0 8px 22px rgba(79,70,229,.4);
+}
+.fb-plan-cta-glow:hover {
+    background: linear-gradient(135deg, #818cf8, #3b82f6);
+}
+.fb-plan-cta-gold {
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    border-color: transparent;
+    color: #1c1917;
+    box-shadow: 0 8px 22px rgba(217,119,6,.35);
+}
+.fb-plan-cta-gold:hover {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    color: #1c1917;
+}
+.fb-plans-foot {
+    margin: 16px 0 0; text-align: center;
+    font-size: 12.5px; color: #64748b;
+}
+.fb-plans-foot strong { color: #a5b4fc; }
+.fb-plans-foot i { color: #60a5fa; margin-right: 4px; }
+
+/* Anual ocupa linha completa no desktop se 7 cards: 4+3 */
+.fb-plans-grid .fb-plan-card[data-plan="1ano"] {
+    /* opcional: não força span */
+}
+
 /* Hide leftovers */
 .float-private-btn, .private-modal, #privateModal, #openPrivateModal,
 [onclick*="abrirModalInfoPrivado"] { display: none !important; }
@@ -2431,37 +2583,140 @@ body {
 
 <!-- Modal de Planos -->
 <div class="modal fade" id="planosModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-crown"></i> Planos de Conexão
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content fb-plans-modal">
+            <div class="modal-header fb-plans-header border-0">
+                <div>
+                    <span class="fb-plans-eyebrow"><i class="fas fa-sparkles"></i> Assinatura Fabi Bot</span>
+                    <h5 class="modal-title mb-0">Escolha o tempo da sua conexão</h5>
+                    <p class="fb-plans-sub mb-0">Cada plano libera <strong>1 sessão WhatsApp</strong> — ideal para um número. Renove ou prolongue quando quiser.</p>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <!-- Plano 2 Dias -->
-                    <div class="col-md-3 mb-4">
-                        <div class="card text-center h-100 border-primary">
-                            <div class="card-header bg-primary text-white">
-                                <h5 class="mb-0">2 DIAS</h5>
-                            </div>
-                            <div class="card-body">
-                                <h2 class="card-title">R$ 4,00</h2>
-                                <ul class="list-unstyled">
-                                    <li><i class="fas fa-check text-success"></i> 1 Sessão WhatsApp</li>
-                                    <li><i class="fas fa-check text-success"></i> 48 horas de acesso</li>
-                                    <li><i class="fas fa-check text-success"></i> Suporte básico</li>
-                                </ul>
-                            </div>
-                            <div class="card-footer">
-                                <button class="btn btn-primary w-100" onclick="selecionarPlano('2dias', 4)">
-                                    Selecionar
-                                </button>
-                            </div>
+            <div class="modal-body fb-plans-body">
+                <div class="fb-plans-grid">
+                    <!-- 2 dias -->
+                    <article class="fb-plan-card" data-plan="2dias">
+                        <div class="fb-plan-top">
+                            <span class="fb-plan-name">Flash</span>
+                            <span class="fb-plan-time">2 dias</span>
                         </div>
-                    </div>
+                        <div class="fb-plan-price"><span class="fb-currency">R$</span>4<span class="fb-cents">,00</span></div>
+                        <p class="fb-plan-tagline">Teste rápido · 48h</p>
+                        <ul class="fb-plan-feats">
+                            <li><i class="fas fa-mobile-alt"></i> 1 sessão WhatsApp</li>
+                            <li><i class="fas fa-clock"></i> 48 horas de acesso</li>
+                            <li><i class="fas fa-headset"></i> Suporte básico</li>
+                        </ul>
+                        <button type="button" class="fb-plan-cta" onclick="selecionarPlano('2dias', 4)">Ativar plano</button>
+                    </article>
+
+                    <!-- Semanal -->
+                    <article class="fb-plan-card" data-plan="semanal">
+                        <div class="fb-plan-top">
+                            <span class="fb-plan-name">Semanal</span>
+                            <span class="fb-plan-time">7 dias</span>
+                        </div>
+                        <div class="fb-plan-price"><span class="fb-currency">R$</span>10<span class="fb-cents">,00</span></div>
+                        <p class="fb-plan-tagline">Uma semana completa</p>
+                        <ul class="fb-plan-feats">
+                            <li><i class="fas fa-mobile-alt"></i> 1 sessão WhatsApp</li>
+                            <li><i class="fas fa-calendar-week"></i> 7 dias de acesso</li>
+                            <li><i class="fas fa-headset"></i> Suporte prioritário</li>
+                        </ul>
+                        <button type="button" class="fb-plan-cta" onclick="selecionarPlano('semanal', 10)">Ativar plano</button>
+                    </article>
+
+                    <!-- 14 dias -->
+                    <article class="fb-plan-card" data-plan="14dias">
+                        <div class="fb-plan-top">
+                            <span class="fb-plan-name">Quinzenal</span>
+                            <span class="fb-plan-time">14 dias</span>
+                        </div>
+                        <div class="fb-plan-price"><span class="fb-currency">R$</span>17<span class="fb-cents">,00</span></div>
+                        <p class="fb-plan-tagline">Melhor custo curto prazo</p>
+                        <ul class="fb-plan-feats">
+                            <li><i class="fas fa-mobile-alt"></i> 1 sessão WhatsApp</li>
+                            <li><i class="fas fa-calendar-alt"></i> 14 dias de acesso</li>
+                            <li><i class="fas fa-bolt"></i> Recursos completos</li>
+                        </ul>
+                        <button type="button" class="fb-plan-cta" onclick="selecionarPlano('14dias', 17)">Ativar plano</button>
+                    </article>
+
+                    <!-- Mensal - destaque -->
+                    <article class="fb-plan-card fb-plan-featured" data-plan="mensal">
+                        <span class="fb-plan-ribbon"><i class="fas fa-star"></i> Mais escolhido</span>
+                        <div class="fb-plan-top">
+                            <span class="fb-plan-name">Mensal</span>
+                            <span class="fb-plan-time">30 dias</span>
+                        </div>
+                        <div class="fb-plan-price"><span class="fb-currency">R$</span>30<span class="fb-cents">,00</span></div>
+                        <p class="fb-plan-tagline">Equilíbrio ideal · ~R$1/dia</p>
+                        <ul class="fb-plan-feats">
+                            <li><i class="fas fa-mobile-alt"></i> 1 sessão WhatsApp</li>
+                            <li><i class="fas fa-calendar-check"></i> 30 dias de acesso</li>
+                            <li><i class="fas fa-shield-alt"></i> Prioridade no suporte</li>
+                        </ul>
+                        <button type="button" class="fb-plan-cta fb-plan-cta-glow" onclick="selecionarPlano('mensal', 30)">Quero este</button>
+                    </article>
+
+                    <!-- 3 meses -->
+                    <article class="fb-plan-card" data-plan="3meses">
+                        <div class="fb-plan-top">
+                            <span class="fb-plan-name">Trimestral</span>
+                            <span class="fb-plan-time">90 dias</span>
+                        </div>
+                        <div class="fb-plan-price"><span class="fb-currency">R$</span>80<span class="fb-cents">,00</span></div>
+                        <p class="fb-plan-tagline">~R$26,67/mês · economia</p>
+                        <ul class="fb-plan-feats">
+                            <li><i class="fas fa-mobile-alt"></i> 1 sessão WhatsApp</li>
+                            <li><i class="fas fa-calendar"></i> 90 dias de acesso</li>
+                            <li><i class="fas fa-life-ring"></i> Suporte 24/7</li>
+                        </ul>
+                        <button type="button" class="fb-plan-cta" onclick="selecionarPlano('3meses', 80)">Ativar plano</button>
+                    </article>
+
+                    <!-- 5 meses -->
+                    <article class="fb-plan-card" data-plan="5meses">
+                        <div class="fb-plan-top">
+                            <span class="fb-plan-name">Semestral+</span>
+                            <span class="fb-plan-time">150 dias</span>
+                        </div>
+                        <div class="fb-plan-price"><span class="fb-currency">R$</span>125<span class="fb-cents">,00</span></div>
+                        <p class="fb-plan-tagline">~R$25,00/mês</p>
+                        <ul class="fb-plan-feats">
+                            <li><i class="fas fa-mobile-alt"></i> 1 sessão WhatsApp</li>
+                            <li><i class="fas fa-hourglass-half"></i> 150 dias de acesso</li>
+                            <li><i class="fas fa-life-ring"></i> Suporte 24/7</li>
+                        </ul>
+                        <button type="button" class="fb-plan-cta" onclick="selecionarPlano('5meses', 125)">Ativar plano</button>
+                    </article>
+
+                    <!-- 1 ano -->
+                    <article class="fb-plan-card fb-plan-annual" data-plan="1ano">
+                        <span class="fb-plan-ribbon fb-ribbon-gold"><i class="fas fa-crown"></i> Máximo valor</span>
+                        <div class="fb-plan-top">
+                            <span class="fb-plan-name">Anual</span>
+                            <span class="fb-plan-time">365 dias</span>
+                        </div>
+                        <div class="fb-plan-price"><span class="fb-currency">R$</span>180<span class="fb-cents">,00</span></div>
+                        <p class="fb-plan-tagline">~R$15,00/mês · melhor preço</p>
+                        <ul class="fb-plan-feats">
+                            <li><i class="fas fa-mobile-alt"></i> 1 sessão WhatsApp</li>
+                            <li><i class="fas fa-infinity"></i> 1 ano de acesso</li>
+                            <li><i class="fas fa-gem"></i> Suporte VIP</li>
+                        </ul>
+                        <button type="button" class="fb-plan-cta fb-plan-cta-gold" onclick="selecionarPlano('1ano', 180)">Garantir ano</button>
+                    </article>
+                </div>
+                <p class="fb-plans-foot">
+                    <i class="fas fa-info-circle"></i>
+                    Todos os planos incluem <strong>apenas 1 número conectado</strong>. Ao renovar, o tempo é somado; a cota de sessão permanece 1.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
                     
                     <!-- Plano Semanal -->
                     <div class="col-md-3 mb-4">
@@ -2494,7 +2749,7 @@ body {
                             <div class="card-body">
                                 <h2 class="card-title">R$ 17,00</h2>
                                 <ul class="list-unstyled">
-                                    <li><i class="fas fa-check text-success"></i> 2 Sessões WhatsApp</li>
+                                    <li><i class="fas fa-check text-success"></i> 1 Sessão WhatsApp</li>
                                     <li><i class="fas fa-check text-success"></i> 14 dias de acesso</li>
                                     <li><i class="fas fa-check text-success"></i> Suporte prioritário</li>
                                 </ul>
@@ -2517,7 +2772,7 @@ body {
                             <div class="card-body">
                                 <h2 class="card-title">R$ 30,00</h2>
                                 <ul class="list-unstyled">
-                                    <li><i class="fas fa-check text-success"></i> 3 Sessões WhatsApp</li>
+                                    <li><i class="fas fa-check text-success"></i> 1 Sessão WhatsApp</li>
                                     <li><i class="fas fa-check text-success"></i> 30 dias de acesso</li>
                                     <li><i class="fas fa-check text-success"></i> Suporte 24/7</li>
                                 </ul>
@@ -2542,7 +2797,7 @@ body {
                                 <h2 class="card-title">R$ 80,00</h2>
                                 <p class="text-muted"><small>R$ 26,67/mês</small></p>
                                 <ul class="list-unstyled">
-                                    <li><i class="fas fa-check text-success"></i> 5 Sessões WhatsApp</li>
+                                    <li><i class="fas fa-check text-success"></i> 1 Sessão WhatsApp</li>
                                     <li><i class="fas fa-check text-success"></i> 90 dias de acesso</li>
                                     <li><i class="fas fa-check text-success"></i> Suporte 24/7</li>
                                 </ul>
@@ -2565,7 +2820,7 @@ body {
                                 <h2 class="card-title">R$ 125,00</h2>
                                 <p class="text-muted"><small>R$ 25,00/mês</small></p>
                                 <ul class="list-unstyled">
-                                    <li><i class="fas fa-check text-success"></i> 8 Sessões WhatsApp</li>
+                                    <li><i class="fas fa-check text-success"></i> 1 Sessão WhatsApp</li>
                                     <li><i class="fas fa-check text-success"></i> 150 dias de acesso</li>
                                     <li><i class="fas fa-check text-success"></i> Suporte 24/7</li>
                                 </ul>
