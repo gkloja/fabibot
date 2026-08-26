@@ -1419,58 +1419,204 @@ body {
 .empty-state { color: #64748b !important; }
 
 
-/* ===== Botão flutuante — ativar notificações ===== */
-.fb-float-notify {
+/* ===== Botão flutuante — notificações (criativo) ===== */
+.fb-float-notify-wrap {
     position: fixed;
-    bottom: 28px;
-    right: 28px;
-    z-index: 1050;
+    bottom: 26px;
+    right: 26px;
+    z-index: 99999;
     display: none;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-end;
     gap: 10px;
+    pointer-events: none;
+}
+.fb-float-notify-wrap.is-visible { display: flex; pointer-events: auto; }
+
+.fb-float-bubble {
+    max-width: 240px;
+    background: linear-gradient(145deg, rgba(15,23,42,.96), rgba(30,27,75,.95));
+    border: 1px solid rgba(96,165,250,.35);
+    color: #e2e8f0;
+    font-size: 12.5px;
+    line-height: 1.4;
+    padding: 12px 14px;
+    border-radius: 16px 16px 4px 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.04);
+    transform-origin: bottom right;
+    animation: fbBubbleIn .45s cubic-bezier(.2,.9,.3,1) both;
+}
+.fb-float-bubble strong {
+    display: block;
+    color: #fff;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+.fb-float-bubble span.muted { color: #94a3b8; font-size: 11.5px; }
+.fb-float-bubble .fb-bubble-close {
+    position: absolute; top: 6px; right: 8px;
+    background: transparent; border: none; color: #64748b;
+    cursor: pointer; font-size: 14px; line-height: 1; padding: 2px;
+}
+.fb-float-bubble { position: relative; padding-right: 28px; }
+
+.fb-float-notify {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
     border: none;
     cursor: pointer;
-    padding: 12px 16px 12px 14px;
+    padding: 8px 18px 8px 8px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: #fff;
+    background: linear-gradient(135deg, #4f46e5 0%, #2563eb 45%, #06b6d4 100%);
+    background-size: 200% 200%;
+    animation: fbGradShift 6s ease infinite;
+    color: #fff !important;
     font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 13.5px;
-    box-shadow: 0 10px 28px rgba(37, 99, 235, 0.45), 0 0 0 1px rgba(255,255,255,0.08);
-    transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+    letter-spacing: -0.01em;
+    box-shadow:
+        0 12px 32px rgba(37, 99, 235, 0.5),
+        0 0 0 1px rgba(255,255,255,0.12),
+        inset 0 1px 0 rgba(255,255,255,0.25);
+    transition: transform .2s ease, box-shadow .2s ease;
+    isolation: isolate;
+    overflow: visible;
+}
+.fb-float-notify::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 999px;
+    background: conic-gradient(from 0deg, #60a5fa, #a78bfa, #34d399, #60a5fa);
+    z-index: -1;
+    opacity: .85;
+    animation: fbSpinRing 3.5s linear infinite;
+}
+.fb-float-notify::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: inherit;
+    z-index: -1;
+    background: linear-gradient(135deg, #312e81, #1e3a8a 50%, #0e7490);
 }
 .fb-float-notify:hover {
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 14px 32px rgba(37, 99, 235, 0.55);
-    color: #fff;
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 16px 40px rgba(37, 99, 235, 0.6);
+    color: #fff !important;
 }
-.fb-float-notify i.bell {
-    font-size: 18px;
-    width: 34px; height: 34px;
+.fb-float-notify:active { transform: translateY(-1px) scale(0.98); }
+
+.fb-float-notify .fb-bell-wrap {
+    width: 42px; height: 42px;
     border-radius: 50%;
     display: inline-flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.18);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+    position: relative;
 }
-.fb-float-notify .fb-float-label { white-space: nowrap; }
+.fb-float-notify .fb-bell-wrap i {
+    font-size: 18px;
+    color: #fff;
+}
+.fb-float-notify.fb-float-pulse .fb-bell-wrap i {
+    animation: fbBellShake 2.2s ease-in-out infinite;
+}
+.fb-float-notify .fb-dot {
+    position: absolute;
+    top: 6px; right: 8px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #f43f5e;
+    border: 2px solid #1e3a8a;
+    box-shadow: 0 0 0 0 rgba(244,63,94,.6);
+    animation: fbDotPing 1.6s infinite;
+}
+.fb-float-notify .fb-float-label { white-space: nowrap; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.fb-float-notify .fb-float-sub {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    opacity: .85;
+    letter-spacing: 0.02em;
+}
+
 .fb-float-notify.fb-float-on {
-    background: linear-gradient(135deg, #10b981, #059669);
-    box-shadow: 0 10px 28px rgba(16, 185, 129, 0.4);
+    background: linear-gradient(135deg, #059669, #10b981);
+    animation: none;
 }
+.fb-float-notify.fb-float-on::before { display: none; }
+.fb-float-notify.fb-float-on .fb-dot { display: none; }
+
 .fb-float-notify.fb-float-denied {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    box-shadow: 0 10px 28px rgba(245, 158, 11, 0.35);
+    background: linear-gradient(135deg, #b45309, #f59e0b);
+    animation: none;
 }
-@keyframes fbFloatPulse {
-    0% { box-shadow: 0 0 0 0 rgba(37,99,235,.55), 0 10px 28px rgba(37,99,235,.4); }
-    70% { box-shadow: 0 0 0 14px rgba(37,99,235,0), 0 10px 28px rgba(37,99,235,.4); }
-    100% { box-shadow: 0 0 0 0 rgba(37,99,235,0), 0 10px 28px rgba(37,99,235,.4); }
+.fb-float-notify.fb-float-denied::before { display: none; }
+
+@keyframes fbSpinRing {
+    to { transform: rotate(360deg); }
 }
-.fb-float-notify.fb-float-pulse { animation: fbFloatPulse 2s infinite; }
+@keyframes fbGradShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+@keyframes fbBellShake {
+    0%, 70%, 100% { transform: rotate(0); }
+    75% { transform: rotate(14deg); }
+    80% { transform: rotate(-12deg); }
+    85% { transform: rotate(10deg); }
+    90% { transform: rotate(-6deg); }
+    95% { transform: rotate(3deg); }
+}
+@keyframes fbDotPing {
+    0% { box-shadow: 0 0 0 0 rgba(244,63,94,.55); }
+    70% { box-shadow: 0 0 0 8px rgba(244,63,94,0); }
+    100% { box-shadow: 0 0 0 0 rgba(244,63,94,0); }
+}
+@keyframes fbBubbleIn {
+    from { opacity: 0; transform: translateY(8px) scale(.92); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Mini modal de ajuda se bloqueado */
+.fb-notify-help-backdrop {
+    position: fixed; inset: 0; z-index: 100000;
+    background: rgba(2,6,23,.72);
+    backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+}
+.fb-notify-help-backdrop.open { display: flex; }
+.fb-notify-help {
+    width: min(400px, 100%);
+    background: linear-gradient(165deg, #0f172a, #1e1b4b);
+    border: 1px solid rgba(96,165,250,.3);
+    border-radius: 20px;
+    padding: 24px;
+    color: #e2e8f0;
+    box-shadow: 0 24px 60px rgba(0,0,0,.55);
+}
+.fb-notify-help h4 { color: #fff; font-weight: 800; margin: 0 0 8px; font-size: 1.15rem; }
+.fb-notify-help p { color: #94a3b8; font-size: 14px; margin: 0 0 14px; line-height: 1.5; }
+.fb-notify-help ol { margin: 0 0 18px; padding-left: 20px; color: #cbd5e1; font-size: 13.5px; }
+.fb-notify-help ol li { margin-bottom: 6px; }
+.fb-notify-help .btn-help-ok {
+    width: 100%; border: none; border-radius: 12px; padding: 12px;
+    font-weight: 700; color: #fff;
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    cursor: pointer;
+}
+
 @media (max-width: 576px) {
-    .fb-float-notify { bottom: 18px; right: 14px; padding: 11px 13px; }
-    .fb-float-notify .fb-float-label { display: none; }
-    .fb-float-notify i.bell { width: 40px; height: 40px; font-size: 20px; }
+    .fb-float-notify-wrap { bottom: 16px; right: 12px; }
+    .fb-float-bubble { max-width: 200px; font-size: 12px; }
+    .fb-float-notify .fb-float-sub { display: none; }
 }
 
 /* Hide leftovers */
@@ -4330,157 +4476,285 @@ $(document).ready(function() {
 })();
 </script>
 
-<!-- Botão flutuante: ativar notificações (quem recusou pode ativar depois) -->
-<button type="button" id="fbFloatNotify" class="fb-float-notify fb-float-pulse" title="Ativar notificações da Fabi Bot" aria-label="Ativar notificações">
-  <i class="fas fa-bell bell"></i>
-  <span class="fb-float-label">Ativar notificações</span>
-</button>
+<!-- Notificações: botão flutuante criativo + ajuda se bloqueado -->
+<div class="fb-float-notify-wrap is-visible" id="fbFloatNotifyWrap">
+  <div class="fb-float-bubble" id="fbFloatBubble">
+    <button type="button" class="fb-bubble-close" id="fbBubbleClose" aria-label="Fechar">×</button>
+    <strong>🔔 Não perca o bot offline</strong>
+    <span class="muted">Ative avisos se a sessão cair, aluguel acabar ou tiver novidade no feed.</span>
+  </div>
+  <button type="button" id="fbFloatNotify" class="fb-float-notify fb-float-pulse" title="Ativar notificações da Fabi Bot">
+    <span class="fb-bell-wrap">
+      <i class="fas fa-bell"></i>
+      <span class="fb-dot" aria-hidden="true"></span>
+    </span>
+    <span>
+      <span class="fb-float-label">Quero ser avisado</span>
+      <span class="fb-float-sub">toque para ativar</span>
+    </span>
+  </button>
+</div>
+<div class="fb-notify-help-backdrop" id="fbNotifyHelp" role="dialog" aria-modal="true">
+  <div class="fb-notify-help">
+    <h4>🔒 Notificações bloqueadas</h4>
+    <p>O navegador bloqueou o pedido. Libere manualmente e tente de novo:</p>
+    <ol>
+      <li>Toque no <strong>cadeado</strong> (ou ícone) na barra de endereço</li>
+      <li>Abra <strong>Notificações</strong> / Site settings</li>
+      <li>Mude para <strong>Permitir</strong></li>
+      <li>Recarregue a página e toque de novo no botão</li>
+    </ol>
+    <button type="button" class="btn-help-ok" id="fbNotifyHelpOk">Entendi</button>
+  </div>
+</div>
 <script>
 (function () {
+  var wrap = document.getElementById('fbFloatNotifyWrap');
   var btn = document.getElementById('fbFloatNotify');
-  if (!btn) return;
+  var bubble = document.getElementById('fbFloatBubble');
+  var help = document.getElementById('fbNotifyHelp');
+  if (!btn || !wrap) return;
 
-  function setUI(state) {
-    // state: need | on | denied | hidden
-    btn.classList.remove('fb-float-on', 'fb-float-denied', 'fb-float-pulse');
-    if (state === 'hidden') {
-      btn.style.display = 'none';
-      return;
-    }
-    btn.style.display = 'inline-flex';
-    if (state === 'on') {
-      btn.classList.add('fb-float-on');
-      btn.querySelector('.fb-float-label').textContent = 'Notificações ativas';
-      btn.querySelector('.bell').className = 'fas fa-check bell';
-      btn.title = 'Notificações já estão ativas';
-    } else if (state === 'denied') {
-      btn.classList.add('fb-float-denied');
-      btn.querySelector('.fb-float-label').textContent = 'Ativar no navegador';
-      btn.querySelector('.bell').className = 'fas fa-bell-slash bell';
-      btn.title = 'Permissão bloqueada — toque para ver como ativar';
-    } else {
-      btn.classList.add('fb-float-pulse');
-      btn.querySelector('.fb-float-label').textContent = 'Ativar notificações';
-      btn.querySelector('.bell').className = 'fas fa-bell bell';
-      btn.title = 'Ativar avisos de sessão offline e aluguel';
-    }
-  }
+  var osReady = null;
+  var busy = false;
 
   function toast(msg, tipo) {
-    if (typeof toastr !== 'undefined') {
-      if (tipo === 'success') toastr.success(msg);
-      else if (tipo === 'error') toastr.error(msg);
-      else toastr.info(msg);
+    try {
+      if (typeof toastr !== 'undefined') {
+        if (tipo === 'success') toastr.success(msg, 'Fabi Bot');
+        else if (tipo === 'error') toastr.error(msg, 'Fabi Bot');
+        else toastr.info(msg, 'Fabi Bot');
+        return;
+      }
+    } catch (e) {}
+    console.log('[Fabi Notify]', msg);
+  }
+
+  function nativePerm() {
+    try {
+      if (typeof Notification !== 'undefined') return Notification.permission;
+    } catch (e) {}
+    return 'default';
+  }
+
+  function setUI(state) {
+    wrap.classList.add('is-visible');
+    btn.classList.remove('fb-float-on', 'fb-float-denied', 'fb-float-pulse');
+    var label = btn.querySelector('.fb-float-label');
+    var sub = btn.querySelector('.fb-float-sub');
+    var icon = btn.querySelector('.fb-bell-wrap i');
+    var dot = btn.querySelector('.fb-dot');
+
+    if (state === 'hidden') {
+      wrap.classList.remove('is-visible');
+      wrap.style.display = 'none';
+      return;
+    }
+    wrap.style.display = 'flex';
+
+    if (state === 'on') {
+      btn.classList.add('fb-float-on');
+      if (label) label.textContent = 'Tudo certo!';
+      if (sub) sub.textContent = 'notificações ativas';
+      if (icon) icon.className = 'fas fa-check';
+      if (dot) dot.style.display = 'none';
+      if (bubble) bubble.style.display = 'none';
+      setTimeout(function () { setUI('hidden'); }, 3500);
+    } else if (state === 'denied') {
+      btn.classList.add('fb-float-denied');
+      if (label) label.textContent = 'Liberar no navegador';
+      if (sub) sub.textContent = 'está bloqueado';
+      if (icon) icon.className = 'fas fa-bell-slash';
+      if (dot) dot.style.display = 'none';
+      if (bubble) {
+        bubble.style.display = 'block';
+        bubble.querySelector('strong').textContent = '🚫 Bloqueado no navegador';
+        bubble.querySelector('.muted').textContent = 'Toque no botão para ver como permitir as notificações.';
+      }
     } else {
-      alert(msg);
+      btn.classList.add('fb-float-pulse');
+      if (label) label.textContent = 'Quero ser avisado';
+      if (sub) sub.textContent = 'toque para ativar';
+      if (icon) icon.className = 'fas fa-bell';
+      if (dot) dot.style.display = '';
     }
   }
 
-  async function refreshState(OneSignal) {
+  async function refreshFromOS(OneSignal) {
     try {
-      var perm = 'default';
-      try {
-        if (OneSignal.Notifications && OneSignal.Notifications.permissionNative) {
-          perm = OneSignal.Notifications.permissionNative;
-        } else if (typeof Notification !== 'undefined') {
-          perm = Notification.permission;
-        }
-      } catch (e) {
-        if (typeof Notification !== 'undefined') perm = Notification.permission;
-      }
-
+      var perm = nativePerm();
       var optedIn = false;
       try {
-        if (OneSignal.User && OneSignal.User.PushSubscription) {
+        if (OneSignal && OneSignal.User && OneSignal.User.PushSubscription) {
           optedIn = !!OneSignal.User.PushSubscription.optedIn;
         }
       } catch (e) {}
+      try {
+        if (OneSignal && OneSignal.Notifications && OneSignal.Notifications.permissionNative) {
+          perm = OneSignal.Notifications.permissionNative || perm;
+        }
+      } catch (e) {}
 
-      if (optedIn || perm === 'granted') {
-        setUI('on');
-        // some seconds depois esconde se já ativo (não polui a tela)
-        setTimeout(function () {
-          if (btn.classList.contains('fb-float-on')) setUI('hidden');
-        }, 4000);
-      } else if (perm === 'denied') {
-        setUI('denied');
-      } else {
-        setUI('need');
-      }
+      if (optedIn || perm === 'granted') setUI('on');
+      else if (perm === 'denied') setUI('denied');
+      else setUI('need');
     } catch (e) {
       setUI('need');
     }
   }
 
-  async function ativar(OneSignal) {
+  async function loginUser(OneSignal) {
     try {
-      var perm = (typeof Notification !== 'undefined') ? Notification.permission : 'default';
+      var raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
+      if (!raw || !OneSignal || !OneSignal.login) return;
+      var s = JSON.parse(raw);
+      var ext = String((s && (s.id || s.numero || s.email)) || '').trim();
+      if (ext) await OneSignal.login(ext);
+    } catch (e) {}
+  }
+
+  async function pedirPermissao() {
+    if (busy) return;
+    busy = true;
+    btn.style.opacity = '0.75';
+    try {
+      var perm = nativePerm();
       if (perm === 'denied') {
-        toast('As notificações estão bloqueadas neste site. No navegador: ícone de cadeado na barra de endereço → Notificações → Permitir. Depois recarregue a página.', 'error');
+        if (help) help.classList.add('open');
         setUI('denied');
         return;
       }
-      // Preferir slidedown do OneSignal (mesmo visual do prompt inicial)
-      if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
-        await OneSignal.Slidedown.promptPush();
-      } else if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
-        await OneSignal.Notifications.requestPermission(true);
-      } else if (typeof Notification !== 'undefined' && Notification.requestPermission) {
-        await Notification.requestPermission();
+
+      var OneSignal = osReady;
+      // Espera OneSignal um pouco se ainda não veio
+      if (!OneSignal && window.OneSignalDeferred) {
+        await new Promise(function (resolve) {
+          var done = false;
+          window.OneSignalDeferred.push(async function (OS) {
+            osReady = OS;
+            OneSignal = OS;
+            done = true;
+            resolve();
+          });
+          setTimeout(function () { if (!done) resolve(); }, 2500);
+        });
+        OneSignal = osReady || OneSignal;
       }
-      // Login usuário se logado
-      try {
-        var raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
-        if (raw) {
-          var s = JSON.parse(raw);
-          var ext = String((s && (s.id || s.numero || s.email)) || '').trim();
-          if (ext && OneSignal.login) await OneSignal.login(ext);
+
+      toast('Abrindo pedido de notificação…', 'info');
+
+      var ok = false;
+
+      // 1) OneSignal Slidedown forçado (mesmo quem recusou antes)
+      if (OneSignal && OneSignal.Slidedown) {
+        try {
+          if (typeof OneSignal.Slidedown.promptPush === 'function') {
+            await OneSignal.Slidedown.promptPush({ force: true });
+            ok = true;
+          }
+        } catch (e1) {
+          console.warn('Slidedown.promptPush', e1);
         }
-      } catch (e2) {}
-      await refreshState(OneSignal);
-      if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-        toast('Notificações ativadas! Você será avisado se a sessão cair.', 'success');
       }
-    } catch (e) {
-      console.warn('Ativar notificações:', e);
-      toast('Não foi possível abrir o pedido de notificação. Tente pelo cadeado do navegador.', 'error');
+
+      // 2) OneSignal Notifications API
+      if (!ok && OneSignal && OneSignal.Notifications) {
+        try {
+          if (typeof OneSignal.Notifications.requestPermission === 'function') {
+            await OneSignal.Notifications.requestPermission(true);
+            ok = true;
+          }
+        } catch (e2) {
+          console.warn('Notifications.requestPermission', e2);
+        }
+      }
+
+      // 3) Nativo do navegador (sempre tenta se ainda default)
+      if (nativePerm() === 'default' && typeof Notification !== 'undefined' && Notification.requestPermission) {
+        try {
+          var r = await Notification.requestPermission();
+          ok = ok || r === 'granted';
+        } catch (e3) {
+          console.warn('Notification.requestPermission', e3);
+        }
+      }
+
+      if (OneSignal) await loginUser(OneSignal);
+      await refreshFromOS(OneSignal);
+
+      perm = nativePerm();
+      if (perm === 'granted') {
+        toast('Notificações ativas! Você será avisado se a sessão cair.', 'success');
+        try {
+          if (OneSignal && typeof Notification !== 'undefined') {
+            // feedback visual imediato
+            new Notification('Fabi Bot', {
+              body: 'Pronto! Avisos de sessão e aluguel ativados.',
+              icon: '/icon-192.png'
+            });
+          }
+        } catch (e) {}
+      } else if (perm === 'denied') {
+        if (help) help.classList.add('open');
+        setUI('denied');
+        toast('Permissão negada. Siga os passos na tela para liberar.', 'error');
+      } else {
+        toast('Se o pedido não apareceu, verifique se o site está em HTTPS e tente de novo.', 'info');
+        setUI('need');
+      }
+    } catch (err) {
+      console.error('pedirPermissao', err);
+      toast('Erro ao pedir notificação. Recarregue a página e tente outra vez.', 'error');
+    } finally {
+      busy = false;
+      btn.style.opacity = '1';
     }
   }
 
+  // Clique SEMPRE ligado (não depende do OneSignal carregar)
+  btn.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    pedirPermissao();
+  });
+
+  var closeBtn = document.getElementById('fbBubbleClose');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (bubble) bubble.style.display = 'none';
+    });
+  }
+  var helpOk = document.getElementById('fbNotifyHelpOk');
+  if (helpOk) {
+    helpOk.addEventListener('click', function () {
+      if (help) help.classList.remove('open');
+    });
+  }
+  if (help) {
+    help.addEventListener('click', function (e) {
+      if (e.target === help) help.classList.remove('open');
+    });
+  }
+
+  // Estado inicial
+  if (nativePerm() === 'granted') setUI('on');
+  else if (nativePerm() === 'denied') setUI('denied');
+  else setUI('need');
+
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   window.OneSignalDeferred.push(async function (OneSignal) {
-    await refreshState(OneSignal);
-    btn.onclick = function () { ativar(OneSignal); };
-    // Atualiza se o usuário mudar permissão em outra aba
+    osReady = OneSignal;
+    await refreshFromOS(OneSignal);
     try {
       if (OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.addEventListener) {
         OneSignal.User.PushSubscription.addEventListener('change', function () {
-          refreshState(OneSignal);
+          refreshFromOS(OneSignal);
         });
       }
     } catch (e) {}
-    // Fallback: se OneSignal demorar, mostra botão mesmo assim
   });
-
-  // Se OneSignal falhar, ainda mostra o botão após 2s
-  setTimeout(function () {
-    if (btn.style.display === 'none' || !btn.style.display) {
-      if (typeof Notification !== 'undefined') {
-        if (Notification.permission === 'granted') setUI('hidden');
-        else if (Notification.permission === 'denied') setUI('denied');
-        else setUI('need');
-      } else {
-        setUI('need');
-      }
-      if (!btn.onclick) {
-        btn.onclick = function () {
-          toast('Aguarde o carregamento do sistema de notificações e tente de novo.', 'info');
-        };
-      }
-    }
-  }, 2500);
 })();
 </script>
-
 </body>
 </html>
