@@ -1497,6 +1497,123 @@ body {
     margin-top: 1em !important;
     padding-top: 1em !important;
   }
+
+/* ===== TUTORIAIS PREMIUM — Fabi Bot ===== */
+.fb-tutorials-section { position: relative; overflow: hidden; }
+.fb-tutorials-section::before {
+    content: '';
+    position: absolute; top: -35%; right: -18%;
+    width: 380px; height: 380px;
+    background: radial-gradient(circle, rgba(37,99,235,.2) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+}
+.fb-tutorials-section::after {
+    content: '';
+    position: absolute; bottom: -25%; left: -12%;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(37,211,102,.12) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+}
+.fb-tutorials-section > * { position: relative; z-index: 1; }
+.fb-tutorials-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; margin-bottom: 20px;
+}
+.fb-tutorials-sub {
+    color: var(--fb-text-muted, #9CA3AF);
+    font-size: 13.5px; margin: 0; max-width: 440px; line-height: 1.5;
+}
+.fb-tutorials-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.fb-pill {
+    font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    padding: 6px 12px; border-radius: 999px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); color: #c7d2fe;
+}
+.fb-pill.green {
+    color: #86efac; border-color: rgba(37,211,102,.3); background: rgba(37,211,102,.1);
+}
+.fb-tutorials-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+}
+@media (max-width: 768px) {
+    .fb-tutorials-grid { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto; }
+}
+.fb-video-card {
+    position: relative;
+    background: linear-gradient(160deg, rgba(20,26,43,.98) 0%, rgba(10,12,18,.99) 100%);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 22px; overflow: hidden;
+    transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s;
+    display: flex; flex-direction: column;
+}
+.fb-video-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    border-color: rgba(37,99,235,.5);
+    box-shadow: 0 24px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(37,99,235,.2), 0 0 40px rgba(37,99,235,.12);
+}
+.fb-video-card.wa-card:hover {
+    border-color: rgba(37,211,102,.45);
+    box-shadow: 0 24px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(37,211,102,.2), 0 0 40px rgba(37,211,102,.1);
+}
+.fb-video-step {
+    position: absolute; top: 14px; left: 14px; z-index: 3;
+    width: 36px; height: 36px; border-radius: 12px;
+    background: rgba(0,0,0,.7); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.15); color: #fff;
+    font-family: 'Space Grotesk', Inter, sans-serif; font-weight: 700; font-size: 14px;
+    display: grid; place-items: center;
+}
+.fb-video-thumb {
+    position: relative; background: #000;
+    aspect-ratio: 16 / 9; /* horizontal tutorials */
+}
+.fb-video-thumb.shorts { aspect-ratio: 9 / 16; max-height: 460px; }
+.fb-video-thumb iframe {
+    position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+}
+.fb-video-thumb::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 30%;
+    background: linear-gradient(to top, rgba(10,12,18,.92), transparent);
+    pointer-events: none; z-index: 1;
+}
+.fb-video-body {
+    padding: 18px 18px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1;
+}
+.fb-video-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+    color: #93b4ff; background: rgba(37,99,235,.14);
+    border: 1px solid rgba(37,99,235,.32); border-radius: 999px;
+    padding: 5px 11px; width: fit-content;
+}
+.fb-video-badge.wa {
+    color: #86efac; background: rgba(37,211,102,.12); border-color: rgba(37,211,102,.32);
+}
+.fb-video-title {
+    font-family: 'Space Grotesk', Inter, sans-serif;
+    font-size: 1.12rem; font-weight: 700; color: #fff; margin: 0;
+    line-height: 1.25; letter-spacing: -0.02em;
+}
+.fb-video-desc {
+    font-size: 13px; color: var(--fb-text-muted, #9CA3AF); margin: 0; line-height: 1.5; flex: 1;
+}
+.fb-video-footer {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    margin-top: 6px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.06);
+}
+.fb-video-open {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 700; color: #93b4ff; text-decoration: none;
+    transition: color .15s, gap .15s;
+}
+.fb-video-open:hover { color: #bfdbfe; gap: 11px; }
+.fb-video-card.wa-card .fb-video-open { color: #86efac; }
+.fb-video-card.wa-card .fb-video-open:hover { color: #bbf7d0; }
+.fb-video-meta {
+    font-size: 11px; color: #6b7280; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 5px;
+}
+
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -1625,62 +1742,93 @@ body {
         </div>
 
         <!-- Seção de Vídeos Tutoriais -->
-<div class="card-whatsapp mb-4">
-    <div class="card-header-whatsapp">
-        <h4 class="mb-0">
-            <i class="fab fa-youtube text-danger"></i> Tutoriais em Vídeo
-        </h4>
+<div class="card-whatsapp mb-4 fb-tutorials-section">
+    <div class="card-header-whatsapp" style="background: linear-gradient(135deg, #14532d 0%, #166534 40%, #16a34a 100%);">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <h4 class="mb-0" style="display:flex;align-items:center;gap:10px;">
+                <span style="width:34px;height:34px;border-radius:10px;background:rgba(0,0,0,.28);display:grid;place-items:center;">
+                    <i class="fab fa-youtube"></i>
+                </span>
+                Tutoriais em Vídeo
+            </h4>
+            <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.18);padding:5px 12px;border-radius:999px;">
+                2 vídeos · essenciais
+            </span>
+        </div>
     </div>
-    <div class="card-body">
-        <div class="row">
-            <!-- Vídeo 1: Configurar Robô -->
-            <div class="col-md-6 mb-3">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fas fa-robot text-primary"></i> Como Configurar a Robô
-                        </h5>
-                        <div class="ratio ratio-16x9">
-                            <iframe 
-                                src="https://www.youtube.com/embed/lKXTtacr3RU" 
-                                title="Como configurar a robô"
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        <p class="text-muted small mt-2 mb-0">
-                            <i class="fas fa-clock"></i> Aprenda passo a passo como configurar sua robô corretamente.
-                        </p>
+    <div class="card-body" style="padding: 22px;">
+        <div class="fb-tutorials-head">
+            <p class="fb-tutorials-sub">
+                Assista na ordem — primeiro <strong style="color:#e5e7eb;">configure</strong>, depois <strong style="color:#e5e7eb;">conecte</strong>. Leva poucos minutos e evita erro no pareamento.
+            </p>
+            <div class="fb-tutorials-pills">
+                <span class="fb-pill">① Configurar</span>
+                <span class="fb-pill green">② Conectar</span>
+            </div>
+        </div>
+
+        <div class="fb-tutorials-grid">
+            <!-- 1. Configurar -->
+            <article class="fb-video-card">
+                <span class="fb-video-step">1</span>
+                <div class="fb-video-thumb shorts">
+                    <iframe
+                        src="https://www.youtube.com/embed/5UsyLmYi9jQ?rel=0"
+                        title="Como configurar a robô"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                        loading="lazy"
+                        referrerpolicy="strict-origin-when-cross-origin">
+                    </iframe>
+                </div>
+                <div class="fb-video-body">
+                    <span class="fb-video-badge"><i class="fas fa-robot"></i> Configurar</span>
+                    <h5 class="fb-video-title">Como configurar a Fabi Bot</h5>
+                    <p class="fb-video-desc">
+                        Deixe a robô pronta antes de gerar o código de pareamento. Ideal se você está começando agora.
+                    </p>
+                    <div class="fb-video-footer">
+                        <a class="fb-video-open" href="https://youtube.com/shorts/5UsyLmYi9jQ" target="_blank" rel="noopener">
+                            <i class="fab fa-youtube" style="color:#ff0033;"></i> Abrir no YouTube
+                            <i class="fas fa-arrow-right" style="font-size:11px;"></i>
+                        </a>
+                        <span class="fb-video-meta"><i class="fas fa-bolt"></i> Short</span>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Vídeo 2: Conectar Robô -->
-            <div class="col-md-6 mb-3">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fab fa-whatsapp text-success"></i> Como Conectar a Robô
-                        </h5>
-                        <div class="ratio ratio-16x9">
-                            <iframe 
-                                src="https://www.youtube.com/embed/j09X_Gt3fQo" 
-                                title="Como conectar a robô"
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        <p class="text-muted small mt-2 mb-0">
-                            <i class="fas fa-plug"></i> Veja como conectar sua robô ao WhatsApp de forma simples.
-                        </p>
+            </article>
+
+            <!-- 2. Conectar -->
+            <article class="fb-video-card wa-card">
+                <span class="fb-video-step">2</span>
+                <div class="fb-video-thumb">
+                    <iframe
+                        src="https://www.youtube.com/embed/j09X_Gt3fQo?rel=0"
+                        title="Como conectar a robô ao WhatsApp"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                        loading="lazy"
+                        referrerpolicy="strict-origin-when-cross-origin">
+                    </iframe>
+                </div>
+                <div class="fb-video-body">
+                    <span class="fb-video-badge wa"><i class="fab fa-whatsapp"></i> Conectar</span>
+                    <h5 class="fb-video-title">Como conectar ao WhatsApp</h5>
+                    <p class="fb-video-desc">
+                        Use o código de 8 dígitos e finalize a conexão. Se a notificação não chegar, use o caminho manual.
+                    </p>
+                    <div class="fb-video-footer">
+                        <a class="fb-video-open" href="https://www.youtube.com/watch?v=j09X_Gt3fQo" target="_blank" rel="noopener">
+                            <i class="fab fa-youtube" style="color:#ff0033;"></i> Abrir no YouTube
+                            <i class="fas fa-arrow-right" style="font-size:11px;"></i>
+                        </a>
+                        <span class="fb-video-meta"><i class="fas fa-play"></i> Tutorial</span>
                     </div>
                 </div>
-            </div>
+            </article>
         </div>
     </div>
 </div>
+
         <div class="card-whatsapp mt-4">
             <div class="card-body">
                 <div class="row">
