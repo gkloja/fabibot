@@ -3132,15 +3132,16 @@ function carregarSessoes() {
                 $('#pendentes').text(data.stats.retrying || 0);
             }
             let lista = data.sessoes || data.sessions || [];
-            // filtro extra no client (backend já filtra)
+            // Filtro rígido no client: só sessões com dono = conta logada
             const meuNum = String(sess.numero || '').replace(/\D/g, '');
             if (meuNum && Array.isArray(lista)) {
                 lista = lista.filter(s => {
-                    const n = String((s && (s.session || s.numero || s.name)) || '').replace(/\D/g, '');
-                    const dono = String((s && (s.dono || s.usuario || (s.config && s.config.usuario))) || '').replace(/\D/g, '');
-                    if (dono) return dono === meuNum || dono.endsWith(meuNum) || meuNum.endsWith(dono);
-                    return true; // se backend já filtrou, mantém
+                    const dono = String((s && (s.dono || s.usuario || (s.config && (s.config.usuario || s.config.dono || s.config.contaNumero)))) || '').replace(/\D/g, '');
+                    if (!dono) return false;
+                    return dono === meuNum;
                 });
+            } else {
+                lista = [];
             }
             if (data.success !== false) {
                 renderizarListaSessoes(lista);
@@ -3250,7 +3251,7 @@ function atualizarSessao(sessionName) {
 }
 
 function atualizarTodasEstatisticas() {
-    fetch(apiUrl('/api/sessoes/status'))
+    fetch(apiUrl(withAuth('/api/sessoes/status')))
         .then(response => response.json())
         .then(data => {
             if (data.success) {
