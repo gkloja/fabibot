@@ -1418,6 +1418,61 @@ body {
 .empty-state i { color: #334155 !important; }
 .empty-state { color: #64748b !important; }
 
+
+/* ===== Botão flutuante — ativar notificações ===== */
+.fb-float-notify {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 1050;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    border: none;
+    cursor: pointer;
+    padding: 12px 16px 12px 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    box-shadow: 0 10px 28px rgba(37, 99, 235, 0.45), 0 0 0 1px rgba(255,255,255,0.08);
+    transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+}
+.fb-float-notify:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 14px 32px rgba(37, 99, 235, 0.55);
+    color: #fff;
+}
+.fb-float-notify i.bell {
+    font-size: 18px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.15);
+}
+.fb-float-notify .fb-float-label { white-space: nowrap; }
+.fb-float-notify.fb-float-on {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 10px 28px rgba(16, 185, 129, 0.4);
+}
+.fb-float-notify.fb-float-denied {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 10px 28px rgba(245, 158, 11, 0.35);
+}
+@keyframes fbFloatPulse {
+    0% { box-shadow: 0 0 0 0 rgba(37,99,235,.55), 0 10px 28px rgba(37,99,235,.4); }
+    70% { box-shadow: 0 0 0 14px rgba(37,99,235,0), 0 10px 28px rgba(37,99,235,.4); }
+    100% { box-shadow: 0 0 0 0 rgba(37,99,235,0), 0 10px 28px rgba(37,99,235,.4); }
+}
+.fb-float-notify.fb-float-pulse { animation: fbFloatPulse 2s infinite; }
+@media (max-width: 576px) {
+    .fb-float-notify { bottom: 18px; right: 14px; padding: 11px 13px; }
+    .fb-float-notify .fb-float-label { display: none; }
+    .fb-float-notify i.bell { width: 40px; height: 40px; font-size: 20px; }
+}
+
 /* Hide leftovers */
 .float-private-btn, .private-modal, #privateModal, #openPrivateModal,
 [onclick*="abrirModalInfoPrivado"] { display: none !important; }
@@ -1743,7 +1798,7 @@ body {
                 <span class="fb-video-step">1</span>
                 <div class="fb-video-thumb">
                     <iframe
-                        src="https://www.youtube.com/embed/j09X_Gt3fQo?rel=0"
+                        src="https://www.youtube.com/embed/0FcqWiIrB9o?rel=0"
                         title="Como conectar a robô ao WhatsApp"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen
@@ -1756,7 +1811,7 @@ body {
                     <h5 class="fb-video-title">Como conectar ao WhatsApp</h5>
                     <p class="fb-video-desc">Código de 8 dígitos e pareamento. Se a notificação não chegar, use o modo manual.</p>
                     <div class="fb-video-footer">
-                        <a class="fb-video-open" href="https://www.youtube.com/watch?v=j09X_Gt3fQo" target="_blank" rel="noopener">
+                        <a class="fb-video-open" href="https://youtube.com/shorts/0FcqWiIrB9o?si=5MSP83U2RkMZ6-ab" target="_blank" rel="noopener">
                             <i class="fab fa-youtube" style="color:#ff0033;"></i> YouTube
                         </a>
                         <span class="fb-video-meta"><i class="fas fa-play"></i> Tutorial</span>
@@ -4274,5 +4329,158 @@ $(document).ready(function() {
   window.addEventListener("storage", function () { renderUserNav(); });
 })();
 </script>
+
+<!-- Botão flutuante: ativar notificações (quem recusou pode ativar depois) -->
+<button type="button" id="fbFloatNotify" class="fb-float-notify fb-float-pulse" title="Ativar notificações da Fabi Bot" aria-label="Ativar notificações">
+  <i class="fas fa-bell bell"></i>
+  <span class="fb-float-label">Ativar notificações</span>
+</button>
+<script>
+(function () {
+  var btn = document.getElementById('fbFloatNotify');
+  if (!btn) return;
+
+  function setUI(state) {
+    // state: need | on | denied | hidden
+    btn.classList.remove('fb-float-on', 'fb-float-denied', 'fb-float-pulse');
+    if (state === 'hidden') {
+      btn.style.display = 'none';
+      return;
+    }
+    btn.style.display = 'inline-flex';
+    if (state === 'on') {
+      btn.classList.add('fb-float-on');
+      btn.querySelector('.fb-float-label').textContent = 'Notificações ativas';
+      btn.querySelector('.bell').className = 'fas fa-check bell';
+      btn.title = 'Notificações já estão ativas';
+    } else if (state === 'denied') {
+      btn.classList.add('fb-float-denied');
+      btn.querySelector('.fb-float-label').textContent = 'Ativar no navegador';
+      btn.querySelector('.bell').className = 'fas fa-bell-slash bell';
+      btn.title = 'Permissão bloqueada — toque para ver como ativar';
+    } else {
+      btn.classList.add('fb-float-pulse');
+      btn.querySelector('.fb-float-label').textContent = 'Ativar notificações';
+      btn.querySelector('.bell').className = 'fas fa-bell bell';
+      btn.title = 'Ativar avisos de sessão offline e aluguel';
+    }
+  }
+
+  function toast(msg, tipo) {
+    if (typeof toastr !== 'undefined') {
+      if (tipo === 'success') toastr.success(msg);
+      else if (tipo === 'error') toastr.error(msg);
+      else toastr.info(msg);
+    } else {
+      alert(msg);
+    }
+  }
+
+  async function refreshState(OneSignal) {
+    try {
+      var perm = 'default';
+      try {
+        if (OneSignal.Notifications && OneSignal.Notifications.permissionNative) {
+          perm = OneSignal.Notifications.permissionNative;
+        } else if (typeof Notification !== 'undefined') {
+          perm = Notification.permission;
+        }
+      } catch (e) {
+        if (typeof Notification !== 'undefined') perm = Notification.permission;
+      }
+
+      var optedIn = false;
+      try {
+        if (OneSignal.User && OneSignal.User.PushSubscription) {
+          optedIn = !!OneSignal.User.PushSubscription.optedIn;
+        }
+      } catch (e) {}
+
+      if (optedIn || perm === 'granted') {
+        setUI('on');
+        // some seconds depois esconde se já ativo (não polui a tela)
+        setTimeout(function () {
+          if (btn.classList.contains('fb-float-on')) setUI('hidden');
+        }, 4000);
+      } else if (perm === 'denied') {
+        setUI('denied');
+      } else {
+        setUI('need');
+      }
+    } catch (e) {
+      setUI('need');
+    }
+  }
+
+  async function ativar(OneSignal) {
+    try {
+      var perm = (typeof Notification !== 'undefined') ? Notification.permission : 'default';
+      if (perm === 'denied') {
+        toast('As notificações estão bloqueadas neste site. No navegador: ícone de cadeado na barra de endereço → Notificações → Permitir. Depois recarregue a página.', 'error');
+        setUI('denied');
+        return;
+      }
+      // Preferir slidedown do OneSignal (mesmo visual do prompt inicial)
+      if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
+        await OneSignal.Slidedown.promptPush();
+      } else if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+        await OneSignal.Notifications.requestPermission(true);
+      } else if (typeof Notification !== 'undefined' && Notification.requestPermission) {
+        await Notification.requestPermission();
+      }
+      // Login usuário se logado
+      try {
+        var raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
+        if (raw) {
+          var s = JSON.parse(raw);
+          var ext = String((s && (s.id || s.numero || s.email)) || '').trim();
+          if (ext && OneSignal.login) await OneSignal.login(ext);
+        }
+      } catch (e2) {}
+      await refreshState(OneSignal);
+      if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+        toast('Notificações ativadas! Você será avisado se a sessão cair.', 'success');
+      }
+    } catch (e) {
+      console.warn('Ativar notificações:', e);
+      toast('Não foi possível abrir o pedido de notificação. Tente pelo cadeado do navegador.', 'error');
+    }
+  }
+
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  window.OneSignalDeferred.push(async function (OneSignal) {
+    await refreshState(OneSignal);
+    btn.onclick = function () { ativar(OneSignal); };
+    // Atualiza se o usuário mudar permissão em outra aba
+    try {
+      if (OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.addEventListener) {
+        OneSignal.User.PushSubscription.addEventListener('change', function () {
+          refreshState(OneSignal);
+        });
+      }
+    } catch (e) {}
+    // Fallback: se OneSignal demorar, mostra botão mesmo assim
+  });
+
+  // Se OneSignal falhar, ainda mostra o botão após 2s
+  setTimeout(function () {
+    if (btn.style.display === 'none' || !btn.style.display) {
+      if (typeof Notification !== 'undefined') {
+        if (Notification.permission === 'granted') setUI('hidden');
+        else if (Notification.permission === 'denied') setUI('denied');
+        else setUI('need');
+      } else {
+        setUI('need');
+      }
+      if (!btn.onclick) {
+        btn.onclick = function () {
+          toast('Aguarde o carregamento do sistema de notificações e tente de novo.', 'info');
+        };
+      }
+    }
+  }, 2500);
+})();
+</script>
+
 </body>
 </html>
