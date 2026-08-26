@@ -3254,13 +3254,20 @@ function atualizarTodasEstatisticas() {
     fetch(apiUrl(withAuth('/api/sessoes/status')))
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                $('#totalSessoes').text(data.stats.total || 0);
-                $('#conectadas').text(data.stats.connected || 0);
-                $('#pendentes').text(data.stats.retrying || 0);
-                $('#contadorSessoes').text(data.sessoes.length || 0);
-                atualizarHora();
-            }
+            if (!data || data.success === false) return;
+            const lista = Array.isArray(data.sessoes) ? data.sessoes : [];
+            let conectadasN = 0, pendentesN = 0;
+            lista.forEach(s => {
+                const stRaw = (s.status && typeof s.status === 'object') ? (s.status.status || '') : (s.status || '');
+                const st = String(stRaw).toLowerCase();
+                const online = !!(s.isActive) || ['open', 'connected', 'online', 'conectado'].some(k => st.includes(k));
+                if (online) conectadasN++; else pendentesN++;
+            });
+            $('#totalSessoes').text(lista.length);
+            $('#conectadas').text(conectadasN);
+            $('#pendentes').text(pendentesN);
+            $('#contadorSessoes').text(lista.length);
+            atualizarHora();
         })
         .catch(error => console.error('Erro ao atualizar estatísticas:', error));
 }
@@ -3752,13 +3759,49 @@ function iniciarProcessoExclusao() {
             return data;
         })
         .then(data => {
-            if (data && data.success) {
+            if (data && data.success && (data.deleted || data.requerConfirmacao === false || data.offline)) {
+                // Sessão OFFLINE: já deletada sem código
+                const nomeRemovido = sessaoParaDeletar;
+                $('#confirmacaoConteudo').html(`
+                    <h5 class="text-center mb-3">
+                        <i class="fas fa-check-circle text-success"></i> Sessão removida!
+                    </h5>
+                    <p class="text-center">
+                        A sessão <strong>${nomeRemovido}</strong> estava offline e foi excluída
+                        sem precisar de código no WhatsApp.
+                        ${data.devolucaoSessao ? '<br><small class="text-success">+1 crédito de sessão devolvido.</small>' : ''}
+                    </p>
+                `);
+                $('#formConfirmacao').hide();
+                $('#confirmacaoStatus').hide();
+                $('#btnIniciarConfirmacao').hide();
+                $('#btnConfirmarExclusao').hide();
+                $('#btnCancelarConfirmacao').prop('disabled', false).text('Fechar');
+                exclusaoEmAndamento = false;
+                toastr.success('Sessão offline removida!', 'Sucesso');
+                setTimeout(() => {
+                    try {
+                        const el = document.getElementById('confirmacaoModal');
+                        if (el && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                            const inst = bootstrap.Modal.getInstance(el);
+                            if (inst) inst.hide();
+                            else $('#confirmacaoModal').modal('hide');
+                        } else {
+                            $('#confirmacaoModal').modal('hide');
+                        }
+                    } catch (_) {}
+                    $(`#sessao-${nomeRemovido}`).fadeOut(300, function() { $(this).remove(); });
+                    if (typeof carregarDadosAtualizados === 'function') carregarDadosAtualizados();
+                    if (data.devolucaoSessao && typeof carregarCarteira === 'function') carregarCarteira();
+                }, 1200);
+            } else if (data && data.success) {
+                // Sessão ONLINE: pede código no WhatsApp
                 $('#confirmacaoConteudo').html(`
                     <h5 class="text-center mb-3">
                         <i class="fas fa-check-circle text-success"></i> Código Enviado!
                     </h5>
                     <p class="text-center">
-                        Um código de 8 dígitos foi enviado para o WhatsApp da sessão
+                        Sessão <strong>online</strong>: um código de 8 dígitos foi enviado ao WhatsApp de
                         <strong>${sessaoParaDeletar}</strong>.
                     </p>
                 `);
