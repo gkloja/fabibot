@@ -3287,7 +3287,11 @@ function deletarSessao(sessionName) {
 
 function iniciarProcessoExclusao() {
     $('#btnIniciarConfirmacao').prop('disabled', true).html('<span class="loading"></span> Solicitando...');
-    fetch(apiUrl(`/api/sessoes/${sessaoParaDeletar}/deletar`), { method: 'POST' })
+    fetch(apiUrl(withAuth(`/api/sessoes/${sessaoParaDeletar}/deletar`)), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...authBodyFields() })
+    })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -3347,10 +3351,10 @@ function confirmarExclusaoComCodigo() {
     $('#formConfirmacao').hide();
     $('#confirmacaoStatus').show();
     $('#mensagemStatusConfirmacao').text('Verificando código...');
-    fetch(apiUrl(`/api/sessoes/${sessaoParaDeletar}/confirmar-delecao`), {
+    fetch(apiUrl(withAuth(`/api/sessoes/${sessaoParaDeletar}/confirmar-delecao`)), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ codigo })
+        body: JSON.stringify({ codigo, ...authBodyFields() })
     })
     .then(response => response.json())
     .then(data => {
