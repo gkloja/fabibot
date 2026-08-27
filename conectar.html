@@ -3473,10 +3473,20 @@ async function cancelarPareamentoAtual(sessaoNome) {
         return;
     }
     try {
-        const resp = await fetch(apiUrl(`/api/sessoes/${encodeURIComponent(sessao)}/cancelar`), { method: 'POST' });
+        const resp = await fetch(apiUrl(withAuth(`/api/sessoes/${encodeURIComponent(sessao)}/cancelar`)), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...(typeof authBodyFields === 'function' ? authBodyFields() : {}) })
+        });
         const data = await resp.json().catch(() => ({}));
         if (data.success) {
-            toastr.success(data.sessaoDevolvida ? 'Pareamento cancelado e 1 sessão devolvida à sua conta.' : (data.message || 'Pareamento cancelado.'), 'Cancelado');
+            const devolveu = !!(data.sessaoDevolvida || data.devolucaoSessao || data.sessoesRestantes != null);
+            toastr.success(devolveu
+                ? ('Pareamento cancelado e 1 sessão devolvida' + (data.sessoesRestantes != null ? (' (agora: ' + data.sessoesRestantes + ')') : '') + '.')
+                : (data.message || 'Pareamento cancelado.'), 'Cancelado');
+            if (data.sessoesRestantes != null) {
+                try { $('#sessoesAtivas').text(data.sessoesRestantes); } catch (e) {}
+            }
             if (typeof carregarCarteira === 'function') carregarCarteira();
             const modalEl = document.getElementById('codigoImediatoModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
