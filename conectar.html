@@ -2358,30 +2358,60 @@ body {
         </div>
     </div>
     <div class="card-body">
-        <!-- Estatísticas -->
-        <div class="row mb-4">
-            <div class="col-md-3">
+        <!-- Estatísticas (suas + globais) -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="small text-muted mb-2" style="letter-spacing:.08em;text-transform:uppercase;font-weight:700;">
+                    <i class="fas fa-user"></i> Suas sessões
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
                 <div class="stats-box">
                     <div class="stats-number" id="totalSessoes">0</div>
-                    <div class="stats-label">Total de Sessões</div>
+                    <div class="stats-label">Total (suas)</div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-md-3">
                 <div class="stats-box">
                     <div class="stats-number" id="conectadas">0</div>
-                    <div class="stats-label">Conectadas</div>
+                    <div class="stats-label">Conectadas (suas)</div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-md-3">
                 <div class="stats-box">
                     <div class="stats-number" id="pendentes">0</div>
-                    <div class="stats-label">Pendentes</div>
+                    <div class="stats-label">Offline / Pendentes</div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-md-3">
                 <div class="stats-box">
                     <div class="stats-number" id="ultimaAtualizacao">Agora</div>
                     <div class="stats-label">Última Atualização</div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="small text-muted mb-2" style="letter-spacing:.08em;text-transform:uppercase;font-weight:700;">
+                    <i class="fas fa-server"></i> No servidor (todas as contas)
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="stats-box" style="border:1px solid rgba(37,211,102,.35);">
+                    <div class="stats-number" id="globalTotalSessoes">0</div>
+                    <div class="stats-label">Total de Sessões</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="stats-box" style="border:1px solid rgba(52,211,153,.4);">
+                    <div class="stats-number" id="globalConectadas" style="color:#34d399;">0</div>
+                    <div class="stats-label">Conectadas no total</div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="stats-box">
+                    <div class="stats-number" id="globalOffline">0</div>
+                    <div class="stats-label">Offline no total</div>
                 </div>
             </div>
         </div>
@@ -3136,6 +3166,38 @@ function renderizarListaSessoes(sessoes) {
     $('#contadorSessoes').text(sessoes.length);
 }
 
+
+function aplicarStatsSessoes(data, listaFiltrada) {
+    try {
+        var lista = Array.isArray(listaFiltrada) ? listaFiltrada : (data && (data.sessoes || data.sessions)) || [];
+        var total = lista.length;
+        var conectadas = lista.filter(function (s) {
+            if (!s) return false;
+            if (s.isActive) return true;
+            var st = String((s.status && (s.status.status || s.status)) || s.state || '').toLowerCase();
+            return ['open', 'connected', 'online', 'conectado'].some(function (k) { return st.indexOf(k) >= 0; });
+        }).length;
+        var pendentes = Math.max(0, total - conectadas);
+        if (data && data.stats && !listaFiltrada) {
+            total = data.stats.total != null ? data.stats.total : total;
+            conectadas = data.stats.connected != null ? data.stats.connected : conectadas;
+            pendentes = data.stats.retrying != null ? data.stats.retrying : pendentes;
+        }
+        $('#totalSessoes').text(total);
+        $('#conectadas').text(conectadas);
+        $('#pendentes').text(pendentes);
+        $('#contadorSessoes').text(total);
+
+        var g = (data && data.statsGlobal) || {};
+        $('#globalTotalSessoes').text(g.total != null ? g.total : '—');
+        $('#globalConectadas').text(g.connected != null ? g.connected : '—');
+        var off = (g.offline != null) ? g.offline : (g.total != null && g.connected != null ? Math.max(0, g.total - g.connected) : '—');
+        $('#globalOffline').text(off);
+    } catch (e) {
+        console.warn('aplicarStatsSessoes', e);
+    }
+}
+
 function carregarSessoes() {
     const sess = (typeof getSessaoLocal === 'function') ? getSessaoLocal() : null;
     if (!sess || !(sess.numero || sess.id || sess.nome)) {
@@ -3157,11 +3219,6 @@ function carregarSessoes() {
         .then(r => r.json())
         .then(data => {
             if (!data) return;
-            if (data.stats) {
-                $('#totalSessoes').text(data.stats.total || 0);
-                $('#conectadas').text(data.stats.connected || 0);
-                $('#pendentes').text(data.stats.retrying || 0);
-            }
             let lista = data.sessoes || data.sessions || [];
             // Filtro rígido no client: só sessões com dono = conta logada
             const meuNum = String(sess.numero || '').replace(/\D/g, '');
@@ -3174,6 +3231,7 @@ function carregarSessoes() {
             } else {
                 lista = [];
             }
+            if (typeof aplicarStatsSessoes === 'function') aplicarStatsSessoes(data, lista);
             if (data.success !== false) {
                 renderizarListaSessoes(lista);
             }
@@ -3285,13 +3343,20 @@ function atualizarTodasEstatisticas() {
     fetch(apiUrl(withAuth('/api/sessoes/status')))
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                $('#totalSessoes').text(data.stats.total || 0);
-                $('#conectadas').text(data.stats.connected || 0);
-                $('#pendentes').text(data.stats.retrying || 0);
-                $('#contadorSessoes').text(data.sessoes.length || 0);
-                atualizarHora();
-            }
+            if (!data || data.success === false) return;
+            var lista = data.sessoes || data.sessions || [];
+            try {
+                var sess = (typeof getSessaoLocal === 'function') ? getSessaoLocal() : null;
+                var meuNum = sess && sess.numero ? String(sess.numero).replace(/\D/g, '') : '';
+                if (meuNum && Array.isArray(lista)) {
+                    lista = lista.filter(function (s) {
+                        var dono = String((s && (s.dono || s.usuario || (s.config && (s.config.usuario || s.config.dono || s.config.contaNumero)))) || '').replace(/\D/g, '');
+                        return dono && dono === meuNum;
+                    });
+                }
+            } catch (e) {}
+            if (typeof aplicarStatsSessoes === 'function') aplicarStatsSessoes(data, lista);
+            atualizarHora();
         })
         .catch(error => console.error('Erro ao atualizar estatísticas:', error));
 }
