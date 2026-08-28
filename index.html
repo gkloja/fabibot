@@ -7219,62 +7219,45 @@ body.light-mode .command-badge-mobile {
 
 
 <!-- ============================================================ -->
-<!-- INTRO / HERO com mascote Fabi (vídeo em loop) -->
+<!-- INTRO / APRESENTAÇÃO (trazida do index.html) -->
+<!-- Vídeo explicando como funciona + botões de Conectar e Configurar. -->
+<!-- Some sozinha quando a seção "configurar" está aberta. -->
+<!-- ============================================================ -->
+<!-- ============================================================ -->
+<!-- INTRO / APRESENTAÇÃO (trazida do index.html) -->
+<!-- O vídeo só aparece se o usuário NÃO estiver logado. -->
 <!-- ============================================================ -->
 <section class="fz-intro-section" id="introSection">
-  <div class="container fz-intro-hero">
-    <!-- MASCOTE: integrada ao fundo, atrás do texto -->
-    <div class="fz-mascot-wrap" aria-hidden="true">
-      <div class="fz-mascot-glow"></div>
-      <video
-        id="fabiMascot"
-        class="fz-mascot-video"
-        src="/fabi-mascote.mp4"
-        poster="/fabi-mascote-poster.jpg"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto"
-      ></video>
+    <div class="container fz-intro-inner">
+        <span class="fz-intro-badge"><i class="fas fa-bolt"></i> Conheça a Fabi Bot</span>
+        <h1 class="fz-intro-title">Conecte a <span>Fabi Bot</span> no seu grupo</h1>
+        <p class="fz-intro-subtitle">
+            Figurinhas automáticas, download de músicas/vídeos, IA integrada, proteção completa e muito mais —
+            direto aqui no site, sem precisar sair do WhatsApp.
+        </p>
+
+        
+        <!-- 🔓 USUÁRIO LOGADO: SEM VÍDEO, APENAS BOTÕES -->
+        <div class="fz-intro-actions" id="introActionsLogado" style="display:none;">
+            <a href="conectar.html" class="fz-btn fz-btn-accent"><i class="fas fa-handshake"></i> Conectar Robô</a>
+            <button type="button" class="fz-btn fz-btn-accent" onclick="mudarSecao('configurar')"><i class="fas fa-cog"></i> Configurar Grupo</button>
+            <button type="button" class="fz-btn fz-btn-accent" onclick="event.preventDefault(); mudarSecao('comunidades'); abrirRankingAoVivo(); return false;" title="Ver ranking ao vivo dos grupos"><i class="fas fa-chart-line"></i> Rank Ao Vivo!</button>
+        </div>
+        
+        <!-- 🔒 VISITANTE (NÃO LOGADO): VÍDEO + BOTÃO DE ENTRAR -->
+        <div class="fz-intro-actions" id="introActionsVisitante" style="display:none;">
+            <a href="login.html" class="fz-btn fz-btn-accent"><i class="fas fa-right-to-bracket"></i> Entrar</a>
+        </div>
+
+        <div class="fz-intro-video-wrap" id="introVideoWrap" style="display:none;">
+            <video id="fabibot-video" class="fz-intro-video" preload="metadata" poster="/flogo.jpg" controls playsinline>
+                <source src="fabibot.mp4" type="video/mp4">
+                Seu navegador não suporta vídeos HTML5.
+            </video>
+            <p class="fz-intro-video-caption">Assista e veja como automatizar seu grupo com inteligência e diversão! <a href="login.html">Já tem conta? Entrar</a></p>
+        </div>
+        
     </div>
-
-    <!-- TEXTO por cima da personagem -->
-    <div class="fz-intro-copy">
-      <span class="fz-intro-badge"><i class="fas fa-bolt"></i> Conheça a Fabi Bot</span>
-      <h1 class="fz-intro-title">Conecte a <span>Fabi Bot</span><br>no seu grupo</h1>
-      <p class="fz-intro-subtitle">
-        Figurinhas automáticas, download de músicas e vídeos, IA integrada e proteção completa —
-        direto no WhatsApp, 24 horas por dia.
-      </p>
-
-      <div class="fz-intro-actions" id="introActionsLogado" style="display:none;">
-        <a href="conectar.html" class="fz-btn fz-btn-accent"><i class="fas fa-handshake"></i> Conectar Robô</a>
-        <button type="button" class="fz-btn fz-btn-outline" onclick="mudarSecao('configurar')"><i class="fas fa-cog"></i> Configurar</button>
-        <button type="button" class="fz-btn fz-btn-outline" onclick="event.preventDefault(); mudarSecao('comunidades'); if(typeof abrirRankingAoVivo==='function')abrirRankingAoVivo(); return false;" title="Ranking ao vivo"><i class="fas fa-chart-line"></i> Rank Ao Vivo</button>
-      </div>
-
-      <div class="fz-intro-actions" id="introActionsVisitante" style="display:none;">
-        <a href="login.html" class="fz-btn fz-btn-accent"><i class="fas fa-right-to-bracket"></i> Entrar</a>
-        <a href="conectar.html" class="fz-btn fz-btn-outline"><i class="fas fa-robot"></i> Como funciona</a>
-      </div>
-
-      <div class="fz-mascot-label">
-        <span class="fz-mascot-dot"></span> Fabi online
-      </div>
-    </div>
-  </div>
-
-  <!-- Vídeo tutorial (só visitante) -->
-  <div class="container" style="margin-top:28px;max-width:900px;">
-    <div class="fz-intro-video-wrap" id="introVideoWrap" style="display:none;">
-      <video id="fabibot-video" class="fz-intro-video" preload="metadata" poster="/flogo.jpg" controls playsinline>
-        <source src="fabibot.mp4" type="video/mp4">
-        Seu navegador não suporta vídeos HTML5.
-      </video>
-      <p class="fz-intro-video-caption">Assista e veja como automatizar seu grupo com inteligência e diversão! <a href="login.html">Já tem conta? Entrar</a></p>
-    </div>
-  </div>
 </section>
 <script>
 (function atualizarIntroPorSessao() {
@@ -7299,7 +7282,7 @@ body.light-mode .command-badge-mobile {
       if (videoEl) {
         videoEl.style.display = 'none';
         var v = document.getElementById('fabibot-video');
-        if (v) { try { v.pause(); } catch(e) {} }
+        if (v) { try { v.pause(); v.removeAttribute('src'); v.load(); } catch(e) {} }
       }
     } else {
       if (logadoEl) logadoEl.style.display = 'none';
@@ -7311,28 +7294,7 @@ body.light-mode .command-badge-mobile {
   else aplicar();
   window.atualizarIntroPorSessao = aplicar;
 })();
-
-/* Autoplay do mascote (muted + unlock no mobile) */
-(function initFabiMascot() {
-  function playMascot() {
-    var v = document.getElementById('fabiMascot');
-    if (!v) return;
-    v.muted = true;
-    var p = v.play();
-    if (p && p.catch) p.catch(function(){});
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', playMascot);
-  else playMascot();
-  var unlock = function() {
-    playMascot();
-    document.removeEventListener('touchstart', unlock);
-    document.removeEventListener('click', unlock);
-  };
-  document.addEventListener('touchstart', unlock, { once: true, passive: true });
-  document.addEventListener('click', unlock, { once: true });
-})();
 </script>
-
 
 <style>
 .fz-intro-section { background: linear-gradient(180deg, #0A0A0A 0%, #111111 100%); padding: 48px 0 40px; border-bottom: 1px solid #222; }
@@ -7354,164 +7316,6 @@ body.light-mode .fz-btn-outline { color: #111827; border-color: #d1d5db; }
 body.light-mode .fz-intro-video-wrap { border-color: #e5e7eb; }
 .fz-intro-video { width: 100%; display: block; aspect-ratio: 2/1; max-height: 560px; object-fit: cover; background: #000; }
 .fz-intro-video-caption { padding: 14px; font-size: 13px; color: #A0A0A0; background: #111; margin: 0; }
-
-/* ===== HERO + MASCOTE FABI (integrada ao fundo) ===== */
-.fz-intro-section {
-  position: relative;
-  overflow: hidden;
-}
-.fz-intro-hero {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  max-width: 1100px;
-  margin: 0 auto;
-  min-height: 420px;
-  text-align: left;
-}
-/* Personagem atrás do texto, fundida no fundo escuro */
-.fz-mascot-wrap {
-  position: absolute;
-  right: -2%;
-  top: 50%;
-  transform: translateY(-50%);
-  width: min(520px, 58%);
-  height: 100%;
-  max-height: 520px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 0;
-  pointer-events: none;
-  user-select: none;
-}
-.fz-mascot-glow {
-  position: absolute;
-  width: 85%;
-  height: 85%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(37,99,235,.32) 0%, rgba(37,99,235,.06) 50%, transparent 72%);
-  filter: blur(32px);
-  z-index: 0;
-  animation: fabiPulse 4.2s ease-in-out infinite;
-}
-@keyframes fabiPulse {
-  0%, 100% { opacity: .45; transform: scale(1); }
-  50% { opacity: .85; transform: scale(1.08); }
-}
-/* mix-blend-mode: screen = preto some no fundo escuro do site */
-.fz-mascot-video {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 480px;
-  height: auto;
-  background: transparent;
-  border-radius: 0;
-  display: block;
-  mix-blend-mode: screen;
-  opacity: 0.92;
-  filter: contrast(1.05) saturate(1.05);
-  -webkit-mask-image: radial-gradient(ellipse 70% 75% at 50% 45%, #000 40%, transparent 78%);
-  mask-image: radial-gradient(ellipse 70% 75% at 50% 45%, #000 40%, transparent 78%);
-}
-body.light-mode .fz-mascot-video {
-  mix-blend-mode: multiply;
-  opacity: 0.55;
-  filter: contrast(1.05) brightness(1.05);
-}
-.fz-intro-copy {
-  position: relative;
-  z-index: 2;
-  max-width: 560px;
-  padding: 12px 0;
-}
-.fz-intro-copy .fz-intro-badge { margin-bottom: 16px; }
-.fz-intro-copy .fz-intro-title {
-  font-size: clamp(1.8rem, 4.2vw, 2.6rem);
-  line-height: 1.18;
-  margin-bottom: 14px;
-  text-shadow: 0 2px 24px rgba(0,0,0,.65);
-}
-body.light-mode .fz-intro-copy .fz-intro-title {
-  text-shadow: 0 1px 12px rgba(255,255,255,.8);
-}
-.fz-intro-copy .fz-intro-subtitle {
-  margin: 0 0 26px;
-  max-width: 480px;
-  font-size: 1.02rem;
-  line-height: 1.55;
-  text-shadow: 0 1px 16px rgba(0,0,0,.5);
-}
-.fz-intro-copy .fz-intro-actions {
-  justify-content: flex-start;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.fz-mascot-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .02em;
-  color: #94a3b8;
-  background: rgba(10,10,10,.55);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,.09);
-  padding: 7px 14px;
-  border-radius: 999px;
-}
-body.light-mode .fz-mascot-label {
-  color: #64748b;
-  background: rgba(255,255,255,.7);
-  border-color: rgba(15,23,42,.08);
-}
-.fz-mascot-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 0 0 rgba(34,197,94,.5);
-  animation: fabiOnline 2s ease-out infinite;
-}
-@keyframes fabiOnline {
-  0% { box-shadow: 0 0 0 0 rgba(34,197,94,.5); }
-  70% { box-shadow: 0 0 0 9px rgba(34,197,94,0); }
-  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
-}
-@media (max-width: 900px) {
-  .fz-intro-hero {
-    min-height: 0;
-    text-align: center;
-    padding-top: 8px;
-  }
-  .fz-mascot-wrap {
-    position: relative;
-    right: auto;
-    top: auto;
-    transform: none;
-    width: 100%;
-    max-height: 300px;
-    margin: 0 auto 8px;
-  }
-  .fz-mascot-video {
-    max-width: 260px;
-    margin: 0 auto;
-    opacity: 0.88;
-  }
-  .fz-intro-copy {
-    max-width: 100%;
-    margin: 0 auto;
-  }
-  .fz-intro-copy .fz-intro-subtitle { margin-left: auto; margin-right: auto; }
-  .fz-intro-copy .fz-intro-actions { justify-content: center; }
-  .fz-mascot-label { margin: 0 auto; }
-}
-
-
 .fz-intro-video-caption a { color: var(--primary); font-weight: 700; }
 @media (max-width: 600px) {
     .fz-intro-title { font-size: 1.6rem; }
