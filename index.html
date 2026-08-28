@@ -7249,12 +7249,19 @@ body.light-mode .command-badge-mobile {
       </video>
       <p class="fz-intro-video-caption">
         Assista e veja como automatizar seu grupo com a Fabi Bot!
-        <a href="login.html">Já tem conta? Entrar</a>
       </p>
+      <div class="fz-intro-extra" style="display:flex;margin:14px 0 8px;padding:0 12px 12px;">
+        <a href="login.html" class="fz-btn fz-btn-accent" style="background:var(--primary);color:#fff;box-shadow:0 6px 18px rgba(37,99,235,.35);">
+          <i class="fas fa-right-to-bracket"></i> Entrar / Criar conta
+        </a>
+        <a href="conectar.html" class="fz-btn fz-btn-outline">
+          <i class="fas fa-robot"></i> Como funciona
+        </a>
+      </div>
     </div>
 
     <!-- 2) Personagem + hotspots (sempre; visitante vê depois do tutorial) -->
-    <div class="fz-fabi-stage" id="fabiCtaStage">
+    <div class="fz-fabi-stage" id="fabiCtaStage" style="display:none;">
       <div class="fz-fabi-glow"></div>
 
       <video
@@ -7318,15 +7325,25 @@ body.light-mode .command-badge-mobile {
     var extra = document.getElementById('introActionsLogado');
     var videoEl = document.getElementById('introVideoWrap');
     var tut = document.getElementById('fabibot-video');
+    var stage = document.getElementById('fabiCtaStage');
     if (logado) {
+      // Logado: personagem + CTAs + Rank (sem vídeo tutorial)
+      if (stage) stage.style.display = 'block';
       if (hl) { hl.style.display = 'block'; hl.style.pointerEvents = 'auto'; }
       if (hv) hv.style.display = 'none';
       if (extra) extra.style.display = 'flex';
       if (videoEl) videoEl.style.display = 'none';
       if (tut) { try { tut.pause(); } catch(e) {} }
+      // tenta tocar o loop da mascote
+      try {
+        var m = document.getElementById('fabiMascot');
+        if (m) { m.muted = true; m.play().catch(function(){}); }
+      } catch(e) {}
     } else {
+      // Visitante: SÓ vídeo tutorial (sem personagem/botões)
+      if (stage) stage.style.display = 'none';
       if (hl) hl.style.display = 'none';
-      if (hv) { hv.style.display = 'block'; hv.style.pointerEvents = 'auto'; }
+      if (hv) hv.style.display = 'none';
       if (extra) extra.style.display = 'none';
       if (videoEl) videoEl.style.display = 'block';
     }
