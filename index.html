@@ -7241,11 +7241,22 @@ body.light-mode .command-badge-mobile {
       </p>
     </div>
 
-    <!-- Stage: personagem + botões reais por cima das cápsulas -->
+    <!-- 1) Vídeo tutorial — SÓ visitante, aparece PRIMEIRO -->
+    <div class="fz-intro-video-wrap" id="introVideoWrap" style="display:none;">
+      <video id="fabibot-video" class="fz-intro-video" preload="metadata" poster="/flogo.jpg" controls playsinline>
+        <source src="fabibot.mp4" type="video/mp4">
+        Seu navegador não suporta vídeos HTML5.
+      </video>
+      <p class="fz-intro-video-caption">
+        Assista e veja como automatizar seu grupo com a Fabi Bot!
+        <a href="login.html">Já tem conta? Entrar</a>
+      </p>
+    </div>
+
+    <!-- 2) Personagem + hotspots (sempre; visitante vê depois do tutorial) -->
     <div class="fz-fabi-stage" id="fabiCtaStage">
       <div class="fz-fabi-glow"></div>
 
-      <!-- Vídeo em loop (se existir); senão o poster/imagem -->
       <video
         id="fabiMascot"
         class="fz-fabi-media"
@@ -7253,11 +7264,8 @@ body.light-mode .command-badge-mobile {
         poster="/fabi-cta.jpg"
         autoplay muted loop playsinline preload="metadata"
       ></video>
-      <!-- Fallback visual se o vídeo falhar -->
       <img id="fabiCtaImg" class="fz-fabi-media fz-fabi-img-fallback" src="/fabi-cta.jpg" alt="Fabi Bot" style="display:none;" />
 
-      <!-- HOTSPOTS — alinhados às cápsulas verdes da arte -->
-      <!-- Logado: Conectar + Configurar -->
       <div class="fz-hotspots" id="hotspotsLogado" style="display:none;">
         <a href="conectar.html" class="fz-hotspot fz-hotspot-left" title="Conectar Robô">
           <span class="fz-hotspot-hit"></span>
@@ -7269,7 +7277,6 @@ body.light-mode .command-badge-mobile {
         </button>
       </div>
 
-      <!-- Visitante: Entrar + Como funciona -->
       <div class="fz-hotspots" id="hotspotsVisitante" style="display:none;">
         <a href="login.html" class="fz-hotspot fz-hotspot-left" title="Entrar">
           <span class="fz-hotspot-hit"></span>
@@ -7284,25 +7291,12 @@ body.light-mode .command-badge-mobile {
       <div class="fz-fabi-status"><span class="fz-mascot-dot"></span> Fabi online</div>
     </div>
 
-    <!-- Atalhos extras (Rank) — só logado -->
     <div class="fz-intro-extra" id="introActionsLogado" style="display:none;">
       <button type="button" class="fz-btn fz-btn-outline" onclick="event.preventDefault(); mudarSecao('comunidades'); if(typeof abrirRankingAoVivo==='function')abrirRankingAoVivo(); return false;">
         <i class="fas fa-chart-line"></i> Rank Ao Vivo
       </button>
     </div>
     <div id="introActionsVisitante" style="display:none;"></div>
-
-    <!-- Vídeo tutorial — SÓ visitante (não logado) -->
-    <div class="fz-intro-video-wrap" id="introVideoWrap" style="display:none;">
-      <video id="fabibot-video" class="fz-intro-video" preload="metadata" poster="/flogo.jpg" controls playsinline>
-        <source src="fabibot.mp4" type="video/mp4">
-        Seu navegador não suporta vídeos HTML5.
-      </video>
-      <p class="fz-intro-video-caption">
-        Assista e veja como automatizar seu grupo com a Fabi Bot!
-        <a href="login.html">Já tem conta? Entrar</a>
-      </p>
-    </div>
   </div>
 </section>
 <script>
@@ -7402,19 +7396,20 @@ body.light-mode .fz-intro-video-wrap { border-color: #e5e7eb; }
 .fz-intro-section {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(180deg, #0A0A0A 0%, #0d0d0d 55%, #111 100%);
-  padding: 28px 0 40px;
-  border-bottom: 1px solid #222;
+  background: #000;
+  padding: 24px 0 36px;
+  border-bottom: 1px solid #1a1a1a;
 }
 body.light-mode .fz-intro-section {
   background: linear-gradient(180deg, #f9fafb 0%, #eef1f5 100%);
   border-bottom: 1px solid #e5e7eb;
 }
 .fz-intro-cta {
-  max-width: 640px;
+  max-width: 720px;
   margin: 0 auto;
   text-align: center;
   padding: 0 8px;
+  background: transparent;
 }
 .fz-intro-cta-text { margin-bottom: 4px; }
 .fz-intro-cta .fz-intro-title {
@@ -7434,12 +7429,12 @@ body.light-mode .fz-intro-cta .fz-intro-subtitle { color: #6b7280; }
 /* Stage maior, sem “caixa” visível */
 .fz-fabi-stage {
   position: relative;
-  width: min(100%, 580px);
-  margin: 0 auto -8px;
+  width: min(100%, 680px);
+  margin: 0 auto -12px;
   aspect-ratio: 3 / 4;
   border-radius: 0;
   overflow: visible;
-  background: transparent;
+  background: #000;
 }
 .fz-fabi-glow {
   position: absolute;
@@ -7471,10 +7466,11 @@ body.light-mode .fz-intro-cta .fz-intro-subtitle { color: #6b7280; }
   border-radius: 0;
   /* some o preto no fundo escuro */
   mix-blend-mode: screen;
-  /* vinheta forte: some traço/borda do retângulo */
-  -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 40%, #000 38%, rgba(0,0,0,.7) 55%, transparent 72%);
-  mask-image: radial-gradient(ellipse 72% 68% at 50% 40%, #000 38%, rgba(0,0,0,.7) 55%, transparent 72%);
-  filter: drop-shadow(0 24px 60px rgba(34, 197, 94, 0.22));
+  /* vinheta suave só nas extremidades — personagem maior e nítida */
+  -webkit-mask-image: radial-gradient(ellipse 88% 86% at 50% 42%, #000 58%, rgba(0,0,0,.75) 78%, transparent 92%);
+  mask-image: radial-gradient(ellipse 88% 86% at 50% 42%, #000 58%, rgba(0,0,0,.75) 78%, transparent 92%);
+  filter: none;
+  mix-blend-mode: normal; /* fundo já é preto = sem cinza */
 }
 /* camada extra de fade nas 4 bordas (mata o traço residual) */
 .fz-fabi-stage::after {
@@ -7484,10 +7480,10 @@ body.light-mode .fz-intro-cta .fz-intro-subtitle { color: #6b7280; }
   z-index: 2;
   pointer-events: none;
   background:
-    linear-gradient(to right, #0A0A0A 0%, transparent 12%, transparent 88%, #0A0A0A 100%),
-    linear-gradient(to bottom, #0A0A0A 0%, transparent 10%, transparent 88%, #0A0A0A 100%);
-  mix-blend-mode: multiply;
-  opacity: 0.95;
+    linear-gradient(to right, #000 0%, transparent 14%, transparent 86%, #000 100%),
+    linear-gradient(to bottom, #000 0%, transparent 12%, transparent 86%, #000 100%);
+  mix-blend-mode: normal;
+  opacity: 1;
 }
 body.light-mode .fz-fabi-stage::after {
   background:
@@ -7611,7 +7607,7 @@ body.light-mode .fz-btn-outline { color: #111827; border-color: #d1d5db; }
 /* vídeo tutorial visitante */
 .fz-intro-cta .fz-intro-video-wrap {
   max-width: 640px;
-  margin: 28px auto 0;
+  margin: 8px auto 24px;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid #262626;
@@ -7638,11 +7634,14 @@ body.light-mode .fz-intro-cta .fz-intro-video-wrap { border-color: #e5e7eb; }
 .fz-intro-cta .fz-intro-video-caption a { color: var(--primary); font-weight: 700; }
 
 @media (max-width: 520px) {
-  .fz-fabi-stage { width: min(100%, 100vw - 8px); max-width: 460px; }
+  .fz-fabi-stage { width: min(100%, 100vw); max-width: none; margin-left: -4px; margin-right: -4px; }
+  .fz-intro-cta { padding: 0; max-width: 100%; }
+  .fz-intro-cta-text { padding: 0 16px; }
   .fz-hotspot { top: 55.5%; width: 42%; height: 10%; min-height: 48px; }
   .fz-hotspot-left { left: 3%; }
   .fz-hotspot-right { right: 3%; }
   .fz-intro-cta .fz-intro-video { max-height: 240px; }
+  .fz-intro-extra { padding: 0 16px; }
 }
 
 
