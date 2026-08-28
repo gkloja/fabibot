@@ -7284,14 +7284,25 @@ body.light-mode .command-badge-mobile {
       <div class="fz-fabi-status"><span class="fz-mascot-dot"></span> Fabi online</div>
     </div>
 
-    <!-- Atalhos extras (Rank) — só logado, abaixo da arte -->
+    <!-- Atalhos extras (Rank) — só logado -->
     <div class="fz-intro-extra" id="introActionsLogado" style="display:none;">
       <button type="button" class="fz-btn fz-btn-outline" onclick="event.preventDefault(); mudarSecao('comunidades'); if(typeof abrirRankingAoVivo==='function')abrirRankingAoVivo(); return false;">
         <i class="fas fa-chart-line"></i> Rank Ao Vivo
       </button>
     </div>
     <div id="introActionsVisitante" style="display:none;"></div>
-    <div id="introVideoWrap" style="display:none;"></div>
+
+    <!-- Vídeo tutorial — SÓ visitante (não logado) -->
+    <div class="fz-intro-video-wrap" id="introVideoWrap" style="display:none;">
+      <video id="fabibot-video" class="fz-intro-video" preload="metadata" poster="/flogo.jpg" controls playsinline>
+        <source src="fabibot.mp4" type="video/mp4">
+        Seu navegador não suporta vídeos HTML5.
+      </video>
+      <p class="fz-intro-video-caption">
+        Assista e veja como automatizar seu grupo com a Fabi Bot!
+        <a href="login.html">Já tem conta? Entrar</a>
+      </p>
+    </div>
   </div>
 </section>
 <script>
@@ -7311,16 +7322,20 @@ body.light-mode .command-badge-mobile {
     var hl = document.getElementById('hotspotsLogado');
     var hv = document.getElementById('hotspotsVisitante');
     var extra = document.getElementById('introActionsLogado');
+    var videoEl = document.getElementById('introVideoWrap');
+    var tut = document.getElementById('fabibot-video');
     if (logado) {
       if (hl) { hl.style.display = 'block'; hl.style.pointerEvents = 'auto'; }
       if (hv) hv.style.display = 'none';
       if (extra) extra.style.display = 'flex';
+      if (videoEl) videoEl.style.display = 'none';
+      if (tut) { try { tut.pause(); } catch(e) {} }
     } else {
       if (hl) hl.style.display = 'none';
       if (hv) { hv.style.display = 'block'; hv.style.pointerEvents = 'auto'; }
       if (extra) extra.style.display = 'none';
+      if (videoEl) videoEl.style.display = 'block';
     }
-    // garante hotspots clicáveis mesmo se display veio errado
     document.querySelectorAll('.fz-hotspot').forEach(function(el){
       el.style.pointerEvents = 'auto';
       el.style.zIndex = '10';
@@ -7419,8 +7434,8 @@ body.light-mode .fz-intro-cta .fz-intro-subtitle { color: #6b7280; }
 /* Stage maior, sem “caixa” visível */
 .fz-fabi-stage {
   position: relative;
-  width: min(100%, 520px);
-  margin: 0 auto;
+  width: min(100%, 580px);
+  margin: 0 auto -8px;
   aspect-ratio: 3 / 4;
   border-radius: 0;
   overflow: visible;
@@ -7456,10 +7471,30 @@ body.light-mode .fz-intro-cta .fz-intro-subtitle { color: #6b7280; }
   border-radius: 0;
   /* some o preto no fundo escuro */
   mix-blend-mode: screen;
-  /* vinheta: some as bordas do “quadrado” */
-  -webkit-mask-image: radial-gradient(ellipse 78% 72% at 50% 42%, #000 42%, rgba(0,0,0,.85) 62%, transparent 78%);
-  mask-image: radial-gradient(ellipse 78% 72% at 50% 42%, #000 42%, rgba(0,0,0,.85) 62%, transparent 78%);
-  filter: drop-shadow(0 20px 50px rgba(34, 197, 94, 0.18));
+  /* vinheta forte: some traço/borda do retângulo */
+  -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 40%, #000 38%, rgba(0,0,0,.7) 55%, transparent 72%);
+  mask-image: radial-gradient(ellipse 72% 68% at 50% 40%, #000 38%, rgba(0,0,0,.7) 55%, transparent 72%);
+  filter: drop-shadow(0 24px 60px rgba(34, 197, 94, 0.22));
+}
+/* camada extra de fade nas 4 bordas (mata o traço residual) */
+.fz-fabi-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(to right, #0A0A0A 0%, transparent 12%, transparent 88%, #0A0A0A 100%),
+    linear-gradient(to bottom, #0A0A0A 0%, transparent 10%, transparent 88%, #0A0A0A 100%);
+  mix-blend-mode: multiply;
+  opacity: 0.95;
+}
+body.light-mode .fz-fabi-stage::after {
+  background:
+    linear-gradient(to right, #f9fafb 0%, transparent 14%, transparent 86%, #f9fafb 100%),
+    linear-gradient(to bottom, #f9fafb 0%, transparent 12%, transparent 86%, #f9fafb 100%);
+  mix-blend-mode: normal;
+  opacity: 0.9;
 }
 body.light-mode .fz-fabi-media {
   mix-blend-mode: normal;
@@ -7573,12 +7608,43 @@ body.light-mode .fz-fabi-media {
 .fz-btn-outline:hover { border-color: #22c55e; color: #4ade80; }
 body.light-mode .fz-btn-outline { color: #111827; border-color: #d1d5db; }
 
+/* vídeo tutorial visitante */
+.fz-intro-cta .fz-intro-video-wrap {
+  max-width: 640px;
+  margin: 28px auto 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #262626;
+  box-shadow: 0 10px 36px rgba(0,0,0,.45);
+  background: #000;
+  text-align: left;
+}
+body.light-mode .fz-intro-cta .fz-intro-video-wrap { border-color: #e5e7eb; }
+.fz-intro-cta .fz-intro-video {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16/9;
+  max-height: 400px;
+  object-fit: cover;
+  background: #000;
+}
+.fz-intro-cta .fz-intro-video-caption {
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #A0A0A0;
+  background: #111;
+  margin: 0;
+}
+.fz-intro-cta .fz-intro-video-caption a { color: var(--primary); font-weight: 700; }
+
 @media (max-width: 520px) {
-  .fz-fabi-stage { width: min(100%, 100vw - 24px); max-width: 420px; }
+  .fz-fabi-stage { width: min(100%, 100vw - 8px); max-width: 460px; }
   .fz-hotspot { top: 55.5%; width: 42%; height: 10%; min-height: 48px; }
   .fz-hotspot-left { left: 3%; }
   .fz-hotspot-right { right: 3%; }
+  .fz-intro-cta .fz-intro-video { max-height: 240px; }
 }
+
 
 /* ===== Perfil / Trocar Foto (portado do index.html) ===== */
 #profileContainer .user-photo, #profileContainer .profile-placeholder {
