@@ -125,7 +125,7 @@ body{font-family:var(--font);background:
 .vitima img{width:40px;height:40px;border-radius:11px;object-fit:cover}
 footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a{color:var(--g2);text-decoration:none}
 
-.plots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.plots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}@media(min-width:700px){.plots{grid-template-columns:repeat(6,1fr)}}.plot.locked{opacity:.85;border-style:dashed}
 .plot{background:linear-gradient(180deg,#1a2a1c,#0e1610);border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
 .plot.ready{border-color:rgba(74,222,128,.5);box-shadow:0 0 16px rgba(22,163,74,.2)}
 .plot.growing{border-color:rgba(251,191,36,.3)}
@@ -286,18 +286,25 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
     <button class="back" data-back>← Arena</button>
     <div class="panel">
       <h3>🌾 Fazenda Gold</h3>
-      <p class="sub">3 canteiros independentes. Plante, espere e colha. Visite e tente roubar a fazenda de outros no ranking.</p>
+      <p class="sub">Até <b>6 canteiros</b>. O 1º é grátis; os outros desbloqueiam com Golds. Custo de plantio aparece em cada cultura. Aviso quando ficar pronto.</p>
       <div class="plots" id="farmPlots"></div>
+      <div id="unlockRow" class="hide" style="margin-bottom:10px">
+        <button class="btn btn-gold" id="btnUnlock">🔓 Desbloquear próximo canteiro</button>
+        <p class="sub" id="unlockHint" style="margin-top:6px;margin-bottom:0"></p>
+      </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
         <button class="btn btn-g" id="btnHarvest" style="flex:1">🧺 COLHER TUDO</button>
         <button class="btn btn-ghost" id="btnFarmRefresh" style="flex:1">Atualizar</button>
       </div>
       <div class="sec">Plantar cultura</div>
       <div class="crop-grid" id="cropGrid"></div>
-      <div class="bets" style="margin-top:8px">
-        <button type="button" class="on" id="plantQty1" data-q="1">1 canteiro</button>
-        <button type="button" id="plantQty3" data-q="3">Encher livres</button>
+      <div class="bets" style="margin-top:8px" id="plantQtyRow">
+        <button type="button" class="on" data-q="1">1</button>
+        <button type="button" data-q="2">2</button>
+        <button type="button" data-q="3">3</button>
+        <button type="button" data-q="6">Encher livres</button>
       </div>
+      <p class="sub" id="plantCostHint" style="margin-bottom:6px">Selecione a cultura · custo por canteiro aparece no card</p>
       <button class="btn btn-gold" id="btnPlant">🌱 PLANTAR</button>
       <p class="sub" id="farmLog" style="margin-top:8px;margin-bottom:0"></p>
       <div class="hist"><h4>Últimas ações · Fazenda</h4><div id="hist-fazenda"></div></div>
@@ -548,30 +555,70 @@ document.getElementById('btnUp').onclick=()=>{S.power++;if(S.power%3===0)S.level
 document.getElementById('btnFish').onclick=async()=>{const btn=document.getElementById('btnFish');document.getElementById('rod').textContent='🎣…';const d=await play('/cliente06/game/pescar',{},btn,{hist:'hist-pescar'});if(d){document.getElementById('rod').textContent=d.emoji||'🐟';document.getElementById('fishTag').textContent=d.peixe;document.getElementById('fishLog').textContent='+'+fmt(d.gain);toast((d.emoji||'')+' +'+d.gain,'ok');setBtnCd(btn,4000,'LANÇAR LINHA')}};
 
 
+
 /* FAZENDA */
-let farmCrop='milho', farmQty=1, visitTarget=null;
+let farmCrop='milho', farmQty=1, visitTarget=null, farmCatalog=[];
 function paintPlots(plots){
   const box=document.getElementById('farmPlots');
   if(!box)return;
   box.innerHTML=(plots||[]).map(p=>{
+    if(p.state==='locked'){
+      return `<div class="plot locked" data-unlock="${p.index}">
+        <div class="pe">🔒</div>
+        <div class="pn">Canteiro ${p.index+1}</div>
+        <div class="pr">Desbloquear</div>
+        <div class="pr" style="color:var(--gold2);font-weight:800">${fmt(p.unlockCost)}</div>
+      </div>`;
+    }
     const cls=p.state==='ready'?'ready':p.state==='growing'?'growing':'';
-    const bar=p.state==='growing'?`<div class="pbar"><i style="width:${p.progress}%"></i></div>`:(p.state==='ready'?'<div class="pr" style="color:var(--g2)">Pronto!</div>':'<div class="pr">Vazio</div>');
-    const reward=p.reward?`<div class="pr">+${fmt(p.reward)}</div>`:'';
+    const bar=p.state==='growing'?`<div class="pbar"><i style="width:${p.progress}%"></i></div>`:(p.state==='ready'?'<div class="pr" style="color:var(--g2);font-weight:800">Pronto!</div>':'<div class="pr">Vazio</div>');
+    const reward=p.reward?`<div class="pr">colheita +${fmt(p.reward)}</div>`:'';
     return `<div class="plot ${cls}"><div class="pe">${p.emoji||'🟫'}</div><div class="pn">${esc(p.nome)}</div>${bar}${p.state==='growing'?`<div class="pr">${esc(p.remaining)}</div>`:''}${reward}</div>`;
   }).join('');
+  box.querySelectorAll('[data-unlock]').forEach(el=>{
+    el.style.cursor='pointer';
+    el.onclick=()=>document.getElementById('btnUnlock')&&document.getElementById('btnUnlock').click();
+  });
 }
 function paintCatalog(cat){
+  farmCatalog=cat||[];
   const box=document.getElementById('cropGrid');
   if(!box)return;
-  box.innerHTML=(cat||[]).map(c=>`<button type="button" class="crop ${c.id===farmCrop?'on':''}" data-c="${esc(c.id)}">
-    <div class="ce">${c.emoji}</div><div class="cn">${esc(c.nome)}</div>
-    <div class="cm">${esc(c.tempo)} · -${fmt(c.cost)}</div>
-    <div class="cr">+${fmt(c.reward)}</div>
+  box.innerHTML=farmCatalog.map(c=>`<button type="button" class="crop ${c.id===farmCrop?'on':''}" data-c="${esc(c.id)}">
+    <div class="ce">${c.emoji}</div>
+    <div class="cn">${esc(c.nome)}</div>
+    <div class="cm">${esc(c.tempo)}</div>
+    <div class="cm">Plantar: <b style="color:#fecaca">-${fmt(c.cost)}</b></div>
+    <div class="cr">Colher +${fmt(c.reward)}</div>
+    <div class="cm">Lucro ~${fmt(c.lucro!=null?c.lucro:(c.reward-c.cost))}</div>
   </button>`).join('');
   box.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{
     farmCrop=b.getAttribute('data-c');
     box.querySelectorAll('.crop').forEach(x=>x.classList.toggle('on',x.getAttribute('data-c')===farmCrop));
+    updatePlantCostHint();
   });
+  updatePlantCostHint();
+}
+function updatePlantCostHint(){
+  const c=farmCatalog.find(x=>x.id===farmCrop);
+  const el=document.getElementById('plantCostHint');
+  if(!el)return;
+  if(!c){el.textContent='Selecione uma cultura';return;}
+  const total=c.cost*farmQty;
+  el.innerHTML=`${c.emoji} <b>${esc(c.nome)}</b> · <span style="color:#fecaca">-${fmt(c.cost)}</span> por canteiro · ${farmQty}× = <b style="color:#fecaca">-${fmt(total)}</span> · colheita <b style="color:var(--g2)">+${fmt(c.reward*farmQty)}</b>`;
+}
+function updateUnlockUI(faz){
+  const row=document.getElementById('unlockRow');
+  const hint=document.getElementById('unlockHint');
+  const btn=document.getElementById('btnUnlock');
+  if(!row||!faz)return;
+  if(faz.nextUnlockCost!=null&&faz.unlockedSlots<6){
+    row.classList.remove('hide');
+    btn.textContent='🔓 Liberar canteiro '+(faz.unlockedSlots+1)+' · '+fmt(faz.nextUnlockCost)+' Golds';
+    hint.textContent='Você tem '+faz.unlockedSlots+' de 6 canteiros · 1º grátis · próximos pagos';
+  } else {
+    row.classList.add('hide');
+  }
 }
 async function loadFarm(){
   if(!S.grupo)return;
@@ -580,29 +627,46 @@ async function loadFarm(){
     if(typeof r.data.golds==='number')setGold(r.data.golds);
     paintPlots(r.data.fazenda&&r.data.fazenda.plots);
     paintCatalog(r.data.catalogo);
-    if(r.data.fazenda) document.getElementById('farmLog').textContent='Colheitas: '+fmt(r.data.fazenda.totalHarvest||0)+' · Plantios: '+(r.data.fazenda.totalPlanted||0);
+    updateUnlockUI(r.data.fazenda);
+    if(r.data.fazenda) document.getElementById('farmLog').textContent='Liberados: '+(r.data.fazenda.unlockedSlots||1)+'/6 · Colheitas: '+fmt(r.data.fazenda.totalHarvest||0)+' · Plantios: '+(r.data.fazenda.totalPlanted||0);
+    if(r.data.alertReady&&r.data.alertReady.ready&&r.data.alertReady.ready.length){
+      toast('🌾 Pronto: '+r.data.alertReady.ready.join(', '),'ok');
+    }
   } else toast((r.data&&r.data.message)||'Falha fazenda','bad');
   loadRecent('fazenda','hist-fazenda');
 }
-document.getElementById('plantQty1')&&(document.getElementById('plantQty1').onclick=()=>{farmQty=1;document.getElementById('plantQty1').classList.add('on');document.getElementById('plantQty3').classList.remove('on')});
-document.getElementById('plantQty3')&&(document.getElementById('plantQty3').onclick=()=>{farmQty=3;document.getElementById('plantQty3').classList.add('on');document.getElementById('plantQty1').classList.remove('on')});
+document.getElementById('plantQtyRow')&&document.getElementById('plantQtyRow').querySelectorAll('[data-q]').forEach(b=>{
+  b.onclick=()=>{
+    document.getElementById('plantQtyRow').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    farmQty=parseInt(b.getAttribute('data-q'),10)||1;
+    updatePlantCostHint();
+  };
+});
 document.getElementById('btnPlant').onclick=async()=>{
   const btn=document.getElementById('btnPlant');
   const d=await play('/cliente06/game/fazenda/plantar',{crop:farmCrop,qty:farmQty},btn,{hist:'hist-fazenda'});
   if(!d)return;
-  if(d.fazenda)paintPlots(d.fazenda.plots);
-  document.getElementById('farmLog').textContent='Plantou '+d.planted+' (-'+fmt(d.cost)+')';
-  toast('🌱 Plantado!','ok');
+  if(d.fazenda){paintPlots(d.fazenda.plots);updateUnlockUI(d.fazenda)}
+  document.getElementById('farmLog').textContent='Plantou '+(d.planted||0)+' canteiro(s) · custo -'+fmt(d.cost)+' ('+fmt(d.costUnit||0)+' cada)';
+  toast('🌱 Plantado em '+(d.planted||1)+' canteiro(s)!','ok');
 };
 document.getElementById('btnHarvest').onclick=async()=>{
   const btn=document.getElementById('btnHarvest');
   const d=await play('/cliente06/game/fazenda/colher',{},btn,{hist:'hist-fazenda'});
   if(!d)return;
-  if(d.fazenda)paintPlots(d.fazenda.plots);
+  if(d.fazenda){paintPlots(d.fazenda.plots);updateUnlockUI(d.fazenda)}
   document.getElementById('farmLog').textContent='Colheu +'+fmt(d.gain);
   toast('🧺 +'+fmt(d.gain),'ok');
 };
 document.getElementById('btnFarmRefresh').onclick=()=>loadFarm();
+document.getElementById('btnUnlock').onclick=async()=>{
+  const btn=document.getElementById('btnUnlock');
+  const d=await play('/cliente06/game/fazenda/desbloquear',{},btn,{hist:'hist-fazenda'});
+  if(!d)return;
+  if(d.fazenda){paintPlots(d.fazenda.plots);updateUnlockUI(d.fazenda)}
+  toast('🔓 Canteiro '+(d.unlockedSlots)+' liberado!','ok');
+};
 document.getElementById('btnVisit').onclick=async()=>{
   const num=String(document.getElementById('visitNum').value||'').replace(/\D/g,'');
   if(!num)return toast('Informe o número','bad');
@@ -615,9 +679,9 @@ document.getElementById('btnVisit').onclick=async()=>{
   box.classList.remove('hide');
   box.innerHTML=`<div class="user" style="margin:10px 0;padding:10px;border-radius:14px;border:1px solid var(--line)">
     <img src="${esc(fixFoto(f.dono&&f.dono.foto))}" style="width:44px;height:44px;border-radius:12px" onerror="this.src='${AV}'"/>
-    <div><strong>${esc(f.dono&&f.dono.nome)}</strong><div style="font-size:12px;color:var(--muted)">${f.readyCount||0} prontos · ${f.emptyCount||0} vazios</div></div>
+    <div><strong>${esc(f.dono&&f.dono.nome)}</strong><div style="font-size:12px;color:var(--muted)">${f.unlockedSlots||1}/6 canteiros · ${f.readyCount||0} prontos</div></div>
   </div>
-  <div class="plots">${(f.plots||[]).map(p=>`<div class="plot ${p.state}"><div class="pe">${p.emoji}</div><div class="pn">${esc(p.nome)}</div><div class="pr">${p.state==='ready'?'Pronto':p.state==='growing'?esc(p.remaining):'Vazio'}</div></div>`).join('')}</div>
+  <div class="plots">${(f.plots||[]).map(p=>`<div class="plot ${p.state}"><div class="pe">${p.emoji}</div><div class="pn">${esc(p.nome)}</div><div class="pr">${p.state==='ready'?'Pronto':p.state==='growing'?esc(p.remaining):p.state==='locked'?'🔒':('Vazio')}</div></div>`).join('')}</div>
   ${r.data.isOwn?'':'<button class="btn btn-pink" id="btnStealFarm">🦝 TENTAR ROUBAR CANTEIRO PRONTO</button>'}`;
   const steal=document.getElementById('btnStealFarm');
   if(steal)steal.onclick=async()=>{
@@ -626,11 +690,10 @@ document.getElementById('btnVisit').onclick=async()=>{
     if(d.win)toast('🦝 +'+fmt(d.loot)+' ('+(d.crop&&d.crop.emoji||'')+')','ok');
     else toast(d.message||('Falhou '+d.delta),'bad');
     if(d.fazendaAlvo){
-      box.querySelector('.plots').innerHTML=(d.fazendaAlvo.plots||[]).map(p=>`<div class="plot ${p.state}"><div class="pe">${p.emoji}</div><div class="pn">${esc(p.nome)}</div><div class="pr">${p.state==='ready'?'Pronto':p.state==='growing'?esc(p.remaining):'Vazio'}</div></div>`).join('');
+      box.querySelector('.plots').innerHTML=(d.fazendaAlvo.plots||[]).map(p=>`<div class="plot ${p.state}"><div class="pe">${p.emoji}</div><div class="pn">${esc(p.nome)}</div><div class="pr">${p.state==='ready'?'Pronto':p.state==='growing'?esc(p.remaining):p.state==='locked'?'🔒':'Vazio'}</div></div>`).join('');
     }
   };
 };
-
 /* bets */
 function wireBet(inputId, chipsId, key, maxKey){
   const inp=document.getElementById(inputId);
