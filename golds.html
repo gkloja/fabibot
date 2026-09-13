@@ -96,6 +96,14 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 .check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:8px 0}
 .vitima{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.25);margin:8px 0}
 .vitima img{width:40px;height:40px;border-radius:11px;object-fit:cover}
+
+.gbtn{box-shadow:0 8px 24px rgba(0,0,0,.25);transition:transform .15s,border-color .15s}
+.gbtn:hover{transform:translateY(-3px);border-color:rgba(251,191,36,.35)}
+.hud .user{background:linear-gradient(135deg,rgba(22,163,74,.12),var(--card))}
+.shell{animation:fadein .35s ease}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.gcard.on{box-shadow:0 0 0 1px rgba(251,191,36,.35),0 8px 28px rgba(251,191,36,.12)}
+.raid-pos{font-size:10px;font-weight:800;color:var(--gold);margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -186,7 +194,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
     <button class="back" data-back>← Jogos</button>
     <div class="panel arena tig" style="min-height:auto;padding:16px">
       <h3 style="text-align:center">🐯 Fortune Tiger</h3>
-      <p class="sub" style="text-align:center">Mais difícil · par central paga <b>2x</b> · grade = jackpot</p>
+      <p class="sub" style="text-align:center">Mais difícil · <b>🍀 vale 2x</b> · grade completa = jackpot</p>
       <div class="grid3" id="tigerGrid">
         <div class="cell">🐯</div><div class="cell">🍒</div><div class="cell">🎰</div>
         <div class="cell">🃏</div><div class="cell">🍊</div><div class="cell">🍒</div>
@@ -194,7 +202,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
       </div>
       <div class="bets" id="tBets"><button data-v="10">10</button><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button></div>
       <button class="btn btn-gold" id="btnSpin">GIRAR</button>
-      <div class="pay"><div>🐯 15x</div><div>🎰 10x</div><div>🃏 5x</div><div>🍊 4x</div><div>🍒 3x</div><div>Par centro 2x</div></div>
+      <div class="pay"><div>🐯 15x</div><div>🎰 10x</div><div>🃏 5x</div><div>🍊 4x</div><div>🍒 3x</div><div>🍀 2x</div></div>
       <p class="sub" id="tigLog" style="margin-top:10px;margin-bottom:0;text-align:center"></p>
     </div>
   </div>
@@ -203,7 +211,9 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
     <button class="back" data-back>← Jogos</button>
     <div class="arena"><div class="big">🏴‍☠️</div><div class="tag" id="raidTag">Rouba o mais rico do grupo</div></div>
     <div class="panel">
-      <p class="sub">Na sorte você tenta roubar Golds da <b>pessoa mais rica</b> deste grupo (exceto você). Falha = multa. Cooldown 45s · push no canal.</p>
+      <p class="sub">Escolha um grupo do <b>Top 10 mais ricos</b> (igual /rankgrupos). Você tenta roubar a pessoa mais rica dali. Falha = multa no seu grupo. Cooldown 45s.</p>
+      <div class="sec">Alvo (Top 10)</div>
+      <div class="groups" id="raidTargets"><div class="skel"></div></div>
       <div class="vitima hide" id="vitimaBox"><img id="vitimaFoto" alt=""/><div><strong id="vitimaNome">—</strong><div style="font-size:12px;color:var(--muted)" id="vitimaMeta"></div></div></div>
       <button class="btn btn-pink" id="btnRaid">TENTAR ROUBO</button>
       <p class="sub" id="raidLog" style="margin-top:8px;margin-bottom:0"></p>
@@ -230,7 +240,7 @@ const PROXY_HOST='https://orange-hill-2e61.gbscabral15.workers.dev';
 const BACKEND='http://br2.bronxyshost.com:4009';
 const API_URL=PROXY_HOST+'/br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009';
 const SK='fabi_ge_v4', AV='https://fabibot.vercel.app/flogo.jpg';
-const SYM=['🎰','🍒','🍊','🃏','🐯'];
+const SYM=['🎰','🍒','🍊','🃏','🐯','🍀'];
 function urlsFor(path){
   const target=BACKEND.replace(/\/$/,'')+path;
   const hostPath=BACKEND.replace(/^https?:\/\//,'');
@@ -262,7 +272,7 @@ function setBtnCd(btn, ms, label){
   tick();
 }
 
-const S={user:null,pass:'',foto:AV,groups:[],grupo:'',grupoNome:'',golds:0,power:1,level:1,energy:100,maxE:100,streak:0,lastE:Date.now(),bet:100,cashout:1.5,rankMode:'total',busy:false,rankCache:null,rankAt:0,cd:{}};
+const S={user:null,pass:'',foto:AV,groups:[],grupo:'',grupoNome:'',golds:0,power:1,level:1,energy:100,maxE:100,streak:0,lastE:Date.now(),bet:100,cashout:1.5,rankMode:'total',busy:false,rankCache:null,rankAt:0,cd:{},targetGrupo:'',top10:[]};
 function save(){try{localStorage.setItem(SK,JSON.stringify({user:S.user,pass:S.pass,foto:S.foto,grupo:S.grupo,grupoNome:S.grupoNome,power:S.power,level:S.level,energy:S.energy,maxE:S.maxE,streak:S.streak,lastE:S.lastE}))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'null');if(!d||!d.user||!d.pass)return false;Object.assign(S,d);return true}catch(e){return false}}
 
@@ -349,7 +359,7 @@ function showApp(){
   setAvatar(S.user.foto||S.foto||AV);
   loadGroups().then(ui);
 }
-function openGame(n){if(n!=='rank'&&!S.grupo){toast('Escolha um grupo','bad');return}document.getElementById('viewHome').classList.add('hide');document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));document.getElementById('gv-'+n).classList.add('on');if(n==='rank')loadRank(true)}
+function openGame(n){if(n!=='rank'&&!S.grupo){toast('Escolha um grupo','bad');return}document.getElementById('viewHome').classList.add('hide');document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));document.getElementById('gv-'+n).classList.add('on');if(n==='rank')loadRank(true);if(n==='raid')loadRaidTargets()}
 function closeGame(){document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));document.getElementById('viewHome').classList.remove('hide')}
 document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>openGame(b.dataset.g));
 document.querySelectorAll('[data-back]').forEach(b=>b.onclick=closeGame);
@@ -449,20 +459,46 @@ document.getElementById('btnSpin').onclick=async()=>{
   else{log.textContent='Sem linha · -'+fmt(d.bet||S.bet);toast('Sem prêmio','bad')}
 };
 
+
+async function loadRaidTargets(){
+  const box=document.getElementById('raidTargets');
+  if(!box)return;
+  box.innerHTML='<div class="skel"></div><div class="skel"></div>';
+  let r=await api('/cliente06/game/rank-grupos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:10})},15000);
+  if(!r.ok) r=await api('/cliente06/game/rank-grupos?limit=10',null,15000);
+  if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha ao carregar Top 10</p>';return}
+  S.top10=r.data.top10||r.data.rank||[];
+  if(!S.top10.length){box.innerHTML='<p class="sub">Nenhum grupo no ranking</p>';return}
+  if(!S.targetGrupo) S.targetGrupo=S.top10[0].grupo;
+  box.innerHTML=S.top10.map(g=>`<button type="button" class="gcard ${g.grupo===S.targetGrupo?'on':''}" data-tg="${esc(g.grupo)}">
+    <div class="raid-pos">#${g.posicao||''} TOP 10</div>
+    <strong>${esc(g.nome)}</strong>
+    <div class="gg">💰 ${fmt(g.totalGolds||g.golds)}</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px">${g.membros||g.participantes||0} membros · média ${fmt(g.mediaGolds||0)}</div>
+  </button>`).join('');
+  box.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>{
+    S.targetGrupo=b.getAttribute('data-tg');
+    box.querySelectorAll('.gcard').forEach(c=>c.classList.toggle('on',c.getAttribute('data-tg')===S.targetGrupo));
+    const g=S.top10.find(x=>x.grupo===S.targetGrupo);
+    toast('Alvo: '+(g&&g.nome||'grupo'),'ok');
+  });
+}
+
 /* RAID */
 document.getElementById('btnRaid').onclick=async()=>{
   const btn=document.getElementById('btnRaid');
+  if(!S.targetGrupo){toast('Escolha um grupo do Top 10','bad');return}
   document.getElementById('raidTag').textContent='Atacando…';
-  const d=await play('/cliente06/game/raid',{power:S.power,level:S.level},btn);
+  const d=await play('/cliente06/game/raid',{power:S.power,level:S.level,targetGrupo:S.targetGrupo},btn);
   if(!d)return;
   const box=document.getElementById('vitimaBox');
   if(d.vitima){
     box.classList.remove('hide');
     document.getElementById('vitimaFoto').src=fixFoto(d.vitima.foto);
     document.getElementById('vitimaNome').textContent=d.vitima.nome||'Rival';
-    document.getElementById('vitimaMeta').textContent='Tinha ~'+fmt(d.vitima.goldsAntes)+' Golds';
+    document.getElementById('vitimaMeta').textContent='Tinha ~'+fmt(d.vitima.goldsAntes)+' Golds · '+(d.alvo&&d.alvo.nome||'');
   }
-  if(d.win){document.getElementById('raidTag').textContent='Roubou +'+d.loot;document.getElementById('raidLog').textContent='🏴‍☠️ +'+fmt(d.loot)+' de '+(d.vitima&&d.vitima.nome||'rival');toast('Raid +'+d.loot,'ok')}
+  if(d.win){document.getElementById('raidTag').textContent='Roubou +'+d.loot;document.getElementById('raidLog').textContent='🏴‍☠️ +'+fmt(d.loot)+' de '+(d.vitima&&d.vitima.nome||'rival')+' em '+(d.alvo&&d.alvo.nome||'');toast('Raid +'+d.loot,'ok')}
   else{document.getElementById('raidTag').textContent='Falhou';document.getElementById('raidLog').textContent='Multa '+d.delta;toast('Raid falhou','bad')}
 };
 
@@ -491,14 +527,14 @@ function paint(cache){
   const box=document.getElementById('rankList');
   const arr=cache.arr||[];
   if(cache.mode==='grupos'){
-    document.getElementById('rankTitle').textContent='🏰 Grupos mais ricos';
-    document.getElementById('rankSub').textContent='Soma de todos os Golds do grupo';
+    document.getElementById('rankTitle').textContent='🏰 Top grupos (igual /rankgrupos)';
+    document.getElementById('rankSub').textContent='Ordenado por total de Golds · nomes de grupos.json';
     box.innerHTML=arr.map((x,i)=>{
       const m=i===0?'👑':i===1?'🥈':i===2?'🥉':(i+1);
       return `<div class="ri"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div>
         <div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}</strong>
-        <div style="font-size:11px;color:var(--muted)">${x.membros||0} membros</div></div>
-        <div style="color:var(--gold2);font-weight:800">${fmt(x.golds)}</div></div>`;
+        <div style="font-size:11px;color:var(--muted)">${x.membros||x.participantes||0} membros · média ${fmt(x.mediaGolds||0)}</div></div>
+        <div style="color:var(--gold2);font-weight:800">${fmt(x.totalGolds||x.golds)}</div></div>`;
     }).join('')||'<p class="sub">Vazio</p>';
     return;
   }
