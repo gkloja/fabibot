@@ -42,18 +42,22 @@ body{font-family:var(--font);background:
 .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
 .user{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(22,163,74,.14),var(--card))}
 .user img{width:56px;height:56px;border-radius:16px;object-fit:cover;border:2px solid rgba(251,191,36,.45);background:#1a1f2e}
-.bal{background:linear-gradient(145deg,rgba(251,191,36,.14),rgba(14,22,18,.95));border-color:rgba(251,191,36,.35)}
+.bal{background:linear-gradient(145deg,rgba(251,191,36,.14),rgba(14,22,18,.95));border-color:rgba(251,191,36,.35);display:flex;gap:12px;align-items:center}
+.bal .gimg{width:52px;height:52px;border-radius:14px;object-fit:cover;border:2px solid rgba(251,191,36,.35);background:#122;flex-shrink:0}
+.bal .col{flex:1;min-width:0}
 .bal .row{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
-.bal .v{font-size:22px;font-weight:800;color:var(--gold2)}
+.bal .v{font-size:20px;font-weight:800;color:var(--gold2)}
 .bal .s{font-size:12px;color:var(--muted)}.bal .s b{color:var(--g2);font-weight:800}
 .bal .l{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:800}
 .sec{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:8px 0 10px}
-.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:14px}
-.gcard{text-align:left;padding:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font-family:inherit;cursor:pointer;transition:.15s}
+.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:14px}
+.gcard{text-align:left;padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font-family:inherit;cursor:pointer;transition:.15s;display:flex;gap:10px;align-items:center}
 .gcard:hover{border-color:rgba(255,255,255,.18);transform:translateY(-2px)}
 .gcard.on{border-color:rgba(251,191,36,.55);background:rgba(251,191,36,.1);box-shadow:0 0 0 1px rgba(251,191,36,.25)}
+.gcard img{width:44px;height:44px;border-radius:12px;object-fit:cover;background:#1a1f2e;flex-shrink:0}
+.gcard .meta{min-width:0;flex:1}
 .gcard strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gcard .gg{color:var(--gold2);font-weight:800;margin-top:4px}
+.gcard .gg{color:var(--gold2);font-weight:800;margin-top:2px;font-size:13px}
 .games{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}
 .gbtn{background:linear-gradient(180deg,#142019,var(--card));border:1px solid var(--line);border-radius:18px;padding:18px 12px;cursor:pointer;font-family:inherit;color:var(--text);text-align:center;box-shadow:0 12px 28px rgba(0,0,0,.25);transition:.15s}
 .gbtn:hover{transform:translateY(-3px);border-color:rgba(251,191,36,.3)}
@@ -69,16 +73,18 @@ body{font-family:var(--font);background:
 .bets{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
 .bets button{flex:1;min-width:52px;padding:10px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-weight:800;font-family:inherit;cursor:pointer}
 .bets button.on{border-color:rgba(22,163,74,.55);background:rgba(22,163,74,.15);color:var(--g2)}
+.amt{display:flex;gap:8px;align-items:center;margin:8px 0}
+.amt input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font:inherit;font-weight:700}
+.amt .hint{font-size:11px;color:var(--muted);white-space:nowrap}
 .arena{min-height:200px;border-radius:20px;border:1px solid var(--line);margin-bottom:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#152018,#070b09);position:relative;overflow:hidden}
 .arena.tig{background:radial-gradient(circle at 50% 85%,rgba(251,191,36,.22),transparent 55%),linear-gradient(180deg,#1c1608,#0a0804)}
-.arena.sky{background:linear-gradient(180deg,#1a3050 0%,#0e1a2e 45%,#070b09 100%);overflow:hidden}
-.stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 60% 70%,#fff,transparent),radial-gradient(1px 1px at 80% 20%,#fff,transparent);opacity:.35;pointer-events:none}
-.rocket{position:absolute;left:12%;bottom:14%;font-size:42px;z-index:3;filter:drop-shadow(0 8px 12px rgba(0,0,0,.45));transform-origin:center bottom}
-.rocket.fly{transition:left linear, bottom linear, transform linear}
-.boom{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%) scale(0);font-size:72px;z-index:4;opacity:0;pointer-events:none}
-.boom.show{animation:explode .7s ease forwards}
-@keyframes explode{0%{opacity:1;transform:translate(-50%,-50%) scale(.3)}40%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.6)}}
-.crash-n{font-size:44px;font-weight:800;color:var(--cyan);z-index:2;text-shadow:0 0 24px rgba(34,211,238,.35)}.crash-n.boom{color:var(--red)}
+.crash-box{position:relative;height:280px;border-radius:20px;border:1px solid var(--line);margin-bottom:12px;background:linear-gradient(180deg,#0c1220 0%,#070b12 100%);overflow:hidden}
+.crash-box canvas{position:absolute;inset:0;width:100%;height:100%}
+.crash-hud{position:absolute;left:14px;top:12px;z-index:3}
+.crash-hud .mx{font-size:36px;font-weight:800;color:var(--cyan);text-shadow:0 0 20px rgba(34,211,238,.4)}
+.crash-hud .mx.boom{color:var(--red)}
+.crash-hud .tg{font-size:12px;font-weight:700;color:var(--muted);margin-top:2px}
+.crash-rocket{position:absolute;z-index:4;font-size:28px;filter:drop-shadow(0 0 8px rgba(34,211,238,.5));pointer-events:none;transform:translate(-50%,50%) rotate(-25deg)}
 .tag{font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px;background:rgba(251,191,36,.14);color:var(--gold2);z-index:2}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:280px;margin:12px auto}
 .cell{aspect-ratio:1;border-radius:14px;background:#1a1230;border:2px solid rgba(251,191,36,.35);display:grid;place-items:center;font-size:32px}
@@ -111,9 +117,10 @@ body{font-family:var(--font);background:
 .modal.on .sheet{transform:none}
 .modal .head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .modal .head img{width:56px;height:56px;border-radius:16px;object-fit:cover}
-.gline{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer}
+.gline{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;align-items:center}
+.gline img{width:36px;height:36px;border-radius:10px;object-fit:cover}
 .gline:hover{color:var(--gold2)}
-.raid-pos{font-size:10px;font-weight:800;color:var(--gold);margin-bottom:4px}
+.raid-pos{font-size:10px;font-weight:800;color:var(--gold);margin-bottom:2px}
 .vitima{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.25);margin:8px 0}
 .vitima img{width:40px;height:40px;border-radius:11px;object-fit:cover}
 footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a{color:var(--g2);text-decoration:none}
@@ -133,7 +140,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
   <div class="login">
     <div style="font-size:44px">👑</div>
     <h1>Gold Empire</h1>
-    <p id="loginHint">Mesma conta do site. Golds reais do WhatsApp.</p>
+    <p>Mesma conta do site. Golds reais do WhatsApp.</p>
     <div class="fld"><label>Usuário</label><input id="inpUser"/></div>
     <div class="fld"><label>Senha</label><input id="inpPass" type="password"/></div>
     <div class="err" id="loginErr"></div>
@@ -152,18 +159,21 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
       <button class="btn btn-ghost" id="btnLogout" style="width:auto;padding:8px 12px;font-size:12px">Sair</button>
     </div>
     <div class="card bal">
-      <div class="l">Seu saldo neste grupo</div>
-      <div class="v">💰 <span id="goldBal">0</span></div>
-      <div class="row">
-        <div class="s">Grupo: <b id="grpTotal">0</b></div>
-        <div class="s">Rank: <b id="grpPos">—</b></div>
+      <img class="gimg" id="grpImg" src="https://fabibot.vercel.app/flogo.jpg" alt="" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'"/>
+      <div class="col">
+        <div class="l">Seu saldo neste grupo</div>
+        <div class="v">💰 <span id="goldBal">0</span></div>
+        <div class="row">
+          <div class="s">Grupo: <b id="grpTotal">0</b></div>
+          <div class="s">Rank: <b id="grpPos">—</b></div>
+        </div>
+        <div class="s" id="grpLabel" style="margin-top:4px">—</div>
       </div>
-      <div class="s" id="grpLabel" style="margin-top:4px">—</div>
     </div>
   </div>
 
   <div id="viewHome">
-    <div class="banner">Escolha o <b>grupo</b>. Seu saldo e o total do grupo aparecem acima. Clique em alguém no ranking para ver o perfil.</div>
+    <div class="banner">Escolha o <b>grupo</b> (com foto). Aposte só o que tem — o servidor valida o saldo.</div>
     <div class="sec">1 · Grupo</div>
     <div class="groups" id="grpGrid"><div class="skel"></div></div>
     <div class="sec">2 · Arena</div>
@@ -198,15 +208,19 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 
   <div class="gv" id="gv-crash">
     <button class="back" data-back>← Arena</button>
-    <div class="arena sky" id="crashArena">
-      <div class="stars"></div>
-      <div class="rocket" id="rocket">🚀</div>
-      <div class="boom" id="boomFx">💥</div>
-      <div class="crash-n" id="cMult">1.00x</div>
-      <div class="tag" id="crashTag">Aguardando decolagem</div>
+    <div class="crash-box" id="crashBox">
+      <canvas id="crashCanvas"></canvas>
+      <div class="crash-rocket" id="rocket">🚀</div>
+      <div class="crash-hud">
+        <div class="mx" id="cMult">1.00x</div>
+        <div class="tg" id="crashTag">Aguardando decolagem</div>
+      </div>
     </div>
     <div class="panel">
-      <div class="bets" id="cBets"><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button><button data-v="1000">1k</button></div>
+      <div class="sec">Aposta (máx = seu saldo)</div>
+      <div class="amt"><input id="cBetIn" type="number" min="1" step="1" value="100"/><span class="hint" id="cMax">máx 0</span></div>
+      <div class="bets" id="cBets"><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button><button data-v="1000">1k</button><button data-v="all">ALL</button></div>
+      <div class="sec">Cash-out</div>
       <div class="bets" id="cOuts"><button data-v="1.5" class="on">1.5x</button><button data-v="2">2x</button><button data-v="3">3x</button><button data-v="5">5x</button><button data-v="10">10x</button></div>
       <button class="btn btn-red" id="btnCrash">DECOLAR 🚀</button>
       <div class="hist"><h4>Últimas ações · Foguete</h4><div id="hist-foguete"></div></div>
@@ -223,7 +237,9 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
         <div class="cell">🃏</div><div class="cell">🍀</div><div class="cell">🍊</div>
         <div class="cell">🎰</div><div class="cell">🐯</div><div class="cell">🍀</div>
       </div>
-      <div class="bets" id="tBets"><button data-v="10">10</button><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button></div>
+      <div class="sec">Aposta</div>
+      <div class="amt"><input id="tBetIn" type="number" min="1" step="1" value="100"/><span class="hint" id="tMax">máx 0</span></div>
+      <div class="bets" id="tBets"><button data-v="10">10</button><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button><button data-v="all">ALL</button></div>
       <button class="btn btn-gold" id="btnSpin">GIRAR</button>
       <div class="pay"><div>🐯 15x</div><div>🎰 10x</div><div>🃏 5x</div><div>🍊 4x</div><div>🍒 3x</div><div>🍀 2x</div></div>
       <p class="sub" id="tigLog" style="margin-top:10px;margin-bottom:0;text-align:center"></p>
@@ -235,7 +251,10 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
     <button class="back" data-back>← Arena</button>
     <div class="arena"><div style="font-size:56px">🏴‍☠️</div><div class="tag" id="raidTag">Top 10 · não o seu grupo</div></div>
     <div class="panel">
-      <p class="sub">Escolha um grupo do <b>Top 10</b> (não pode ser o seu). Rouba a pessoa mais rica dali.</p>
+      <p class="sub">Escolha um grupo do <b>Top 10</b>. Valor da investida: se falhar, a multa é <b>proporcional</b> ao valor.</p>
+      <div class="sec">Valor da investida</div>
+      <div class="amt"><input id="rAmtIn" type="number" min="10" step="1" value="50"/><span class="hint" id="rMax">máx 0</span></div>
+      <div class="bets" id="rBets"><button data-v="25">25</button><button data-v="50" class="on">50</button><button data-v="100">100</button><button data-v="250">250</button><button data-v="all">ALL</button></div>
       <div class="sec">Alvo</div>
       <div class="groups" id="raidTargets"><div class="skel"></div></div>
       <div class="vitima hide" id="vitimaBox"><img id="vitimaFoto" alt=""/><div><strong id="vitimaNome">—</strong><div style="font-size:12px;color:var(--muted)" id="vitimaMeta"></div></div></div>
@@ -252,7 +271,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
       <button id="tabGrp">👥 Grupo</button>
       <button id="tabGrupos">🏰 Top grupos</button>
     </div>
-    <div class="panel"><h3 id="rankTitle">🏆 Ranking</h3><p class="sub" id="rankSub">Toque em alguém para ver o perfil</p><div id="rankList"></div>
+    <div class="panel"><h3 id="rankTitle">🏆 Ranking</h3><p class="sub" id="rankSub">Toque em alguém ou grupo para detalhes</p><div id="rankList"></div>
       <button class="btn btn-ghost" id="btnRR" style="margin-top:8px">Atualizar</button></div>
   </div>
 </div>
@@ -271,7 +290,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 <div class="modal" id="modalGrupo">
   <div class="sheet">
     <div class="head">
-      <div style="font-size:36px">🏰</div>
+      <img id="mgImg" src="" alt="" style="width:56px;height:56px;border-radius:16px;object-fit:cover"/>
       <div><strong id="mgNome" style="font-size:16px">—</strong><div style="font-size:12px;color:var(--muted)" id="mgMeta">—</div></div>
     </div>
     <div id="mgLink" class="sub"></div>
@@ -289,7 +308,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 const PROXY_HOST='https://orange-hill-2e61.gbscabral15.workers.dev';
 const BACKEND='http://br2.bronxyshost.com:4009';
 const API_URL=PROXY_HOST+'/br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009';
-const SK='fabi_ge_v5', AV='https://fabibot.vercel.app/flogo.jpg';
+const SK='fabi_ge_v6', AV='https://fabibot.vercel.app/flogo.jpg';
 const SYM=['🎰','🍒','🍊','🃏','🐯','🍀'];
 function urlsFor(path){
   const target=BACKEND.replace(/\/$/,'')+path;
@@ -309,9 +328,17 @@ function paintHist(id,arr){
     return `<div class="hi"><div><b>${esc(a.nome)}</b> <span>${esc(a.texto)}</span></div><div class="d ${cls}">${d>0?'+':''}${fmt(d)}</div></div>`;
   }).join('');
 }
+function clampBet(v){v=Math.floor(Number(v)||0);if(v<1)v=1;if(v>S.golds)v=Math.max(1,S.golds);return v}
+function syncBetHints(){
+  const m=fmt(S.golds);
+  ['cMax','tMax','rMax'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='máx '+m});
+  const c=document.getElementById('cBetIn');if(c&&+c.value>S.golds)c.value=S.golds||1;
+  const t=document.getElementById('tBetIn');if(t&&+t.value>S.golds)t.value=S.golds||1;
+  const r=document.getElementById('rAmtIn');if(r&&+r.value>S.golds)r.value=Math.max(10,S.golds||10);
+}
 
-const S={user:null,pass:'',foto:AV,groups:[],grupo:'',grupoNome:'',golds:0,grupoTotal:0,grupoPos:null,power:1,level:1,energy:100,maxE:100,streak:0,lastE:Date.now(),bet:100,cashout:1.5,rankMode:'total',busy:false,rankCache:null,rankAt:0,targetGrupo:'',top10:[],pendingGold:null};
-function save(){try{localStorage.setItem(SK,JSON.stringify({user:S.user,pass:S.pass,foto:S.foto,grupo:S.grupo,grupoNome:S.grupoNome,power:S.power,level:S.level,energy:S.energy,maxE:S.maxE,streak:S.streak,lastE:S.lastE}))}catch(e){}}
+const S={user:null,pass:'',foto:AV,groups:[],grupo:'',grupoNome:'',grupoImagem:null,golds:0,grupoTotal:0,grupoPos:null,power:1,level:1,energy:100,maxE:100,streak:0,lastE:Date.now(),bet:100,cashout:1.5,raidAmt:50,rankMode:'total',busy:false,rankCache:null,rankAt:0,targetGrupo:'',top10:[],pendingGold:null};
+function save(){try{localStorage.setItem(SK,JSON.stringify({user:S.user,pass:S.pass,foto:S.foto,grupo:S.grupo,grupoNome:S.grupoNome,grupoImagem:S.grupoImagem,power:S.power,level:S.level,energy:S.energy,maxE:S.maxE,streak:S.streak,lastE:S.lastE}))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'null');if(!d||!d.user||!d.pass)return false;Object.assign(S,d);return true}catch(e){return false}}
 
 async function api(path,opts,ms){
@@ -331,22 +358,22 @@ async function api(path,opts,ms){
 }
 
 function setGold(n,opts){
-  // opts.defer = não atualiza UI ainda (foguete)
   S.golds=Math.floor(Number(n)||0);
   if(opts&&opts.defer){S.pendingGold=S.golds;return}
   document.getElementById('goldBal').textContent=fmt(S.golds);
   S.pendingGold=null;
-  const g=S.groups.find(x=>x.grupo===S.grupo);if(g)g.golds=S.golds;renderGroups();
+  const g=S.groups.find(x=>x.grupo===S.grupo);if(g)g.golds=S.golds;renderGroups();syncBetHints();
 }
-function flushGold(){if(S.pendingGold!=null){document.getElementById('goldBal').textContent=fmt(S.pendingGold);S.pendingGold=null}else document.getElementById('goldBal').textContent=fmt(S.golds);renderGroups()}
+function flushGold(){if(S.pendingGold!=null){document.getElementById('goldBal').textContent=fmt(S.pendingGold);S.pendingGold=null}else document.getElementById('goldBal').textContent=fmt(S.golds);renderGroups();syncBetHints()}
 function setGrupoMeta(d){
   if(!d)return;
   if(typeof d.grupoTotal==='number'){S.grupoTotal=d.grupoTotal;document.getElementById('grpTotal').textContent=fmt(d.grupoTotal)}
   if(d.grupoPosicao!=null){S.grupoPos=d.grupoPosicao;document.getElementById('grpPos').textContent=d.grupoPosicao?'#'+d.grupoPosicao:'—'}
-  if(d.grupoNome) document.getElementById('grpLabel').textContent=d.grupoNome;
+  if(d.grupoNome){S.grupoNome=d.grupoNome;document.getElementById('grpLabel').textContent=d.grupoNome}
+  if(d.grupoImagem){S.grupoImagem=d.grupoImagem;document.getElementById('grpImg').src=fixFoto(d.grupoImagem)}
 }
 function regen(){const now=Date.now();const e=Math.floor((now-S.lastE)/8000);if(e>0&&S.energy<S.maxE){S.energy=Math.min(S.maxE,S.energy+e);S.lastE+=e*8000;save()}}
-function ui(){regen();if(S.pendingGold==null)document.getElementById('goldBal').textContent=fmt(S.golds);document.getElementById('stP').textContent=S.power;document.getElementById('stL').textContent=S.level;document.getElementById('stS').textContent=S.streak;document.getElementById('eFill').style.width=Math.min(100,S.energy/S.maxE*100)+'%';document.getElementById('eTxt').textContent=S.energy+' / '+S.maxE;document.getElementById('userSub').textContent=S.grupoNome?('Grupo: '+S.grupoNome):'Toque em um grupo'}
+function ui(){regen();if(S.pendingGold==null)document.getElementById('goldBal').textContent=fmt(S.golds);document.getElementById('stP').textContent=S.power;document.getElementById('stL').textContent=S.level;document.getElementById('stS').textContent=S.streak;document.getElementById('eFill').style.width=Math.min(100,S.energy/S.maxE*100)+'%';document.getElementById('eTxt').textContent=S.energy+' / '+S.maxE;document.getElementById('userSub').textContent=S.grupoNome?('Grupo: '+S.grupoNome):'Toque em um grupo';syncBetHints()}
 function setAvatar(url){document.getElementById('av').src=fixFoto(url||S.foto||AV);S.foto=document.getElementById('av').src}
 
 async function tryLogin(u,p){
@@ -364,8 +391,11 @@ async function tryLogin(u,p){
 function renderGroups(){
   const box=document.getElementById('grpGrid');
   if(!S.groups.length){box.innerHTML='<div class="gcard"><strong>Nenhum grupo</strong></div>';return}
-  box.innerHTML=S.groups.map(g=>`<button type="button" class="gcard ${g.grupo===S.grupo?'on':''}" data-g="${esc(g.grupo)}"><strong>${esc(g.nome||String(g.grupo).split('@')[0])}</strong><div class="gg">💰 ${fmt(g.golds)}</div></button>`).join('');
-  box.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const g=S.groups.find(x=>x.grupo===b.getAttribute('data-g'));if(g)selectGroup(g.grupo,g.nome,g.golds)});
+  box.innerHTML=S.groups.map(g=>`<button type="button" class="gcard ${g.grupo===S.grupo?'on':''}" data-g="${esc(g.grupo)}">
+    <img src="${esc(fixFoto(g.imagem))}" onerror="this.src='${AV}'" alt=""/>
+    <div class="meta"><strong>${esc(g.nome||String(g.grupo).split('@')[0])}</strong><div class="gg">💰 ${fmt(g.golds)}</div></div>
+  </button>`).join('');
+  box.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const g=S.groups.find(x=>x.grupo===b.getAttribute('data-g'));if(g)selectGroup(g.grupo,g.nome,g.golds,g.imagem)});
 }
 
 async function loadGroups(){
@@ -375,14 +405,16 @@ async function loadGroups(){
     S.groups=r.data.groups||[];
     if(r.data.user){if(r.data.user.foto)setAvatar(r.data.user.foto);if(r.data.user.numero)S.user.numero=r.data.user.numero}
   }
-  if(!S.groups.length&&S.user.grupo)S.groups=[{grupo:S.user.grupo,nome:'Meu grupo',golds:0}];
+  if(!S.groups.length&&S.user.grupo)S.groups=[{grupo:S.user.grupo,nome:'Meu grupo',golds:0,imagem:null}];
   renderGroups();
-  if(!S.grupo&&S.groups[0])await selectGroup(S.groups[0].grupo,S.groups[0].nome,S.groups[0].golds);
-  else if(S.grupo){const g=S.groups.find(x=>x.grupo===S.grupo);if(g)await selectGroup(g.grupo,g.nome,g.golds)}
+  if(!S.grupo&&S.groups[0])await selectGroup(S.groups[0].grupo,S.groups[0].nome,S.groups[0].golds,S.groups[0].imagem);
+  else if(S.grupo){const g=S.groups.find(x=>x.grupo===S.grupo);if(g)await selectGroup(g.grupo,g.nome,g.golds,g.imagem)}
 }
 
-async function selectGroup(id,nome,golds){
-  S.grupo=id;S.grupoNome=nome||String(id).split('@')[0];
+async function selectGroup(id,nome,golds,imagem){
+  S.grupo=id;S.grupoNome=nome||String(id).split('@')[0];S.grupoImagem=imagem||null;
+  if(S.grupoImagem)document.getElementById('grpImg').src=fixFoto(S.grupoImagem);
+  else document.getElementById('grpImg').src=AV;
   if(typeof golds==='number')setGold(golds);
   save();renderGroups();ui();
   toast('Grupo: '+S.grupoNome,'ok');
@@ -415,8 +447,10 @@ function openGame(n){
   document.getElementById('gv-'+n).classList.add('on');
   if(n==='rank')loadRank(true);
   if(n==='raid')loadRaidTargets();
+  if(n==='crash') resizeCrash();
   const map={mine:'mine',fish:'pescar',crash:'foguete',tiger:'tigrinho',raid:'raid'};
   if(map[n]) loadRecent(map[n],'hist-'+map[n]);
+  syncBetHints();
 }
 function closeGame(){document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));document.getElementById('viewHome').classList.remove('hide')}
 document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>openGame(b.dataset.g));
@@ -466,53 +500,105 @@ document.getElementById('btnMine').onclick=async()=>{const btn=document.getEleme
 document.getElementById('btnUp').onclick=()=>{S.power++;if(S.power%3===0)S.level++;S.maxE=Math.min(200,100+S.level*5);save();ui();toast('Poder '+S.power,'ok')};
 document.getElementById('btnFish').onclick=async()=>{const btn=document.getElementById('btnFish');document.getElementById('rod').textContent='🎣…';const d=await play('/cliente06/game/pescar',{},btn,{hist:'hist-pescar'});if(d){document.getElementById('rod').textContent=d.emoji||'🐟';document.getElementById('fishTag').textContent=d.peixe;document.getElementById('fishLog').textContent='+'+fmt(d.gain);toast((d.emoji||'')+' +'+d.gain,'ok');setBtnCd(btn,4000,'LANÇAR LINHA')}};
 
-document.querySelectorAll('#cBets button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cBets button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.bet=+b.dataset.v});
+/* bets */
+function wireBet(inputId, chipsId, key, maxKey){
+  const inp=document.getElementById(inputId);
+  document.querySelectorAll('#'+chipsId+' button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#'+chipsId+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    let v=b.dataset.v==='all'?S.golds:+b.dataset.v;
+    v=clampBet(v);S[key]=v;inp.value=v;
+  });
+  inp.oninput=()=>{let v=clampBet(inp.value);inp.value=v;S[key]=v};
+}
+wireBet('cBetIn','cBets','bet');
+wireBet('tBetIn','tBets','bet');
+wireBet('rAmtIn','rBets','raidAmt');
 document.querySelectorAll('#cOuts button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cOuts button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.cashout=+b.dataset.v});
+
+/* CRASH canvas */
+let crashPts=[];
+function resizeCrash(){
+  const box=document.getElementById('crashBox');const cv=document.getElementById('crashCanvas');
+  if(!box||!cv)return;
+  const dpr=window.devicePixelRatio||1;
+  cv.width=box.clientWidth*dpr;cv.height=box.clientHeight*dpr;
+  cv.style.width=box.clientWidth+'px';cv.style.height=box.clientHeight+'px';
+  drawCrash(1,false);
+}
+function drawCrash(mult,crashed){
+  const cv=document.getElementById('crashCanvas');if(!cv)return;
+  const ctx=cv.getContext('2d');const w=cv.width,h=cv.height;const dpr=window.devicePixelRatio||1;
+  ctx.clearRect(0,0,w,h);
+  // grid
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1*dpr;
+  for(let i=1;i<6;i++){const y=h*i/6;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}
+  if(crashPts.length<2)return;
+  const maxM=Math.max(2,mult,crashed?mult:mult*1.05);
+  const pad=20*dpr;
+  function X(i){return pad+(w-pad*2)*(i/(crashPts.length-1||1))}
+  function Y(m){return h-pad-((m-1)/(maxM-1||1))*(h-pad*2)}
+  ctx.beginPath();
+  crashPts.forEach((m,i)=>{const x=X(i),y=Y(m);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});
+  ctx.strokeStyle=crashed?'#fb7185':'#22d3ee';
+  ctx.lineWidth=3*dpr;ctx.lineJoin='round';ctx.stroke();
+  // glow
+  ctx.strokeStyle=crashed?'rgba(251,113,133,.25)':'rgba(34,211,238,.25)';
+  ctx.lineWidth=8*dpr;ctx.stroke();
+  // rocket pos
+  const last=crashPts[crashPts.length-1];
+  const rx=X(crashPts.length-1)/dpr, ry=Y(last)/dpr;
+  const rocket=document.getElementById('rocket');
+  rocket.style.left=rx+'px';rocket.style.bottom=(document.getElementById('crashBox').clientHeight-ry)+'px';
+  rocket.style.opacity=crashed?'0':'1';
+}
+window.addEventListener('resize',()=>{if(document.getElementById('gv-crash').classList.contains('on'))resizeCrash()});
+
 document.getElementById('btnCrash').onclick=async()=>{
-  if(S.golds<S.bet)return toast('Sem Golds','bad');
+  S.bet=clampBet(document.getElementById('cBetIn').value);
+  document.getElementById('cBetIn').value=S.bet;
+  if(S.golds<S.bet)return toast('Saldo insuficiente','bad');
   const btn=document.getElementById('btnCrash');
-  const el=document.getElementById('cMult');const rocket=document.getElementById('rocket');const boom=document.getElementById('boomFx');const tag=document.getElementById('crashTag');
-  el.classList.remove('boom');boom.classList.remove('show');
-  rocket.style.transition='none';rocket.style.left='12%';rocket.style.bottom='14%';rocket.style.transform='rotate(-15deg)';rocket.style.opacity='1';
-  void rocket.offsetWidth;
-  // defer gold until animation ends
+  const el=document.getElementById('cMult');const tag=document.getElementById('crashTag');
+  el.classList.remove('boom');crashPts=[1];resizeCrash();
   const d=await play('/cliente06/game/foguete',{bet:S.bet,cashout:S.cashout},btn,{deferGold:true,hist:'hist-foguete'});
   if(!d){flushGold();return}
   const target=d.win?d.cashout:d.crashAt;
   const dur=Math.max(1400,Math.min(12000,d.durationMs||Math.floor(900+Math.log(Math.max(1.05,target))*2300)));
-  rocket.style.transition='left '+dur+'ms linear, bottom '+dur+'ms linear, transform '+dur+'ms linear';
-  rocket.style.left=d.win?'72%':'88%';rocket.style.bottom=d.win?'58%':'72%';rocket.style.transform=d.win?'rotate(-25deg)':'rotate(-40deg)';
   const t0=performance.now();
   function frame(now){
     const p=Math.min(1,(now-t0)/dur);
-    el.textContent=(1+(target-1)*p).toFixed(2)+'x';
+    // exponential-ish curve feel
+    const ease=Math.pow(p,0.85);
+    const m=1+(target-1)*ease;
+    crashPts.push(m);
+    if(crashPts.length>120)crashPts.shift();
+    el.textContent=m.toFixed(2)+'x';
     tag.textContent=p<1?'Subindo…':(d.win?'SAIU!':'CRASH');
+    drawCrash(m,false);
     if(p<1) requestAnimationFrame(frame);
     else {
       el.textContent=Number(d.crashAt).toFixed(2)+'x';
-      flushGold(); // saldo só agora
-      if(d.win){toast('🚀 +'+fmt(d.payout),'ok')}
+      flushGold();
+      if(d.win){toast('🚀 +'+fmt(d.payout),'ok');drawCrash(target,false)}
       else{
         el.classList.add('boom');
-        boom.style.left=rocket.style.left;boom.style.top='auto';boom.style.bottom=rocket.style.bottom;
-        boom.classList.add('show');
-        rocket.style.opacity='0';
+        drawCrash(Number(d.crashAt),true);
         toast('💥 Crash -'+fmt(d.bet),'bad');
-        setTimeout(()=>{rocket.style.transition='none';rocket.style.left='12%';rocket.style.bottom='14%';rocket.style.transform='rotate(-15deg)';rocket.style.opacity='1'},700);
       }
     }
   }
   requestAnimationFrame(frame);
 };
 
-document.querySelectorAll('#tBets button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tBets button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.bet=+b.dataset.v});
-function paintGrid(reels){const cells=document.querySelectorAll('#tigerGrid .cell');let i=0;for(let r=0;r<3;r++)for(let c=0;c<3;c++)cells[i++].textContent=(reels&&reels[r]&&reels[r][c])||SYM[Math.floor(Math.random()*SYM.length)]}
 document.getElementById('btnSpin').onclick=async()=>{
-  if(S.golds<S.bet)return toast('Sem Golds','bad');
+  S.bet=clampBet(document.getElementById('tBetIn').value);
+  document.getElementById('tBetIn').value=S.bet;
+  if(S.golds<S.bet)return toast('Saldo insuficiente','bad');
   const btn=document.getElementById('btnSpin');
-  const anim=setInterval(()=>paintGrid(null),70);
+  const anim=setInterval(()=>{const cells=document.querySelectorAll('#tigerGrid .cell');cells.forEach(c=>c.textContent=SYM[Math.floor(Math.random()*SYM.length)])},70);
   const d=await play('/cliente06/game/tigrinho',{bet:S.bet},btn,{hist:'hist-tigrinho'});
-  clearInterval(anim);if(!d)return;if(d.reels)paintGrid(d.reels);
+  clearInterval(anim);if(!d)return;
+  if(d.reels){const cells=document.querySelectorAll('#tigerGrid .cell');let i=0;for(let r=0;r<3;r++)for(let c=0;c<3;c++)cells[i++].textContent=d.reels[r][c]}
   const log=document.getElementById('tigLog');
   if(d.jackpot){log.textContent='🎉 JACKPOT +'+fmt(d.ganho);toast('🐯 JACKPOT','ok')}
   else if(d.ganho>0){log.textContent='+'+fmt(d.ganho);toast('🐯 +'+fmt(d.ganho),'ok')}
@@ -526,20 +612,24 @@ async function loadRaidTargets(){
   if(!r.ok)r=await api('/cliente06/game/rank-grupos?limit=10',null,15000);
   if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha Top 10</p>';return}
   S.top10=(r.data.top10||r.data.rank||[]).filter(g=>String(g.grupo)!==String(S.grupo));
-  if(!S.top10.length){box.innerHTML='<p class="sub">Só seu grupo no Top 10 — não há alvo</p>';return}
+  if(!S.top10.length){box.innerHTML='<p class="sub">Só seu grupo no Top 10 — sem alvo</p>';return}
   if(!S.targetGrupo||String(S.targetGrupo)===String(S.grupo)) S.targetGrupo=S.top10[0].grupo;
   box.innerHTML=S.top10.map(g=>`<button type="button" class="gcard ${g.grupo===S.targetGrupo?'on':''}" data-tg="${esc(g.grupo)}">
-    <div class="raid-pos">#${g.posicao||''}</div><strong>${esc(g.nome)}</strong>
-    <div class="gg">💰 ${fmt(g.totalGolds||g.golds)}</div>
-    <div style="font-size:11px;color:var(--muted);margin-top:4px">${g.membros||0} membros</div>
+    <img src="${esc(fixFoto(g.imagem))}" onerror="this.src='${AV}'" alt=""/>
+    <div class="meta"><div class="raid-pos">#${g.posicao||''}</div><strong>${esc(g.nome)}</strong>
+    <div class="gg">💰 ${fmt(g.totalGolds||g.golds)}</div></div>
   </button>`).join('');
   box.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>{S.targetGrupo=b.getAttribute('data-tg');box.querySelectorAll('.gcard').forEach(c=>c.classList.toggle('on',c.getAttribute('data-tg')===S.targetGrupo))});
 }
 document.getElementById('btnRaid').onclick=async()=>{
+  S.raidAmt=clampBet(document.getElementById('rAmtIn').value);
+  if(S.raidAmt<10)S.raidAmt=10;
+  document.getElementById('rAmtIn').value=S.raidAmt;
   const btn=document.getElementById('btnRaid');
   if(!S.targetGrupo)return toast('Escolha um grupo do Top 10','bad');
   if(String(S.targetGrupo)===String(S.grupo))return toast('Não pode roubar o próprio grupo','bad');
-  const d=await play('/cliente06/game/raid',{power:S.power,level:S.level,targetGrupo:S.targetGrupo},btn,{hist:'hist-raid'});
+  if(S.golds<S.raidAmt)return toast('Saldo insuficiente','bad');
+  const d=await play('/cliente06/game/raid',{amount:S.raidAmt,power:Math.max(1,Math.floor(S.raidAmt/20)),level:S.level,targetGrupo:S.targetGrupo},btn,{hist:'hist-raid'});
   if(!d)return;
   const box=document.getElementById('vitimaBox');
   if(d.vitima){box.classList.remove('hide');document.getElementById('vitimaFoto').src=fixFoto(d.vitima.foto);document.getElementById('vitimaNome').textContent=d.vitima.nome||'Rival';document.getElementById('vitimaMeta').textContent='~'+fmt(d.vitima.goldsAntes)+' · '+(d.alvo&&d.alvo.nome||'')}
@@ -561,16 +651,17 @@ async function loadRank(force){
   const body={modo:S.rankMode==='group'?'group':'total',limit:30};if(S.rankMode==='group'&&S.grupo)body.grupo=S.grupo;
   let r=await api('/cliente06/game/rank',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)},15000);
   if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha</p>';return}
-  S.rankCache={mode:S.rankMode,arr:r.data.rank||[],meta:{nome:r.data.nomeGrupo}};S.rankAt=Date.now();paint(S.rankCache);
+  S.rankCache={mode:S.rankMode,arr:r.data.rank||[]};S.rankAt=Date.now();paint(S.rankCache);
 }
 function paint(cache){
   const box=document.getElementById('rankList');const arr=cache.arr||[];
   if(cache.mode==='grupos'){
-    document.getElementById('rankTitle').textContent='🏰 Top grupos (/rankgrupos)';
-    document.getElementById('rankSub').textContent='Toque no grupo para ver detalhes';
+    document.getElementById('rankTitle').textContent='🏰 Top grupos';
+    document.getElementById('rankSub').textContent='Toque no grupo para detalhes e link';
     box.innerHTML=arr.map((x,i)=>{
       const m=i===0?'👑':i===1?'🥈':i===2?'🥉':(i+1);
       return `<div class="ri" data-grupo="${esc(x.grupo)}"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div>
+        <img src="${esc(fixFoto(x.imagem))}" onerror="this.src='${AV}'"/>
         <div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}</strong>
         <div style="font-size:11px;color:var(--muted)">${x.membros||0} membros · média ${fmt(x.mediaGolds||0)}</div></div>
         <div style="color:var(--gold2);font-weight:800">${fmt(x.totalGolds||x.golds)}</div></div>`;
@@ -603,7 +694,10 @@ async function openPerfil(numero){
   document.getElementById('mpFoto').src=fixFoto(u.foto);
   document.getElementById('mpNome').textContent=u.nome;
   document.getElementById('mpMeta').textContent='Total: '+fmt(u.totalGolds)+' Golds · '+gs.length+' grupo(s)';
-  document.getElementById('mpGroups').innerHTML=gs.map(g=>`<div class="gline" data-g="${esc(g.grupo)}"><div><b>${esc(g.nome)}</b><div style="font-size:11px;color:var(--muted)">${g.posicao?'#'+g.posicao+' · ':''}${fmt(g.totalGolds)} no grupo</div></div><div style="color:var(--gold2);font-weight:800">${fmt(g.golds)}</div></div>`).join('')||'<p class="sub">Sem grupos</p>';
+  document.getElementById('mpGroups').innerHTML=gs.map(g=>`<div class="gline" data-g="${esc(g.grupo)}">
+    <img src="${esc(fixFoto(g.imagem))}" onerror="this.src='${AV}'"/>
+    <div style="flex:1"><b>${esc(g.nome)}</b><div style="font-size:11px;color:var(--muted)">${g.posicao?'#'+g.posicao+' · ':''}${fmt(g.totalGolds)} no grupo</div></div>
+    <div style="color:var(--gold2);font-weight:800">${fmt(g.golds)}</div></div>`).join('')||'<p class="sub">Sem grupos</p>';
   document.getElementById('mpGroups').querySelectorAll('[data-g]').forEach(el=>el.onclick=()=>{closeModal();openGrupo(el.getAttribute('data-g'))});
   document.getElementById('modalPerfil').classList.add('on');
 }
@@ -611,11 +705,12 @@ async function openGrupo(grupo){
   const r=await api('/cliente06/game/grupo-info',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({grupo})},12000);
   if(!r.ok||!r.data||!r.data.success)return toast('Grupo indisponível','bad');
   const d=r.data;
+  document.getElementById('mgImg').src=fixFoto(d.imagem);
   document.getElementById('mgNome').textContent=d.nome||'Grupo';
   document.getElementById('mgMeta').textContent=(d.posicao?'#'+d.posicao+' · ':'')+fmt(d.totalGolds)+' Golds · '+d.membros+' membros · média '+fmt(d.mediaGolds);
   const link=document.getElementById('mgLink');
-  if(d.link) link.innerHTML='🔗 <a href="'+esc(d.link)+'" target="_blank" rel="noopener">Entrar no grupo</a>';
-  else link.textContent='Link de convite indisponível';
+  if(d.link) link.innerHTML='🔗 <a href="'+esc(d.link)+'" target="_blank" rel="noopener" style="color:var(--g2)">Entrar no grupo</a>';
+  else link.textContent='Link de convite indisponível no grupos.json';
   document.getElementById('mgTop').innerHTML=(d.top||[]).map((x,i)=>`<div class="ri" data-num="${esc(x.numero)}"><div style="width:22px;font-weight:800;color:var(--gold)">${i+1}</div>
     <img src="${esc(fixFoto(x.foto))}" onerror="this.src='${AV}'"/><div style="flex:1"><strong style="font-size:13px">${esc(x.nome)}</strong></div>
     <div style="color:var(--gold2);font-weight:800">${fmt(x.golds)}</div></div>`).join('')||'<p class="sub">Sem dados</p>';
