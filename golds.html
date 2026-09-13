@@ -124,6 +124,22 @@ body{font-family:var(--font);background:
 .vitima{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.25);margin:8px 0}
 .vitima img{width:40px;height:40px;border-radius:11px;object-fit:cover}
 footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a{color:var(--g2);text-decoration:none}
+
+.plots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.plot{background:linear-gradient(180deg,#1a2a1c,#0e1610);border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.plot.ready{border-color:rgba(74,222,128,.5);box-shadow:0 0 16px rgba(22,163,74,.2)}
+.plot.growing{border-color:rgba(251,191,36,.3)}
+.plot .pe{font-size:36px;line-height:1}
+.plot .pn{font-size:12px;font-weight:700}
+.plot .pr{font-size:11px;color:var(--muted)}
+.pbar{width:100%;height:8px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:4px}
+.pbar>i{display:block;height:100%;background:linear-gradient(90deg,var(--g),var(--cyan));border-radius:99px;transition:width .4s}
+.crop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;max-height:280px;overflow:auto;margin:8px 0}
+.crop{padding:10px 8px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);text-align:center;cursor:pointer;font-family:inherit;color:var(--text)}
+.crop.on{border-color:rgba(74,222,128,.55);background:rgba(22,163,74,.12)}
+.crop .ce{font-size:24px}.crop .cn{font-size:11px;font-weight:700;margin-top:2px}
+.crop .cm{font-size:10px;color:var(--muted);margin-top:2px}
+.crop .cr{font-size:11px;color:var(--gold2);font-weight:800}
 </style>
 </head>
 <body>
@@ -182,6 +198,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
       <button class="gbtn" data-g="fish"><span class="ico">🎣</span><strong>Pescar</strong><span>Peixes raros</span></button>
       <button class="gbtn" data-g="crash"><span class="ico">🚀</span><strong>Foguete</strong><span>Crash ao vivo</span></button>
       <button class="gbtn" data-g="tiger"><span class="ico">🐯</span><strong>Tigrinho</strong><span>Fortune 3×3</span></button>
+      <button class="gbtn" data-g="farm"><span class="ico">🌾</span><strong>Fazenda</strong><span>3 canteiros</span></button>
       <button class="gbtn" data-g="raid"><span class="ico">🏴‍☠️</span><strong>Roubar</strong><span>Top 10 grupos</span></button>
       <button class="gbtn" data-g="rank"><span class="ico">🏆</span><strong>Ranking</strong><span>Pessoas & grupos</span></button>
     </div>
@@ -261,6 +278,35 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
       <button class="btn btn-pink" id="btnRaid">TENTAR ROUBO</button>
       <p class="sub" id="raidLog" style="margin-top:8px;margin-bottom:0"></p>
       <div class="hist"><h4>Últimas ações · Raid</h4><div id="hist-raid"></div></div>
+    </div>
+  </div>
+
+  
+  <div class="gv" id="gv-farm">
+    <button class="back" data-back>← Arena</button>
+    <div class="panel">
+      <h3>🌾 Fazenda Gold</h3>
+      <p class="sub">3 canteiros independentes. Plante, espere e colha. Visite e tente roubar a fazenda de outros no ranking.</p>
+      <div class="plots" id="farmPlots"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="btn btn-g" id="btnHarvest" style="flex:1">🧺 COLHER TUDO</button>
+        <button class="btn btn-ghost" id="btnFarmRefresh" style="flex:1">Atualizar</button>
+      </div>
+      <div class="sec">Plantar cultura</div>
+      <div class="crop-grid" id="cropGrid"></div>
+      <div class="bets" style="margin-top:8px">
+        <button type="button" class="on" id="plantQty1" data-q="1">1 canteiro</button>
+        <button type="button" id="plantQty3" data-q="3">Encher livres</button>
+      </div>
+      <button class="btn btn-gold" id="btnPlant">🌱 PLANTAR</button>
+      <p class="sub" id="farmLog" style="margin-top:8px;margin-bottom:0"></p>
+      <div class="hist"><h4>Últimas ações · Fazenda</h4><div id="hist-fazenda"></div></div>
+    </div>
+    <div class="panel">
+      <h3>👀 Visitar / Roubar fazenda</h3>
+      <p class="sub">Toque em alguém no ranking do grupo e abra o perfil — ou informe o número.</p>
+      <div class="amt"><input id="visitNum" type="text" placeholder="Número WhatsApp (só dígitos)"/><button class="btn btn-cyan" id="btnVisit" style="width:auto;padding:12px 16px">Visitar</button></div>
+      <div id="visitFarm" class="hide"></div>
     </div>
   </div>
 
@@ -448,7 +494,8 @@ function openGame(n){
   if(n==='rank')loadRank(true);
   if(n==='raid')loadRaidTargets();
   if(n==='crash') resizeCrash();
-  const map={mine:'mine',fish:'pescar',crash:'foguete',tiger:'tigrinho',raid:'raid'};
+  if(n==='farm')loadFarm();
+  const map={mine:'mine',fish:'pescar',crash:'foguete',tiger:'tigrinho',raid:'raid',farm:'fazenda'};
   if(map[n]) loadRecent(map[n],'hist-'+map[n]);
   syncBetHints();
 }
@@ -499,6 +546,90 @@ async function play(path,body,btn,opts){
 document.getElementById('btnMine').onclick=async()=>{const btn=document.getElementById('btnMine');regen();if(S.energy<1)return toast('Sem energia','bad');S.energy--;S.streak++;save();const d=await play('/cliente06/game/mine',{taps:1,power:S.power,level:S.level},btn,{hist:'hist-mine'});if(d){document.getElementById('mineTag').textContent='+'+d.gain;toast('⛏️ +'+d.gain,'ok');setBtnCd(btn,800,'MINERAR')}};
 document.getElementById('btnUp').onclick=()=>{S.power++;if(S.power%3===0)S.level++;S.maxE=Math.min(200,100+S.level*5);save();ui();toast('Poder '+S.power,'ok')};
 document.getElementById('btnFish').onclick=async()=>{const btn=document.getElementById('btnFish');document.getElementById('rod').textContent='🎣…';const d=await play('/cliente06/game/pescar',{},btn,{hist:'hist-pescar'});if(d){document.getElementById('rod').textContent=d.emoji||'🐟';document.getElementById('fishTag').textContent=d.peixe;document.getElementById('fishLog').textContent='+'+fmt(d.gain);toast((d.emoji||'')+' +'+d.gain,'ok');setBtnCd(btn,4000,'LANÇAR LINHA')}};
+
+
+/* FAZENDA */
+let farmCrop='milho', farmQty=1, visitTarget=null;
+function paintPlots(plots){
+  const box=document.getElementById('farmPlots');
+  if(!box)return;
+  box.innerHTML=(plots||[]).map(p=>{
+    const cls=p.state==='ready'?'ready':p.state==='growing'?'growing':'';
+    const bar=p.state==='growing'?`<div class="pbar"><i style="width:${p.progress}%"></i></div>`:(p.state==='ready'?'<div class="pr" style="color:var(--g2)">Pronto!</div>':'<div class="pr">Vazio</div>');
+    const reward=p.reward?`<div class="pr">+${fmt(p.reward)}</div>`:'';
+    return `<div class="plot ${cls}"><div class="pe">${p.emoji||'🟫'}</div><div class="pn">${esc(p.nome)}</div>${bar}${p.state==='growing'?`<div class="pr">${esc(p.remaining)}</div>`:''}${reward}</div>`;
+  }).join('');
+}
+function paintCatalog(cat){
+  const box=document.getElementById('cropGrid');
+  if(!box)return;
+  box.innerHTML=(cat||[]).map(c=>`<button type="button" class="crop ${c.id===farmCrop?'on':''}" data-c="${esc(c.id)}">
+    <div class="ce">${c.emoji}</div><div class="cn">${esc(c.nome)}</div>
+    <div class="cm">${esc(c.tempo)} · -${fmt(c.cost)}</div>
+    <div class="cr">+${fmt(c.reward)}</div>
+  </button>`).join('');
+  box.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{
+    farmCrop=b.getAttribute('data-c');
+    box.querySelectorAll('.crop').forEach(x=>x.classList.toggle('on',x.getAttribute('data-c')===farmCrop));
+  });
+}
+async function loadFarm(){
+  if(!S.grupo)return;
+  const r=await api('/cliente06/game/fazenda',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo})},15000);
+  if(r.ok&&r.data&&r.data.success){
+    if(typeof r.data.golds==='number')setGold(r.data.golds);
+    paintPlots(r.data.fazenda&&r.data.fazenda.plots);
+    paintCatalog(r.data.catalogo);
+    if(r.data.fazenda) document.getElementById('farmLog').textContent='Colheitas: '+fmt(r.data.fazenda.totalHarvest||0)+' · Plantios: '+(r.data.fazenda.totalPlanted||0);
+  } else toast((r.data&&r.data.message)||'Falha fazenda','bad');
+  loadRecent('fazenda','hist-fazenda');
+}
+document.getElementById('plantQty1')&&(document.getElementById('plantQty1').onclick=()=>{farmQty=1;document.getElementById('plantQty1').classList.add('on');document.getElementById('plantQty3').classList.remove('on')});
+document.getElementById('plantQty3')&&(document.getElementById('plantQty3').onclick=()=>{farmQty=3;document.getElementById('plantQty3').classList.add('on');document.getElementById('plantQty1').classList.remove('on')});
+document.getElementById('btnPlant').onclick=async()=>{
+  const btn=document.getElementById('btnPlant');
+  const d=await play('/cliente06/game/fazenda/plantar',{crop:farmCrop,qty:farmQty},btn,{hist:'hist-fazenda'});
+  if(!d)return;
+  if(d.fazenda)paintPlots(d.fazenda.plots);
+  document.getElementById('farmLog').textContent='Plantou '+d.planted+' (-'+fmt(d.cost)+')';
+  toast('🌱 Plantado!','ok');
+};
+document.getElementById('btnHarvest').onclick=async()=>{
+  const btn=document.getElementById('btnHarvest');
+  const d=await play('/cliente06/game/fazenda/colher',{},btn,{hist:'hist-fazenda'});
+  if(!d)return;
+  if(d.fazenda)paintPlots(d.fazenda.plots);
+  document.getElementById('farmLog').textContent='Colheu +'+fmt(d.gain);
+  toast('🧺 +'+fmt(d.gain),'ok');
+};
+document.getElementById('btnFarmRefresh').onclick=()=>loadFarm();
+document.getElementById('btnVisit').onclick=async()=>{
+  const num=String(document.getElementById('visitNum').value||'').replace(/\D/g,'');
+  if(!num)return toast('Informe o número','bad');
+  if(!S.grupo)return toast('Escolha grupo','bad');
+  const r=await api('/cliente06/game/fazenda/visitar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo,numero:num})},12000);
+  const box=document.getElementById('visitFarm');
+  if(!r.ok||!r.data||!r.data.success){box.classList.remove('hide');box.innerHTML='<p class="sub">Falha ao visitar</p>';return}
+  visitTarget={numero:num,grupo:S.grupo};
+  const f=r.data.fazenda;
+  box.classList.remove('hide');
+  box.innerHTML=`<div class="user" style="margin:10px 0;padding:10px;border-radius:14px;border:1px solid var(--line)">
+    <img src="${esc(fixFoto(f.dono&&f.dono.foto))}" style="width:44px;height:44px;border-radius:12px" onerror="this.src='${AV}'"/>
+    <div><strong>${esc(f.dono&&f.dono.nome)}</strong><div style="font-size:12px;color:var(--muted)">${f.readyCount||0} prontos · ${f.emptyCount||0} vazios</div></div>
+  </div>
+  <div class="plots">${(f.plots||[]).map(p=>`<div class="plot ${p.state}"><div class="pe">${p.emoji}</div><div class="pn">${esc(p.nome)}</div><div class="pr">${p.state==='ready'?'Pronto':p.state==='growing'?esc(p.remaining):'Vazio'}</div></div>`).join('')}</div>
+  ${r.data.isOwn?'':'<button class="btn btn-pink" id="btnStealFarm">🦝 TENTAR ROUBAR CANTEIRO PRONTO</button>'}`;
+  const steal=document.getElementById('btnStealFarm');
+  if(steal)steal.onclick=async()=>{
+    const d=await play('/cliente06/game/fazenda/roubar',{numero:visitTarget.numero,grupoAlvo:visitTarget.grupo},steal,{hist:'hist-fazenda'});
+    if(!d)return;
+    if(d.win)toast('🦝 +'+fmt(d.loot)+' ('+(d.crop&&d.crop.emoji||'')+')','ok');
+    else toast(d.message||('Falhou '+d.delta),'bad');
+    if(d.fazendaAlvo){
+      box.querySelector('.plots').innerHTML=(d.fazendaAlvo.plots||[]).map(p=>`<div class="plot ${p.state}"><div class="pe">${p.emoji}</div><div class="pn">${esc(p.nome)}</div><div class="pr">${p.state==='ready'?'Pronto':p.state==='growing'?esc(p.remaining):'Vazio'}</div></div>`).join('');
+    }
+  };
+};
 
 /* bets */
 function wireBet(inputId, chipsId, key, maxKey){
@@ -699,6 +830,18 @@ async function openPerfil(numero){
     <div style="flex:1"><b>${esc(g.nome)}</b><div style="font-size:11px;color:var(--muted)">${g.posicao?'#'+g.posicao+' · ':''}${fmt(g.totalGolds)} no grupo</div></div>
     <div style="color:var(--gold2);font-weight:800">${fmt(g.golds)}</div></div>`).join('')||'<p class="sub">Sem grupos</p>';
   document.getElementById('mpGroups').querySelectorAll('[data-g]').forEach(el=>el.onclick=()=>{closeModal();openGrupo(el.getAttribute('data-g'))});
+  // botão visitar fazenda desta pessoa no grupo atual
+  const extra=document.createElement('div');
+  extra.style.marginTop='12px';
+  extra.innerHTML='<button class="btn btn-cyan" id="btnVisitFromProfile">🌾 Ver fazenda desta pessoa</button>';
+  const old=document.getElementById('btnVisitFromProfile');if(old)old.parentElement.remove();
+  document.getElementById('mpGroups').parentElement.appendChild(extra);
+  document.getElementById('btnVisitFromProfile').onclick=()=>{
+    closeModal();
+    openGame('farm');
+    document.getElementById('visitNum').value=String(numero).replace(/\D/g,'');
+    setTimeout(()=>document.getElementById('btnVisit').click(),300);
+  };
   document.getElementById('modalPerfil').classList.add('on');
 }
 async function openGrupo(grupo){
