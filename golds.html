@@ -10,7 +10,7 @@
 <style>
 :root{--bg:#070b09;--card:#101a15;--line:rgba(255,255,255,.09);--g:#16a34a;--g2:#4ade80;--gold:#fbbf24;--gold2:#fde68a;--cyan:#22d3ee;--purple:#c084fc;--red:#fb7185;--pink:#f472b6;--text:#f0fdf4;--muted:#7d9b8c;--font:'Plus Jakarta Sans',system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:var(--font);background:radial-gradient(800px 360px at 20% -10%,rgba(22,163,74,.22),transparent),radial-gradient(600px 280px at 100% 0,rgba(251,191,36,.1),transparent),var(--bg);color:var(--text);min-height:100vh}
+body{font-family:var(--font);background:radial-gradient(800px 360px at 20% -10%,rgba(22,163,74,.2),transparent),radial-gradient(600px 280px at 100% 0,rgba(251,191,36,.08),transparent),var(--bg);color:var(--text);min-height:100vh}
 .top{position:sticky;top:0;z-index:30;backdrop-filter:blur(14px);background:rgba(7,11,9,.9);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);font-weight:800}
 .brand img{width:32px;height:32px;border-radius:9px;object-fit:cover}
@@ -19,8 +19,8 @@ body{font-family:var(--font);background:radial-gradient(800px 360px at 20% -10%,
 .nav a.on{color:var(--gold2);background:rgba(251,191,36,.12)}
 .shell{max-width:980px;margin:0 auto;padding:14px 14px 70px}
 .hide{display:none!important}
-.btn{border:0;border-radius:13px;padding:13px 16px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;width:100%}
-.btn:disabled{opacity:.45}.btn:active{transform:scale(.98)}
+.btn{border:0;border-radius:13px;padding:13px 16px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;width:100%;position:relative}
+.btn:disabled{opacity:.5;cursor:not-allowed}.btn:active:not(:disabled){transform:scale(.98)}
 .btn-g{background:linear-gradient(135deg,var(--g2),var(--g));color:#052e16}
 .btn-gold{background:linear-gradient(135deg,var(--gold),#d97706);color:#1a1200}
 .btn-purple{background:linear-gradient(135deg,var(--purple),#7c3aed);color:#fff}
@@ -28,6 +28,7 @@ body{font-family:var(--font);background:radial-gradient(800px 360px at 20% -10%,
 .btn-cyan{background:linear-gradient(135deg,var(--cyan),#0891b2);color:#042f2e}
 .btn-pink{background:linear-gradient(135deg,var(--pink),#db2777);color:#fff}
 .btn-ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}
+.cd{font-size:11px;opacity:.9}
 .login{max-width:400px;margin:40px auto;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;text-align:center}
 .login h1{margin:8px 0}.login p{color:var(--muted);font-size:13px;margin-bottom:14px;line-height:1.45}
 .fld{text-align:left;margin-bottom:10px}
@@ -38,7 +39,7 @@ body{font-family:var(--font);background:radial-gradient(800px 360px at 20% -10%,
 @media(max-width:640px){.hud{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
 .user{display:flex;align-items:center;gap:10px}
-.user img{width:46px;height:46px;border-radius:13px;object-fit:cover;border:2px solid rgba(251,191,36,.35)}
+.user img{width:52px;height:52px;border-radius:14px;object-fit:cover;border:2px solid rgba(251,191,36,.45);background:#1a1f2e}
 .bal{background:linear-gradient(145deg,rgba(251,191,36,.16),var(--card));border-color:rgba(251,191,36,.4)}
 .bal .v{font-size:26px;font-weight:800;color:var(--gold2)}
 .bal .l{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:800}
@@ -62,12 +63,13 @@ body{font-family:var(--font);background:radial-gradient(800px 360px at 20% -10%,
 .bets{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
 .bets button{flex:1;min-width:52px;padding:9px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-weight:800;font-family:inherit;cursor:pointer}
 .bets button.on{border-color:rgba(22,163,74,.5);background:rgba(22,163,74,.15);color:var(--g2)}
-.arena{min-height:180px;border-radius:18px;border:1px solid var(--line);margin-bottom:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#152018,#070b09)}
+.arena{min-height:180px;border-radius:18px;border:1px solid var(--line);margin-bottom:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#152018,#070b09);position:relative;overflow:hidden}
 .arena.tig{background:radial-gradient(circle at 50% 80%,rgba(251,191,36,.2),transparent 50%),linear-gradient(180deg,#1a1408,#0a0804)}
+.arena.sky{background:linear-gradient(180deg,#1a2840 0%,#0c1420 40%,#070b09 100%);overflow:hidden}
 .big{font-size:56px}
 .tag{font-size:12px;font-weight:800;padding:4px 12px;border-radius:999px;background:rgba(251,191,36,.14);color:var(--gold2)}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:280px;margin:12px auto}
-.cell{aspect-ratio:1;border-radius:14px;background:#1a1230;border:2px solid rgba(251,191,36,.35);display:grid;place-items:center;font-size:32px;box-shadow:inset 0 0 16px rgba(0,0,0,.35)}
+.cell{aspect-ratio:1;border-radius:14px;background:#1a1230;border:2px solid rgba(251,191,36,.35);display:grid;place-items:center;font-size:32px}
 .pay{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:11px;color:var(--muted);margin-top:10px}
 .pay div{background:rgba(255,255,255,.03);border-radius:10px;padding:8px;text-align:center;border:1px solid var(--line)}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
@@ -75,12 +77,15 @@ body{font-family:var(--font);background:radial-gradient(800px 360px at 20% -10%,
 .st .n{font-weight:800;color:var(--gold2)}.st .l{font-size:10px;color:var(--muted);text-transform:uppercase}
 .ebar{height:8px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;margin:8px 0}
 .ebar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--cyan));transition:width .3s}
-.crash{font-size:48px;font-weight:800;color:var(--cyan)}.crash.boom{color:var(--red)}
+.crash-n{font-size:42px;font-weight:800;color:var(--cyan);z-index:2}.crash-n.boom{color:var(--red)}
+.plane{position:absolute;left:8%;bottom:18%;font-size:36px;z-index:2;transition:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.4))}
+.plane.fly{transition:left linear, bottom linear, transform linear}
+.sky-line{position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.5}
 .tabs{display:flex;gap:6px;margin-bottom:10px}
 .tabs button{flex:1;padding:10px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-weight:800;font-family:inherit;cursor:pointer}
 .tabs button.on{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.4);color:var(--gold2)}
 .ri{display:flex;align-items:center;gap:10px;padding:9px 4px;border-radius:12px}.ri.me{background:rgba(251,191,36,.1)}
-.ri img{width:38px;height:38px;border-radius:11px;object-fit:cover}
+.ri img{width:38px;height:38px;border-radius:11px;object-fit:cover;background:#1a1f2e}
 .skel{height:48px;border-radius:12px;margin-bottom:6px;background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.08),rgba(255,255,255,.03));background-size:200% 100%;animation:sh 1s infinite}
 @keyframes sh{to{background-position:-200% 0}}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(10px);background:rgba(12,20,16,.96);border:1px solid rgba(22,163,74,.45);color:var(--g2);padding:11px 16px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:80;max-width:92%;text-align:center}
@@ -89,6 +94,8 @@ body{font-family:var(--font);background:radial-gradient(800px 360px at 20% -10%,
 .banner b{color:var(--gold2)}
 footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a{color:var(--g2);text-decoration:none}
 .check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:8px 0}
+.vitima{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.25);margin:8px 0}
+.vitima img{width:40px;height:40px;border-radius:11px;object-fit:cover}
 </style>
 </head>
 <body>
@@ -105,7 +112,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
   <div class="login">
     <div style="font-size:42px">👑</div>
     <h1>Gold Empire</h1>
-    <p id="loginHint">Se você já está no site, entramos automático com a mesma conta.</p>
+    <p id="loginHint">Já logado no site? Entramos automático.</p>
     <div class="fld"><label>Usuário</label><input id="inpUser"/></div>
     <div class="fld"><label>Senha</label><input id="inpPass" type="password"/></div>
     <div class="err" id="loginErr"></div>
@@ -116,7 +123,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 <div class="shell hide" id="viewApp">
   <div class="hud">
     <div class="card user">
-      <img id="av" alt=""/>
+      <img id="av" alt="foto" onerror="this.onerror=null;this.src='https://fabibot.vercel.app/flogo.jpg'"/>
       <div style="flex:1;min-width:0">
         <strong id="userName" style="display:block">—</strong>
         <span id="userSub" style="font-size:12px;color:var(--muted)">Escolha o grupo</span>
@@ -131,21 +138,20 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
   </div>
 
   <div id="viewHome">
-    <div class="banner">Escolha <b>qual grupo</b> usar. Cada grupo tem Golds próprios (iguais ao WhatsApp).</div>
-    <div class="sec">1 · Seu grupo / conta</div>
-    <div class="groups" id="grpGrid"><div class="skel"></div><div class="skel"></div></div>
+    <div class="banner">Toque no <b>grupo</b> para jogar com aquele saldo. Cooldown nos jogos · vitórias grandes notificam o canal.</div>
+    <div class="sec">1 · Grupo</div>
+    <div class="groups" id="grpGrid"><div class="skel"></div></div>
     <div class="sec">2 · Jogos</div>
     <div class="games">
-      <button class="gbtn" data-g="mine"><span class="ico">⛏️</span><strong>Minerar</strong><span>Energia & ouro</span></button>
-      <button class="gbtn" data-g="fish"><span class="ico">🎣</span><strong>Pescar</strong><span>Peixes raros</span></button>
-      <button class="gbtn" data-g="crash"><span class="ico">🚀</span><strong>Foguete</strong><span>Crash</span></button>
+      <button class="gbtn" data-g="mine"><span class="ico">⛏️</span><strong>Minerar</strong><span>Energia</span></button>
+      <button class="gbtn" data-g="fish"><span class="ico">🎣</span><strong>Pescar</strong><span>Peixes</span></button>
+      <button class="gbtn" data-g="crash"><span class="ico">🚀</span><strong>Foguete</strong><span>Crash ao vivo</span></button>
       <button class="gbtn" data-g="tiger"><span class="ico">🐯</span><strong>Tigrinho</strong><span>Fortune 3×3</span></button>
-      <button class="gbtn" data-g="raid"><span class="ico">🏴‍☠️</span><strong>Raid</strong><span>Roubar</span></button>
-      <button class="gbtn" data-g="rank"><span class="ico">🏆</span><strong>Ranking</strong><span>Global / grupo</span></button>
+      <button class="gbtn" data-g="raid"><span class="ico">🏴‍☠️</span><strong>Roubar</strong><span>Mais rico do grupo</span></button>
+      <button class="gbtn" data-g="rank"><span class="ico">🏆</span><strong>Ranking</strong><span>Pessoas & grupos</span></button>
     </div>
   </div>
 
-  <!-- MINE -->
   <div class="gv" id="gv-mine">
     <button class="back" data-back>← Jogos</button>
     <div class="arena" id="mineArena"><div class="big" id="pick">⛏️</div><div class="tag" id="mineTag">Minerar</div></div>
@@ -155,59 +161,62 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
       <button class="btn btn-ghost" id="btnUp" style="margin-top:8px">⬆️ Poder</button></div>
   </div>
 
-  <!-- FISH -->
   <div class="gv" id="gv-fish">
     <button class="back" data-back>← Jogos</button>
     <div class="arena"><div class="big" id="rod">🎣</div><div class="tag" id="fishTag">Pesca</div></div>
     <div class="panel"><button class="btn btn-cyan" id="btnFish">LANÇAR LINHA</button><p class="sub" id="fishLog" style="margin-top:10px;margin-bottom:0"></p></div>
   </div>
 
-  <!-- CRASH -->
   <div class="gv" id="gv-crash">
     <button class="back" data-back>← Jogos</button>
-    <div class="arena"><div class="crash" id="cMult">1.00x</div></div>
+    <div class="arena sky" id="crashArena">
+      <div class="plane" id="plane">✈️</div>
+      <div class="crash-n" id="cMult">1.00x</div>
+      <div class="sky-line"></div>
+      <div class="tag" id="crashTag" style="position:absolute;bottom:10px">Aguardando decolagem</div>
+    </div>
     <div class="panel">
       <div class="bets" id="cBets"><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button><button data-v="1000">1k</button></div>
-      <div class="bets" id="cOuts"><button data-v="1.5" class="on">1.5x</button><button data-v="2">2x</button><button data-v="3">3x</button><button data-v="5">5x</button></div>
-      <button class="btn btn-red" id="btnCrash">LANÇAR</button>
+      <div class="bets" id="cOuts"><button data-v="1.5" class="on">1.5x</button><button data-v="2">2x</button><button data-v="3">3x</button><button data-v="5">5x</button><button data-v="10">10x</button></div>
+      <button class="btn btn-red" id="btnCrash">DECOLAR</button>
     </div>
   </div>
 
-  <!-- TIGER 3x3 -->
   <div class="gv" id="gv-tiger">
     <button class="back" data-back>← Jogos</button>
     <div class="panel arena tig" style="min-height:auto;padding:16px">
       <h3 style="text-align:center">🐯 Fortune Tiger</h3>
-      <p class="sub" style="text-align:center">Igual ao comando do WhatsApp · linhas, colunas e diagonais</p>
+      <p class="sub" style="text-align:center">Mais difícil · par central paga <b>2x</b> · grade = jackpot</p>
       <div class="grid3" id="tigerGrid">
         <div class="cell">🐯</div><div class="cell">🍒</div><div class="cell">🎰</div>
         <div class="cell">🃏</div><div class="cell">🍊</div><div class="cell">🍒</div>
         <div class="cell">🎰</div><div class="cell">🐯</div><div class="cell">🃏</div>
       </div>
-      <div class="bets" id="tBets"><button data-v="10">10</button><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button><button data-v="1000">1k</button></div>
-      <button class="btn btn-gold" id="btnSpin">GIRAR · até 45x+</button>
-      <div class="pay"><div>🐯 15x</div><div>🎰 10x</div><div>🃏 5x</div><div>🍊 4x</div><div>🍒 3x</div><div>Grade = JACKPOT</div></div>
+      <div class="bets" id="tBets"><button data-v="10">10</button><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button></div>
+      <button class="btn btn-gold" id="btnSpin">GIRAR</button>
+      <div class="pay"><div>🐯 15x</div><div>🎰 10x</div><div>🃏 5x</div><div>🍊 4x</div><div>🍒 3x</div><div>Par centro 2x</div></div>
       <p class="sub" id="tigLog" style="margin-top:10px;margin-bottom:0;text-align:center"></p>
     </div>
   </div>
 
-  <!-- RAID -->
   <div class="gv" id="gv-raid">
     <button class="back" data-back>← Jogos</button>
-    <div class="arena"><div class="big">🏴‍☠️</div><div class="tag" id="raidTag">Raid</div></div>
+    <div class="arena"><div class="big">🏴‍☠️</div><div class="tag" id="raidTag">Rouba o mais rico do grupo</div></div>
     <div class="panel">
-      <div class="fld"><label>Alvo</label><input id="raidTarget" value="Império rival"/></div>
-      <div class="fld"><label>Riqueza estimada</label><input id="raidWealth" type="number" value="1000"/></div>
-      <label class="check"><input type="checkbox" id="raidAdmin"/> Sou admin do grupo</label>
-      <button class="btn btn-pink" id="btnRaid">ATACAR</button>
+      <p class="sub">Na sorte você tenta roubar Golds da <b>pessoa mais rica</b> deste grupo (exceto você). Falha = multa. Cooldown 45s · push no canal.</p>
+      <div class="vitima hide" id="vitimaBox"><img id="vitimaFoto" alt=""/><div><strong id="vitimaNome">—</strong><div style="font-size:12px;color:var(--muted)" id="vitimaMeta"></div></div></div>
+      <button class="btn btn-pink" id="btnRaid">TENTAR ROUBO</button>
       <p class="sub" id="raidLog" style="margin-top:8px;margin-bottom:0"></p>
     </div>
   </div>
 
-  <!-- RANK -->
   <div class="gv" id="gv-rank">
     <button class="back" data-back>← Jogos</button>
-    <div class="tabs"><button class="on" id="tabG">🌍 Global</button><button id="tabGrp">👥 Grupo</button></div>
+    <div class="tabs">
+      <button class="on" id="tabG">🌍 Pessoas</button>
+      <button id="tabGrp">👥 Neste grupo</button>
+      <button id="tabGrupos">🏰 Grupos ricos</button>
+    </div>
     <div class="panel"><h3 id="rankTitle">🏆 Ranking</h3><p class="sub" id="rankSub">—</p><div id="rankList"></div>
       <button class="btn btn-ghost" id="btnRR" style="margin-top:8px">Atualizar</button></div>
   </div>
@@ -220,25 +229,41 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 const PROXY_HOST='https://orange-hill-2e61.gbscabral15.workers.dev';
 const BACKEND='http://br2.bronxyshost.com:4009';
 const API_URL=PROXY_HOST+'/br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009';
-const SK='fabi_ge_v3', AV='https://fabibot.vercel.app/flogo.jpg';
+const SK='fabi_ge_v4', AV='https://fabibot.vercel.app/flogo.jpg';
 const SYM=['🎰','🍒','🍊','🃏','🐯'];
-
 function urlsFor(path){
   const target=BACKEND.replace(/\/$/,'')+path;
   const hostPath=BACKEND.replace(/^https?:\/\//,'');
-  return [
-    PROXY_HOST+'/'+hostPath+'/proxy?url='+encodeURIComponent(target),
-    PROXY_HOST+'/proxy?url='+encodeURIComponent(target),
-    API_URL+path
-  ];
+  return [PROXY_HOST+'/'+hostPath+'/proxy?url='+encodeURIComponent(target), PROXY_HOST+'/proxy?url='+encodeURIComponent(target), API_URL+path];
 }
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function fmt(n){return Math.floor(Number(n)||0).toLocaleString('pt-BR')}
 function toast(m,k){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(k==='bad'?' bad':k==='ok'?' ok':'');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),2400)}
+function fixFoto(f){
+  f=String(f||'').trim();
+  if(!f) return AV;
+  if(f.startsWith('//')) f='https:'+f;
+  if(f.startsWith('/')) f='https://fabibot.vercel.app'+f;
+  if(!/^https?:\/\//i.test(f)) f=AV;
+  return f;
+}
+function setBtnCd(btn, ms, label){
+  if(!btn) return;
+  const end=Date.now()+Math.max(0,ms||0);
+  const base=label||btn.dataset.label||btn.textContent;
+  btn.dataset.label=base;
+  const tick=()=>{
+    const left=end-Date.now();
+    if(left<=0){btn.disabled=false;btn.textContent=base;return}
+    btn.disabled=true;
+    btn.innerHTML=base+' <span class="cd">('+Math.ceil(left/1000)+'s)</span>';
+    setTimeout(tick,200);
+  };
+  tick();
+}
 
-const S={user:null,pass:'',foto:AV,groups:[],grupo:'',grupoNome:'',golds:0,power:1,level:1,energy:100,maxE:100,streak:0,lastE:Date.now(),bet:100,cashout:1.5,rankMode:'total',busy:false,rankCache:null,rankAt:0,isAdmin:false};
-
-function save(){try{localStorage.setItem(SK,JSON.stringify({user:S.user,pass:S.pass,foto:S.foto,grupo:S.grupo,grupoNome:S.grupoNome,power:S.power,level:S.level,energy:S.energy,maxE:S.maxE,streak:S.streak,lastE:S.lastE,isAdmin:S.isAdmin}))}catch(e){}}
+const S={user:null,pass:'',foto:AV,groups:[],grupo:'',grupoNome:'',golds:0,power:1,level:1,energy:100,maxE:100,streak:0,lastE:Date.now(),bet:100,cashout:1.5,rankMode:'total',busy:false,rankCache:null,rankAt:0,cd:{}};
+function save(){try{localStorage.setItem(SK,JSON.stringify({user:S.user,pass:S.pass,foto:S.foto,grupo:S.grupo,grupoNome:S.grupoNome,power:S.power,level:S.level,energy:S.energy,maxE:S.maxE,streak:S.streak,lastE:S.lastE}))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'null');if(!d||!d.user||!d.pass)return false;Object.assign(S,d);return true}catch(e){return false}}
 
 async function api(path,opts,ms){
@@ -259,7 +284,8 @@ async function api(path,opts,ms){
 
 function setGold(n){S.golds=Math.floor(Number(n)||0);document.getElementById('goldBal').textContent=fmt(S.golds);const g=S.groups.find(x=>x.grupo===S.grupo);if(g)g.golds=S.golds;renderGroups()}
 function regen(){const now=Date.now();const e=Math.floor((now-S.lastE)/8000);if(e>0&&S.energy<S.maxE){S.energy=Math.min(S.maxE,S.energy+e);S.lastE+=e*8000;save()}}
-function ui(){regen();document.getElementById('goldBal').textContent=fmt(S.golds);document.getElementById('stP').textContent=S.power;document.getElementById('stL').textContent=S.level;document.getElementById('stS').textContent=S.streak;document.getElementById('eFill').style.width=Math.min(100,S.energy/S.maxE*100)+'%';document.getElementById('eTxt').textContent=S.energy+' / '+S.maxE;document.getElementById('grpLabel').textContent=S.grupoNome||'—';document.getElementById('userSub').textContent=S.grupoNome?('Grupo: '+S.grupoNome):'Toque em um grupo abaixo'}
+function ui(){regen();document.getElementById('goldBal').textContent=fmt(S.golds);document.getElementById('stP').textContent=S.power;document.getElementById('stL').textContent=S.level;document.getElementById('stS').textContent=S.streak;document.getElementById('eFill').style.width=Math.min(100,S.energy/S.maxE*100)+'%';document.getElementById('eTxt').textContent=S.energy+' / '+S.maxE;document.getElementById('grpLabel').textContent=S.grupoNome||'—';document.getElementById('userSub').textContent=S.grupoNome?('Grupo: '+S.grupoNome):'Toque em um grupo'}
+function setAvatar(url){const img=document.getElementById('av');img.src=fixFoto(url||S.foto||AV);S.foto=img.src}
 
 async function tryLogin(u,p){
   const body=JSON.stringify({username:u,password:p});
@@ -268,7 +294,6 @@ async function tryLogin(u,p){
     const r=await api(path,{method:'POST',headers,body},12000);
     if(r.ok&&r.data&&(r.data.user||r.data.nome||r.data.success)) return r.data.user||r.data;
   }
-  // fallback: se senha bate com registro via game (geAuthUser usa nome+id)
   const test=await api('/cliente06/game/groups',{method:'POST',headers,body:JSON.stringify({username:u,password:p})},12000);
   if(test.ok&&test.data&&test.data.success) return {nome:u,numero:(test.data.user&&test.data.user.numero)||'',foto:(test.data.user&&test.data.user.foto)||AV};
   throw new Error('Login inválido');
@@ -276,7 +301,7 @@ async function tryLogin(u,p){
 
 function renderGroups(){
   const box=document.getElementById('grpGrid');
-  if(!S.groups.length){box.innerHTML='<div class="gcard"><strong>Nenhum grupo com Golds</strong><div class="gg">Use o bot no WhatsApp</div></div>';return}
+  if(!S.groups.length){box.innerHTML='<div class="gcard"><strong>Nenhum grupo</strong><div class="gg">Use o bot no WhatsApp</div></div>';return}
   box.innerHTML=S.groups.map(g=>`<button type="button" class="gcard ${g.grupo===S.grupo?'on':''}" data-g="${esc(g.grupo)}"><strong>${esc(g.nome||String(g.grupo).split('@')[0])}</strong><div class="gg">💰 ${fmt(g.golds)}</div></button>`).join('');
   box.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const g=S.groups.find(x=>x.grupo===b.getAttribute('data-g'));if(g)selectGroup(g.grupo,g.nome,g.golds)});
 }
@@ -284,14 +309,13 @@ function renderGroups(){
 async function loadGroups(){
   const body=JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass});
   let r=await api('/cliente06/game/groups',{method:'POST',headers:{'Content-Type':'application/json'},body},15000);
-  if(!r.ok){
-    // fallback GET encoded
-    const q='?username='+encodeURIComponent(S.user.nome||S.user.numero)+'&password='+encodeURIComponent(S.pass);
-    r=await api('/cliente06/game/groups'+q,null,15000);
-  }
   if(r.ok&&r.data&&r.data.success){
     S.groups=r.data.groups||[];
-    if(r.data.user){if(r.data.user.foto)S.foto=r.data.user.foto;if(r.data.user.numero)S.user.numero=r.data.user.numero}
+    if(r.data.user){
+      if(r.data.user.foto) setAvatar(r.data.user.foto);
+      if(r.data.user.numero) S.user.numero=r.data.user.numero;
+      if(r.data.user.nome) S.user.nome=r.data.user.nome;
+    }
   }
   if(!S.groups.length&&S.user.grupo)S.groups=[{grupo:S.user.grupo,nome:'Meu grupo',golds:0}];
   renderGroups();
@@ -303,7 +327,7 @@ async function selectGroup(id,nome,golds){
   S.grupo=id;S.grupoNome=nome||String(id).split('@')[0];
   if(typeof golds==='number')setGold(golds);
   save();renderGroups();ui();
-  toast('Jogando em: '+S.grupoNome,'ok');
+  toast('Grupo: '+S.grupoNome,'ok');
   await refreshGold();
 }
 
@@ -311,10 +335,9 @@ async function refreshGold(){
   if(!S.user||!S.grupo)return;
   const body=JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo});
   let r=await api('/cliente06/game/me',{method:'POST',headers:{'Content-Type':'application/json'},body},12000);
-  if(r.ok&&r.data&&typeof r.data.golds==='number')setGold(r.data.golds);
-  else{
-    const s=await api('/cliente06/game/sync',{method:'POST',headers:{'Content-Type':'application/json'},body},12000);
-    if(s.ok&&s.data&&typeof s.data.golds==='number')setGold(s.data.golds);
+  if(r.ok&&r.data){
+    if(typeof r.data.golds==='number')setGold(r.data.golds);
+    if(r.data.user&&r.data.user.foto)setAvatar(r.data.user.foto);
   }
   ui();
 }
@@ -323,18 +346,10 @@ function showApp(){
   document.getElementById('viewLogin').classList.add('hide');
   document.getElementById('viewApp').classList.remove('hide');
   document.getElementById('userName').textContent=S.user.nome;
-  document.getElementById('av').src=S.foto||AV;
-  document.getElementById('raidAdmin').checked=!!S.isAdmin;
+  setAvatar(S.user.foto||S.foto||AV);
   loadGroups().then(ui);
 }
-
-function openGame(n){
-  if(n!=='rank'&&!S.grupo){toast('Escolha um grupo primeiro','bad');return}
-  document.getElementById('viewHome').classList.add('hide');
-  document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));
-  document.getElementById('gv-'+n).classList.add('on');
-  if(n==='rank')loadRank(true);
-}
+function openGame(n){if(n!=='rank'&&!S.grupo){toast('Escolha um grupo','bad');return}document.getElementById('viewHome').classList.add('hide');document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));document.getElementById('gv-'+n).classList.add('on');if(n==='rank')loadRank(true)}
 function closeGame(){document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));document.getElementById('viewHome').classList.remove('hide')}
 document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>openGame(b.dataset.g));
 document.querySelectorAll('[data-back]').forEach(b=>b.onclick=closeGame);
@@ -347,103 +362,175 @@ document.getElementById('btnLogin').onclick=async()=>{
   const btn=document.getElementById('btnLogin');btn.disabled=true;btn.textContent='Entrando…';
   try{
     const user=await tryLogin(u,p);
-    S.user={nome:user.nome||u,numero:user.numero||'',grupo:user.grupo||'',foto:user.foto||user.avatar||AV};
-    S.pass=p;S.foto=S.user.foto;save();
-    try{localStorage.setItem('fabi_session',JSON.stringify({nome:S.user.nome,numero:S.user.numero,id:S.pass,grupo:S.user.grupo}))}catch(e){}
+    S.user={nome:user.nome||u,numero:user.numero||'',grupo:user.grupo||'',foto:user.foto||user.avatar||user.fotoPerfil||AV};
+    S.pass=p;S.foto=fixFoto(S.user.foto);save();
+    try{localStorage.setItem('fabi_session',JSON.stringify({nome:S.user.nome,numero:S.user.numero,id:S.pass,grupo:S.user.grupo,foto:S.foto}))}catch(e){}
     showApp();toast('Olá, '+S.user.nome,'ok');
   }catch(e){err.textContent=e.message||'Falha'}
   finally{btn.disabled=false;btn.textContent='Entrar'}
 };
 document.getElementById('btnLogout').onclick=()=>{localStorage.removeItem(SK);location.reload()};
-document.getElementById('raidAdmin').onchange=()=>{S.isAdmin=document.getElementById('raidAdmin').checked;save()};
 
 function needGroup(){if(!S.grupo){toast('Escolha um grupo','bad');return false}return true}
-async function play(path,body){
+async function play(path,body,btn){
   if(!needGroup())return null;
   if(S.busy){toast('Aguarde…','bad');return null}
-  S.busy=true;
+  S.busy=true; if(btn) btn.disabled=true;
   try{
     const r=await api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo},body||{}))},18000);
-    if(r.ok&&r.data&&r.data.success){if(typeof r.data.golds==='number')setGold(r.data.golds);else await refreshGold();return r.data}
+    if(r.status===429){
+      const ms=(r.data&&r.data.cooldownMs)||3000;
+      if(btn) setBtnCd(btn, ms, btn.dataset.label||btn.textContent);
+      toast((r.data&&r.data.message)||'Cooldown','bad');
+      return null;
+    }
+    if(r.ok&&r.data&&r.data.success){
+      if(typeof r.data.golds==='number')setGold(r.data.golds);
+      if(r.data.cooldownMs&&btn) setBtnCd(btn, r.data.cooldownMs, btn.dataset.label||btn.textContent);
+      return r.data;
+    }
     toast((r.data&&(r.data.message||r.data.error))||('Erro '+r.status),'bad');
     if(r.data&&typeof r.data.golds==='number')setGold(r.data.golds);
     return null;
   }catch(e){toast('Rede','bad');return null}
-  finally{S.busy=false;ui()}
+  finally{S.busy=false; if(btn&&!btn.disabled){/* ok */} ui()}
 }
 
-document.getElementById('btnMine').onclick=async()=>{regen();if(S.energy<1)return toast('Sem energia','bad');S.energy--;S.streak++;save();const d=await play('/cliente06/game/mine',{taps:1,power:S.power,level:S.level,isAdmin:S.isAdmin});if(d){document.getElementById('mineTag').textContent='+'+d.gain;toast('⛏️ +'+d.gain,'ok')}};
+document.getElementById('btnMine').onclick=async()=>{const btn=document.getElementById('btnMine');regen();if(S.energy<1)return toast('Sem energia','bad');S.energy--;S.streak++;save();const d=await play('/cliente06/game/mine',{taps:1,power:S.power,level:S.level},btn);if(d){document.getElementById('mineTag').textContent='+'+d.gain;toast('⛏️ +'+d.gain,'ok');setBtnCd(btn,800,'MINERAR')}};
 document.getElementById('mineArena').onclick=()=>document.getElementById('btnMine').click();
 document.getElementById('btnUp').onclick=()=>{S.power++;if(S.power%3===0)S.level++;S.maxE=Math.min(200,100+S.level*5);save();ui();toast('Poder '+S.power,'ok')};
-document.getElementById('btnFish').onclick=async()=>{document.getElementById('rod').textContent='🎣…';const d=await play('/cliente06/game/pescar',{});if(d){document.getElementById('rod').textContent=d.emoji||'🐟';document.getElementById('fishTag').textContent=d.peixe;document.getElementById('fishLog').textContent='+'+fmt(d.gain)+' Golds';toast((d.emoji||'')+' +'+d.gain,'ok')}};
+document.getElementById('btnFish').onclick=async()=>{const btn=document.getElementById('btnFish');document.getElementById('rod').textContent='🎣…';const d=await play('/cliente06/game/pescar',{},btn);if(d){document.getElementById('rod').textContent=d.emoji||'🐟';document.getElementById('fishTag').textContent=d.peixe;document.getElementById('fishLog').textContent='+'+fmt(d.gain);toast((d.emoji||'')+' +'+d.gain,'ok');setBtnCd(btn,4000,'LANÇAR LINHA')}};
+
+/* CRASH plane */
 document.querySelectorAll('#cBets button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cBets button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.bet=+b.dataset.v});
 document.querySelectorAll('#cOuts button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cOuts button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.cashout=+b.dataset.v});
-document.getElementById('btnCrash').onclick=async()=>{if(S.golds<S.bet)return toast('Sem Golds','bad');const el=document.getElementById('cMult');el.classList.remove('boom');let v=1,run=true;const iv=setInterval(()=>{if(!run)return;v=Math.min(S.cashout,v+0.05);el.textContent=v.toFixed(2)+'x'},40);const d=await play('/cliente06/game/foguete',{bet:S.bet,cashout:S.cashout});run=false;clearInterval(iv);if(d){el.textContent=Number(d.crashAt).toFixed(2)+'x';if(d.win)toast('+'+fmt(d.payout),'ok');else{el.classList.add('boom');toast('Crash','bad')}}};
+document.getElementById('btnCrash').onclick=async()=>{
+  if(S.golds<S.bet)return toast('Sem Golds','bad');
+  const btn=document.getElementById('btnCrash');
+  const el=document.getElementById('cMult'); const plane=document.getElementById('plane'); const tag=document.getElementById('crashTag');
+  el.classList.remove('boom'); plane.style.transition='none'; plane.style.left='8%'; plane.style.bottom='18%'; plane.style.transform='rotate(0deg)';
+  void plane.offsetWidth;
+  const d=await play('/cliente06/game/foguete',{bet:S.bet,cashout:S.cashout},btn);
+  if(!d)return;
+  const target=d.win?d.cashout:d.crashAt;
+  const dur=Math.max(1200, Math.min(12000, d.durationMs||Math.floor(800+Math.log(Math.max(1.05,target))*2200)));
+  plane.style.transition='left '+dur+'ms linear, bottom '+dur+'ms linear, transform '+dur+'ms linear';
+  plane.style.left=(d.win?'78%':'92%'); plane.style.bottom=(d.win?'62%':'78%'); plane.style.transform=d.win?'rotate(-8deg)':'rotate(-25deg) scale(0.7)';
+  const t0=performance.now();
+  function frame(now){
+    const p=Math.min(1,(now-t0)/dur);
+    const mult=1+(target-1)*p;
+    el.textContent=mult.toFixed(2)+'x';
+    tag.textContent=d.win?(p<1?'Subindo…':'SAIU!'):(p<1?'Subindo…':'💥 CRASH');
+    if(p<1) requestAnimationFrame(frame);
+    else {
+      el.textContent=Number(d.crashAt).toFixed(2)+'x';
+      if(d.win){el.classList.remove('boom');toast('🚀 +'+fmt(d.payout),'ok')}
+      else{el.classList.add('boom');toast('Crash -'+fmt(d.bet),'bad');plane.style.transform='rotate(40deg) scale(0.4)';plane.style.opacity='0.4';setTimeout(()=>{plane.style.opacity='1';plane.style.left='8%';plane.style.bottom='18%';plane.style.transform='none';plane.style.transition='none'},600)}
+    }
+  }
+  requestAnimationFrame(frame);
+};
 
-/* Fortune Tiger 3x3 */
+/* TIGER */
 document.querySelectorAll('#tBets button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tBets button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.bet=+b.dataset.v});
-function paintGrid(reels){
-  const cells=document.querySelectorAll('#tigerGrid .cell');
-  let i=0;
-  for(let r=0;r<3;r++) for(let c=0;c<3;c++) cells[i++].textContent=(reels&&reels[r]&&reels[r][c])||SYM[Math.floor(Math.random()*SYM.length)];
-}
+function paintGrid(reels){const cells=document.querySelectorAll('#tigerGrid .cell');let i=0;for(let r=0;r<3;r++)for(let c=0;c<3;c++)cells[i++].textContent=(reels&&reels[r]&&reels[r][c])||SYM[Math.floor(Math.random()*SYM.length)]}
 document.getElementById('btnSpin').onclick=async()=>{
   if(S.golds<S.bet)return toast('Sem Golds','bad');
+  const btn=document.getElementById('btnSpin');
   const anim=setInterval(()=>paintGrid(null),70);
-  const d=await play('/cliente06/game/tigrinho',{bet:S.bet});
+  const d=await play('/cliente06/game/tigrinho',{bet:S.bet},btn);
   clearInterval(anim);
   if(!d)return;
-  if(d.reels) paintGrid(d.reels);
+  if(d.reels)paintGrid(d.reels);
   const log=document.getElementById('tigLog');
-  if(d.jackpot){log.textContent='🎉 MEGA JACKPOT grade completa! +'+fmt(d.ganho);toast('🐯 JACKPOT +'+fmt(d.ganho),'ok')}
-  else if(d.ganho>0){log.textContent='+'+fmt(d.ganho)+' Golds'+(d.detalhes&&d.detalhes.length?(' · '+d.detalhes.map(x=>x.tipo+' x'+x.multiplicador).join(', ')): '');toast('🐯 +'+fmt(d.ganho),'ok')}
-  else{log.textContent='Sem linha · -'+fmt(d.bet||S.bet)+' Golds';toast('Sem prêmio','bad')}
+  if(d.jackpot){log.textContent='🎉 JACKPOT +'+fmt(d.ganho);toast('🐯 JACKPOT','ok')}
+  else if(d.ganho>0){log.textContent='+'+fmt(d.ganho)+(d.detalhes&&d.detalhes[0]?(' · '+d.detalhes[0].tipo+' x'+d.detalhes[0].multiplicador):'');toast('🐯 +'+fmt(d.ganho),'ok')}
+  else{log.textContent='Sem linha · -'+fmt(d.bet||S.bet);toast('Sem prêmio','bad')}
 };
 
+/* RAID */
 document.getElementById('btnRaid').onclick=async()=>{
-  S.isAdmin=document.getElementById('raidAdmin').checked;save();
-  const d=await play('/cliente06/game/raid',{isAdmin:S.isAdmin,power:S.power,level:S.level,targetName:document.getElementById('raidTarget').value||'Império',targetGolds:parseInt(document.getElementById('raidWealth').value,10)||1000});
-  if(d){if(d.win){document.getElementById('raidTag').textContent='+'+d.loot;document.getElementById('raidLog').textContent='Saqueou '+fmt(d.loot);toast('Raid +'+d.loot,'ok')}else{document.getElementById('raidTag').textContent='Falhou';document.getElementById('raidLog').textContent=String(d.delta);toast('Raid falhou','bad')}}
+  const btn=document.getElementById('btnRaid');
+  document.getElementById('raidTag').textContent='Atacando…';
+  const d=await play('/cliente06/game/raid',{power:S.power,level:S.level},btn);
+  if(!d)return;
+  const box=document.getElementById('vitimaBox');
+  if(d.vitima){
+    box.classList.remove('hide');
+    document.getElementById('vitimaFoto').src=fixFoto(d.vitima.foto);
+    document.getElementById('vitimaNome').textContent=d.vitima.nome||'Rival';
+    document.getElementById('vitimaMeta').textContent='Tinha ~'+fmt(d.vitima.goldsAntes)+' Golds';
+  }
+  if(d.win){document.getElementById('raidTag').textContent='Roubou +'+d.loot;document.getElementById('raidLog').textContent='🏴‍☠️ +'+fmt(d.loot)+' de '+(d.vitima&&d.vitima.nome||'rival');toast('Raid +'+d.loot,'ok')}
+  else{document.getElementById('raidTag').textContent='Falhou';document.getElementById('raidLog').textContent='Multa '+d.delta;toast('Raid falhou','bad')}
 };
 
+/* RANK */
 async function loadRank(force){
   const box=document.getElementById('rankList');
-  if(!force&&S.rankCache&&Date.now()-S.rankAt<12000&&S.rankCache.mode===S.rankMode){paint(S.rankCache.arr,S.rankCache.meta);return}
-  box.innerHTML='<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
-  const body={modo:S.rankMode,limit:30};if(S.rankMode==='group'&&S.grupo)body.grupo=S.grupo;
+  if(!force&&S.rankCache&&Date.now()-S.rankAt<12000&&S.rankCache.mode===S.rankMode){paint(S.rankCache);return}
+  box.innerHTML='<div class="skel"></div><div class="skel"></div>';
+  if(S.rankMode==='grupos'){
+    let r=await api('/cliente06/game/rank-grupos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:25})},15000);
+    if(!r.ok) r=await api('/cliente06/game/rank-grupos?limit=25',null,15000);
+    if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha no ranking de grupos</p>';return}
+    S.rankCache={mode:'grupos',arr:r.data.rank||[]};S.rankAt=Date.now();paint(S.rankCache);return;
+  }
+  const body={modo:S.rankMode==='group'?'group':'total',limit:30};if(S.rankMode==='group'&&S.grupo)body.grupo=S.grupo;
   let r=await api('/cliente06/game/rank',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)},15000);
   if(!r.ok||!r.data||!r.data.success){
-    let path='/cliente06/game/rank?limit=30&modo='+encodeURIComponent(S.rankMode);
-    if(S.rankMode==='group'&&S.grupo)path+='&grupo='+encodeURIComponent(S.grupo);
+    let path='/cliente06/game/rank?limit=30&modo='+encodeURIComponent(body.modo);
+    if(body.grupo)path+='&grupo='+encodeURIComponent(body.grupo);
     r=await api(path,null,15000);
   }
-  if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha no ranking. Atualize o connect.js no VPS e tente de novo.</p>';return}
-  const arr=r.data.rank||[];const meta={nome:r.data.nomeGrupo,mode:S.rankMode};
-  S.rankCache={arr,meta,mode:S.rankMode};S.rankAt=Date.now();paint(arr,meta);
+  if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha no ranking</p>';return}
+  S.rankCache={mode:S.rankMode,arr:r.data.rank||[],meta:{nome:r.data.nomeGrupo}};S.rankAt=Date.now();paint(S.rankCache);
 }
-function paint(arr,meta){
+function paint(cache){
   const box=document.getElementById('rankList');
-  document.getElementById('rankTitle').textContent=S.rankMode==='group'?('🏆 '+(meta.nome||S.grupoNome||'Grupo')):'🏆 Global';
+  const arr=cache.arr||[];
+  if(cache.mode==='grupos'){
+    document.getElementById('rankTitle').textContent='🏰 Grupos mais ricos';
+    document.getElementById('rankSub').textContent='Soma de todos os Golds do grupo';
+    box.innerHTML=arr.map((x,i)=>{
+      const m=i===0?'👑':i===1?'🥈':i===2?'🥉':(i+1);
+      return `<div class="ri"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div>
+        <div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}</strong>
+        <div style="font-size:11px;color:var(--muted)">${x.membros||0} membros</div></div>
+        <div style="color:var(--gold2);font-weight:800">${fmt(x.golds)}</div></div>`;
+    }).join('')||'<p class="sub">Vazio</p>';
+    return;
+  }
+  document.getElementById('rankTitle').textContent=S.rankMode==='group'?('🏆 '+(cache.meta&&cache.meta.nome||S.grupoNome||'Grupo')):'🏆 Pessoas';
   document.getElementById('rankSub').textContent=S.rankMode==='group'?'Golds neste grupo':'Soma em todos os grupos';
-  if(!arr.length){box.innerHTML='<p class="sub">Vazio</p>';return}
   const my=String(S.user.numero||'').replace(/\D/g,'');
   box.innerHTML=arr.map((x,i)=>{
     const me=my&&String(x.numero)===my;
     const m=i===0?'👑':i===1?'🥈':i===2?'🥉':(i+1);
     return `<div class="ri ${me?'me':''}"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div>
-      <img src="${esc(x.foto||AV)}" onerror="this.src='${AV}'"/><div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}${me?' · você':''}</strong>
+      <img src="${esc(fixFoto(x.foto))}" onerror="this.src='${AV}'"/><div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}${me?' · você':''}</strong>
       <div style="font-size:11px;color:var(--muted)">${x.grupos?x.grupos+' grupos':''}</div></div>
       <div style="color:var(--gold2);font-weight:800">${fmt(x.golds)}</div></div>`;
-  }).join('');
+  }).join('')||'<p class="sub">Vazio</p>';
 }
-document.getElementById('tabG').onclick=()=>{S.rankMode='total';tabG.classList.add('on');tabGrp.classList.remove('on');loadRank(true)};
-document.getElementById('tabGrp').onclick=()=>{if(!S.grupo)return toast('Escolha grupo','bad');S.rankMode='group';tabGrp.classList.add('on');tabG.classList.remove('on');loadRank(true)};
+document.getElementById('tabG').onclick=()=>{S.rankMode='total';tabG.classList.add('on');tabGrp.classList.remove('on');tabGrupos.classList.remove('on');loadRank(true)};
+document.getElementById('tabGrp').onclick=()=>{if(!S.grupo)return toast('Escolha grupo','bad');S.rankMode='group';tabGrp.classList.add('on');tabG.classList.remove('on');tabGrupos.classList.remove('on');loadRank(true)};
+document.getElementById('tabGrupos').onclick=()=>{S.rankMode='grupos';tabGrupos.classList.add('on');tabG.classList.remove('on');tabGrp.classList.remove('on');loadRank(true)};
 document.getElementById('btnRR').onclick=()=>{S.rankAt=0;loadRank(true)};
 
 setInterval(()=>{if(S.user){regen();ui()}},5000);
 setInterval(()=>{if(S.user&&S.grupo)refreshGold()},20000);
 
 async function bootSSO(){
+  // foto do site session
+  try{
+    const raw=localStorage.getItem('fabi_session')||localStorage.getItem('neconecta_user_session');
+    if(raw){
+      const s=JSON.parse(raw);
+      if(s.foto||s.avatar||s.fotoPerfil) S.foto=fixFoto(s.foto||s.avatar||s.fotoPerfil);
+    }
+  }catch(e){}
   if(load()&&S.user&&S.pass){showApp();return}
   try{
     const raw=localStorage.getItem('fabi_session')||localStorage.getItem('neconecta_user_session');
@@ -455,12 +542,11 @@ async function bootSSO(){
     if(pass)document.getElementById('inpPass').value=pass;
     if(user&&pass){
       document.getElementById('loginErr').textContent='Entrando com a conta do site…';
-      document.getElementById('loginHint').textContent='Conta do site detectada — entrando…';
       try{
         const logged=await tryLogin(user,pass);
-        S.user={nome:logged.nome||user,numero:logged.numero||s.numero||'',grupo:logged.grupo||s.grupo||'',foto:logged.foto||logged.avatar||s.avatar||s.foto||AV};
-        S.pass=pass;S.foto=S.user.foto;save();showApp();toast('Logado: '+S.user.nome,'ok');
-      }catch(e){document.getElementById('loginErr').textContent='Confirme a senha (mesma do site)';document.getElementById('loginHint').textContent='Conta encontrada, mas precisa da senha.'}
+        S.user={nome:logged.nome||user,numero:logged.numero||s.numero||'',grupo:logged.grupo||s.grupo||'',foto:logged.foto||logged.avatar||logged.fotoPerfil||s.foto||s.avatar||AV};
+        S.pass=pass;S.foto=fixFoto(S.user.foto);save();showApp();toast('Logado: '+S.user.nome,'ok');
+      }catch(e){document.getElementById('loginErr').textContent='Confirme a senha'}
     }
   }catch(e){}
 }
