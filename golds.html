@@ -4,70 +4,82 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
 <title>Gold Empire · Fabi Bot</title>
-<meta name="theme-color" content="#0a0f0c"/>
+<meta name="theme-color" content="#070b09"/>
 <link rel="icon" href="/favicon-32x32.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#070b09;--card:#101a15;--line:rgba(255,255,255,.09);--g:#16a34a;--g2:#4ade80;--gold:#fbbf24;--gold2:#fde68a;--cyan:#22d3ee;--purple:#c084fc;--red:#fb7185;--pink:#f472b6;--text:#f0fdf4;--muted:#7d9b8c;--font:'Plus Jakarta Sans',system-ui,sans-serif}
+:root{--bg:#060908;--card:#0e1612;--line:rgba(255,255,255,.08);--g:#16a34a;--g2:#4ade80;--gold:#fbbf24;--gold2:#fde68a;--cyan:#22d3ee;--purple:#c084fc;--red:#fb7185;--pink:#f472b6;--text:#f0fdf4;--muted:#7d9b8c;--font:'Plus Jakarta Sans',system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:var(--font);background:radial-gradient(800px 360px at 20% -10%,rgba(22,163,74,.2),transparent),radial-gradient(600px 280px at 100% 0,rgba(251,191,36,.08),transparent),var(--bg);color:var(--text);min-height:100vh}
-.top{position:sticky;top:0;z-index:30;backdrop-filter:blur(14px);background:rgba(7,11,9,.9);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+body{font-family:var(--font);background:
+  radial-gradient(900px 420px at 15% -15%,rgba(22,163,74,.22),transparent 55%),
+  radial-gradient(700px 320px at 100% 0,rgba(251,191,36,.1),transparent 50%),
+  var(--bg);color:var(--text);min-height:100vh}
+.top{position:sticky;top:0;z-index:40;backdrop-filter:blur(16px);background:rgba(6,9,8,.92);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);font-weight:800}
-.brand img{width:32px;height:32px;border-radius:9px;object-fit:cover}
+.brand img{width:34px;height:34px;border-radius:10px;object-fit:cover;box-shadow:0 0 0 2px rgba(22,163,74,.35)}
 .brand span{color:var(--g2)}
-.nav a{color:var(--muted);text-decoration:none;font-size:12px;font-weight:700;padding:6px 10px;border-radius:9px;margin-left:4px}
+.nav a{color:var(--muted);text-decoration:none;font-size:12px;font-weight:700;padding:7px 11px;border-radius:10px}
 .nav a.on{color:var(--gold2);background:rgba(251,191,36,.12)}
-.shell{max-width:980px;margin:0 auto;padding:14px 14px 70px}
+.shell{max-width:980px;margin:0 auto;padding:16px 14px 80px}
 .hide{display:none!important}
-.btn{border:0;border-radius:13px;padding:13px 16px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;width:100%;position:relative}
+.btn{border:0;border-radius:14px;padding:13px 16px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;width:100%}
 .btn:disabled{opacity:.5;cursor:not-allowed}.btn:active:not(:disabled){transform:scale(.98)}
 .btn-g{background:linear-gradient(135deg,var(--g2),var(--g));color:#052e16}
 .btn-gold{background:linear-gradient(135deg,var(--gold),#d97706);color:#1a1200}
-.btn-purple{background:linear-gradient(135deg,var(--purple),#7c3aed);color:#fff}
-.btn-red{background:linear-gradient(135deg,var(--red),#e11d48);color:#fff}
+.btn-red{background:linear-gradient(135deg,#fb7185,#e11d48);color:#fff}
 .btn-cyan{background:linear-gradient(135deg,var(--cyan),#0891b2);color:#042f2e}
 .btn-pink{background:linear-gradient(135deg,var(--pink),#db2777);color:#fff}
 .btn-ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}
 .cd{font-size:11px;opacity:.9}
-.login{max-width:400px;margin:40px auto;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;text-align:center}
-.login h1{margin:8px 0}.login p{color:var(--muted);font-size:13px;margin-bottom:14px;line-height:1.45}
+.login{max-width:400px;margin:48px auto;background:linear-gradient(180deg,#142019,#0c1410);border:1px solid var(--line);border-radius:24px;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.login h1{margin:10px 0 6px;font-size:24px}.login p{color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.5}
 .fld{text-align:left;margin-bottom:10px}
-.fld label{display:block;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:4px}
-.fld input{width:100%;padding:12px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font:inherit}
+.fld label{display:block;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;margin-bottom:5px}
+.fld input{width:100%;padding:13px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font:inherit}
 .err{color:var(--red);font-size:12px;min-height:16px;margin:6px 0}
-.hud{display:grid;grid-template-columns:1fr auto;gap:10px;margin-bottom:14px}
-@media(max-width:640px){.hud{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
-.user{display:flex;align-items:center;gap:10px}
-.user img{width:52px;height:52px;border-radius:14px;object-fit:cover;border:2px solid rgba(251,191,36,.45);background:#1a1f2e}
-.bal{background:linear-gradient(145deg,rgba(251,191,36,.16),var(--card));border-color:rgba(251,191,36,.4)}
-.bal .v{font-size:26px;font-weight:800;color:var(--gold2)}
+.hud{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin-bottom:16px}
+@media(max-width:700px){.hud{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.user{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(22,163,74,.14),var(--card))}
+.user img{width:56px;height:56px;border-radius:16px;object-fit:cover;border:2px solid rgba(251,191,36,.45);background:#1a1f2e}
+.bal{background:linear-gradient(145deg,rgba(251,191,36,.14),rgba(14,22,18,.95));border-color:rgba(251,191,36,.35)}
+.bal .row{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
+.bal .v{font-size:22px;font-weight:800;color:var(--gold2)}
+.bal .s{font-size:12px;color:var(--muted)}.bal .s b{color:var(--g2);font-weight:800}
 .bal .l{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:800}
-.sec{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);margin:6px 0 10px}
-.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:14px}
-.gcard{text-align:left;padding:12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font-family:inherit;cursor:pointer}
-.gcard.on{border-color:rgba(251,191,36,.55);background:rgba(251,191,36,.1)}
+.sec{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:8px 0 10px}
+.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+.gcard{text-align:left;padding:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font-family:inherit;cursor:pointer;transition:.15s}
+.gcard:hover{border-color:rgba(255,255,255,.18);transform:translateY(-2px)}
+.gcard.on{border-color:rgba(251,191,36,.55);background:rgba(251,191,36,.1);box-shadow:0 0 0 1px rgba(251,191,36,.25)}
 .gcard strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gcard .gg{color:var(--gold2);font-weight:800;margin-top:4px}
-.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.gbtn{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 10px;cursor:pointer;font-family:inherit;color:var(--text);text-align:center}
-.gbtn .ico{font-size:28px;display:block;margin-bottom:6px}
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}
+.gbtn{background:linear-gradient(180deg,#142019,var(--card));border:1px solid var(--line);border-radius:18px;padding:18px 12px;cursor:pointer;font-family:inherit;color:var(--text);text-align:center;box-shadow:0 12px 28px rgba(0,0,0,.25);transition:.15s}
+.gbtn:hover{transform:translateY(-3px);border-color:rgba(251,191,36,.3)}
+.gbtn .ico{font-size:30px;display:block;margin-bottom:8px}
 .gbtn strong{font-size:13px;display:block}
 .gbtn span{font-size:11px;color:var(--muted)}
-.gv{display:none}.gv.on{display:block;animation:up .22s ease}
-@keyframes up{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.back{margin-bottom:10px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-weight:700;font-size:12px;font-family:inherit;cursor:pointer}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.gv{display:none}.gv.on{display:block;animation:up .25s ease}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.back{margin-bottom:12px;padding:9px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-weight:700;font-size:12px;font-family:inherit;cursor:pointer}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
 .panel h3{font-size:15px;margin-bottom:4px}
-.sub{font-size:13px;color:var(--muted);line-height:1.4;margin-bottom:10px}
+.sub{font-size:13px;color:var(--muted);line-height:1.45;margin-bottom:10px}
 .bets{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
-.bets button{flex:1;min-width:52px;padding:9px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-weight:800;font-family:inherit;cursor:pointer}
-.bets button.on{border-color:rgba(22,163,74,.5);background:rgba(22,163,74,.15);color:var(--g2)}
-.arena{min-height:180px;border-radius:18px;border:1px solid var(--line);margin-bottom:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#152018,#070b09);position:relative;overflow:hidden}
-.arena.tig{background:radial-gradient(circle at 50% 80%,rgba(251,191,36,.2),transparent 50%),linear-gradient(180deg,#1a1408,#0a0804)}
-.arena.sky{background:linear-gradient(180deg,#1a2840 0%,#0c1420 40%,#070b09 100%);overflow:hidden}
-.big{font-size:56px}
-.tag{font-size:12px;font-weight:800;padding:4px 12px;border-radius:999px;background:rgba(251,191,36,.14);color:var(--gold2)}
+.bets button{flex:1;min-width:52px;padding:10px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-weight:800;font-family:inherit;cursor:pointer}
+.bets button.on{border-color:rgba(22,163,74,.55);background:rgba(22,163,74,.15);color:var(--g2)}
+.arena{min-height:200px;border-radius:20px;border:1px solid var(--line);margin-bottom:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#152018,#070b09);position:relative;overflow:hidden}
+.arena.tig{background:radial-gradient(circle at 50% 85%,rgba(251,191,36,.22),transparent 55%),linear-gradient(180deg,#1c1608,#0a0804)}
+.arena.sky{background:linear-gradient(180deg,#1a3050 0%,#0e1a2e 45%,#070b09 100%);overflow:hidden}
+.stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 60% 70%,#fff,transparent),radial-gradient(1px 1px at 80% 20%,#fff,transparent);opacity:.35;pointer-events:none}
+.rocket{position:absolute;left:12%;bottom:14%;font-size:42px;z-index:3;filter:drop-shadow(0 8px 12px rgba(0,0,0,.45));transform-origin:center bottom}
+.rocket.fly{transition:left linear, bottom linear, transform linear}
+.boom{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%) scale(0);font-size:72px;z-index:4;opacity:0;pointer-events:none}
+.boom.show{animation:explode .7s ease forwards}
+@keyframes explode{0%{opacity:1;transform:translate(-50%,-50%) scale(.3)}40%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.6)}}
+.crash-n{font-size:44px;font-weight:800;color:var(--cyan);z-index:2;text-shadow:0 0 24px rgba(34,211,238,.35)}.crash-n.boom{color:var(--red)}
+.tag{font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px;background:rgba(251,191,36,.14);color:var(--gold2);z-index:2}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:280px;margin:12px auto}
 .cell{aspect-ratio:1;border-radius:14px;background:#1a1230;border:2px solid rgba(251,191,36,.35);display:grid;place-items:center;font-size:32px}
 .pay{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:11px;color:var(--muted);margin-top:10px}
@@ -77,33 +89,34 @@ body{font-family:var(--font);background:radial-gradient(800px 360px at 20% -10%,
 .st .n{font-weight:800;color:var(--gold2)}.st .l{font-size:10px;color:var(--muted);text-transform:uppercase}
 .ebar{height:8px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;margin:8px 0}
 .ebar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--cyan));transition:width .3s}
-.crash-n{font-size:42px;font-weight:800;color:var(--cyan);z-index:2}.crash-n.boom{color:var(--red)}
-.plane{position:absolute;left:8%;bottom:18%;font-size:36px;z-index:2;transition:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.4))}
-.plane.fly{transition:left linear, bottom linear, transform linear}
-.sky-line{position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.5}
-.tabs{display:flex;gap:6px;margin-bottom:10px}
-.tabs button{flex:1;padding:10px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-weight:800;font-family:inherit;cursor:pointer}
+.hist{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.hist h4{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px}
+.hi{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.hi b{color:var(--text)}.hi span{color:var(--muted)}.hi .d{font-weight:800}.hi .d.up{color:var(--g2)}.hi .d.dn{color:var(--red)}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:90px;padding:10px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-weight:800;font-family:inherit;cursor:pointer}
 .tabs button.on{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.4);color:var(--gold2)}
-.ri{display:flex;align-items:center;gap:10px;padding:9px 4px;border-radius:12px}.ri.me{background:rgba(251,191,36,.1)}
-.ri img{width:38px;height:38px;border-radius:11px;object-fit:cover;background:#1a1f2e}
+.ri{display:flex;align-items:center;gap:10px;padding:10px 6px;border-radius:14px;cursor:pointer;transition:.12s}
+.ri:hover{background:rgba(255,255,255,.04)}.ri.me{background:rgba(251,191,36,.1)}
+.ri img{width:40px;height:40px;border-radius:12px;object-fit:cover;background:#1a1f2e}
 .skel{height:48px;border-radius:12px;margin-bottom:6px;background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.08),rgba(255,255,255,.03));background-size:200% 100%;animation:sh 1s infinite}
 @keyframes sh{to{background-position:-200% 0}}
-.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(10px);background:rgba(12,20,16,.96);border:1px solid rgba(22,163,74,.45);color:var(--g2);padding:11px 16px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:80;max-width:92%;text-align:center}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(10px);background:rgba(12,20,16,.96);border:1px solid rgba(22,163,74,.45);color:var(--g2);padding:12px 18px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:92%;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast.bad{border-color:rgba(251,113,133,.5);color:#fecaca}.toast.ok{border-color:rgba(251,191,36,.5);color:var(--gold2)}
-.banner{background:linear-gradient(135deg,rgba(22,163,74,.15),rgba(251,191,36,.08));border:1px solid rgba(251,191,36,.25);border-radius:16px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--muted);line-height:1.45}
+.banner{background:linear-gradient(135deg,rgba(22,163,74,.16),rgba(251,191,36,.08));border:1px solid rgba(251,191,36,.22);border-radius:16px;padding:13px 15px;margin-bottom:14px;font-size:13px;color:var(--muted);line-height:1.45}
 .banner b{color:var(--gold2)}
-footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a{color:var(--g2);text-decoration:none}
-.check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:8px 0}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:90;display:flex;align-items:flex-end;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:.2s}
+.modal.on{opacity:1;pointer-events:auto}
+.modal .sheet{background:linear-gradient(180deg,#142019,#0c1410);border:1px solid var(--line);border-radius:22px 22px 16px 16px;padding:18px;width:100%;max-width:440px;max-height:80vh;overflow:auto;transform:translateY(20px);transition:.25s}
+.modal.on .sheet{transform:none}
+.modal .head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.modal .head img{width:56px;height:56px;border-radius:16px;object-fit:cover}
+.gline{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer}
+.gline:hover{color:var(--gold2)}
+.raid-pos{font-size:10px;font-weight:800;color:var(--gold);margin-bottom:4px}
 .vitima{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.25);margin:8px 0}
 .vitima img{width:40px;height:40px;border-radius:11px;object-fit:cover}
-
-.gbtn{box-shadow:0 8px 24px rgba(0,0,0,.25);transition:transform .15s,border-color .15s}
-.gbtn:hover{transform:translateY(-3px);border-color:rgba(251,191,36,.35)}
-.hud .user{background:linear-gradient(135deg,rgba(22,163,74,.12),var(--card))}
-.shell{animation:fadein .35s ease}
-@keyframes fadein{from{opacity:0}to{opacity:1}}
-.gcard.on{box-shadow:0 0 0 1px rgba(251,191,36,.35),0 8px 28px rgba(251,191,36,.12)}
-.raid-pos{font-size:10px;font-weight:800;color:var(--gold);margin-bottom:4px}
+footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a{color:var(--g2);text-decoration:none}
 </style>
 </head>
 <body>
@@ -118,119 +131,156 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 
 <div class="shell" id="viewLogin">
   <div class="login">
-    <div style="font-size:42px">👑</div>
+    <div style="font-size:44px">👑</div>
     <h1>Gold Empire</h1>
-    <p id="loginHint">Já logado no site? Entramos automático.</p>
+    <p id="loginHint">Mesma conta do site. Golds reais do WhatsApp.</p>
     <div class="fld"><label>Usuário</label><input id="inpUser"/></div>
     <div class="fld"><label>Senha</label><input id="inpPass" type="password"/></div>
     <div class="err" id="loginErr"></div>
-    <button class="btn btn-g" id="btnLogin">Entrar</button>
+    <button class="btn btn-g" id="btnLogin">Entrar no Império</button>
   </div>
 </div>
 
 <div class="shell hide" id="viewApp">
   <div class="hud">
     <div class="card user">
-      <img id="av" alt="foto" onerror="this.onerror=null;this.src='https://fabibot.vercel.app/flogo.jpg'"/>
+      <img id="av" alt="" onerror="this.onerror=null;this.src='https://fabibot.vercel.app/flogo.jpg'"/>
       <div style="flex:1;min-width:0">
-        <strong id="userName" style="display:block">—</strong>
+        <strong id="userName" style="display:block;font-size:16px">—</strong>
         <span id="userSub" style="font-size:12px;color:var(--muted)">Escolha o grupo</span>
       </div>
       <button class="btn btn-ghost" id="btnLogout" style="width:auto;padding:8px 12px;font-size:12px">Sair</button>
     </div>
     <div class="card bal">
-      <div class="l">Saldo do grupo</div>
+      <div class="l">Seu saldo neste grupo</div>
       <div class="v">💰 <span id="goldBal">0</span></div>
-      <div style="font-size:12px;color:var(--muted)" id="grpLabel">—</div>
+      <div class="row">
+        <div class="s">Grupo: <b id="grpTotal">0</b></div>
+        <div class="s">Rank: <b id="grpPos">—</b></div>
+      </div>
+      <div class="s" id="grpLabel" style="margin-top:4px">—</div>
     </div>
   </div>
 
   <div id="viewHome">
-    <div class="banner">Toque no <b>grupo</b> para jogar com aquele saldo. Cooldown nos jogos · vitórias grandes notificam o canal.</div>
+    <div class="banner">Escolha o <b>grupo</b>. Seu saldo e o total do grupo aparecem acima. Clique em alguém no ranking para ver o perfil.</div>
     <div class="sec">1 · Grupo</div>
     <div class="groups" id="grpGrid"><div class="skel"></div></div>
-    <div class="sec">2 · Jogos</div>
+    <div class="sec">2 · Arena</div>
     <div class="games">
-      <button class="gbtn" data-g="mine"><span class="ico">⛏️</span><strong>Minerar</strong><span>Energia</span></button>
-      <button class="gbtn" data-g="fish"><span class="ico">🎣</span><strong>Pescar</strong><span>Peixes</span></button>
+      <button class="gbtn" data-g="mine"><span class="ico">⛏️</span><strong>Minerar</strong><span>Energia & ouro</span></button>
+      <button class="gbtn" data-g="fish"><span class="ico">🎣</span><strong>Pescar</strong><span>Peixes raros</span></button>
       <button class="gbtn" data-g="crash"><span class="ico">🚀</span><strong>Foguete</strong><span>Crash ao vivo</span></button>
       <button class="gbtn" data-g="tiger"><span class="ico">🐯</span><strong>Tigrinho</strong><span>Fortune 3×3</span></button>
-      <button class="gbtn" data-g="raid"><span class="ico">🏴‍☠️</span><strong>Roubar</strong><span>Mais rico do grupo</span></button>
+      <button class="gbtn" data-g="raid"><span class="ico">🏴‍☠️</span><strong>Roubar</strong><span>Top 10 grupos</span></button>
       <button class="gbtn" data-g="rank"><span class="ico">🏆</span><strong>Ranking</strong><span>Pessoas & grupos</span></button>
     </div>
   </div>
 
   <div class="gv" id="gv-mine">
-    <button class="back" data-back>← Jogos</button>
-    <div class="arena" id="mineArena"><div class="big" id="pick">⛏️</div><div class="tag" id="mineTag">Minerar</div></div>
+    <button class="back" data-back>← Arena</button>
+    <div class="arena"><div style="font-size:56px" id="pick">⛏️</div><div class="tag" id="mineTag">Minerar</div></div>
     <div class="stats"><div class="st"><div class="n" id="stP">1</div><div class="l">Poder</div></div><div class="st"><div class="n" id="stL">1</div><div class="l">Nível</div></div><div class="st"><div class="n" id="stS">0</div><div class="l">Combo</div></div></div>
     <div class="panel"><div class="ebar"><i id="eFill"></i></div><p class="sub" id="eTxt">100/100</p>
       <button class="btn btn-gold" id="btnMine">MINERAR</button>
-      <button class="btn btn-ghost" id="btnUp" style="margin-top:8px">⬆️ Poder</button></div>
+      <button class="btn btn-ghost" id="btnUp" style="margin-top:8px">⬆️ Poder</button>
+      <div class="hist"><h4>Últimas ações · Minerar</h4><div id="hist-mine"></div></div>
+    </div>
   </div>
 
   <div class="gv" id="gv-fish">
-    <button class="back" data-back>← Jogos</button>
-    <div class="arena"><div class="big" id="rod">🎣</div><div class="tag" id="fishTag">Pesca</div></div>
-    <div class="panel"><button class="btn btn-cyan" id="btnFish">LANÇAR LINHA</button><p class="sub" id="fishLog" style="margin-top:10px;margin-bottom:0"></p></div>
+    <button class="back" data-back>← Arena</button>
+    <div class="arena"><div style="font-size:56px" id="rod">🎣</div><div class="tag" id="fishTag">Pesca</div></div>
+    <div class="panel"><button class="btn btn-cyan" id="btnFish">LANÇAR LINHA</button><p class="sub" id="fishLog" style="margin-top:10px;margin-bottom:0"></p>
+      <div class="hist"><h4>Últimas ações · Pesca</h4><div id="hist-pescar"></div></div>
+    </div>
   </div>
 
   <div class="gv" id="gv-crash">
-    <button class="back" data-back>← Jogos</button>
+    <button class="back" data-back>← Arena</button>
     <div class="arena sky" id="crashArena">
-      <div class="plane" id="plane">✈️</div>
+      <div class="stars"></div>
+      <div class="rocket" id="rocket">🚀</div>
+      <div class="boom" id="boomFx">💥</div>
       <div class="crash-n" id="cMult">1.00x</div>
-      <div class="sky-line"></div>
-      <div class="tag" id="crashTag" style="position:absolute;bottom:10px">Aguardando decolagem</div>
+      <div class="tag" id="crashTag">Aguardando decolagem</div>
     </div>
     <div class="panel">
       <div class="bets" id="cBets"><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button><button data-v="1000">1k</button></div>
       <div class="bets" id="cOuts"><button data-v="1.5" class="on">1.5x</button><button data-v="2">2x</button><button data-v="3">3x</button><button data-v="5">5x</button><button data-v="10">10x</button></div>
-      <button class="btn btn-red" id="btnCrash">DECOLAR</button>
+      <button class="btn btn-red" id="btnCrash">DECOLAR 🚀</button>
+      <div class="hist"><h4>Últimas ações · Foguete</h4><div id="hist-foguete"></div></div>
     </div>
   </div>
 
   <div class="gv" id="gv-tiger">
-    <button class="back" data-back>← Jogos</button>
+    <button class="back" data-back>← Arena</button>
     <div class="panel arena tig" style="min-height:auto;padding:16px">
       <h3 style="text-align:center">🐯 Fortune Tiger</h3>
-      <p class="sub" style="text-align:center">Mais difícil · <b>🍀 vale 2x</b> · grade completa = jackpot</p>
+      <p class="sub" style="text-align:center"><b>🍀 = 2x</b> · grade completa = jackpot</p>
       <div class="grid3" id="tigerGrid">
         <div class="cell">🐯</div><div class="cell">🍒</div><div class="cell">🎰</div>
-        <div class="cell">🃏</div><div class="cell">🍊</div><div class="cell">🍒</div>
-        <div class="cell">🎰</div><div class="cell">🐯</div><div class="cell">🃏</div>
+        <div class="cell">🃏</div><div class="cell">🍀</div><div class="cell">🍊</div>
+        <div class="cell">🎰</div><div class="cell">🐯</div><div class="cell">🍀</div>
       </div>
       <div class="bets" id="tBets"><button data-v="10">10</button><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button></div>
       <button class="btn btn-gold" id="btnSpin">GIRAR</button>
       <div class="pay"><div>🐯 15x</div><div>🎰 10x</div><div>🃏 5x</div><div>🍊 4x</div><div>🍒 3x</div><div>🍀 2x</div></div>
       <p class="sub" id="tigLog" style="margin-top:10px;margin-bottom:0;text-align:center"></p>
+      <div class="hist"><h4>Últimas ações · Tigrinho</h4><div id="hist-tigrinho"></div></div>
     </div>
   </div>
 
   <div class="gv" id="gv-raid">
-    <button class="back" data-back>← Jogos</button>
-    <div class="arena"><div class="big">🏴‍☠️</div><div class="tag" id="raidTag">Rouba o mais rico do grupo</div></div>
+    <button class="back" data-back>← Arena</button>
+    <div class="arena"><div style="font-size:56px">🏴‍☠️</div><div class="tag" id="raidTag">Top 10 · não o seu grupo</div></div>
     <div class="panel">
-      <p class="sub">Escolha um grupo do <b>Top 10 mais ricos</b> (igual /rankgrupos). Você tenta roubar a pessoa mais rica dali. Falha = multa no seu grupo. Cooldown 45s.</p>
-      <div class="sec">Alvo (Top 10)</div>
+      <p class="sub">Escolha um grupo do <b>Top 10</b> (não pode ser o seu). Rouba a pessoa mais rica dali.</p>
+      <div class="sec">Alvo</div>
       <div class="groups" id="raidTargets"><div class="skel"></div></div>
       <div class="vitima hide" id="vitimaBox"><img id="vitimaFoto" alt=""/><div><strong id="vitimaNome">—</strong><div style="font-size:12px;color:var(--muted)" id="vitimaMeta"></div></div></div>
       <button class="btn btn-pink" id="btnRaid">TENTAR ROUBO</button>
       <p class="sub" id="raidLog" style="margin-top:8px;margin-bottom:0"></p>
+      <div class="hist"><h4>Últimas ações · Raid</h4><div id="hist-raid"></div></div>
     </div>
   </div>
 
   <div class="gv" id="gv-rank">
-    <button class="back" data-back>← Jogos</button>
+    <button class="back" data-back>← Arena</button>
     <div class="tabs">
       <button class="on" id="tabG">🌍 Pessoas</button>
-      <button id="tabGrp">👥 Neste grupo</button>
-      <button id="tabGrupos">🏰 Grupos ricos</button>
+      <button id="tabGrp">👥 Grupo</button>
+      <button id="tabGrupos">🏰 Top grupos</button>
     </div>
-    <div class="panel"><h3 id="rankTitle">🏆 Ranking</h3><p class="sub" id="rankSub">—</p><div id="rankList"></div>
+    <div class="panel"><h3 id="rankTitle">🏆 Ranking</h3><p class="sub" id="rankSub">Toque em alguém para ver o perfil</p><div id="rankList"></div>
       <button class="btn btn-ghost" id="btnRR" style="margin-top:8px">Atualizar</button></div>
   </div>
 </div>
+
+<div class="modal" id="modalPerfil">
+  <div class="sheet">
+    <div class="head">
+      <img id="mpFoto" alt=""/>
+      <div><strong id="mpNome" style="font-size:16px">—</strong><div style="font-size:12px;color:var(--muted)" id="mpMeta">—</div></div>
+    </div>
+    <div class="sec">Grupos com Golds</div>
+    <div id="mpGroups"></div>
+    <button class="btn btn-ghost" style="margin-top:12px" onclick="closeModal()">Fechar</button>
+  </div>
+</div>
+<div class="modal" id="modalGrupo">
+  <div class="sheet">
+    <div class="head">
+      <div style="font-size:36px">🏰</div>
+      <div><strong id="mgNome" style="font-size:16px">—</strong><div style="font-size:12px;color:var(--muted)" id="mgMeta">—</div></div>
+    </div>
+    <div id="mgLink" class="sub"></div>
+    <div class="sec">Top do grupo</div>
+    <div id="mgTop"></div>
+    <button class="btn btn-ghost" style="margin-top:12px" onclick="closeModal()">Fechar</button>
+  </div>
+</div>
+
 <footer><a href="index.html">Fabi Bot</a> · Gold Empire</footer>
 <div class="toast" id="toast"></div>
 <script>
@@ -239,40 +289,28 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 const PROXY_HOST='https://orange-hill-2e61.gbscabral15.workers.dev';
 const BACKEND='http://br2.bronxyshost.com:4009';
 const API_URL=PROXY_HOST+'/br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009';
-const SK='fabi_ge_v4', AV='https://fabibot.vercel.app/flogo.jpg';
+const SK='fabi_ge_v5', AV='https://fabibot.vercel.app/flogo.jpg';
 const SYM=['🎰','🍒','🍊','🃏','🐯','🍀'];
 function urlsFor(path){
   const target=BACKEND.replace(/\/$/,'')+path;
   const hostPath=BACKEND.replace(/^https?:\/\//,'');
-  return [PROXY_HOST+'/'+hostPath+'/proxy?url='+encodeURIComponent(target), PROXY_HOST+'/proxy?url='+encodeURIComponent(target), API_URL+path];
+  return [PROXY_HOST+'/'+hostPath+'/proxy?url='+encodeURIComponent(target),PROXY_HOST+'/proxy?url='+encodeURIComponent(target),API_URL+path];
 }
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function fmt(n){return Math.floor(Number(n)||0).toLocaleString('pt-BR')}
 function toast(m,k){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(k==='bad'?' bad':k==='ok'?' ok':'');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),2400)}
-function fixFoto(f){
-  f=String(f||'').trim();
-  if(!f) return AV;
-  if(f.startsWith('//')) f='https:'+f;
-  if(f.startsWith('/')) f='https://fabibot.vercel.app'+f;
-  if(!/^https?:\/\//i.test(f)) f=AV;
-  return f;
-}
-function setBtnCd(btn, ms, label){
-  if(!btn) return;
-  const end=Date.now()+Math.max(0,ms||0);
-  const base=label||btn.dataset.label||btn.textContent;
-  btn.dataset.label=base;
-  const tick=()=>{
-    const left=end-Date.now();
-    if(left<=0){btn.disabled=false;btn.textContent=base;return}
-    btn.disabled=true;
-    btn.innerHTML=base+' <span class="cd">('+Math.ceil(left/1000)+'s)</span>';
-    setTimeout(tick,200);
-  };
-  tick();
+function fixFoto(f){f=String(f||'').trim();if(!f)return AV;if(f.startsWith('//'))f='https:'+f;if(f.startsWith('/'))f='https://fabibot.vercel.app'+f;if(!/^https?:\/\//i.test(f))return AV;return f}
+function setBtnCd(btn,ms,label){if(!btn)return;const end=Date.now()+Math.max(0,ms||0);const base=label||btn.dataset.label||btn.textContent;btn.dataset.label=base;const tick=()=>{const left=end-Date.now();if(left<=0){btn.disabled=false;btn.textContent=base;return}btn.disabled=true;btn.innerHTML=base+' <span class="cd">('+Math.ceil(left/1000)+'s)</span>';setTimeout(tick,200)};tick()}
+function paintHist(id,arr){
+  const el=document.getElementById(id);if(!el)return;
+  if(!arr||!arr.length){el.innerHTML='<div class="hi"><span>Nada ainda</span></div>';return}
+  el.innerHTML=arr.slice(0,3).map(a=>{
+    const d=Number(a.delta)||0;const cls=d>0?'up':d<0?'dn':'';
+    return `<div class="hi"><div><b>${esc(a.nome)}</b> <span>${esc(a.texto)}</span></div><div class="d ${cls}">${d>0?'+':''}${fmt(d)}</div></div>`;
+  }).join('');
 }
 
-const S={user:null,pass:'',foto:AV,groups:[],grupo:'',grupoNome:'',golds:0,power:1,level:1,energy:100,maxE:100,streak:0,lastE:Date.now(),bet:100,cashout:1.5,rankMode:'total',busy:false,rankCache:null,rankAt:0,cd:{},targetGrupo:'',top10:[]};
+const S={user:null,pass:'',foto:AV,groups:[],grupo:'',grupoNome:'',golds:0,grupoTotal:0,grupoPos:null,power:1,level:1,energy:100,maxE:100,streak:0,lastE:Date.now(),bet:100,cashout:1.5,rankMode:'total',busy:false,rankCache:null,rankAt:0,targetGrupo:'',top10:[],pendingGold:null};
 function save(){try{localStorage.setItem(SK,JSON.stringify({user:S.user,pass:S.pass,foto:S.foto,grupo:S.grupo,grupoNome:S.grupoNome,power:S.power,level:S.level,energy:S.energy,maxE:S.maxE,streak:S.streak,lastE:S.lastE}))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'null');if(!d||!d.user||!d.pass)return false;Object.assign(S,d);return true}catch(e){return false}}
 
@@ -292,10 +330,24 @@ async function api(path,opts,ms){
   }finally{clearTimeout(t)}
 }
 
-function setGold(n){S.golds=Math.floor(Number(n)||0);document.getElementById('goldBal').textContent=fmt(S.golds);const g=S.groups.find(x=>x.grupo===S.grupo);if(g)g.golds=S.golds;renderGroups()}
+function setGold(n,opts){
+  // opts.defer = não atualiza UI ainda (foguete)
+  S.golds=Math.floor(Number(n)||0);
+  if(opts&&opts.defer){S.pendingGold=S.golds;return}
+  document.getElementById('goldBal').textContent=fmt(S.golds);
+  S.pendingGold=null;
+  const g=S.groups.find(x=>x.grupo===S.grupo);if(g)g.golds=S.golds;renderGroups();
+}
+function flushGold(){if(S.pendingGold!=null){document.getElementById('goldBal').textContent=fmt(S.pendingGold);S.pendingGold=null}else document.getElementById('goldBal').textContent=fmt(S.golds);renderGroups()}
+function setGrupoMeta(d){
+  if(!d)return;
+  if(typeof d.grupoTotal==='number'){S.grupoTotal=d.grupoTotal;document.getElementById('grpTotal').textContent=fmt(d.grupoTotal)}
+  if(d.grupoPosicao!=null){S.grupoPos=d.grupoPosicao;document.getElementById('grpPos').textContent=d.grupoPosicao?'#'+d.grupoPosicao:'—'}
+  if(d.grupoNome) document.getElementById('grpLabel').textContent=d.grupoNome;
+}
 function regen(){const now=Date.now();const e=Math.floor((now-S.lastE)/8000);if(e>0&&S.energy<S.maxE){S.energy=Math.min(S.maxE,S.energy+e);S.lastE+=e*8000;save()}}
-function ui(){regen();document.getElementById('goldBal').textContent=fmt(S.golds);document.getElementById('stP').textContent=S.power;document.getElementById('stL').textContent=S.level;document.getElementById('stS').textContent=S.streak;document.getElementById('eFill').style.width=Math.min(100,S.energy/S.maxE*100)+'%';document.getElementById('eTxt').textContent=S.energy+' / '+S.maxE;document.getElementById('grpLabel').textContent=S.grupoNome||'—';document.getElementById('userSub').textContent=S.grupoNome?('Grupo: '+S.grupoNome):'Toque em um grupo'}
-function setAvatar(url){const img=document.getElementById('av');img.src=fixFoto(url||S.foto||AV);S.foto=img.src}
+function ui(){regen();if(S.pendingGold==null)document.getElementById('goldBal').textContent=fmt(S.golds);document.getElementById('stP').textContent=S.power;document.getElementById('stL').textContent=S.level;document.getElementById('stS').textContent=S.streak;document.getElementById('eFill').style.width=Math.min(100,S.energy/S.maxE*100)+'%';document.getElementById('eTxt').textContent=S.energy+' / '+S.maxE;document.getElementById('userSub').textContent=S.grupoNome?('Grupo: '+S.grupoNome):'Toque em um grupo'}
+function setAvatar(url){document.getElementById('av').src=fixFoto(url||S.foto||AV);S.foto=document.getElementById('av').src}
 
 async function tryLogin(u,p){
   const body=JSON.stringify({username:u,password:p});
@@ -311,7 +363,7 @@ async function tryLogin(u,p){
 
 function renderGroups(){
   const box=document.getElementById('grpGrid');
-  if(!S.groups.length){box.innerHTML='<div class="gcard"><strong>Nenhum grupo</strong><div class="gg">Use o bot no WhatsApp</div></div>';return}
+  if(!S.groups.length){box.innerHTML='<div class="gcard"><strong>Nenhum grupo</strong></div>';return}
   box.innerHTML=S.groups.map(g=>`<button type="button" class="gcard ${g.grupo===S.grupo?'on':''}" data-g="${esc(g.grupo)}"><strong>${esc(g.nome||String(g.grupo).split('@')[0])}</strong><div class="gg">💰 ${fmt(g.golds)}</div></button>`).join('');
   box.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const g=S.groups.find(x=>x.grupo===b.getAttribute('data-g'));if(g)selectGroup(g.grupo,g.nome,g.golds)});
 }
@@ -321,11 +373,7 @@ async function loadGroups(){
   let r=await api('/cliente06/game/groups',{method:'POST',headers:{'Content-Type':'application/json'},body},15000);
   if(r.ok&&r.data&&r.data.success){
     S.groups=r.data.groups||[];
-    if(r.data.user){
-      if(r.data.user.foto) setAvatar(r.data.user.foto);
-      if(r.data.user.numero) S.user.numero=r.data.user.numero;
-      if(r.data.user.nome) S.user.nome=r.data.user.nome;
-    }
+    if(r.data.user){if(r.data.user.foto)setAvatar(r.data.user.foto);if(r.data.user.numero)S.user.numero=r.data.user.numero}
   }
   if(!S.groups.length&&S.user.grupo)S.groups=[{grupo:S.user.grupo,nome:'Meu grupo',golds:0}];
   renderGroups();
@@ -347,6 +395,7 @@ async function refreshGold(){
   let r=await api('/cliente06/game/me',{method:'POST',headers:{'Content-Type':'application/json'},body},12000);
   if(r.ok&&r.data){
     if(typeof r.data.golds==='number')setGold(r.data.golds);
+    setGrupoMeta(r.data);
     if(r.data.user&&r.data.user.foto)setAvatar(r.data.user.foto);
   }
   ui();
@@ -359,10 +408,24 @@ function showApp(){
   setAvatar(S.user.foto||S.foto||AV);
   loadGroups().then(ui);
 }
-function openGame(n){if(n!=='rank'&&!S.grupo){toast('Escolha um grupo','bad');return}document.getElementById('viewHome').classList.add('hide');document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));document.getElementById('gv-'+n).classList.add('on');if(n==='rank')loadRank(true);if(n==='raid')loadRaidTargets()}
+function openGame(n){
+  if(n!=='rank'&&!S.grupo){toast('Escolha um grupo','bad');return}
+  document.getElementById('viewHome').classList.add('hide');
+  document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));
+  document.getElementById('gv-'+n).classList.add('on');
+  if(n==='rank')loadRank(true);
+  if(n==='raid')loadRaidTargets();
+  const map={mine:'mine',fish:'pescar',crash:'foguete',tiger:'tigrinho',raid:'raid'};
+  if(map[n]) loadRecent(map[n],'hist-'+map[n]);
+}
 function closeGame(){document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));document.getElementById('viewHome').classList.remove('hide')}
 document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>openGame(b.dataset.g));
 document.querySelectorAll('[data-back]').forEach(b=>b.onclick=closeGame);
+
+async function loadRecent(tipo,elId){
+  const r=await api('/cliente06/game/recent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo,limit:3})},10000);
+  if(r.ok&&r.data&&r.data.recent) paintHist(elId,r.data.recent);
+}
 
 document.getElementById('btnLogin').onclick=async()=>{
   const u=document.getElementById('inpUser').value.trim();
@@ -373,200 +436,201 @@ document.getElementById('btnLogin').onclick=async()=>{
   try{
     const user=await tryLogin(u,p);
     S.user={nome:user.nome||u,numero:user.numero||'',grupo:user.grupo||'',foto:user.foto||user.avatar||user.fotoPerfil||AV};
-    S.pass=p;S.foto=fixFoto(S.user.foto);save();
-    try{localStorage.setItem('fabi_session',JSON.stringify({nome:S.user.nome,numero:S.user.numero,id:S.pass,grupo:S.user.grupo,foto:S.foto}))}catch(e){}
-    showApp();toast('Olá, '+S.user.nome,'ok');
+    S.pass=p;S.foto=fixFoto(S.user.foto);save();showApp();toast('Olá, '+S.user.nome,'ok');
   }catch(e){err.textContent=e.message||'Falha'}
-  finally{btn.disabled=false;btn.textContent='Entrar'}
+  finally{btn.disabled=false;btn.textContent='Entrar no Império'}
 };
 document.getElementById('btnLogout').onclick=()=>{localStorage.removeItem(SK);location.reload()};
 
 function needGroup(){if(!S.grupo){toast('Escolha um grupo','bad');return false}return true}
-async function play(path,body,btn){
+async function play(path,body,btn,opts){
   if(!needGroup())return null;
   if(S.busy){toast('Aguarde…','bad');return null}
-  S.busy=true; if(btn) btn.disabled=true;
+  S.busy=true;if(btn)btn.disabled=true;
   try{
     const r=await api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo},body||{}))},18000);
-    if(r.status===429){
-      const ms=(r.data&&r.data.cooldownMs)||3000;
-      if(btn) setBtnCd(btn, ms, btn.dataset.label||btn.textContent);
-      toast((r.data&&r.data.message)||'Cooldown','bad');
-      return null;
-    }
+    if(r.status===429){const ms=(r.data&&r.data.cooldownMs)||3000;if(btn)setBtnCd(btn,ms,btn.dataset.label||btn.textContent);toast((r.data&&r.data.message)||'Cooldown','bad');return null}
     if(r.ok&&r.data&&r.data.success){
-      if(typeof r.data.golds==='number')setGold(r.data.golds);
-      if(r.data.cooldownMs&&btn) setBtnCd(btn, r.data.cooldownMs, btn.dataset.label||btn.textContent);
+      if(typeof r.data.golds==='number') setGold(r.data.golds,{defer:opts&&opts.deferGold});
+      if(r.data.cooldownMs&&btn) setBtnCd(btn,r.data.cooldownMs,btn.dataset.label||btn.textContent);
+      if(r.data.recent&&opts&&opts.hist) paintHist(opts.hist,r.data.recent);
       return r.data;
     }
     toast((r.data&&(r.data.message||r.data.error))||('Erro '+r.status),'bad');
-    if(r.data&&typeof r.data.golds==='number')setGold(r.data.golds);
     return null;
   }catch(e){toast('Rede','bad');return null}
-  finally{S.busy=false; if(btn&&!btn.disabled){/* ok */} ui()}
+  finally{S.busy=false;ui()}
 }
 
-document.getElementById('btnMine').onclick=async()=>{const btn=document.getElementById('btnMine');regen();if(S.energy<1)return toast('Sem energia','bad');S.energy--;S.streak++;save();const d=await play('/cliente06/game/mine',{taps:1,power:S.power,level:S.level},btn);if(d){document.getElementById('mineTag').textContent='+'+d.gain;toast('⛏️ +'+d.gain,'ok');setBtnCd(btn,800,'MINERAR')}};
-document.getElementById('mineArena').onclick=()=>document.getElementById('btnMine').click();
+document.getElementById('btnMine').onclick=async()=>{const btn=document.getElementById('btnMine');regen();if(S.energy<1)return toast('Sem energia','bad');S.energy--;S.streak++;save();const d=await play('/cliente06/game/mine',{taps:1,power:S.power,level:S.level},btn,{hist:'hist-mine'});if(d){document.getElementById('mineTag').textContent='+'+d.gain;toast('⛏️ +'+d.gain,'ok');setBtnCd(btn,800,'MINERAR')}};
 document.getElementById('btnUp').onclick=()=>{S.power++;if(S.power%3===0)S.level++;S.maxE=Math.min(200,100+S.level*5);save();ui();toast('Poder '+S.power,'ok')};
-document.getElementById('btnFish').onclick=async()=>{const btn=document.getElementById('btnFish');document.getElementById('rod').textContent='🎣…';const d=await play('/cliente06/game/pescar',{},btn);if(d){document.getElementById('rod').textContent=d.emoji||'🐟';document.getElementById('fishTag').textContent=d.peixe;document.getElementById('fishLog').textContent='+'+fmt(d.gain);toast((d.emoji||'')+' +'+d.gain,'ok');setBtnCd(btn,4000,'LANÇAR LINHA')}};
+document.getElementById('btnFish').onclick=async()=>{const btn=document.getElementById('btnFish');document.getElementById('rod').textContent='🎣…';const d=await play('/cliente06/game/pescar',{},btn,{hist:'hist-pescar'});if(d){document.getElementById('rod').textContent=d.emoji||'🐟';document.getElementById('fishTag').textContent=d.peixe;document.getElementById('fishLog').textContent='+'+fmt(d.gain);toast((d.emoji||'')+' +'+d.gain,'ok');setBtnCd(btn,4000,'LANÇAR LINHA')}};
 
-/* CRASH plane */
 document.querySelectorAll('#cBets button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cBets button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.bet=+b.dataset.v});
 document.querySelectorAll('#cOuts button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cOuts button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.cashout=+b.dataset.v});
 document.getElementById('btnCrash').onclick=async()=>{
   if(S.golds<S.bet)return toast('Sem Golds','bad');
   const btn=document.getElementById('btnCrash');
-  const el=document.getElementById('cMult'); const plane=document.getElementById('plane'); const tag=document.getElementById('crashTag');
-  el.classList.remove('boom'); plane.style.transition='none'; plane.style.left='8%'; plane.style.bottom='18%'; plane.style.transform='rotate(0deg)';
-  void plane.offsetWidth;
-  const d=await play('/cliente06/game/foguete',{bet:S.bet,cashout:S.cashout},btn);
-  if(!d)return;
+  const el=document.getElementById('cMult');const rocket=document.getElementById('rocket');const boom=document.getElementById('boomFx');const tag=document.getElementById('crashTag');
+  el.classList.remove('boom');boom.classList.remove('show');
+  rocket.style.transition='none';rocket.style.left='12%';rocket.style.bottom='14%';rocket.style.transform='rotate(-15deg)';rocket.style.opacity='1';
+  void rocket.offsetWidth;
+  // defer gold until animation ends
+  const d=await play('/cliente06/game/foguete',{bet:S.bet,cashout:S.cashout},btn,{deferGold:true,hist:'hist-foguete'});
+  if(!d){flushGold();return}
   const target=d.win?d.cashout:d.crashAt;
-  const dur=Math.max(1200, Math.min(12000, d.durationMs||Math.floor(800+Math.log(Math.max(1.05,target))*2200)));
-  plane.style.transition='left '+dur+'ms linear, bottom '+dur+'ms linear, transform '+dur+'ms linear';
-  plane.style.left=(d.win?'78%':'92%'); plane.style.bottom=(d.win?'62%':'78%'); plane.style.transform=d.win?'rotate(-8deg)':'rotate(-25deg) scale(0.7)';
+  const dur=Math.max(1400,Math.min(12000,d.durationMs||Math.floor(900+Math.log(Math.max(1.05,target))*2300)));
+  rocket.style.transition='left '+dur+'ms linear, bottom '+dur+'ms linear, transform '+dur+'ms linear';
+  rocket.style.left=d.win?'72%':'88%';rocket.style.bottom=d.win?'58%':'72%';rocket.style.transform=d.win?'rotate(-25deg)':'rotate(-40deg)';
   const t0=performance.now();
   function frame(now){
     const p=Math.min(1,(now-t0)/dur);
-    const mult=1+(target-1)*p;
-    el.textContent=mult.toFixed(2)+'x';
-    tag.textContent=d.win?(p<1?'Subindo…':'SAIU!'):(p<1?'Subindo…':'💥 CRASH');
+    el.textContent=(1+(target-1)*p).toFixed(2)+'x';
+    tag.textContent=p<1?'Subindo…':(d.win?'SAIU!':'CRASH');
     if(p<1) requestAnimationFrame(frame);
     else {
       el.textContent=Number(d.crashAt).toFixed(2)+'x';
-      if(d.win){el.classList.remove('boom');toast('🚀 +'+fmt(d.payout),'ok')}
-      else{el.classList.add('boom');toast('Crash -'+fmt(d.bet),'bad');plane.style.transform='rotate(40deg) scale(0.4)';plane.style.opacity='0.4';setTimeout(()=>{plane.style.opacity='1';plane.style.left='8%';plane.style.bottom='18%';plane.style.transform='none';plane.style.transition='none'},600)}
+      flushGold(); // saldo só agora
+      if(d.win){toast('🚀 +'+fmt(d.payout),'ok')}
+      else{
+        el.classList.add('boom');
+        boom.style.left=rocket.style.left;boom.style.top='auto';boom.style.bottom=rocket.style.bottom;
+        boom.classList.add('show');
+        rocket.style.opacity='0';
+        toast('💥 Crash -'+fmt(d.bet),'bad');
+        setTimeout(()=>{rocket.style.transition='none';rocket.style.left='12%';rocket.style.bottom='14%';rocket.style.transform='rotate(-15deg)';rocket.style.opacity='1'},700);
+      }
     }
   }
   requestAnimationFrame(frame);
 };
 
-/* TIGER */
 document.querySelectorAll('#tBets button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tBets button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.bet=+b.dataset.v});
 function paintGrid(reels){const cells=document.querySelectorAll('#tigerGrid .cell');let i=0;for(let r=0;r<3;r++)for(let c=0;c<3;c++)cells[i++].textContent=(reels&&reels[r]&&reels[r][c])||SYM[Math.floor(Math.random()*SYM.length)]}
 document.getElementById('btnSpin').onclick=async()=>{
   if(S.golds<S.bet)return toast('Sem Golds','bad');
   const btn=document.getElementById('btnSpin');
   const anim=setInterval(()=>paintGrid(null),70);
-  const d=await play('/cliente06/game/tigrinho',{bet:S.bet},btn);
-  clearInterval(anim);
-  if(!d)return;
-  if(d.reels)paintGrid(d.reels);
+  const d=await play('/cliente06/game/tigrinho',{bet:S.bet},btn,{hist:'hist-tigrinho'});
+  clearInterval(anim);if(!d)return;if(d.reels)paintGrid(d.reels);
   const log=document.getElementById('tigLog');
   if(d.jackpot){log.textContent='🎉 JACKPOT +'+fmt(d.ganho);toast('🐯 JACKPOT','ok')}
-  else if(d.ganho>0){log.textContent='+'+fmt(d.ganho)+(d.detalhes&&d.detalhes[0]?(' · '+d.detalhes[0].tipo+' x'+d.detalhes[0].multiplicador):'');toast('🐯 +'+fmt(d.ganho),'ok')}
-  else{log.textContent='Sem linha · -'+fmt(d.bet||S.bet);toast('Sem prêmio','bad')}
+  else if(d.ganho>0){log.textContent='+'+fmt(d.ganho);toast('🐯 +'+fmt(d.ganho),'ok')}
+  else{log.textContent='-'+fmt(d.bet||S.bet);toast('Sem prêmio','bad')}
 };
-
 
 async function loadRaidTargets(){
   const box=document.getElementById('raidTargets');
-  if(!box)return;
-  box.innerHTML='<div class="skel"></div><div class="skel"></div>';
+  box.innerHTML='<div class="skel"></div>';
   let r=await api('/cliente06/game/rank-grupos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:10})},15000);
-  if(!r.ok) r=await api('/cliente06/game/rank-grupos?limit=10',null,15000);
-  if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha ao carregar Top 10</p>';return}
-  S.top10=r.data.top10||r.data.rank||[];
-  if(!S.top10.length){box.innerHTML='<p class="sub">Nenhum grupo no ranking</p>';return}
-  if(!S.targetGrupo) S.targetGrupo=S.top10[0].grupo;
+  if(!r.ok)r=await api('/cliente06/game/rank-grupos?limit=10',null,15000);
+  if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha Top 10</p>';return}
+  S.top10=(r.data.top10||r.data.rank||[]).filter(g=>String(g.grupo)!==String(S.grupo));
+  if(!S.top10.length){box.innerHTML='<p class="sub">Só seu grupo no Top 10 — não há alvo</p>';return}
+  if(!S.targetGrupo||String(S.targetGrupo)===String(S.grupo)) S.targetGrupo=S.top10[0].grupo;
   box.innerHTML=S.top10.map(g=>`<button type="button" class="gcard ${g.grupo===S.targetGrupo?'on':''}" data-tg="${esc(g.grupo)}">
-    <div class="raid-pos">#${g.posicao||''} TOP 10</div>
-    <strong>${esc(g.nome)}</strong>
+    <div class="raid-pos">#${g.posicao||''}</div><strong>${esc(g.nome)}</strong>
     <div class="gg">💰 ${fmt(g.totalGolds||g.golds)}</div>
-    <div style="font-size:11px;color:var(--muted);margin-top:4px">${g.membros||g.participantes||0} membros · média ${fmt(g.mediaGolds||0)}</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px">${g.membros||0} membros</div>
   </button>`).join('');
-  box.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>{
-    S.targetGrupo=b.getAttribute('data-tg');
-    box.querySelectorAll('.gcard').forEach(c=>c.classList.toggle('on',c.getAttribute('data-tg')===S.targetGrupo));
-    const g=S.top10.find(x=>x.grupo===S.targetGrupo);
-    toast('Alvo: '+(g&&g.nome||'grupo'),'ok');
-  });
+  box.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>{S.targetGrupo=b.getAttribute('data-tg');box.querySelectorAll('.gcard').forEach(c=>c.classList.toggle('on',c.getAttribute('data-tg')===S.targetGrupo))});
 }
-
-/* RAID */
 document.getElementById('btnRaid').onclick=async()=>{
   const btn=document.getElementById('btnRaid');
-  if(!S.targetGrupo){toast('Escolha um grupo do Top 10','bad');return}
-  document.getElementById('raidTag').textContent='Atacando…';
-  const d=await play('/cliente06/game/raid',{power:S.power,level:S.level,targetGrupo:S.targetGrupo},btn);
+  if(!S.targetGrupo)return toast('Escolha um grupo do Top 10','bad');
+  if(String(S.targetGrupo)===String(S.grupo))return toast('Não pode roubar o próprio grupo','bad');
+  const d=await play('/cliente06/game/raid',{power:S.power,level:S.level,targetGrupo:S.targetGrupo},btn,{hist:'hist-raid'});
   if(!d)return;
   const box=document.getElementById('vitimaBox');
-  if(d.vitima){
-    box.classList.remove('hide');
-    document.getElementById('vitimaFoto').src=fixFoto(d.vitima.foto);
-    document.getElementById('vitimaNome').textContent=d.vitima.nome||'Rival';
-    document.getElementById('vitimaMeta').textContent='Tinha ~'+fmt(d.vitima.goldsAntes)+' Golds · '+(d.alvo&&d.alvo.nome||'');
-  }
-  if(d.win){document.getElementById('raidTag').textContent='Roubou +'+d.loot;document.getElementById('raidLog').textContent='🏴‍☠️ +'+fmt(d.loot)+' de '+(d.vitima&&d.vitima.nome||'rival')+' em '+(d.alvo&&d.alvo.nome||'');toast('Raid +'+d.loot,'ok')}
-  else{document.getElementById('raidTag').textContent='Falhou';document.getElementById('raidLog').textContent='Multa '+d.delta;toast('Raid falhou','bad')}
+  if(d.vitima){box.classList.remove('hide');document.getElementById('vitimaFoto').src=fixFoto(d.vitima.foto);document.getElementById('vitimaNome').textContent=d.vitima.nome||'Rival';document.getElementById('vitimaMeta').textContent='~'+fmt(d.vitima.goldsAntes)+' · '+(d.alvo&&d.alvo.nome||'')}
+  if(d.win){document.getElementById('raidTag').textContent='+'+d.loot;document.getElementById('raidLog').textContent='🏴‍☠️ +'+fmt(d.loot);toast('Raid +'+d.loot,'ok')}
+  else{document.getElementById('raidTag').textContent='Falhou';document.getElementById('raidLog').textContent='Multa '+d.delta;toast('Falhou','bad')}
+  await refreshGold();
 };
 
-/* RANK */
 async function loadRank(force){
   const box=document.getElementById('rankList');
   if(!force&&S.rankCache&&Date.now()-S.rankAt<12000&&S.rankCache.mode===S.rankMode){paint(S.rankCache);return}
   box.innerHTML='<div class="skel"></div><div class="skel"></div>';
   if(S.rankMode==='grupos'){
-    let r=await api('/cliente06/game/rank-grupos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:25})},15000);
-    if(!r.ok) r=await api('/cliente06/game/rank-grupos?limit=25',null,15000);
-    if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha no ranking de grupos</p>';return}
+    let r=await api('/cliente06/game/rank-grupos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:15})},15000);
+    if(!r.ok)r=await api('/cliente06/game/rank-grupos?limit=15',null,15000);
+    if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha</p>';return}
     S.rankCache={mode:'grupos',arr:r.data.rank||[]};S.rankAt=Date.now();paint(S.rankCache);return;
   }
   const body={modo:S.rankMode==='group'?'group':'total',limit:30};if(S.rankMode==='group'&&S.grupo)body.grupo=S.grupo;
   let r=await api('/cliente06/game/rank',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)},15000);
-  if(!r.ok||!r.data||!r.data.success){
-    let path='/cliente06/game/rank?limit=30&modo='+encodeURIComponent(body.modo);
-    if(body.grupo)path+='&grupo='+encodeURIComponent(body.grupo);
-    r=await api(path,null,15000);
-  }
-  if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha no ranking</p>';return}
+  if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha</p>';return}
   S.rankCache={mode:S.rankMode,arr:r.data.rank||[],meta:{nome:r.data.nomeGrupo}};S.rankAt=Date.now();paint(S.rankCache);
 }
 function paint(cache){
-  const box=document.getElementById('rankList');
-  const arr=cache.arr||[];
+  const box=document.getElementById('rankList');const arr=cache.arr||[];
   if(cache.mode==='grupos'){
-    document.getElementById('rankTitle').textContent='🏰 Top grupos (igual /rankgrupos)';
-    document.getElementById('rankSub').textContent='Ordenado por total de Golds · nomes de grupos.json';
+    document.getElementById('rankTitle').textContent='🏰 Top grupos (/rankgrupos)';
+    document.getElementById('rankSub').textContent='Toque no grupo para ver detalhes';
     box.innerHTML=arr.map((x,i)=>{
       const m=i===0?'👑':i===1?'🥈':i===2?'🥉':(i+1);
-      return `<div class="ri"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div>
+      return `<div class="ri" data-grupo="${esc(x.grupo)}"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div>
         <div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}</strong>
-        <div style="font-size:11px;color:var(--muted)">${x.membros||x.participantes||0} membros · média ${fmt(x.mediaGolds||0)}</div></div>
+        <div style="font-size:11px;color:var(--muted)">${x.membros||0} membros · média ${fmt(x.mediaGolds||0)}</div></div>
         <div style="color:var(--gold2);font-weight:800">${fmt(x.totalGolds||x.golds)}</div></div>`;
     }).join('')||'<p class="sub">Vazio</p>';
+    box.querySelectorAll('[data-grupo]').forEach(el=>el.onclick=()=>openGrupo(el.getAttribute('data-grupo')));
     return;
   }
-  document.getElementById('rankTitle').textContent=S.rankMode==='group'?('🏆 '+(cache.meta&&cache.meta.nome||S.grupoNome||'Grupo')):'🏆 Pessoas';
-  document.getElementById('rankSub').textContent=S.rankMode==='group'?'Golds neste grupo':'Soma em todos os grupos';
+  document.getElementById('rankTitle').textContent=S.rankMode==='group'?'🏆 Neste grupo':'🏆 Pessoas';
+  document.getElementById('rankSub').textContent='Toque no perfil para ver grupos';
   const my=String(S.user.numero||'').replace(/\D/g,'');
   box.innerHTML=arr.map((x,i)=>{
     const me=my&&String(x.numero)===my;
     const m=i===0?'👑':i===1?'🥈':i===2?'🥉':(i+1);
-    return `<div class="ri ${me?'me':''}"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div>
+    return `<div class="ri ${me?'me':''}" data-num="${esc(x.numero)}"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div>
       <img src="${esc(fixFoto(x.foto))}" onerror="this.src='${AV}'"/><div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}${me?' · você':''}</strong>
       <div style="font-size:11px;color:var(--muted)">${x.grupos?x.grupos+' grupos':''}</div></div>
       <div style="color:var(--gold2);font-weight:800">${fmt(x.golds)}</div></div>`;
   }).join('')||'<p class="sub">Vazio</p>';
+  box.querySelectorAll('[data-num]').forEach(el=>el.onclick=()=>openPerfil(el.getAttribute('data-num')));
 }
 document.getElementById('tabG').onclick=()=>{S.rankMode='total';tabG.classList.add('on');tabGrp.classList.remove('on');tabGrupos.classList.remove('on');loadRank(true)};
 document.getElementById('tabGrp').onclick=()=>{if(!S.grupo)return toast('Escolha grupo','bad');S.rankMode='group';tabGrp.classList.add('on');tabG.classList.remove('on');tabGrupos.classList.remove('on');loadRank(true)};
 document.getElementById('tabGrupos').onclick=()=>{S.rankMode='grupos';tabGrupos.classList.add('on');tabG.classList.remove('on');tabGrp.classList.remove('on');loadRank(true)};
 document.getElementById('btnRR').onclick=()=>{S.rankAt=0;loadRank(true)};
 
+async function openPerfil(numero){
+  const r=await api('/cliente06/game/perfil',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numero})},12000);
+  if(!r.ok||!r.data||!r.data.success)return toast('Perfil indisponível','bad');
+  const u=r.data.user;const gs=r.data.groups||[];
+  document.getElementById('mpFoto').src=fixFoto(u.foto);
+  document.getElementById('mpNome').textContent=u.nome;
+  document.getElementById('mpMeta').textContent='Total: '+fmt(u.totalGolds)+' Golds · '+gs.length+' grupo(s)';
+  document.getElementById('mpGroups').innerHTML=gs.map(g=>`<div class="gline" data-g="${esc(g.grupo)}"><div><b>${esc(g.nome)}</b><div style="font-size:11px;color:var(--muted)">${g.posicao?'#'+g.posicao+' · ':''}${fmt(g.totalGolds)} no grupo</div></div><div style="color:var(--gold2);font-weight:800">${fmt(g.golds)}</div></div>`).join('')||'<p class="sub">Sem grupos</p>';
+  document.getElementById('mpGroups').querySelectorAll('[data-g]').forEach(el=>el.onclick=()=>{closeModal();openGrupo(el.getAttribute('data-g'))});
+  document.getElementById('modalPerfil').classList.add('on');
+}
+async function openGrupo(grupo){
+  const r=await api('/cliente06/game/grupo-info',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({grupo})},12000);
+  if(!r.ok||!r.data||!r.data.success)return toast('Grupo indisponível','bad');
+  const d=r.data;
+  document.getElementById('mgNome').textContent=d.nome||'Grupo';
+  document.getElementById('mgMeta').textContent=(d.posicao?'#'+d.posicao+' · ':'')+fmt(d.totalGolds)+' Golds · '+d.membros+' membros · média '+fmt(d.mediaGolds);
+  const link=document.getElementById('mgLink');
+  if(d.link) link.innerHTML='🔗 <a href="'+esc(d.link)+'" target="_blank" rel="noopener">Entrar no grupo</a>';
+  else link.textContent='Link de convite indisponível';
+  document.getElementById('mgTop').innerHTML=(d.top||[]).map((x,i)=>`<div class="ri" data-num="${esc(x.numero)}"><div style="width:22px;font-weight:800;color:var(--gold)">${i+1}</div>
+    <img src="${esc(fixFoto(x.foto))}" onerror="this.src='${AV}'"/><div style="flex:1"><strong style="font-size:13px">${esc(x.nome)}</strong></div>
+    <div style="color:var(--gold2);font-weight:800">${fmt(x.golds)}</div></div>`).join('')||'<p class="sub">Sem dados</p>';
+  document.getElementById('mgTop').querySelectorAll('[data-num]').forEach(el=>el.onclick=()=>{closeModal();openPerfil(el.getAttribute('data-num'))});
+  document.getElementById('modalGrupo').classList.add('on');
+}
+window.closeModal=function(){document.getElementById('modalPerfil').classList.remove('on');document.getElementById('modalGrupo').classList.remove('on')};
+document.getElementById('modalPerfil').onclick=e=>{if(e.target.id==='modalPerfil')closeModal()};
+document.getElementById('modalGrupo').onclick=e=>{if(e.target.id==='modalGrupo')closeModal()};
+
 setInterval(()=>{if(S.user){regen();ui()}},5000);
-setInterval(()=>{if(S.user&&S.grupo)refreshGold()},20000);
+setInterval(()=>{if(S.user&&S.grupo&&S.pendingGold==null)refreshGold()},20000);
 
 async function bootSSO(){
-  // foto do site session
-  try{
-    const raw=localStorage.getItem('fabi_session')||localStorage.getItem('neconecta_user_session');
-    if(raw){
-      const s=JSON.parse(raw);
-      if(s.foto||s.avatar||s.fotoPerfil) S.foto=fixFoto(s.foto||s.avatar||s.fotoPerfil);
-    }
-  }catch(e){}
+  try{const raw=localStorage.getItem('fabi_session')||localStorage.getItem('neconecta_user_session');if(raw){const s=JSON.parse(raw);if(s.foto||s.avatar)S.foto=fixFoto(s.foto||s.avatar)}}catch(e){}
   if(load()&&S.user&&S.pass){showApp();return}
   try{
     const raw=localStorage.getItem('fabi_session')||localStorage.getItem('neconecta_user_session');
@@ -574,13 +638,11 @@ async function bootSSO(){
     const s=JSON.parse(raw);
     const user=s.nome||s.username||s.user||s.numero||'';
     const pass=String(s.id||s.password||s.senha||'');
-    document.getElementById('inpUser').value=user;
-    if(pass)document.getElementById('inpPass').value=pass;
+    document.getElementById('inpUser').value=user;if(pass)document.getElementById('inpPass').value=pass;
     if(user&&pass){
-      document.getElementById('loginErr').textContent='Entrando com a conta do site…';
       try{
         const logged=await tryLogin(user,pass);
-        S.user={nome:logged.nome||user,numero:logged.numero||s.numero||'',grupo:logged.grupo||s.grupo||'',foto:logged.foto||logged.avatar||logged.fotoPerfil||s.foto||s.avatar||AV};
+        S.user={nome:logged.nome||user,numero:logged.numero||s.numero||'',grupo:logged.grupo||s.grupo||'',foto:logged.foto||logged.avatar||s.foto||AV};
         S.pass=pass;S.foto=fixFoto(S.user.foto);save();showApp();toast('Logado: '+S.user.nome,'ok');
       }catch(e){document.getElementById('loginErr').textContent='Confirme a senha'}
     }
