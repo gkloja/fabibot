@@ -221,9 +221,24 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 
   <div class="gv" id="gv-fish">
     <button class="back" data-back>← Arena</button>
-    <div class="arena"><div style="font-size:56px" id="rod">🎣</div><div class="tag" id="fishTag">Pesca</div></div>
-    <div class="panel"><button class="btn btn-cyan" id="btnFish">LANÇAR LINHA</button><p class="sub" id="fishLog" style="margin-top:10px;margin-bottom:0"></p>
+    <div class="arena" id="fishArena"><div style="font-size:56px" id="rodEmoji">🎣</div><div class="tag" id="fishTag">Pesca RPG</div>
+      <div id="fishResult" class="sub" style="text-align:center;padding:0 12px"></div>
+    </div>
+    <div class="panel">
+      <h3>🎣 Painel do pescador</h3>
+      <p class="sub" id="fishStatus">Carregando…</p>
+      <div class="stats" id="fishStats"></div>
+      <button class="btn btn-cyan" id="btnFish">LANÇAR LINHA</button>
+      <p class="sub" id="fishLog" style="margin-top:10px;margin-bottom:0"></p>
       <div class="hist"><h4>Últimas ações · Pesca</h4><div id="hist-pescar"></div></div>
+    </div>
+    <div class="panel">
+      <h3>🪵 Varas</h3>
+      <div class="groups" id="rodShop"></div>
+      <h3 style="margin-top:12px">🪱 Iscas</h3>
+      <div class="groups" id="baitShop"></div>
+      <button class="btn btn-ghost" id="btnRepair" style="margin-top:10px">🔧 Reparar vara equipada</button>
+      <p class="sub" style="margin-top:8px;margin-bottom:0">Progresso salvo por grupo · use no site e combine com o bot. Mítico exige Vara + Isca Mítica.</p>
     </div>
   </div>
 
@@ -506,6 +521,7 @@ function openGame(n){
   if(n==='raid')loadRaidTargets();
   if(n==='crash') resizeCrash();
   if(n==='farm')loadFarm();
+  if(n==='fish')loadPesca();
   const map={mine:'mine',fish:'pescar',crash:'foguete',tiger:'tigrinho',raid:'raid',farm:'fazenda'};
   if(map[n]) loadRecent(map[n],'hist-'+map[n]);
   syncBetHints();
@@ -556,7 +572,64 @@ async function play(path,body,btn,opts){
 
 document.getElementById('btnMine').onclick=async()=>{const btn=document.getElementById('btnMine');regen();if(S.energy<1)return toast('Sem energia','bad');S.energy--;S.streak++;save();const d=await play('/cliente06/game/mine',{taps:1,power:S.power,level:S.level},btn,{hist:'hist-mine'});if(d){document.getElementById('mineTag').textContent='+'+d.gain;toast('⛏️ +'+d.gain,'ok');setBtnCd(btn,800,'MINERAR')}};
 document.getElementById('btnUp').onclick=()=>{S.power++;if(S.power%3===0)S.level++;S.maxE=Math.min(200,100+S.level*5);save();ui();toast('Poder '+S.power,'ok')};
-document.getElementById('btnFish').onclick=async()=>{const btn=document.getElementById('btnFish');document.getElementById('rod').textContent='🎣…';const d=await play('/cliente06/game/pescar',{},btn,{hist:'hist-pescar'});if(d){document.getElementById('rod').textContent=d.emoji||'🐟';document.getElementById('fishTag').textContent=d.peixe;document.getElementById('fishLog').textContent='+'+fmt(d.gain);toast((d.emoji||'')+' +'+d.gain,'ok');setBtnCd(btn,4000,'LANÇAR LINHA')}};
+
+/* PESCA RPG */
+let pescaState=null;
+function paintPesca(pesca){
+  if(!pesca)return;
+  pescaState=pesca;
+  const st=document.getElementById('fishStatus');
+  if(st) st.innerHTML=pesca.rod.emoji+' <b>'+esc(pesca.rod.nome)+'</b> · '+pesca.bait.emoji+' <b>'+esc(pesca.bait.nome)+'</b><br>Lançadas: <b>'+pesca.castsToday+'/'+pesca.rod.casts+'</b> (restam '+pesca.castsLeft+') · '+esc(pesca.durabilityBar);
+  const stats=document.getElementById('fishStats');
+  if(stats) stats.innerHTML='<div class="st"><div class="n">'+fmt(pesca.totalCaught)+'</div><div class="l">Capturas</div></div><div class="st"><div class="n">'+fmt(pesca.totalGold)+'</div><div class="l">Gold pesca</div></div><div class="st"><div class="n">'+(pesca.best?pesca.best.emoji:'—')+'</div><div class="l">'+(pesca.best?esc(pesca.best.nome):'Recorde')+'</div></div>';
+  const rods=document.getElementById('rodShop');
+  if(rods){
+    rods.innerHTML=(pesca.shopRods||[]).map(function(r){
+      var owned=(pesca.ownedRods||[]).find(function(x){return x.id===r.id});
+      var eq=owned&&owned.equipped;
+      return '<div class="gcard '+(eq?'on':'')+'"><div class="meta" style="width:100%"><strong>'+r.emoji+' '+esc(r.nome)+'</strong><div class="gg">'+(r.cost?fmt(r.cost)+' Golds':'GRÁTIS')+'</div><div style="font-size:11px;color:var(--muted)">'+r.casts+'/dia · usos '+(r.uses<0?'∞':r.uses)+(owned?' · '+esc(owned.bar):'')+'</div><div style="display:flex;gap:6px;margin-top:8px">'+(owned?'<button type="button" class="btn btn-g" style="padding:8px;font-size:11px" data-eq-rod="'+r.id+'">Equipar</button>':'<button type="button" class="btn btn-gold" style="padding:8px;font-size:11px" data-buy-rod="'+r.id+'">Comprar</button>')+'</div></div></div>';
+    }).join('');
+    rods.querySelectorAll('[data-buy-rod]').forEach(function(b){b.onclick=async function(e){e.stopPropagation();var d=await play('/cliente06/game/pesca/comprar',{tipo:'rod',item:b.getAttribute('data-buy-rod')},b);if(d&&d.pesca){paintPesca(d.pesca);toast(d.message||'Comprado','ok')}}});
+    rods.querySelectorAll('[data-eq-rod]').forEach(function(b){b.onclick=async function(e){e.stopPropagation();var d=await play('/cliente06/game/pesca/equipar',{rod:b.getAttribute('data-eq-rod')},b);if(d&&d.pesca){paintPesca(d.pesca);toast('Vara equipada','ok')}}});
+  }
+  var baits=document.getElementById('baitShop');
+  if(baits){
+    baits.innerHTML=(pesca.shopBaits||[]).map(function(b){
+      var owned=(pesca.ownedBaits||[]).find(function(x){return x.id===b.id});
+      var eq=owned&&owned.equipped;
+      return '<div class="gcard '+(eq?'on':'')+'"><div class="meta" style="width:100%"><strong>'+b.emoji+' '+esc(b.nome)+'</strong><div class="gg">'+(b.cost?fmt(b.cost)+'/un':'GRÁTIS diária')+'</div><div style="font-size:11px;color:var(--muted)">Estoque: '+(owned?owned.qty:'0')+'</div><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+(b.cost?'<button type="button" class="btn btn-gold" style="padding:8px;font-size:11px" data-buy-bait="'+b.id+'">Comprar 1</button>':'')+'<button type="button" class="btn btn-g" style="padding:8px;font-size:11px" data-eq-bait="'+b.id+'">Usar</button></div></div></div>';
+    }).join('');
+    baits.querySelectorAll('[data-buy-bait]').forEach(function(b){b.onclick=async function(e){e.stopPropagation();var d=await play('/cliente06/game/pesca/comprar',{tipo:'bait',item:b.getAttribute('data-buy-bait'),qty:1},b);if(d&&d.pesca){paintPesca(d.pesca);toast(d.message||'Comprado','ok')}}});
+    baits.querySelectorAll('[data-eq-bait]').forEach(function(b){b.onclick=async function(e){e.stopPropagation();var d=await play('/cliente06/game/pesca/equipar',{bait:b.getAttribute('data-eq-bait')},b);if(d&&d.pesca){paintPesca(d.pesca);toast('Isca equipada','ok')}}});
+  }
+}
+async function loadPesca(){
+  if(!S.grupo)return;
+  var r=await api('/cliente06/game/pesca',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo})},15000);
+  if(r.ok&&r.data&&r.data.success){if(typeof r.data.golds==='number')setGold(r.data.golds);paintPesca(r.data.pesca)}
+  else toast((r.data&&r.data.message)||'Falha pesca','bad');
+  loadRecent('pescar','hist-pescar');
+}
+document.getElementById('btnFish').onclick=async()=>{
+  const btn=document.getElementById('btnFish');
+  var re=document.getElementById('rodEmoji'); if(re) re.textContent='🎣…';
+  document.getElementById('fishTag').textContent='Pescando…';
+  const d=await play('/cliente06/game/pescar',{},btn,{hist:'hist-pescar'});
+  if(!d){if(re)re.textContent='🎣';return}
+  if(re) re.textContent=d.emoji||'🐟';
+  document.getElementById('fishTag').textContent=(d.rarityLabel||'')+' · '+d.peixe;
+  var fr=document.getElementById('fishResult'); if(fr) fr.textContent=(d.kg?d.kg+' kg · ':'')+(d.gain>0?('+'+fmt(d.gain)+' Golds'):'Sem valor');
+  document.getElementById('fishLog').textContent=(d.warn&&d.warn.length?d.warn.join(' · '):'');
+  if(d.pesca)paintPesca(d.pesca);
+  if(d.gain>0)toast((d.emoji||'🐟')+' +'+fmt(d.gain),'ok'); else toast((d.emoji||'🥾')+' '+d.peixe,'bad');
+  setBtnCd(btn,d.cooldownMs||2500,'LANÇAR LINHA');
+};
+if(document.getElementById('btnRepair')) document.getElementById('btnRepair').onclick=async()=>{
+  const btn=document.getElementById('btnRepair');
+  const d=await play('/cliente06/game/pesca/comprar',{tipo:'reparar'},btn);
+  if(d&&d.pesca){paintPesca(d.pesca);toast(d.message||'Reparada','ok')}
+};
+
 
 
 
