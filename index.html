@@ -9,7 +9,7 @@
 <title>Fabi Bot – Melhor Bot WhatsApp para Figurinhas, Proteção e Grupos | 2026</title>
 
 <!-- META TAGS ESSENCIAIS -->
-<meta name="description" content="O melhor bot de WhatsApp para figurinhas, anti-spam, downloads, jogos e gerenciamento de grupos. +400 comandos. Conecte grátis em minutos.">
+<meta name="description" content="O melhor bot de WhatsApp para figurinhas, anti-spam, downloads, jogos, Gold Empire e gerenciamento de grupos. +400 comandos. Conecte grátis em minutos.">
 <meta name="keywords" content="Fabi Bot, bot figurinhas WhatsApp, bot stickers WhatsApp, baixar música WhatsApp, bot download WhatsApp, bot brincadeiras grupo, robô WhatsApp, anti spam WhatsApp, gerenciador de grupos WhatsApp, FabiBot">
 <meta name="application-name" content="Fabi Bot">
 <link rel="manifest" href="/site.webmanifest">
@@ -7138,6 +7138,7 @@ body.light-mode .command-badge-mobile {
         Comandos
         <span class="badge-count badge-relatos" id="menuRelatosBadge" style="display:none;">0</span>
     </a>
+    <a href="golds.html" class="menu-golds-link" title="Gold Empire" style="color:#f6c445;font-weight:800;">👑 Golds</a>
     <a href="#" data-section="perfil">Perfil</a>
 </div>
         <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
@@ -7161,6 +7162,7 @@ body.light-mode .command-badge-mobile {
             <div class="user-info-box">
                 <h2 id="modalUserNome">—</h2>
                 <p class="golds" id="modalUserGolds">💰 0 Golds</p>
+            <a href="golds.html" id="btnGoldEmpireModal" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;border-radius:999px;background:linear-gradient(135deg,#f6c445,#d4a017);color:#1a1200;font-weight:800;font-size:12px;text-decoration:none;">👑 Jogar Gold Empire</a>
             </div>
             <button class="change-photo-btn">
                 <i class="fas fa-camera"></i> Alterar Foto
@@ -7170,6 +7172,29 @@ body.light-mode .command-badge-mobile {
     </div>
 </div>
 </nav>
+
+<!-- ===== GOLD EMPIRE CTA (Fabi Bot) ===== -->
+<style>
+.ge-cta{margin:12px 16px;padding:16px 18px;border-radius:18px;background:linear-gradient(135deg,rgba(22,163,74,.18),rgba(15,15,15,.95) 50%,rgba(246,196,69,.12));border:1px solid rgba(246,196,69,.35);display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.ge-cta .ge-ico{font-size:36px;line-height:1}
+.ge-cta .ge-txt{flex:1;min-width:180px}
+.ge-cta .ge-txt strong{display:block;font-size:16px;font-weight:800;color:#ffe9a3;margin-bottom:2px}
+.ge-cta .ge-txt span{font-size:13px;color:#9ca3af;line-height:1.4}
+.ge-cta a.ge-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border-radius:12px;background:linear-gradient(135deg,#f6c445,#d4a017);color:#1a1200;font-weight:800;font-size:13px;text-decoration:none;white-space:nowrap}
+.ge-cta a.ge-btn:hover{filter:brightness(1.05)}
+body.light-mode .ge-cta{background:linear-gradient(135deg,rgba(22,163,74,.12),#fff 55%,rgba(246,196,69,.1));border-color:rgba(212,160,23,.4)}
+body.light-mode .ge-cta .ge-txt strong{color:#a16207}
+body.light-mode .ge-cta .ge-txt span{color:#4b5563}
+</style>
+<div class="ge-cta" id="goldEmpireCta">
+  <div class="ge-ico">👑</div>
+  <div class="ge-txt">
+    <strong>Gold Empire — mesmos Golds do WhatsApp</strong>
+    <span>Minere, pesque, foguete e Tigrinho. O saldo é o do seu grupo. Já logado no site? Entra direto.</span>
+  </div>
+  <a class="ge-btn" href="golds.html">Jogar agora →</a>
+</div>
+<!-- ===== /GOLD EMPIRE CTA ===== -->
 <div class="bottom-nav show-on-mobile">
     <div class="bottom-nav-items">
         <button class="bottom-nav-item active" data-section="feed">
@@ -7197,6 +7222,9 @@ body.light-mode .command-badge-mobile {
             <span class="badge-count" id="bottomVendasBadge">0</span>
             <span>Vendas</span>
         </button>
+        <a href="golds.html" class="bottom-nav-item" style="text-decoration:none;color:#f6c445;">
+            <i class="fas fa-coins"></i><span>Golds</span>
+        </a>
         <button class="bottom-nav-item" id="maisNavBtn" onclick="toggleMaisMenu()">
             <i class="fas fa-ellipsis-h"></i><span>Mais</span>
         </button>
@@ -7206,6 +7234,9 @@ body.light-mode .command-badge-mobile {
 <!-- Menu "Mais" (Perfil, Assistir, Música, e futuros atalhos) -->
 <div class="bottom-nav-mais-overlay" id="bottomNavMaisOverlay" onclick="toggleMaisMenu(false)"></div>
 <div class="bottom-nav-mais-menu" id="bottomNavMaisMenu">
+    <a class="bottom-nav-mais-item" href="golds.html" style="text-decoration:none;color:inherit;">
+        <i class="fas fa-coins" style="color:#f6c445;"></i><span>👑 Gold Empire</span>
+    </a>
     <button class="bottom-nav-mais-item" data-section="perfil" onclick="mudarSecao('perfil'); toggleMaisMenu(false);">
         <i class="fas fa-user"></i><span>Perfil</span>
     </button>
@@ -7237,7 +7268,7 @@ body.light-mode .command-badge-mobile {
       <span class="fz-intro-badge"><i class="fas fa-bolt"></i> Conheça a Fabi Bot</span>
       <h1 class="fz-intro-title">Conecte a <span>Fabi Bot</span><br>no seu grupo</h1>
       <p class="fz-intro-subtitle">
-        Figurinhas, downloads, IA e proteção completa — direto no WhatsApp, 24h por dia.
+        Figurinhas, downloads, IA, <strong style="color:#f6c445">Gold Empire</strong> e proteção completa — direto no WhatsApp, 24h por dia.
       </p>
     </div>
 

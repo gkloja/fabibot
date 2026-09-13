@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<title>Gold Empire · Fabi Bot – Golds dos grupos WhatsApp</title>
+<meta name="description" content="Jogue Mina, Pesca, Foguete e Tigrinho com os mesmos Golds do grupo no WhatsApp. Fabi Bot Gold Empire."/>
+<meta name="theme-color" content="#16a34a"/>
+<meta property="og:title" content="Gold Empire · Fabi Bot"/>
+<meta property="og:description" content="Golds reais dos grupos · minere, pesque e jogue"/>
+<meta property="og:image" content="https://fabibot.vercel.app/og-image.jpg"/>
+<link rel="icon" href="/favicon-32x32.png"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<style>
+:root{--bg:#070b09;--card:rgba(15,26,20,.94);--line:rgba(255,255,255,.08);--g:#16a34a;--g2:#22c55e;--gd:rgba(22,163,74,.15);--gold:#f6c445;--gold2:#ffe9a3;--cyan:#2dd4bf;--purple:#a78bfa;--red:#f87171;--text:#f0fdf4;--muted:#86a89a;--font:'Plus Jakarta Sans',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:radial-gradient(ellipse 80% 40% at 50% -5%,rgba(22,163,74,.16),transparent),var(--bg);color:var(--text);min-height:100vh}
+.nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(7,11,9,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.nav .brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);font-weight:800;margin-right:auto}
+.nav .brand img{width:34px;height:34px;border-radius:10px;object-fit:cover}
+.nav .brand span{color:var(--g2)}
+.nav a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:700;padding:7px 11px;border-radius:10px}
+.nav a:hover,.nav a.on{color:var(--g2);background:var(--gd)}
+.nav a.gold{color:var(--gold2);background:rgba(246,196,69,.12)}
+.wrap{max-width:960px;margin:0 auto;padding:16px 16px 60px}
+.hero{display:grid;grid-template-columns:1.3fr .7fr;gap:12px;margin-bottom:14px}
+@media(max-width:720px){.hero{grid-template-columns:1fr}}
+.hero-l{background:linear-gradient(135deg,rgba(22,163,74,.22),rgba(10,18,14,.95) 55%,rgba(246,196,69,.08));border:1px solid rgba(22,163,74,.3);border-radius:20px;padding:20px}
+.hero-l h1{font-size:24px;font-weight:800;margin-bottom:6px}
+.hero-l p{color:var(--muted);font-size:14px;line-height:1.5}
+.hero-r{background:var(--card);border:1px solid rgba(246,196,69,.35);border-radius:20px;padding:18px;display:flex;flex-direction:column;justify-content:center}
+.hero-r .lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700}
+.hero-r .val{font-size:30px;font-weight:800;color:var(--gold2);margin:4px 0}
+.hero-r .meta{font-size:12px;color:var(--muted)}
+.grps{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}
+.grps::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit}
+.chip.on{background:rgba(246,196,69,.15);border-color:rgba(246,196,69,.45);color:var(--gold2)}
+.grid{display:grid;grid-template-columns:200px 1fr;gap:12px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.side{display:flex;overflow-x:auto;gap:6px}.side button{flex:0 0 auto;width:auto}}
+.side{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px;height:fit-content;position:sticky;top:64px}
+@media(max-width:720px){.side{position:static}}
+.side button{display:flex;align-items:center;gap:8px;width:100%;padding:11px;border:0;border-radius:12px;background:0;color:var(--muted);font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;text-align:left}
+.side button.on{background:var(--gd);color:var(--g2)}
+.page{display:none}.page.on{display:block}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.panel h3{font-size:15px;font-weight:800;margin-bottom:4px}
+.sub{font-size:13px;color:var(--muted);line-height:1.45;margin-bottom:10px}
+.arena{height:200px;border-radius:16px;border:1px solid var(--line);margin-bottom:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:radial-gradient(circle at 50% 120%,rgba(22,163,74,.2),transparent 55%),linear-gradient(180deg,#122018,#070b09)}
+.arena.w{background:radial-gradient(circle at 50% 100%,rgba(45,212,191,.22),transparent 50%),linear-gradient(180deg,#0c1e24,#070b09)}
+.arena.s{background:radial-gradient(circle at 50% 90%,rgba(248,113,113,.18),transparent 50%),linear-gradient(180deg,#1a1020,#070b09)}
+.big{font-size:60px}.tag{font-size:12px;font-weight:800;padding:4px 12px;border-radius:999px;background:rgba(246,196,69,.15);color:var(--gold2)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.st{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.st .n{font-size:16px;font-weight:800;color:var(--gold2)}.st .l{font-size:10px;color:var(--muted);text-transform:uppercase}
+.ebar{height:8px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;margin:8px 0}.ebar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--cyan));transition:width .3s}
+.btn{border:0;border-radius:12px;padding:12px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;width:100%}
+.btn:disabled{opacity:.5}.btn-g{background:linear-gradient(135deg,var(--g2),var(--g));color:#052e16}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#d4a017);color:#1a1200}
+.btn-red{background:linear-gradient(135deg,#f87171,#dc2626);color:#fff}
+.btn-purple{background:linear-gradient(135deg,var(--purple),#7c3aed);color:#fff}
+.btn-cyan{background:linear-gradient(135deg,var(--cyan),#0d9488);color:#042f2e}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}
+.bets{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.bets button{flex:1;min-width:52px;padding:9px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-weight:800;font-family:inherit;cursor:pointer}
+.bets button.on{border-color:rgba(22,163,74,.5);background:var(--gd);color:var(--g2)}
+.crash{font-size:46px;font-weight:800;color:var(--cyan)}.crash.boom{color:var(--red)}
+.reels{display:flex;gap:10px;justify-content:center;margin:14px 0}
+.reel{width:72px;height:88px;border-radius:14px;background:#1a1230;border:2px solid rgba(167,139,250,.4);display:grid;place-items:center;font-size:36px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-weight:800;font-family:inherit;cursor:pointer}
+.tabs button.on{background:rgba(246,196,69,.12);border-color:rgba(246,196,69,.4);color:var(--gold2)}
+.ri{display:flex;align-items:center;gap:10px;padding:9px 4px;border-radius:12px}.ri.me{background:rgba(246,196,69,.1)}
+.ri img{width:38px;height:38px;border-radius:11px;object-fit:cover;background:#1a1f2e}
+.skel{height:48px;border-radius:12px;margin-bottom:6px;background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.08),rgba(255,255,255,.03));background-size:200% 100%;animation:sh 1.1s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.login{max-width:400px;margin:32px auto;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px}
+.login h2{text-align:center;margin-bottom:4px}.login .sub{text-align:center}
+.fld{margin-bottom:10px}.fld label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.fld input{width:100%;padding:12px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-size:15px;font-family:inherit;outline:0}
+.err{color:var(--red);font-size:13px;min-height:16px;text-align:center;margin:4px 0}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(10px);background:rgba(12,20,16,.96);border:1px solid rgba(22,163,74,.45);color:var(--g2);padding:11px 16px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:80;max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast.bad{border-color:rgba(248,113,113,.5);color:#fecaca}.toast.ok{border-color:rgba(246,196,69,.5);color:var(--gold2)}
+footer{text-align:center;padding:20px;color:var(--muted);font-size:12px}footer a{color:var(--g2);text-decoration:none}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:12px;font-weight:700;margin-top:10px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="brand" href="index.html"><img src="/flogo.jpg" alt="Fabi" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'"/><b>Fabi<span>Bot</span></b></a>
+  <a href="index.html">Início</a>
+  <a href="conectar.html">Conectar</a>
+  <a href="comandos.html">Comandos</a>
+  <a href="golds.html" class="gold on">👑 Golds</a>
+  <a href="login.html">Login</a>
+</nav>
+
+<div class="wrap" id="viewLogin">
+  <div class="login">
+    <div style="text-align:center;font-size:40px;margin-bottom:6px">👑</div>
+    <h2>Gold Empire</h2>
+    <p class="sub">Se você já está logado no site, entra automático. Golds = saldo do grupo no WhatsApp.</p>
+    <div class="fld"><label>Usuário</label><input id="inpUser" autocomplete="username"/></div>
+    <div class="fld"><label>Senha</label><input id="inpPass" type="password" autocomplete="current-password"/></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn btn-g" id="btnLogin">Entrar e jogar</button>
+    <p class="sub" style="margin-top:12px;margin-bottom:0"><a href="login.html" style="color:var(--g2)">Login do site</a> · <a href="index.html" style="color:var(--muted)">Voltar</a></p>
+  </div>
+</div>
+
+<div class="wrap" id="viewGame" style="display:none">
+  <div class="hero">
+    <div class="hero-l">
+      <h1>👑 Gold Empire</h1>
+      <p>Minere, pesque, lance o foguete e gire o Tigrinho. O saldo é o <b>mesmo</b> do comando de Golds no grupo.</p>
+      <div class="pill"><span id="userName">—</span> · <button id="btnLogout" style="border:0;background:0;color:var(--muted);font-weight:700;cursor:pointer;font-family:inherit">Sair</button></div>
+    </div>
+    <div class="hero-r">
+      <div class="lbl">Saldo no grupo</div>
+      <div class="val">💰 <span id="goldBal">0</span></div>
+      <div class="meta" id="grpLabel">Selecione um grupo</div>
+    </div>
+  </div>
+  <div class="grps" id="grpBar"></div>
+  <div class="grid">
+    <aside class="side" id="side">
+      <button class="on" data-p="mine">⛏️ Minerar</button>
+      <button data-p="fish">🎣 Pescar</button>
+      <button data-p="crash">🚀 Foguete</button>
+      <button data-p="tiger">🐯 Tigrinho</button>
+      <button data-p="rank">🏆 Ranking</button>
+    </aside>
+    <div>
+      <div class="page on" id="pg-mine">
+        <div class="arena" id="mineArena"><div class="big" id="pick">⛏️</div><div class="tag" id="mineTag">Toque para minerar</div></div>
+        <div class="stats"><div class="st"><div class="n" id="stP">1</div><div class="l">Poder</div></div><div class="st"><div class="n" id="stL">1</div><div class="l">Nível</div></div><div class="st"><div class="n" id="stS">0</div><div class="l">Combo</div></div></div>
+        <div class="panel"><h3>⚡ Energia</h3><div class="ebar"><i id="eFill"></i></div><p class="sub" id="eTxt">100/100</p>
+          <button class="btn btn-gold" id="btnMine">MINERAR</button>
+          <button class="btn btn-ghost" id="btnUp" style="margin-top:8px">⬆️ Poder</button></div>
+      </div>
+      <div class="page" id="pg-fish">
+        <div class="arena w"><div class="big" id="rod">🎣</div><div class="tag" id="fishTag">Águas</div></div>
+        <div class="panel"><h3>🎣 Pescar</h3><p class="sub">Peixes raros valem mais Golds.</p><button class="btn btn-cyan" id="btnFish">LANÇAR LINHA</button><p class="sub" id="fishLog" style="margin-top:8px;margin-bottom:0"></p></div>
+      </div>
+      <div class="page" id="pg-crash">
+        <div class="arena s"><div class="crash" id="cMult">1.00x</div></div>
+        <div class="panel"><h3>🚀 Foguete</h3><p class="sub">Cashout antes do crash.</p>
+          <div class="bets" id="cBets"><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button><button data-v="1000">1k</button></div>
+          <div class="bets" id="cOuts"><button data-v="1.5" class="on">1.5x</button><button data-v="2">2x</button><button data-v="3">3x</button><button data-v="5">5x</button></div>
+          <button class="btn btn-red" id="btnCrash">LANÇAR</button></div>
+      </div>
+      <div class="page" id="pg-tiger">
+        <div class="panel" style="background:linear-gradient(180deg,rgba(40,30,70,.9),rgba(12,10,20,.95));border-color:rgba(167,139,250,.3)">
+          <h3 style="text-align:center">🐯 Tigrinho</h3>
+          <div class="reels"><div class="reel" id="r1">🍒</div><div class="reel" id="r2">🍋</div><div class="reel" id="r3">🔔</div></div>
+          <div class="bets" id="tBets"><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button><button data-v="1000">1k</button></div>
+          <button class="btn btn-purple" id="btnSpin">GIRAR</button>
+        </div>
+      </div>
+      <div class="page" id="pg-rank">
+        <div class="tabs"><button class="on" id="tabG">🌍 Global</button><button id="tabGrp">👥 Grupo</button></div>
+        <div class="panel"><h3 id="rankTitle">🏆 Ranking</h3><p class="sub" id="rankSub">—</p><div id="rankList"></div>
+          <button class="btn btn-ghost" id="btnRR" style="margin-top:8px">Atualizar</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer><a href="index.html">Fabi Bot</a> · Gold Empire · <a href="conectar.html">Conectar</a></footer>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+'use strict';
+const PROXY_HOST='https://orange-hill-2e61.gbscabral15.workers.dev';
+const BACKEND='http://br2.bronxyshost.com:4009';
+const API_URL=PROXY_HOST+'/br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009';
+const SK='fabi_ge_site_v1', AV='https://fabibot.vercel.app/flogo.jpg';
+const SYM=['🍒','🍋','🔔','⭐','💎','🐯'];
+function urlsFor(path){
+  const target=BACKEND.replace(/\/$/,'')+path;
+  const hostPath=BACKEND.replace(/^https?:\/\//,'');
+  return [PROXY_HOST+'/'+hostPath+'/proxy?url='+encodeURIComponent(target), PROXY_HOST+'/proxy?url='+encodeURIComponent(target), API_URL+path];
+}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function fmt(n){return Math.floor(Number(n)||0).toLocaleString('pt-BR')}
+function toast(m,k){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(k==='bad'?' bad':k==='ok'?' ok':'');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),2200)}
+const S={user:null,pass:'',foto:AV,groups:[],grupo:'',grupoNome:'',golds:0,power:1,level:1,energy:100,maxE:100,streak:0,lastE:Date.now(),bet:100,cashout:1.5,rankMode:'total',busy:false,rankCache:null,rankAt:0};
+function save(){try{localStorage.setItem(SK,JSON.stringify({user:S.user,pass:S.pass,foto:S.foto,grupo:S.grupo,power:S.power,level:S.level,energy:S.energy,maxE:S.maxE,streak:S.streak,lastE:S.lastE}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'null');if(!d||!d.user)return false;Object.assign(S,d);return true}catch(e){return false}}
+async function api(path,opts,ms){
+  const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),ms||15000);
+  let last={ok:false,status:0,data:{message:'Falha'}};
+  try{for(const url of urlsFor(path)){try{const res=await fetch(url,Object.assign({},opts||{},{signal:ctrl.signal,mode:'cors'}));let data={};try{data=await res.json()}catch(e){}last={ok:res.ok,status:res.status,data};if(res.ok||res.status===401||res.status===400)return last}catch(e){last={ok:false,status:0,data:{message:e.name==='AbortError'?'Tempo esgotado':(e.message||'Sem conexão')}}}}return last}
+  finally{clearTimeout(t)}
+}
+function setGold(n){S.golds=Math.floor(Number(n)||0);document.getElementById('goldBal').textContent=fmt(S.golds);const g=S.groups.find(x=>x.grupo===S.grupo);if(g)g.golds=S.golds;renderGroups()}
+function regen(){const now=Date.now();const e=Math.floor((now-S.lastE)/8000);if(e>0&&S.energy<S.maxE){S.energy=Math.min(S.maxE,S.energy+e);S.lastE+=e*8000;save()}}
+function ui(){regen();document.getElementById('goldBal').textContent=fmt(S.golds);document.getElementById('stP').textContent=S.power;document.getElementById('stL').textContent=S.level;document.getElementById('stS').textContent=S.streak;document.getElementById('eFill').style.width=Math.min(100,S.energy/S.maxE*100)+'%';document.getElementById('eTxt').textContent=S.energy+' / '+S.maxE;document.getElementById('grpLabel').textContent=S.grupoNome||'Selecione um grupo'}
+async function tryLogin(u,p){const body=JSON.stringify({username:u,password:p});const headers={'Content-Type':'application/json','Accept':'application/json'};for(const path of ['/api/login','/login/direto']){const r=await api(path,{method:'POST',headers,body},12000);if(r.ok&&r.data&&(r.data.user||r.data.nome||r.data.success))return r.data.user||r.data}throw new Error('Login inválido')}
+function renderGroups(){const bar=document.getElementById('grpBar');if(!S.groups.length){bar.innerHTML='<span class="chip">Nenhum grupo com Golds</span>';return}bar.innerHTML=S.groups.map(g=>`<button type="button" class="chip ${g.grupo===S.grupo?'on':''}" data-g="${esc(g.grupo)}">${esc((g.nome||'').slice(0,18)||String(g.grupo).split('@')[0])} · ${fmt(g.golds)}</button>`).join('');bar.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const g=S.groups.find(x=>x.grupo===b.getAttribute('data-g'));if(g)selectGroup(g.grupo,g.nome,g.golds)})}
+async function refreshGold(){if(!S.user||!S.grupo)return;const r=await api('/cliente06/game/me',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo})},12000);if(r.ok&&r.data&&r.data.success&&typeof r.data.golds==='number')setGold(r.data.golds);else{const s=await api('/cliente06/game/sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo})},12000);if(s.ok&&s.data&&typeof s.data.golds==='number')setGold(s.data.golds)}ui()}
+async function loadGroups(){const r=await api('/cliente06/game/groups',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass})},15000);if(r.ok&&r.data&&r.data.success){S.groups=r.data.groups||[];if(r.data.user&&r.data.user.foto)S.foto=r.data.user.foto}if(!S.groups.length&&S.user.grupo)S.groups=[{grupo:S.user.grupo,nome:'Meu grupo',golds:0}];renderGroups();if(!S.grupo&&S.groups[0])await selectGroup(S.groups[0].grupo,S.groups[0].nome,S.groups[0].golds);else if(S.grupo){const g=S.groups.find(x=>x.grupo===S.grupo);if(g)await selectGroup(g.grupo,g.nome,g.golds)}}
+async function selectGroup(id,nome,golds){S.grupo=id;S.grupoNome=nome||String(id).split('@')[0];if(typeof golds==='number')setGold(golds);save();renderGroups();ui();await refreshGold()}
+function showGame(){document.getElementById('viewLogin').style.display='none';document.getElementById('viewGame').style.display='block';document.getElementById('userName').textContent=S.user.nome;loadGroups().then(ui)}
+document.getElementById('btnLogin').onclick=async()=>{const u=document.getElementById('inpUser').value.trim();const p=document.getElementById('inpPass').value.trim();const err=document.getElementById('loginErr');err.textContent='';if(!u||!p){err.textContent='Preencha os campos';return}const btn=document.getElementById('btnLogin');btn.disabled=true;btn.textContent='Entrando…';try{const user=await tryLogin(u,p);S.user={nome:user.nome||u,numero:user.numero||'',id:user.id||p,grupo:user.grupo||'',foto:user.foto||AV};S.pass=p;S.foto=S.user.foto;save();try{localStorage.setItem('fabi_session',JSON.stringify({nome:S.user.nome,numero:S.user.numero,id:S.pass,grupo:S.user.grupo}))}catch(e){}showGame();toast('Olá, '+S.user.nome,'ok')}catch(e){err.textContent=e.message||'Falha'}finally{btn.disabled=false;btn.textContent='Entrar e jogar'}};
+document.getElementById('btnLogout').onclick=()=>{localStorage.removeItem(SK);S.user=null;document.getElementById('viewGame').style.display='none';document.getElementById('viewLogin').style.display='block'};
+document.querySelectorAll('#side button').forEach(b=>{b.onclick=()=>{document.querySelectorAll('#side button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));document.getElementById('pg-'+b.dataset.p).classList.add('on');if(b.dataset.p==='rank')loadRank(true)}});
+function needGroup(){if(!S.grupo){toast('Selecione um grupo','bad');return false}return true}
+async function play(name,path,body){if(!needGroup())return null;if(S.busy){toast('Aguarde…','bad');return null}S.busy=true;try{const r=await api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo},body||{}))},18000);if(r.ok&&r.data&&r.data.success){if(typeof r.data.golds==='number')setGold(r.data.golds);else await refreshGold();return r.data}toast((r.data&&(r.data.message||r.data.error))||(name+' falhou'),'bad');await refreshGold();return null}catch(e){toast('Erro de rede','bad');return null}finally{S.busy=false;ui()}}
+document.getElementById('btnMine').onclick=async()=>{regen();if(S.energy<1)return toast('Sem energia','bad');S.energy--;S.streak++;save();const d=await play('Mina','/cliente06/game/mine',{taps:1,power:S.power,level:S.level});if(d){document.getElementById('mineTag').textContent='+'+d.gain+' Golds';toast('⛏️ +'+d.gain,'ok')}};
+document.getElementById('mineArena').onclick=()=>document.getElementById('btnMine').click();
+document.getElementById('btnUp').onclick=()=>{S.power++;if(S.power%3===0)S.level++;S.maxE=Math.min(200,100+S.level*5);save();ui();toast('Poder '+S.power,'ok')};
+document.getElementById('btnFish').onclick=async()=>{document.getElementById('rod').textContent='🎣…';const d=await play('Pesca','/cliente06/game/pescar',{});if(d){document.getElementById('rod').textContent=d.emoji||'🐟';document.getElementById('fishTag').textContent=d.peixe;document.getElementById('fishLog').textContent='+'+fmt(d.gain)+' Golds';toast((d.emoji||'')+' +'+d.gain,'ok')}setTimeout(()=>{document.getElementById('rod').textContent='🎣'},500)};
+document.querySelectorAll('#cBets button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cBets button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.bet=+b.dataset.v});
+document.querySelectorAll('#cOuts button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cOuts button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.cashout=+b.dataset.v});
+document.getElementById('btnCrash').onclick=async()=>{if(S.golds<S.bet)return toast('Sem Golds','bad');const el=document.getElementById('cMult');el.classList.remove('boom');let v=1,run=true;const iv=setInterval(()=>{if(!run)return;v=Math.min(S.cashout,v+0.05);el.textContent=v.toFixed(2)+'x'},40);const d=await play('Foguete','/cliente06/game/foguete',{bet:S.bet,cashout:S.cashout});run=false;clearInterval(iv);if(d){el.textContent=Number(d.crashAt).toFixed(2)+'x';if(d.win)toast('Saiu +'+fmt(d.payout),'ok');else{el.classList.add('boom');toast('Crash -'+fmt(d.bet),'bad')}}};
+document.querySelectorAll('#tBets button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tBets button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.bet=+b.dataset.v});
+document.getElementById('btnSpin').onclick=async()=>{if(S.golds<S.bet)return toast('Sem Golds','bad');const rs=[r1,r2,r3];const iv=setInterval(()=>rs.forEach(r=>r.textContent=SYM[Math.floor(Math.random()*SYM.length)]),50);const d=await play('Tigrinho','/cliente06/game/tigrinho',{bet:S.bet});clearInterval(iv);if(d&&d.reels){r1.textContent=d.reels[0];r2.textContent=d.reels[1];r3.textContent=d.reels[2];if(d.winAmount>0)toast('+'+fmt(d.winAmount)+' ('+d.mult+'x)','ok');else toast('Sem prêmio','bad')}};
+async function loadRank(force){const box=document.getElementById('rankList');if(!force&&S.rankCache&&Date.now()-S.rankAt<10000&&S.rankCache.mode===S.rankMode){paint(S.rankCache.arr,S.rankCache.meta);return}box.innerHTML='<div class="skel"></div><div class="skel"></div><div class="skel"></div>';const body={modo:S.rankMode,limit:40};if(S.rankMode==='group'&&S.grupo)body.grupo=S.grupo;const r=await api('/cliente06/game/rank',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)},15000);if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha no ranking</p>';return}const arr=r.data.rank||[];const meta={nome:r.data.nomeGrupo,mode:S.rankMode};S.rankCache={arr,meta,mode:S.rankMode};S.rankAt=Date.now();paint(arr,meta)}
+function paint(arr,meta){const box=document.getElementById('rankList');document.getElementById('rankTitle').textContent=S.rankMode==='group'?('🏆 '+(meta.nome||S.grupoNome||'Grupo')):'🏆 Global';document.getElementById('rankSub').textContent=S.rankMode==='group'?'Golds do grupo':'Soma em todos os grupos';if(!arr.length){box.innerHTML='<p class="sub">Vazio</p>';return}const my=String(S.user.numero||'').replace(/\D/g,'');box.innerHTML=arr.map((x,i)=>{const me=my&&String(x.numero)===my;const m=i===0?'👑':i===1?'🥈':i===2?'🥉':(i+1);return `<div class="ri ${me?'me':''}"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div><img src="${esc(x.foto||AV)}" onerror="this.src='${AV}'"/><div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}${me?' · você':''}</strong><div style="font-size:11px;color:var(--muted)">${x.grupos?x.grupos+' grupos':''}</div></div><div style="color:var(--gold2);font-weight:800">${fmt(x.golds)}</div></div>`}).join('')}
+document.getElementById('tabG').onclick=()=>{S.rankMode='total';tabG.classList.add('on');tabGrp.classList.remove('on');loadRank(true)};
+document.getElementById('tabGrp').onclick=()=>{if(!S.grupo)return toast('Escolha grupo','bad');S.rankMode='group';tabGrp.classList.add('on');tabG.classList.remove('on');loadRank(true)};
+document.getElementById('btnRR').onclick=()=>{S.rankAt=0;loadRank(true)};
+setInterval(()=>{if(S.user){regen();ui()}},5000);setInterval(()=>{if(S.user&&S.grupo)refreshGold()},20000);
+
+async function bootSSO(){
+  // 1) sessão própria do jogo
+  if(load()&&S.user&&S.pass){showGame();return}
+  // 2) sessão do site Fabi Bot
+  try{
+    const raw=localStorage.getItem('fabi_session')||localStorage.getItem('neconecta_user_session');
+    if(!raw)return;
+    const s=JSON.parse(raw);
+    const user=s.nome||s.username||s.user||s.numero||'';
+    const pass=String(s.id||s.password||s.senha||s.token||'');
+    const uEl=document.getElementById('inpUser'), pEl=document.getElementById('inpPass');
+    if(uEl) uEl.value=user;
+    if(pEl && pass) pEl.value=pass;
+    if(user && pass){
+      document.getElementById('loginErr').textContent='Entrando com sua conta do site…';
+      try{
+        const logged=await tryLogin(user, pass);
+        S.user={nome:logged.nome||user,numero:logged.numero||s.numero||'',id:logged.id||pass,grupo:logged.grupo||s.grupo||'',foto:logged.foto||logged.avatar||s.avatar||AV};
+        S.pass=pass; S.foto=S.user.foto; save();
+        showGame(); toast('Logado como '+S.user.nome,'ok');
+        return;
+      }catch(e){
+        document.getElementById('loginErr').textContent='Confirme a senha para jogar (conta do site detectada)';
+      }
+    }
+  }catch(e){}
+}
+bootSSO();
+})();
+</script>
+</body>
+</html>
