@@ -157,10 +157,14 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
     <div style="font-size:44px">👑</div>
     <h1>Gold Empire</h1>
     <p>Mesma conta do site. Golds reais do WhatsApp.</p>
-    <div class="fld"><label>Usuário</label><input id="inpUser"/></div>
-    <div class="fld"><label>Senha</label><input id="inpPass" type="password"/></div>
+    <div class="banner" style="text-align:left;margin:12px 0">
+      <b>Não tem conta?</b> Entre em um grupo com a Fabi Bot e use o comando <b>/rg</b> (registro) para criar sua conta. Depois volte aqui com o mesmo usuário e senha.
+    </div>
+    <div class="fld"><label>Usuário</label><input id="inpUser" placeholder="Nome do /rg"/></div>
+    <div class="fld"><label>Senha</label><input id="inpPass" type="password" placeholder="Senha do /rg"/></div>
     <div class="err" id="loginErr"></div>
     <button class="btn btn-g" id="btnLogin">Entrar no Império</button>
+    <p class="sub" style="margin-top:12px;margin-bottom:0">Site dos Golds: <a href="https://fabibot.vercel.app/golds" style="color:var(--g2)">fabibot.vercel.app/golds</a></p>
   </div>
 </div>
 
@@ -438,7 +442,7 @@ async function tryLogin(u,p){
   }
   const test=await api('/cliente06/game/groups',{method:'POST',headers,body:JSON.stringify({username:u,password:p})},12000);
   if(test.ok&&test.data&&test.data.success) return {nome:u,numero:(test.data.user&&test.data.user.numero)||'',foto:(test.data.user&&test.data.user.foto)||AV};
-  throw new Error('Login inválido');
+  throw new Error('Conta não encontrada. Use /rg no grupo da Fabi Bot para se registrar.');
 }
 
 function renderGroups(){
@@ -525,7 +529,7 @@ document.getElementById('btnLogin').onclick=async()=>{
     const user=await tryLogin(u,p);
     S.user={nome:user.nome||u,numero:user.numero||'',grupo:user.grupo||'',foto:user.foto||user.avatar||user.fotoPerfil||AV};
     S.pass=p;S.foto=fixFoto(S.user.foto);save();showApp();toast('Olá, '+S.user.nome,'ok');
-  }catch(e){err.textContent=e.message||'Falha'}
+  }catch(e){err.textContent=(e.message||'Falha')+(String(e.message||'').includes('/rg')?'':' — Sem conta? Use /rg no grupo.');}
   finally{btn.disabled=false;btn.textContent='Entrar no Império'}
 };
 document.getElementById('btnLogout').onclick=()=>{localStorage.removeItem(SK);location.reload()};
