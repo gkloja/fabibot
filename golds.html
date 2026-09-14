@@ -641,35 +641,39 @@ function toast(m,k){const t=document.getElementById('toast');t.textContent=m;t.c
 function uiAvatar(nome){return 'https://ui-avatars.com/api/?name='+encodeURIComponent(String(nome||'User').slice(0,40))+'&size=128&background=0f766e&color=fff&bold=true'}
 function fixFoto(f,nome){
   try{
-    f=String(f||'').trim();
-    if(!f||f==='null'||f==='undefined'||f==='false') return uiAvatar(nome)||AV;
-    // data URL / blob ok
-    if(/^data:image\//i.test(f)||/^blob:/i.test(f)) return f;
-    if(f.startsWith('//')) f='https:'+f;
-    // uploads do servidor (não existem no Vercel estático)
-    if(/^\/?uploads\//i.test(f) || /\/uploads\//i.test(f) && !/^https?:/i.test(f)){
-      const path='/'+f.replace(/^\.?\/?/,'');
-      f=BACKEND.replace(/\/$/,'')+path;
-    } else if(f.startsWith('/')){
-      // outros assets estáticos no site
-      f='https://fabibot.vercel.app'+f;
-    } else if(!/^https?:\/\//i.test(f) && f.length>3){
-      // path relativo tipo "uploads/x.jpg" ou "perfil/x"
+    const FALLBACK = 'https://dl.dropboxusercontent.com/scl/fi/pe6liwd0tixj39cn1o5o4/1752896153979.jpeg?rlkey=9dchim7lrqdo2zpl1f1usultf&dl=0';
+    f = String(f||'').trim();
+    if(!f || f==='null' || f==='undefined' || f==='false') return FALLBACK;
+    if(f==='/flogo.jpg' || f==='flogo.jpg' || f.endsWith('/flogo.jpg')) return FALLBACK;
+    if(/^data:image\//i.test(f) || /^blob:/i.test(f)) return f;
+    if(f.startsWith('//')) f = 'https:' + f;
+    // Mesmo padrão do index.html: API_URL + caminho relativo (/uploads/...)
+    // API_URL = worker.../proxy?url=http://br2...:4009  → concatena /uploads/x
+    if(f.startsWith('/')){
+      return API_URL + f;
+    }
+    // path relativo sem barra
+    if(!/^https?:\/\//i.test(f)){
       if(/uploads|perfil|foto|avatar/i.test(f))
-        f=BACKEND.replace(/\/$/,'')+'/'+f.replace(/^\.\//,'');
-      else
-        f='https://fabibot.vercel.app/'+f.replace(/^\.\//,'');
+        return API_URL + '/' + f.replace(/^\.\//,'');
+      return FALLBACK;
     }
-    // http do backend → proxy HTTPS (evita mixed content no Vercel)
+    // http do backend → passa pelo proxy HTTPS (igual index)
     if(/^http:\/\//i.test(f) && /(bronxyshost|localhost|127\.0\.0\.1|:4009)/i.test(f)){
-      f=PROXY_HOST+'/proxy?url='+encodeURIComponent(f);
+      // se já for URL completa do backend, reescreve via API_URL path
+      try{
+        const u = new URL(f);
+        return API_URL + (u.pathname||'') + (u.search||'');
+      }catch(_){
+        return PROXY_HOST + '/proxy?url=' + encodeURIComponent(f);
+      }
     }
-    // força https em hosts conhecidos
     if(/^http:\/\/(fabibot\.vercel\.app|dl\.dropboxusercontent\.com|ui-avatars\.com)/i.test(f))
-      f=f.replace(/^http:/i,'https:');
-    if(!/^https?:\/\//i.test(f)) return uiAvatar(nome)||AV;
+      f = f.replace(/^http:/i,'https:');
     return f;
-  }catch(e){return uiAvatar(nome)||AV}
+  }catch(e){
+    return 'https://dl.dropboxusercontent.com/scl/fi/pe6liwd0tixj39cn1o5o4/1752896153979.jpeg?rlkey=9dchim7lrqdo2zpl1f1usultf&dl=0';
+  }
 }
 function setBtnCd(btn,ms,label){if(!btn)return;const end=Date.now()+Math.max(0,ms||0);const base=label||btn.dataset.label||btn.textContent;btn.dataset.label=base;btn.dataset.cooling='1';const tick=()=>{const left=end-Date.now();if(left<=0){btn.disabled=false;delete btn.dataset.cooling;delete btn.dataset.busy;btn.textContent=base;return}btn.disabled=true;btn.innerHTML=base+' <span class="cd">('+Math.ceil(left/1000)+'s)</span>';setTimeout(tick,200)};tick()}
 function paintHist(id,arr){
@@ -690,6 +694,7 @@ function syncBetHints(){
 }
 
 const S={user:null,pass:'',foto:AV,groups:[],grupo:'',grupoNome:'',grupoImagem:null,golds:0,grupoTotal:0,grupoPos:null,power:1,level:1,energy:100,maxE:100,streak:0,lastE:Date.now(),bet:100,cashout:1.5,raidAmt:50,rankMode:'total',busy:false,rankCache:null,rankAt:0,targetGrupo:'',top10:[],pendingGold:null};
+window.__GE=S;window.S=S;
 function save(){try{localStorage.setItem(SK,JSON.stringify({user:S.user,pass:S.pass,foto:S.foto,grupo:S.grupo,grupoNome:S.grupoNome,grupoImagem:S.grupoImagem,power:S.power,level:S.level,energy:S.energy,maxE:S.maxE,streak:S.streak,lastE:S.lastE}))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'null');if(!d||!d.user||!d.pass)return false;Object.assign(S,d);return true}catch(e){return false}}
 
@@ -726,7 +731,7 @@ function setGrupoMeta(d){
 }
 function regen(){const now=Date.now();const e=Math.floor((now-S.lastE)/8000);if(e>0&&S.energy<S.maxE){S.energy=Math.min(S.maxE,S.energy+e);S.lastE+=e*8000;save()}}
 function ui(){regen();if(S.pendingGold==null)document.getElementById('goldBal').textContent=fmt(S.golds);document.getElementById('stP').textContent=S.power;document.getElementById('stL').textContent=S.level;document.getElementById('stS').textContent=S.streak;document.getElementById('eFill').style.width=Math.min(100,S.energy/S.maxE*100)+'%';document.getElementById('eTxt').textContent=S.energy+' / '+S.maxE;document.getElementById('userSub').textContent=S.grupoNome?('Grupo: '+S.grupoNome):'Toque em um grupo';syncBetHints()}
-function setAvatar(url){const el=document.getElementById('av');if(!el)return;const src=fixFoto(url||S.foto||AV,S.user&&S.user.nome);el.referrerPolicy='no-referrer';el.onerror=function(){this.onerror=null;this.src=uiAvatar(S.user&&S.user.nome)||AV};el.src=src;S.foto=src}
+function setAvatar(url){const el=document.getElementById('av');if(!el)return;const src=fixFoto(url||S.foto||AV,S.user&&S.user.nome);el.referrerPolicy='no-referrer';el.onerror=function(){this.onerror=null;this.src='https://dl.dropboxusercontent.com/scl/fi/pe6liwd0tixj39cn1o5o4/1752896153979.jpeg?rlkey=9dchim7lrqdo2zpl1f1usultf&dl=0'};el.src=src;S.foto=src;if(S.user)S.user.foto=src;try{window.__GE=S}catch(_){}}
 
 async function tryLogin(u,p){
   const body=JSON.stringify({username:u,password:p});
@@ -1630,21 +1635,57 @@ bootSSO();
     if (a && a.startsWith('/')) return BACKEND.replace(/\/$/,'') + a;
     return 'https://ui-avatars.com/api/?name='+encodeURIComponent((u&&u.nome)||'User')+'&size=64&background=0f766e&color=fff';
   }
-  function geIdentity(){
+  function geGetSession(){
+    // 1) estado global do Gold Empire
     try{
-      if (typeof S !== 'undefined' && S.user){
-        const id = String(S.pass || S.user.numero || S.user.nome || '').trim() || ('guest_'+Math.random().toString(36).slice(2,9));
-        return {
-          userId: id,
-          nome: S.user.nome || 'Jogador',
-          avatar: (S.foto || (S.user && S.user.foto) || '')
-        };
+      const g = window.__GE || window.S;
+      if (g && g.user && g.pass) return g;
+    }catch(_){}
+    // 2) localStorage do Golds
+    try{
+      const d = JSON.parse(localStorage.getItem('fabi_ge_v6')||'null');
+      if (d && d.user && d.pass) return d;
+    }catch(_){}
+    // 3) sessão do index.html
+    try{
+      const raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
+      if (raw){
+        const s = JSON.parse(raw);
+        if (s && (s.nome || s.username || s.numero)){
+          return {
+            user: {
+              nome: s.nome || s.username || s.numero,
+              numero: s.numero || '',
+              foto: s.avatar || s.foto || s.fotoPerfil || ''
+            },
+            pass: s.id || s.password || s.senha || s.pass || '',
+            foto: s.avatar || s.foto || s.fotoPerfil || ''
+          };
+        }
       }
     }catch(_){}
-    // visitante
+    return null;
+  }
+  function geIdentity(){
+    const sess = geGetSession();
+    if (sess && sess.user){
+      const u = sess.user;
+      const id = String(sess.pass || u.numero || u.nome || u.id || '').trim();
+      if (id){
+        return {
+          userId: id,
+          nome: u.nome || 'Jogador',
+          avatar: sess.foto || u.foto || u.avatar || u.fotoPerfil || ''
+        };
+      }
+    }
     let gid = localStorage.getItem('ge_guest_id');
     if (!gid){ gid = 'guest_'+Math.random().toString(36).slice(2,10); localStorage.setItem('ge_guest_id', gid); }
     return { userId: gid, nome: 'Visitante', avatar: '' };
+  }
+  function geIsLogged(){
+    const sess = geGetSession();
+    return !!(sess && sess.user && (sess.pass || (sess.user && (sess.user.numero || sess.user.nome))));
   }
 
   let lastMsgCount = 0;
@@ -1656,7 +1697,7 @@ bootSSO();
     const r = await geFetch('/cliente06/online/ping', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ userId: id.userId, nome: id.nome, avatar: id.avatar, visitante: !(typeof S!=='undefined' && S.user) })
+      body: JSON.stringify({ userId: id.userId, nome: id.nome, avatar: id.avatar, visitante: !geIsLogged() })
     }, 8000);
     if (r.ok && r.data && r.data.totalOnline != null){
       const n = Number(r.data.totalOnline)||0;
@@ -1729,7 +1770,7 @@ bootSSO();
   }
 
   async function sendChat(){
-    if (!(typeof S !== 'undefined' && S.user)){
+    if (!geIsLogged()){
       if (typeof toast === 'function') toast('Entre na conta para falar no chat','bad');
       else alert('Entre na conta para falar no chat');
       return;
