@@ -140,6 +140,18 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 .crop .ce{font-size:24px}.crop .cn{font-size:11px;font-weight:700;margin-top:2px}
 .crop .cm{font-size:10px;color:var(--muted);margin-top:2px}
 .crop .cr{font-size:11px;color:var(--gold2);font-weight:800}
+.plot.ready{animation:pulseReady 1.6s ease-in-out infinite;cursor:pointer}
+@keyframes pulseReady{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.35)}50%{box-shadow:0 0 0 6px rgba(74,222,128,.12)}}
+.plot.ready:hover{transform:translateY(-2px);border-color:rgba(74,222,128,.7)}
+.login{position:relative;overflow:hidden}
+.login::before{content:'';position:absolute;inset:-40% -20% auto;height:120px;background:radial-gradient(circle,rgba(251,191,36,.25),transparent 70%);pointer-events:none}
+.top .brand b{letter-spacing:-.3px}
+.gbtn{position:relative;overflow:hidden}
+.gbtn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.04));pointer-events:none}
+.bal .v{letter-spacing:-.5px}
+#btnDaily{box-shadow:0 8px 24px rgba(251,191,36,.2)}
+.chip-live{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;padding:4px 10px;border-radius:999px;background:rgba(22,163,74,.15);color:var(--g2);border:1px solid rgba(22,163,74,.35)}
+.chip-live i{width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:pulseReady 1.2s infinite}
 </style>
 </head>
 <body>
@@ -156,7 +168,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
   <div class="login">
     <div style="font-size:44px">👑</div>
     <h1>Gold Empire</h1>
-    <p>Mesma conta do site. Golds reais do WhatsApp.</p>
+    <p>Mesma conta do <b>/rg</b> no WhatsApp. Se já entrou no site principal, o login é automático.</p>
     <div class="banner" style="text-align:left;margin:12px 0">
       <b>Não tem conta?</b> Entre em um grupo com a Fabi Bot e use o comando <b>/rg</b> (registro) para criar sua conta. Depois volte aqui com o mesmo usuário e senha.
     </div>
@@ -193,7 +205,8 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
   </div>
 
   <div id="viewHome">
-    <div class="banner">Escolha o <b>grupo</b> (com foto). Aposte só o que tem — o servidor valida o saldo.</div>
+    <div class="banner">Escolha o <b>grupo</b> e jogue. Golds são os mesmos do WhatsApp. <b>Bônus diário</b>, fazenda, raids e ranking — tudo em um lugar.</div>
+    <button class="btn btn-gold" id="btnDaily" style="margin-bottom:12px">🎁 Resgatar bônus diário</button>
     <div class="sec">1 · Grupo</div>
     <div class="groups" id="grpGrid"><div class="skel"></div></div>
     <div class="sec">2 · Arena</div>
@@ -648,13 +661,28 @@ function paintPlots(plots){
       </div>`;
     }
     const cls=p.state==='ready'?'ready':p.state==='growing'?'growing':'';
-    const bar=p.state==='growing'?`<div class="pbar"><i style="width:${p.progress}%"></i></div>`:(p.state==='ready'?'<div class="pr" style="color:var(--g2);font-weight:800">Pronto!</div>':'<div class="pr">Vazio</div>');
+    const bar=p.state==='growing'?`<div class="pbar"><i style="width:${p.progress}%"></i></div>`:(p.state==='ready'?'<div class="pr" style="color:var(--g2);font-weight:800">✓ Toque p/ colher</div>':'<div class="pr">Vazio</div>');
     const reward=p.reward?`<div class="pr">colheita +${fmt(p.reward)}</div>`:'';
-    return `<div class="plot ${cls}"><div class="pe">${p.emoji||'🟫'}</div><div class="pn">${esc(p.nome)}</div>${bar}${p.state==='growing'?`<div class="pr">${esc(p.remaining)}</div>`:''}${reward}</div>`;
+    const dataH = p.state==='ready' ? ` data-harvest="${p.index}"` : '';
+    const hint = p.state==='ready' ? ' style="cursor:pointer"' : '';
+    return `<div class="plot ${cls}"${dataH}${hint}><div class="pe">${p.emoji||'🟫'}</div><div class="pn">${esc(p.nome)}</div>${bar}${p.state==='growing'?`<div class="pr">${esc(p.remaining)}</div>`:''}${reward}</div>`;
   }).join('');
   box.querySelectorAll('[data-unlock]').forEach(el=>{
     el.style.cursor='pointer';
     el.onclick=()=>document.getElementById('btnUnlock')&&document.getElementById('btnUnlock').click();
+  });
+  // Clique no canteiro pronto = colhe só ele (não precisa ir no botão de baixo)
+  box.querySelectorAll('[data-harvest]').forEach(el=>{
+    el.onclick=async()=>{
+      const plot=el.getAttribute('data-harvest');
+      el.style.opacity='.6';
+      const d=await play('/cliente06/game/fazenda/colher',{plot:Number(plot)},null,{hist:'hist-fazenda'});
+      el.style.opacity='1';
+      if(!d)return;
+      if(d.fazenda){paintPlots(d.fazenda.plots);updateUnlockUI(d.fazenda)}
+      document.getElementById('farmLog').textContent='Colheu +'+fmt(d.gain)+(d.colhidos&&d.colhidos[0]?' · '+(d.colhidos[0].emoji||''):'');
+      toast('🧺 +'+fmt(d.gain),'ok');
+    };
   });
 }
 function paintCatalog(cat){
@@ -1004,27 +1032,79 @@ window.closeModal=function(){document.getElementById('modalPerfil').classList.re
 document.getElementById('modalPerfil').onclick=e=>{if(e.target.id==='modalPerfil')closeModal()};
 document.getElementById('modalGrupo').onclick=e=>{if(e.target.id==='modalGrupo')closeModal()};
 
+document.getElementById('btnDaily')&&(document.getElementById('btnDaily').onclick=async()=>{
+  if(!S.grupo)return toast('Escolha um grupo primeiro','bad');
+  const btn=document.getElementById('btnDaily');
+  const d=await play('/cliente06/game/daily',{},btn);
+  if(!d)return;
+  toast((d.message||('Bônus +'+fmt(d.gain)))+(d.streak?' · 🔥'+d.streak+'d':''),'ok');
+});
 setInterval(()=>{if(S.user){regen();ui()}},5000);
 setInterval(()=>{if(S.user&&S.grupo&&S.pendingGold==null)refreshGold()},20000);
 
 async function bootSSO(){
-  try{const raw=localStorage.getItem('fabi_session')||localStorage.getItem('neconecta_user_session');if(raw){const s=JSON.parse(raw);if(s.foto||s.avatar)S.foto=fixFoto(s.foto||s.avatar)}}catch(e){}
-  if(load()&&S.user&&S.pass){showApp();return}
-  try{
-    const raw=localStorage.getItem('fabi_session')||localStorage.getItem('neconecta_user_session');
-    if(!raw)return;
-    const s=JSON.parse(raw);
-    const user=s.nome||s.username||s.user||s.numero||'';
-    const pass=String(s.id||s.password||s.senha||'');
-    document.getElementById('inpUser').value=user;if(pass)document.getElementById('inpPass').value=pass;
-    if(user&&pass){
-      try{
-        const logged=await tryLogin(user,pass);
-        S.user={nome:logged.nome||user,numero:logged.numero||s.numero||'',grupo:logged.grupo||s.grupo||'',foto:logged.foto||logged.avatar||s.foto||AV};
-        S.pass=pass;S.foto=fixFoto(S.user.foto);save();showApp();toast('Logado: '+S.user.nome,'ok');
-      }catch(e){document.getElementById('loginErr').textContent='Confirme a senha'}
+  // 1) Sessão já salva no Gold Empire
+  try {
+    if (load() && S.user && S.pass) {
+      showApp();
+      toast('Bem-vindo de volta, ' + (S.user.nome || '') + '!', 'ok');
+      return;
     }
-  }catch(e){}
+  } catch (e) {}
+
+  // 2) Reaproveita login do index.html (fabi_session / neconecta)
+  try {
+    const raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    if (s.foto || s.avatar) S.foto = fixFoto(s.foto || s.avatar);
+
+    const user = String(s.nome || s.username || s.user || s.numero || '').trim();
+    // senha no site principal costuma ser o "id" do /rg
+    const candidates = [
+      s.id, s.password, s.senha, s.pass, s.token, s.userId
+    ].map(x => String(x || '').trim()).filter(Boolean);
+
+    if (user) document.getElementById('inpUser').value = user;
+
+    if (user && candidates.length) {
+      let logged = null, passOk = null;
+      for (const pass of candidates) {
+        try {
+          logged = await tryLogin(user, pass);
+          passOk = pass;
+          break;
+        } catch (_) {}
+      }
+      // tenta também pelo número se o nome falhar
+      if (!logged && s.numero) {
+        const num = String(s.numero).replace(/\D/g, '');
+        for (const pass of candidates) {
+          try {
+            logged = await tryLogin(num, pass);
+            passOk = pass;
+            break;
+          } catch (_) {}
+        }
+      }
+      if (logged && passOk) {
+        S.user = {
+          nome: logged.nome || user,
+          numero: logged.numero || s.numero || '',
+          grupo: logged.grupo || s.grupo || '',
+          foto: logged.foto || logged.avatar || s.foto || AV
+        };
+        S.pass = passOk;
+        S.foto = fixFoto(S.user.foto);
+        save();
+        showApp();
+        toast('Entrada automática: ' + S.user.nome, 'ok');
+        return;
+      }
+      if (candidates[0]) document.getElementById('inpPass').value = candidates[0];
+      document.getElementById('loginErr').textContent = 'Sessão do site detectada — confirme a senha do /rg se precisar.';
+    }
+  } catch (e) {}
 }
 bootSSO();
 })();
