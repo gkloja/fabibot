@@ -225,6 +225,105 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
   }
   .crop { cursor: pointer; user-select: none; }
   .crop:active { transform: scale(.97); }
+
+  /* ===== Online badge + floating chat ===== */
+  .ge-online-pill{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:6px 12px;border-radius:999px;
+    background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);
+    color:#6ee7b7;font-size:12px;font-weight:800;letter-spacing:.2px;
+    margin-left:6px;white-space:nowrap;
+  }
+  .ge-online-pill .dot{
+    width:8px;height:8px;border-radius:50%;background:#22c55e;
+    box-shadow:0 0 0 0 rgba(34,197,94,.55);
+    animation:geOnPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes geOnPulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.45);opacity:1}
+    50%{box-shadow:0 0 0 6px rgba(34,197,94,0);opacity:.85}
+  }
+  .ge-chat-fab{
+    position:fixed;left:16px;bottom:18px;z-index:99990;
+    width:42px;height:42px;border-radius:50%;
+    border:1px solid rgba(37,211,102,.4);
+    background:linear-gradient(145deg,#0f291c,#0a1a12);
+    color:#6ee7b7;font-size:18px;cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,0,0,.28);
+    display:flex;align-items:center;justify-content:center;
+    transition:.15s;
+  }
+  .ge-chat-fab:hover{transform:translateY(-2px);border-color:rgba(37,211,102,.7)}
+  .ge-chat-fab .badge{
+    position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;
+    border-radius:999px;background:#ef4444;color:#fff;
+    font-size:10px;font-weight:800;display:none;align-items:center;justify-content:center;
+    padding:0 5px;border:2px solid #060908;
+  }
+  .ge-chat-fab .badge.on{display:flex}
+  .ge-chat-panel{
+    position:fixed;left:16px;bottom:72px;z-index:99991;
+    width:min(360px,calc(100vw - 24px));height:min(480px,calc(100vh - 160px));
+    background:linear-gradient(180deg,#0e1714,#0a100e);
+    border:1px solid rgba(37,211,102,.3);border-radius:20px;
+    box-shadow:0 24px 60px rgba(0,0,0,.55);
+    display:none;flex-direction:column;overflow:hidden;
+  }
+  .ge-chat-panel.open{display:flex;animation:up .2s ease}
+  .ge-chat-hd{
+    display:flex;align-items:center;gap:10px;padding:12px 14px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    background:linear-gradient(90deg,rgba(37,211,102,.12),transparent);
+  }
+  .ge-chat-hd strong{flex:1;font-size:14px}
+  .ge-chat-hd .mini{font-size:11px;color:var(--muted);font-weight:600}
+  .ge-chat-hd button{
+    border:1px solid var(--line);background:rgba(255,255,255,.05);
+    color:var(--text);border-radius:10px;width:32px;height:32px;cursor:pointer;font-size:14px;
+  }
+  .ge-chat-online{
+    padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.06);
+    display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+  }
+  .ge-chat-online::-webkit-scrollbar{display:none}
+  .ge-chat-online .ou{
+    flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;
+    width:52px;font-size:10px;color:var(--muted);text-align:center;
+  }
+  .ge-chat-online .ou img{
+    width:32px;height:32px;border-radius:50%;object-fit:cover;
+    border:2px solid rgba(34,197,94,.55);background:#1a1f2e;
+  }
+  .ge-chat-online .ou span{max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ge-chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+  .ge-chat-msg{display:flex;gap:8px;align-items:flex-start;max-width:92%}
+  .ge-chat-msg.me{align-self:flex-end;flex-direction:row-reverse}
+  .ge-chat-msg img{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#1a1f2e}
+  .ge-chat-msg .bubble{
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;padding:8px 11px;font-size:13px;line-height:1.4;word-break:break-word;
+  }
+  .ge-chat-msg.me .bubble{background:rgba(22,163,74,.18);border-color:rgba(22,163,74,.35)}
+  .ge-chat-msg .meta{font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:700}
+  .ge-chat-ft{
+    display:flex;gap:8px;padding:10px;border-top:1px solid rgba(255,255,255,.08);
+    background:rgba(0,0,0,.2);
+  }
+  .ge-chat-ft input{
+    flex:1;padding:11px 14px;border-radius:12px;border:1px solid var(--line);
+    background:rgba(255,255,255,.04);color:var(--text);font:inherit;font-size:13px;outline:none;
+  }
+  .ge-chat-ft input:focus{border-color:rgba(37,211,102,.5)}
+  .ge-chat-ft button{
+    width:42px;height:42px;border-radius:12px;border:none;cursor:pointer;
+    background:linear-gradient(135deg,#16a34a,#0f766e);color:#fff;font-size:16px;font-weight:800;
+  }
+  .ge-chat-empty{text-align:center;color:var(--muted);font-size:13px;padding:30px 12px;line-height:1.5}
+  @media(max-width:480px){
+    .ge-chat-fab{bottom:16px;left:12px;width:42px;height:42px}
+    .ge-chat-panel{left:8px;right:auto;bottom:68px;height:min(70vh,520px)}
+    .ge-online-pill{font-size:11px;padding:5px 10px}
+  }
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -289,7 +388,11 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 <body>
 <div class="top">
   <a class="brand" href="index.html"><img src="/flogo.jpg" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'" alt=""/><b>Fabi<span>Bot</span></b></a>
-  <div class="nav" style="margin-left:auto">
+  <div class="nav" style="margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span class="ge-online-pill" id="geOnlinePill" title="Pessoas no site agora">
+      <span class="dot"></span>
+      <span><b id="geOnlineCount">0</b> online</span>
+    </span>
     <a href="index.html">Início</a>
     <a href="golds.html" class="on">👑 Golds</a>
     <a href="conectar.html">Conectar</a>
@@ -315,7 +418,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 <div class="shell hide" id="viewApp">
   <div class="hud">
     <div class="card user">
-      <img id="av" alt="" onerror="this.onerror=null;this.src='https://fabibot.vercel.app/flogo.jpg'"/>
+      <img id="av" referrerpolicy="no-referrer" loading="lazy" alt="" onerror="this.onerror=null;this.src='https://fabibot.vercel.app/flogo.jpg'"/>
       <div style="flex:1;min-width:0">
         <strong id="userName" style="display:block;font-size:16px">—</strong>
         <span id="userSub" style="font-size:12px;color:var(--muted)">Escolha o grupo</span>
@@ -323,7 +426,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
       <button class="btn btn-ghost" id="btnLogout" style="width:auto;padding:8px 12px;font-size:12px">Sair</button>
     </div>
     <div class="card bal">
-      <img class="gimg" id="grpImg" src="https://fabibot.vercel.app/flogo.jpg" alt="" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'"/>
+      <img class="gimg" id="grpImg" referrerpolicy="no-referrer" src="https://fabibot.vercel.app/flogo.jpg" alt="" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'"/>
       <div class="col">
         <div class="l">Seu saldo neste grupo</div>
         <div class="v">💰 <span id="goldBal">0</span></div>
@@ -438,7 +541,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
       <div class="bets" id="rBets"><button data-v="25">25</button><button data-v="50" class="on">50</button><button data-v="100">100</button><button data-v="250">250</button><button data-v="all">ALL</button></div>
       <div class="sec">Alvo</div>
       <div class="groups" id="raidTargets"><div class="skel"></div></div>
-      <div class="vitima hide" id="vitimaBox"><img id="vitimaFoto" alt=""/><div><strong id="vitimaNome">—</strong><div style="font-size:12px;color:var(--muted)" id="vitimaMeta"></div></div></div>
+      <div class="vitima hide" id="vitimaBox"><img id="vitimaFoto" referrerpolicy="no-referrer" alt=""/><div><strong id="vitimaNome">—</strong><div style="font-size:12px;color:var(--muted)" id="vitimaMeta"></div></div></div>
       <button class="btn btn-pink" id="btnRaid">TENTAR ROUBO</button>
       <p class="sub" id="raidLog" style="margin-top:8px;margin-bottom:0"></p>
       <div class="hist"><h4>Últimas ações · Raid</h4><div id="hist-raid"></div></div>
@@ -496,7 +599,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 <div class="modal" id="modalPerfil">
   <div class="sheet">
     <div class="head">
-      <img id="mpFoto" alt=""/>
+      <img id="mpFoto" referrerpolicy="no-referrer" alt=""/>
       <div><strong id="mpNome" style="font-size:16px">—</strong><div style="font-size:12px;color:var(--muted)" id="mpMeta">—</div></div>
     </div>
     <div class="sec">Grupos com Golds</div>
@@ -507,7 +610,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 <div class="modal" id="modalGrupo">
   <div class="sheet">
     <div class="head">
-      <img id="mgImg" src="" alt="" style="width:56px;height:56px;border-radius:16px;object-fit:cover"/>
+      <img id="mgImg" referrerpolicy="no-referrer" src="" alt="" style="width:56px;height:56px;border-radius:16px;object-fit:cover"/>
       <div><strong id="mgNome" style="font-size:16px">—</strong><div style="font-size:12px;color:var(--muted)" id="mgMeta">—</div></div>
     </div>
     <div id="mgLink" class="sub"></div>
@@ -535,7 +638,39 @@ function urlsFor(path){
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function fmt(n){return Math.floor(Number(n)||0).toLocaleString('pt-BR')}
 function toast(m,k){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(k==='bad'?' bad':k==='ok'?' ok':'');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),2400)}
-function fixFoto(f){f=String(f||'').trim();if(!f)return AV;if(f.startsWith('//'))f='https:'+f;if(f.startsWith('/'))f='https://fabibot.vercel.app'+f;if(!/^https?:\/\//i.test(f))return AV;return f}
+function uiAvatar(nome){return 'https://ui-avatars.com/api/?name='+encodeURIComponent(String(nome||'User').slice(0,40))+'&size=128&background=0f766e&color=fff&bold=true'}
+function fixFoto(f,nome){
+  try{
+    f=String(f||'').trim();
+    if(!f||f==='null'||f==='undefined'||f==='false') return uiAvatar(nome)||AV;
+    // data URL / blob ok
+    if(/^data:image\//i.test(f)||/^blob:/i.test(f)) return f;
+    if(f.startsWith('//')) f='https:'+f;
+    // uploads do servidor (não existem no Vercel estático)
+    if(/^\/?uploads\//i.test(f) || /\/uploads\//i.test(f) && !/^https?:/i.test(f)){
+      const path='/'+f.replace(/^\.?\/?/,'');
+      f=BACKEND.replace(/\/$/,'')+path;
+    } else if(f.startsWith('/')){
+      // outros assets estáticos no site
+      f='https://fabibot.vercel.app'+f;
+    } else if(!/^https?:\/\//i.test(f) && f.length>3){
+      // path relativo tipo "uploads/x.jpg" ou "perfil/x"
+      if(/uploads|perfil|foto|avatar/i.test(f))
+        f=BACKEND.replace(/\/$/,'')+'/'+f.replace(/^\.\//,'');
+      else
+        f='https://fabibot.vercel.app/'+f.replace(/^\.\//,'');
+    }
+    // http do backend → proxy HTTPS (evita mixed content no Vercel)
+    if(/^http:\/\//i.test(f) && /(bronxyshost|localhost|127\.0\.0\.1|:4009)/i.test(f)){
+      f=PROXY_HOST+'/proxy?url='+encodeURIComponent(f);
+    }
+    // força https em hosts conhecidos
+    if(/^http:\/\/(fabibot\.vercel\.app|dl\.dropboxusercontent\.com|ui-avatars\.com)/i.test(f))
+      f=f.replace(/^http:/i,'https:');
+    if(!/^https?:\/\//i.test(f)) return uiAvatar(nome)||AV;
+    return f;
+  }catch(e){return uiAvatar(nome)||AV}
+}
 function setBtnCd(btn,ms,label){if(!btn)return;const end=Date.now()+Math.max(0,ms||0);const base=label||btn.dataset.label||btn.textContent;btn.dataset.label=base;btn.dataset.cooling='1';const tick=()=>{const left=end-Date.now();if(left<=0){btn.disabled=false;delete btn.dataset.cooling;delete btn.dataset.busy;btn.textContent=base;return}btn.disabled=true;btn.innerHTML=base+' <span class="cd">('+Math.ceil(left/1000)+'s)</span>';setTimeout(tick,200)};tick()}
 function paintHist(id,arr){
   const el=document.getElementById(id);if(!el)return;
@@ -591,7 +726,7 @@ function setGrupoMeta(d){
 }
 function regen(){const now=Date.now();const e=Math.floor((now-S.lastE)/8000);if(e>0&&S.energy<S.maxE){S.energy=Math.min(S.maxE,S.energy+e);S.lastE+=e*8000;save()}}
 function ui(){regen();if(S.pendingGold==null)document.getElementById('goldBal').textContent=fmt(S.golds);document.getElementById('stP').textContent=S.power;document.getElementById('stL').textContent=S.level;document.getElementById('stS').textContent=S.streak;document.getElementById('eFill').style.width=Math.min(100,S.energy/S.maxE*100)+'%';document.getElementById('eTxt').textContent=S.energy+' / '+S.maxE;document.getElementById('userSub').textContent=S.grupoNome?('Grupo: '+S.grupoNome):'Toque em um grupo';syncBetHints()}
-function setAvatar(url){document.getElementById('av').src=fixFoto(url||S.foto||AV);S.foto=document.getElementById('av').src}
+function setAvatar(url){const el=document.getElementById('av');if(!el)return;const src=fixFoto(url||S.foto||AV,S.user&&S.user.nome);el.referrerPolicy='no-referrer';el.onerror=function(){this.onerror=null;this.src=uiAvatar(S.user&&S.user.nome)||AV};el.src=src;S.foto=src}
 
 async function tryLogin(u,p){
   const body=JSON.stringify({username:u,password:p});
@@ -609,7 +744,7 @@ function renderGroups(){
   const box=document.getElementById('grpGrid');
   if(!S.groups.length){box.innerHTML='<div class="gcard"><strong>Nenhum grupo</strong></div>';return}
   box.innerHTML=S.groups.map(g=>`<button type="button" class="gcard ${g.grupo===S.grupo?'on':''}" data-g="${esc(g.grupo)}">
-    <img src="${esc(fixFoto(g.imagem))}" onerror="this.src='${AV}'" alt=""/>
+    <img referrerpolicy="no-referrer" src="${esc(fixFoto(g.imagem))}" onerror="this.src='${AV}'" alt=""/>
     <div class="meta"><strong>${esc(g.nome||String(g.grupo).split('@')[0])}</strong><div class="gg">💰 ${fmt(g.golds)}</div></div>
   </button>`).join('');
   box.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const g=S.groups.find(x=>x.grupo===b.getAttribute('data-g'));if(g)selectGroup(g.grupo,g.nome,g.golds,g.imagem)});
@@ -951,7 +1086,7 @@ document.getElementById('btnVisit').onclick=async()=>{
   const f=r.data.fazenda;
   box.classList.remove('hide');
   box.innerHTML=`<div class="user" style="margin:10px 0;padding:10px;border-radius:14px;border:1px solid var(--line)">
-    <img src="${esc(fixFoto(f.dono&&f.dono.foto))}" style="width:44px;height:44px;border-radius:12px" onerror="this.src='${AV}'"/>
+    <img referrerpolicy="no-referrer" src="${esc(fixFoto(f.dono&&f.dono.foto))}" style="width:44px;height:44px;border-radius:12px" onerror="this.src='${AV}'"/>
     <div><strong>${esc(f.dono&&f.dono.nome)}</strong><div style="font-size:12px;color:var(--muted)">${f.unlockedSlots||1}/6 canteiros · ${f.readyCount||0} prontos</div></div>
   </div>
   <div class="plots">${(f.plots||[]).map(p=>`<div class="plot ${p.state}"><div class="pe">${p.emoji}</div><div class="pn">${esc(p.nome)}</div><div class="pr">${p.state==='ready'?'Pronto':p.state==='growing'?esc(p.remaining):p.state==='locked'?'🔒':('Vazio')}</div></div>`).join('')}</div>
@@ -1082,7 +1217,7 @@ async function loadRaidTargets(){
   if(!S.top10.length){box.innerHTML='<p class="sub">Só seu grupo no Top 10 — sem alvo</p>';return}
   if(!S.targetGrupo||String(S.targetGrupo)===String(S.grupo)) S.targetGrupo=S.top10[0].grupo;
   box.innerHTML=S.top10.map(g=>`<button type="button" class="gcard ${g.grupo===S.targetGrupo?'on':''}" data-tg="${esc(g.grupo)}">
-    <img src="${esc(fixFoto(g.imagem))}" onerror="this.src='${AV}'" alt=""/>
+    <img referrerpolicy="no-referrer" src="${esc(fixFoto(g.imagem))}" onerror="this.src='${AV}'" alt=""/>
     <div class="meta"><div class="raid-pos">#${g.posicao||''}</div><strong>${esc(g.nome)}</strong>
     <div class="gg">💰 ${fmt(g.totalGolds||g.golds)}</div></div>
   </button>`).join('');
@@ -1128,7 +1263,7 @@ function paint(cache){
     box.innerHTML=arr.map((x,i)=>{
       const m=i===0?'👑':i===1?'🥈':i===2?'🥉':(i+1);
       return `<div class="ri" data-grupo="${esc(x.grupo)}"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div>
-        <img src="${esc(fixFoto(x.imagem))}" onerror="this.src='${AV}'"/>
+        <img referrerpolicy="no-referrer" src="${esc(fixFoto(x.imagem))}" onerror="this.src='${AV}'"/>
         <div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}</strong>
         <div style="font-size:11px;color:var(--muted)">${x.membros||0} membros · média ${fmt(x.mediaGolds||0)}</div></div>
         <div style="color:var(--gold2);font-weight:800">${fmt(x.totalGolds||x.golds)}</div></div>`;
@@ -1143,7 +1278,7 @@ function paint(cache){
     const me=my&&String(x.numero)===my;
     const m=i===0?'👑':i===1?'🥈':i===2?'🥉':(i+1);
     return `<div class="ri ${me?'me':''}" data-num="${esc(x.numero)}"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div>
-      <img src="${esc(fixFoto(x.foto))}" onerror="this.src='${AV}'"/><div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}${me?' · você':''}</strong>
+      <img referrerpolicy="no-referrer" src="${esc(fixFoto(x.foto))}" onerror="this.src='${AV}'"/><div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}${me?' · você':''}</strong>
       <div style="font-size:11px;color:var(--muted)">${x.grupos?x.grupos+' grupos':''}</div></div>
       <div style="color:var(--gold2);font-weight:800">${fmt(x.golds)}</div></div>`;
   }).join('')||'<p class="sub">Vazio</p>';
@@ -1162,7 +1297,7 @@ async function openPerfil(numero){
   document.getElementById('mpNome').textContent=u.nome;
   document.getElementById('mpMeta').textContent='Total: '+fmt(u.totalGolds)+' Golds · '+gs.length+' grupo(s)';
   document.getElementById('mpGroups').innerHTML=gs.map(g=>`<div class="gline" data-g="${esc(g.grupo)}">
-    <img src="${esc(fixFoto(g.imagem))}" onerror="this.src='${AV}'"/>
+    <img referrerpolicy="no-referrer" src="${esc(fixFoto(g.imagem))}" onerror="this.src='${AV}'"/>
     <div style="flex:1"><b>${esc(g.nome)}</b><div style="font-size:11px;color:var(--muted)">${g.posicao?'#'+g.posicao+' · ':''}${fmt(g.totalGolds)} no grupo</div></div>
     <div style="color:var(--gold2);font-weight:800">${fmt(g.golds)}</div></div>`).join('')||'<p class="sub">Sem grupos</p>';
   document.getElementById('mpGroups').querySelectorAll('[data-g]').forEach(el=>el.onclick=()=>{closeModal();openGrupo(el.getAttribute('data-g'))});
@@ -1191,7 +1326,7 @@ async function openGrupo(grupo){
   if(d.link) link.innerHTML='🔗 <a href="'+esc(d.link)+'" target="_blank" rel="noopener" style="color:var(--g2)">Entrar no grupo</a>';
   else link.textContent='Link de convite indisponível no grupos.json';
   document.getElementById('mgTop').innerHTML=(d.top||[]).map((x,i)=>`<div class="ri" data-num="${esc(x.numero)}"><div style="width:22px;font-weight:800;color:var(--gold)">${i+1}</div>
-    <img src="${esc(fixFoto(x.foto))}" onerror="this.src='${AV}'"/><div style="flex:1"><strong style="font-size:13px">${esc(x.nome)}</strong></div>
+    <img referrerpolicy="no-referrer" src="${esc(fixFoto(x.foto))}" onerror="this.src='${AV}'"/><div style="flex:1"><strong style="font-size:13px">${esc(x.nome)}</strong></div>
     <div style="color:var(--gold2);font-weight:800">${fmt(x.golds)}</div></div>`).join('')||'<p class="sub">Sem dados</p>';
   document.getElementById('mgTop').querySelectorAll('[data-num]').forEach(el=>el.onclick=()=>{closeModal();openPerfil(el.getAttribute('data-num'))});
   document.getElementById('modalGrupo').classList.add('on');
@@ -1391,7 +1526,7 @@ async function bootSSO(){
           nome: logged.nome || user,
           numero: logged.numero || s.numero || '',
           grupo: logged.grupo || s.grupo || '',
-          foto: logged.foto || logged.avatar || s.foto || AV
+          foto: logged.foto || logged.avatar || logged.fotoPerfil || s.foto || s.avatar || s.fotoPerfil || AV
         };
         S.pass = passOk;
         S.foto = fixFoto(S.user.foto);
@@ -1408,6 +1543,29 @@ async function bootSSO(){
 bootSSO();
 })();
 </script>
+
+
+<!-- Floating Chat Gold Empire -->
+<button type="button" class="ge-chat-fab" id="geChatFab" title="Chat global" aria-label="Abrir chat">
+  💬
+  <span class="badge" id="geChatBadge">0</span>
+</button>
+<div class="ge-chat-panel" id="geChatPanel" role="dialog" aria-label="Chat global">
+  <div class="ge-chat-hd">
+    <div>
+      <strong>Chat global</strong>
+      <div class="mini"><span id="geChatOnlineLabel">0</span> online · mesmo chat do site</div>
+    </div>
+    <button type="button" id="geChatRefresh" title="Atualizar">↻</button>
+    <button type="button" id="geChatClose" title="Fechar">✕</button>
+  </div>
+  <div class="ge-chat-online" id="geChatOnlineList"></div>
+  <div class="ge-chat-msgs" id="geChatMsgs"><div class="ge-chat-empty">Carregando mensagens…</div></div>
+  <div class="ge-chat-ft">
+    <input id="geChatInput" type="text" maxlength="500" placeholder="Mensagem (precisa estar logado)…" autocomplete="off"/>
+    <button type="button" id="geChatSend" title="Enviar">➤</button>
+  </div>
+</div>
 
 <div class="ge-float-notify-wrap" id="geFloatNotifyWrap">
   <button type="button" class="ge-float-notify pulse" id="geNotifyBtn" title="Ativar notificações" aria-label="Ativar notificações">
@@ -1428,6 +1586,240 @@ bootSSO();
     <button type="button" class="btn-help-ok" id="geNotifyHelpOk">Entendi</button>
   </div>
 </div>
+
+
+<script>
+/* ===== Online + Floating Chat (mesmo backend do index) ===== */
+(function(){
+  'use strict';
+  const PROXY_HOST = 'https://orange-hill-2e61.gbscabral15.workers.dev';
+  const BACKEND = 'http://br2.bronxyshost.com:4009';
+  function geApiUrls(path){
+    const target = BACKEND.replace(/\/$/,'') + path;
+    const hostPath = BACKEND.replace(/^https?:\/\//,'');
+    return [
+      PROXY_HOST + '/' + hostPath + '/proxy?url=' + encodeURIComponent(target),
+      PROXY_HOST + '/proxy?url=' + encodeURIComponent(target)
+    ];
+  }
+  async function geFetch(path, opts, timeoutMs){
+    const urls = geApiUrls(path);
+    let lastErr = null;
+    for (const url of urls){
+      const ctrl = new AbortController();
+      const to = setTimeout(()=>ctrl.abort(), timeoutMs || 12000);
+      try{
+        const r = await fetch(url, Object.assign({}, opts||{}, {signal: ctrl.signal, mode:'cors'}));
+        clearTimeout(to);
+        const text = await r.text();
+        let data = null;
+        try { data = JSON.parse(text); } catch(_){ data = text; }
+        if (r.ok) return { ok:true, data, status:r.status };
+        lastErr = new Error('HTTP '+r.status);
+      }catch(e){
+        clearTimeout(to);
+        lastErr = e;
+      }
+    }
+    return { ok:false, error: lastErr };
+  }
+  function geEsc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function geAvatarUrl(u){
+    const a = (u && (u.avatar || u.foto || u.fotoPerfil)) || '';
+    if (a && /^https?:\/\//i.test(a)) return a;
+    if (a && a.startsWith('/')) return BACKEND.replace(/\/$/,'') + a;
+    return 'https://ui-avatars.com/api/?name='+encodeURIComponent((u&&u.nome)||'User')+'&size=64&background=0f766e&color=fff';
+  }
+  function geIdentity(){
+    try{
+      if (typeof S !== 'undefined' && S.user){
+        const id = String(S.pass || S.user.numero || S.user.nome || '').trim() || ('guest_'+Math.random().toString(36).slice(2,9));
+        return {
+          userId: id,
+          nome: S.user.nome || 'Jogador',
+          avatar: (S.foto || (S.user && S.user.foto) || '')
+        };
+      }
+    }catch(_){}
+    // visitante
+    let gid = localStorage.getItem('ge_guest_id');
+    if (!gid){ gid = 'guest_'+Math.random().toString(36).slice(2,10); localStorage.setItem('ge_guest_id', gid); }
+    return { userId: gid, nome: 'Visitante', avatar: '' };
+  }
+
+  let lastMsgCount = 0;
+  let chatOpen = false;
+  let pollTimer = null;
+
+  async function pingOnline(){
+    const id = geIdentity();
+    const r = await geFetch('/cliente06/online/ping', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId: id.userId, nome: id.nome, avatar: id.avatar, visitante: !(typeof S!=='undefined' && S.user) })
+    }, 8000);
+    if (r.ok && r.data && r.data.totalOnline != null){
+      const n = Number(r.data.totalOnline)||0;
+      const el = document.getElementById('geOnlineCount');
+      if (el) el.textContent = String(n);
+      const lab = document.getElementById('geChatOnlineLabel');
+      if (lab) lab.textContent = String(n);
+    }
+  }
+  async function loadOnlineList(){
+    const r = await geFetch('/cliente06/online', { method:'GET' }, 8000);
+    if (!r.ok || !r.data) return;
+    const n = Number(r.data.totalOnline)||0;
+    const el = document.getElementById('geOnlineCount');
+    if (el) el.textContent = String(n);
+    const lab = document.getElementById('geChatOnlineLabel');
+    if (lab) lab.textContent = String(n);
+    const box = document.getElementById('geChatOnlineList');
+    if (!box) return;
+    const users = Array.isArray(r.data.usuarios) ? r.data.usuarios : [];
+    if (!users.length){
+      box.innerHTML = '<div class="ge-chat-empty" style="padding:6px;font-size:11px">Ninguém online</div>';
+      return;
+    }
+    box.innerHTML = users.slice(0,12).map(u => {
+      const nome = geEsc((u.nome||'User').slice(0,10));
+      const av = geEsc(geAvatarUrl(u));
+      return '<div class="ou" title="'+geEsc(u.nome||'')+'"><img referrerpolicy="no-referrer" src="'+av+'" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/><span>'+nome+'</span></div>';
+    }).join('');
+  }
+
+  function renderMsgs(list){
+    const box = document.getElementById('geChatMsgs');
+    if (!box) return;
+    if (!list || !list.length){
+      box.innerHTML = '<div class="ge-chat-empty">Nenhuma mensagem ainda.<br>Seja o primeiro a falar! 👑</div>';
+      return;
+    }
+    const me = geIdentity();
+    const sorted = list.slice().sort((a,b)=> new Date(a.createdAt||0) - new Date(b.createdAt||0));
+    const last = sorted.slice(-60);
+    box.innerHTML = last.map(m => {
+      const u = m.usuario || {};
+      const isMe = String(u.id||'') === String(me.userId) || String(u.nome||'') === String(me.nome);
+      const nome = m.anonimo ? 'Anônimo' : (u.nome || 'User');
+      const av = m.anonimo ? 'https://ui-avatars.com/api/?name=?&background=334155&color=fff' : geAvatarUrl(u);
+      const txt = geEsc(m.texto || m.text || '');
+      const when = m.createdAt ? new Date(m.createdAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
+      return '<div class="ge-chat-msg'+(isMe?' me':'')+'">'+
+        '<img referrerpolicy="no-referrer" src="'+geEsc(av)+'" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/>'+
+        '<div class="bubble"><div class="meta">'+geEsc(nome)+(when?' · '+when:'')+'</div>'+txt+'</div></div>';
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+    if (!chatOpen && list.length > lastMsgCount && lastMsgCount > 0){
+      const badge = document.getElementById('geChatBadge');
+      if (badge){ badge.textContent = String(Math.min(99, list.length - lastMsgCount)); badge.classList.add('on'); }
+    }
+    lastMsgCount = list.length;
+  }
+
+  async function loadChat(){
+    const r = await geFetch('/cliente06/chat-global/mensagens', { method:'GET' }, 12000);
+    if (!r.ok){
+      const box = document.getElementById('geChatMsgs');
+      if (box) box.innerHTML = '<div class="ge-chat-empty">Não foi possível carregar o chat.</div>';
+      return;
+    }
+    const list = Array.isArray(r.data) ? r.data : (r.data && r.data.mensagens) || [];
+    renderMsgs(list);
+  }
+
+  async function sendChat(){
+    if (!(typeof S !== 'undefined' && S.user)){
+      if (typeof toast === 'function') toast('Entre na conta para falar no chat','bad');
+      else alert('Entre na conta para falar no chat');
+      return;
+    }
+    const inp = document.getElementById('geChatInput');
+    const texto = (inp && inp.value || '').trim();
+    if (!texto) return;
+    const id = geIdentity();
+    const btn = document.getElementById('geChatSend');
+    if (btn) btn.disabled = true;
+    try{
+      const mensagem = {
+        usuario: { id: id.userId, nome: id.nome, avatar: id.avatar },
+        texto: texto.slice(0,500),
+        anonimo: false,
+        createdAt: new Date().toISOString()
+      };
+      const r = await geFetch('/cliente06/chat-global/mensagens', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(mensagem)
+      }, 12000);
+      if (r.ok){
+        if (inp) inp.value = '';
+        await loadChat();
+      } else {
+        if (typeof toast === 'function') toast('Falha ao enviar','bad');
+      }
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  function openChat(){
+    chatOpen = true;
+    const panel = document.getElementById('geChatPanel');
+    if (panel) panel.classList.add('open');
+    const badge = document.getElementById('geChatBadge');
+    if (badge){ badge.classList.remove('on'); badge.textContent='0'; }
+    loadOnlineList();
+    loadChat();
+    const inp = document.getElementById('geChatInput');
+    if (inp) setTimeout(()=>inp.focus(), 150);
+  }
+  function closeChat(){
+    chatOpen = false;
+    const panel = document.getElementById('geChatPanel');
+    if (panel) panel.classList.remove('open');
+  }
+
+  function startLoops(){
+    pingOnline();
+    loadOnlineList();
+    loadChat();
+    setInterval(pingOnline, 45000);
+    setInterval(loadOnlineList, 60000);
+    setInterval(()=>{ if (chatOpen) loadChat(); else loadChat(); }, 25000);
+  }
+
+  function bind(){
+    const fab = document.getElementById('geChatFab');
+    const close = document.getElementById('geChatClose');
+    const refresh = document.getElementById('geChatRefresh');
+    const send = document.getElementById('geChatSend');
+    const inp = document.getElementById('geChatInput');
+    if (fab) fab.addEventListener('click', ()=>{
+      const panel = document.getElementById('geChatPanel');
+      if (panel && panel.classList.contains('open')) closeChat(); else openChat();
+    });
+    if (close) close.addEventListener('click', closeChat);
+    if (refresh) refresh.addEventListener('click', ()=>{ loadOnlineList(); loadChat(); });
+    if (send) send.addEventListener('click', sendChat);
+    if (inp) inp.addEventListener('keydown', e=>{ if (e.key==='Enter'){ e.preventDefault(); sendChat(); }});
+    window.addEventListener('beforeunload', ()=>{
+      try{
+        const id = geIdentity();
+        const urls = geApiUrls('/cliente06/online/offline');
+        const body = JSON.stringify({ userId: id.userId });
+        if (navigator.sendBeacon){
+          // beacon may not set content-type json; best-effort via fetch keepalive
+        }
+        fetch(urls[0], { method:'POST', headers:{'Content-Type':'application/json'}, body, keepalive:true }).catch(()=>{});
+      }catch(_){}
+    });
+    startLoops();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+})();
+</script>
 
 </body>
 </html>
