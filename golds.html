@@ -175,15 +175,56 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
     background: rgba(255,255,255,.06) !important; color: #94a3b8 !important;
     border: 1px solid rgba(255,255,255,.12) !important; border-radius: 999px !important;
   }
-  .ge-float-notify {
-    position: fixed; bottom: 18px; right: 14px; z-index: 60;
-    width: 48px; height: 48px; border-radius: 14px; border: 1px solid rgba(251,191,36,.35);
-    background: linear-gradient(160deg, #142019, #0c1410); color: #fde68a;
-    display: flex; align-items: center; justify-content: center; font-size: 20px;
-    box-shadow: 0 10px 28px rgba(0,0,0,.45); cursor: pointer;
+  .ge-float-notify-wrap {
+    position: fixed; bottom: 16px; right: 12px; z-index: 99990;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
   }
-  .ge-float-notify.on { border-color: rgba(74,222,128,.5); color: #4ade80; }
-  .ge-float-notify.denied { border-color: rgba(251,113,133,.45); color: #fb7185; }
+  .ge-float-notify {
+    position: relative; width: 42px; height: 42px; padding: 0; border: none;
+    border-radius: 50%; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(251,191,36,.28);
+    color: #fde68a; font-size: 15px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.28);
+    transition: transform .15s ease, background .15s ease;
+  }
+  .ge-float-notify:hover { transform: translateY(-2px); background: #1e293b; }
+  .ge-float-notify.on { background: rgba(6, 78, 59, 0.9); border-color: rgba(52, 211, 153, 0.4); color: #6ee7b7; }
+  .ge-float-notify.denied { background: rgba(120, 53, 15, 0.9); border-color: rgba(251, 191, 36, 0.35); color: #fcd34d; }
+  .ge-float-notify.pulse { animation: geSoftPulse 2.8s ease-in-out infinite; }
+  @keyframes geSoftPulse {
+    0%, 100% { box-shadow: 0 6px 18px rgba(0,0,0,.28); }
+    50% { box-shadow: 0 6px 18px rgba(251,191,36,.28); }
+  }
+  .ge-float-notify .ge-dot {
+    position: absolute; top: 8px; right: 8px; width: 7px; height: 7px;
+    border-radius: 50%; background: #f43f5e; border: 1.5px solid #0f172a;
+  }
+  .ge-float-notify.on .ge-dot, .ge-float-notify.denied .ge-dot { display: none; }
+  .ge-notify-help-backdrop {
+    position: fixed; inset: 0; z-index: 100000;
+    background: rgba(2,6,23,.72); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .ge-notify-help-backdrop.open { display: flex; }
+  .ge-notify-help {
+    width: min(380px, 100%);
+    background: linear-gradient(165deg, #0f172a, #1e1b4b);
+    border: 1px solid rgba(251,191,36,.35); border-radius: 18px;
+    padding: 22px; color: #e2e8f0; box-shadow: 0 24px 60px rgba(0,0,0,.55);
+  }
+  .ge-notify-help h4 { color: #fff; font-weight: 800; margin: 0 0 8px; font-size: 1.1rem; }
+  .ge-notify-help p { color: #94a3b8; font-size: 13.5px; margin: 0 0 12px; line-height: 1.5; }
+  .ge-notify-help ol { margin: 0 0 16px; padding-left: 18px; color: #cbd5e1; font-size: 13px; }
+  .ge-notify-help ol li { margin-bottom: 5px; }
+  .ge-notify-help .btn-help-ok {
+    width: 100%; border: none; border-radius: 12px; padding: 11px;
+    font-weight: 700; color: #1a1200; cursor: pointer;
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+  }
+  .crop { cursor: pointer; user-select: none; }
+  .crop:active { transform: scale(.97); }
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -427,7 +468,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
         <button type="button" data-q="3">3</button>
         <button type="button" data-q="6">Encher livres</button>
       </div>
-      <p class="sub" id="plantCostHint" style="margin-bottom:6px">Selecione a cultura · custo por canteiro aparece no card</p>
+      <p class="sub" id="plantCostHint" style="margin-bottom:6px">Toque numa cultura para selecionar · <b>toque 2×</b> para plantar na hora</p>
       <button class="btn btn-gold" id="btnPlant">🌱 PLANTAR</button>
       <p class="sub" id="farmLog" style="margin-top:8px;margin-bottom:0"></p>
       <div class="hist"><h4>Últimas ações · Fazenda</h4><div id="hist-fazenda"></div></div>
@@ -495,7 +536,7 @@ function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function fmt(n){return Math.floor(Number(n)||0).toLocaleString('pt-BR')}
 function toast(m,k){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(k==='bad'?' bad':k==='ok'?' ok':'');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),2400)}
 function fixFoto(f){f=String(f||'').trim();if(!f)return AV;if(f.startsWith('//'))f='https:'+f;if(f.startsWith('/'))f='https://fabibot.vercel.app'+f;if(!/^https?:\/\//i.test(f))return AV;return f}
-function setBtnCd(btn,ms,label){if(!btn)return;const end=Date.now()+Math.max(0,ms||0);const base=label||btn.dataset.label||btn.textContent;btn.dataset.label=base;const tick=()=>{const left=end-Date.now();if(left<=0){btn.disabled=false;btn.textContent=base;return}btn.disabled=true;btn.innerHTML=base+' <span class="cd">('+Math.ceil(left/1000)+'s)</span>';setTimeout(tick,200)};tick()}
+function setBtnCd(btn,ms,label){if(!btn)return;const end=Date.now()+Math.max(0,ms||0);const base=label||btn.dataset.label||btn.textContent;btn.dataset.label=base;btn.dataset.cooling='1';const tick=()=>{const left=end-Date.now();if(left<=0){btn.disabled=false;delete btn.dataset.cooling;delete btn.dataset.busy;btn.textContent=base;return}btn.disabled=true;btn.innerHTML=base+' <span class="cd">('+Math.ceil(left/1000)+'s)</span>';setTimeout(tick,200)};tick()}
 function paintHist(id,arr){
   const el=document.getElementById(id);if(!el)return;
   if(!arr||!arr.length){el.innerHTML='<div class="hi"><span>Nada ainda</span></div>';return}
@@ -665,20 +706,29 @@ function needGroup(){if(!S.grupo){toast('Escolha um grupo','bad');return false}r
 async function play(path,body,btn,opts){
   if(!needGroup())return null;
   if(S.busy){toast('Aguarde…','bad');return null}
-  S.busy=true;if(btn)btn.disabled=true;
+  S.busy=true;if(btn){btn.disabled=true;btn.dataset.busy='1'}
+  let onCd=false;
   try{
     const r=await api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo},body||{}))},18000);
-    if(r.status===429){const ms=(r.data&&r.data.cooldownMs)||3000;if(btn)setBtnCd(btn,ms,btn.dataset.label||btn.textContent);toast((r.data&&r.data.message)||'Cooldown','bad');return null}
+    if(r.status===429){const ms=(r.data&&r.data.cooldownMs)||3000;if(btn){setBtnCd(btn,ms,btn.dataset.label||btn.textContent);onCd=true}toast((r.data&&r.data.message)||'Cooldown','bad');return null}
     if(r.ok&&r.data&&r.data.success){
       if(typeof r.data.golds==='number') setGold(r.data.golds,{defer:opts&&opts.deferGold});
-      if(r.data.cooldownMs&&btn) setBtnCd(btn,r.data.cooldownMs,btn.dataset.label||btn.textContent);
+      if(r.data.cooldownMs&&btn){setBtnCd(btn,r.data.cooldownMs,btn.dataset.label||btn.textContent);onCd=true}
       if(r.data.recent&&opts&&opts.hist) paintHist(opts.hist,r.data.recent);
       return r.data;
     }
     toast((r.data&&(r.data.message||r.data.error))||('Erro '+r.status),'bad');
     return null;
   }catch(e){toast('Rede','bad');return null}
-  finally{S.busy=false;ui()}
+  finally{
+    S.busy=false;
+    // reabilita o botão se NÃO estiver em cooldown (bug: ficava cinza pra sempre)
+    if(btn && !onCd){
+      btn.disabled=false;
+      delete btn.dataset.busy;
+    }
+    ui();
+  }
 }
 
 document.getElementById('btnMine').onclick=async()=>{const btn=document.getElementById('btnMine');regen();if(S.energy<1)return toast('Sem energia','bad');S.energy--;S.streak++;save();const d=await play('/cliente06/game/mine',{taps:1,power:S.power,level:S.level},btn,{hist:'hist-mine'});if(d){document.getElementById('mineTag').textContent='+'+d.gain;toast('⛏️ +'+d.gain,'ok');setBtnCd(btn,800,'MINERAR')}};
@@ -795,10 +845,28 @@ function paintCatalog(cat){
     <div class="cr">Colher +${fmt(c.reward)}</div>
     <div class="cm">Lucro ~${fmt(c.lucro!=null?c.lucro:(c.reward-c.cost))}</div>
   </button>`).join('');
-  box.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{
-    farmCrop=b.getAttribute('data-c');
-    box.querySelectorAll('.crop').forEach(x=>x.classList.toggle('on',x.getAttribute('data-c')===farmCrop));
-    updatePlantCostHint();
+  box.querySelectorAll('[data-c]').forEach(b=>{
+    b.title='Clique para selecionar · Clique 2× para plantar na hora';
+    b.onclick=()=>{
+      farmCrop=b.getAttribute('data-c');
+      box.querySelectorAll('.crop').forEach(x=>x.classList.toggle('on',x.getAttribute('data-c')===farmCrop));
+      updatePlantCostHint();
+    };
+    b.ondblclick=async(ev)=>{
+      ev.preventDefault();
+      farmCrop=b.getAttribute('data-c');
+      box.querySelectorAll('.crop').forEach(x=>x.classList.toggle('on',x.getAttribute('data-c')===farmCrop));
+      updatePlantCostHint();
+      // planta direto (1 canteiro no duplo clique)
+      const btn=document.getElementById('btnPlant');
+      if(btn && btn.disabled){toast('Aguarde o botão liberar…','bad');return}
+      toast('🌱 Plantando '+farmCrop+'…','ok');
+      const d=await play('/cliente06/game/fazenda/plantar',{crop:farmCrop,qty:1},btn,{hist:'hist-fazenda'});
+      if(!d)return;
+      if(d.fazenda){paintPlots(d.fazenda.plots);updateUnlockUI(d.fazenda)}
+      document.getElementById('farmLog').textContent='Plantou '+(d.planted||0)+' · -'+fmt(d.cost);
+      toast('🌱 Plantado!','ok');
+    };
   });
   updatePlantCostHint();
 }
@@ -806,7 +874,7 @@ function updatePlantCostHint(){
   const c=farmCatalog.find(x=>x.id===farmCrop);
   const el=document.getElementById('plantCostHint');
   if(!el)return;
-  if(!c){el.textContent='Selecione uma cultura';return;}
+  if(!c){el.textContent='Selecione uma cultura (ou clique 2× nela para plantar)';return;}
   const total=c.cost*farmQty;
   el.innerHTML=`${c.emoji} <b>${esc(c.nome)}</b> · <span style="color:#fecaca">-${fmt(c.cost)}</span> por canteiro · ${farmQty}× = <b style="color:#fecaca">-${fmt(total)}</span> · colheita <b style="color:var(--g2)">+${fmt(c.reward*farmQty)}</b>`;
 }
@@ -848,7 +916,9 @@ document.getElementById('plantQtyRow')&&document.getElementById('plantQtyRow').q
 });
 document.getElementById('btnPlant').onclick=async()=>{
   const btn=document.getElementById('btnPlant');
+  if(!farmCrop){toast('Escolha uma cultura (ou dê 2 cliques nela)','bad');return}
   const d=await play('/cliente06/game/fazenda/plantar',{crop:farmCrop,qty:farmQty},btn,{hist:'hist-fazenda'});
+  if(btn && !btn.dataset.cooling){btn.disabled=false}
   if(!d)return;
   if(d.fazenda){paintPlots(d.fazenda.plots);updateUnlockUI(d.fazenda)}
   document.getElementById('farmLog').textContent='Plantou '+(d.planted||0)+' canteiro(s) · custo -'+fmt(d.cost)+' ('+fmt(d.costUnit||0)+' cada)';
@@ -1141,62 +1211,134 @@ setInterval(()=>{if(S.user){regen();ui()}},5000);
 setInterval(()=>{if(S.user&&S.grupo&&S.pendingGold==null)refreshGold()},20000);
 
 
-/* ===== OneSignal / permissão de notificação (Gold Empire) ===== */
-async function geEnsurePushPermission(forcePrompt) {
-  try {
-    if (!window.OneSignal) return false;
-    const OneSignal = window.OneSignal;
-    let perm = (typeof Notification !== 'undefined' && Notification.permission) || 'default';
-    try {
-      if (OneSignal.Notifications && OneSignal.Notifications.permissionNative) {
-        perm = OneSignal.Notifications.permissionNative;
-      }
-    } catch (_) {}
-    if (perm === 'granted') {
-      // garante login com id da conta
-      const ext = (S && (S.pass || (S.user && (S.user.id || S.user.numero)))) || '';
-      if (ext) await window.__geOsLogin(ext);
-      if (window.__geUpdateNotifyBtn) window.__geUpdateNotifyBtn();
-      return true;
-    }
-    if (perm === 'denied') {
-      if (forcePrompt) toast('Notificações bloqueadas no navegador. Libere nas configurações do site.', 'bad');
-      if (window.__geUpdateNotifyBtn) window.__geUpdateNotifyBtn();
-      return false;
-    }
-    // pede permissão (slidedown ou nativo)
-    try {
-      if (OneSignal.Slidedown && OneSignal.Slidedown.promptPush) {
-        await OneSignal.Slidedown.promptPush();
-      } else if (OneSignal.Notifications && OneSignal.Notifications.requestPermission) {
-        await OneSignal.Notifications.requestPermission();
-      } else if (typeof Notification !== 'undefined' && Notification.requestPermission) {
-        await Notification.requestPermission();
-      }
-    } catch (e) { console.warn('prompt push', e); }
-    const ext2 = (S && (S.pass || (S.user && (S.user.id || S.user.numero)))) || '';
-    if (ext2) await window.__geOsLogin(ext2);
-    if (window.__geUpdateNotifyBtn) window.__geUpdateNotifyBtn();
-    return (typeof Notification !== 'undefined' && Notification.permission === 'granted');
-  } catch (e) {
-    console.warn('geEnsurePushPermission', e);
-    return false;
-  }
+/* ===== OneSignal / permissão — estilo conectar.html (robusto) ===== */
+function geNativePerm() {
+  try { if (typeof Notification !== 'undefined') return Notification.permission; } catch (e) {}
+  return 'default';
 }
 window.__geUpdateNotifyBtn = function () {
   const btn = document.getElementById('geNotifyBtn');
   if (!btn) return;
-  let perm = (typeof Notification !== 'undefined' && Notification.permission) || 'default';
-  btn.classList.remove('on', 'denied');
-  if (perm === 'granted') { btn.classList.add('on'); btn.title = 'Notificações ativas'; btn.textContent = '🔔'; }
-  else if (perm === 'denied') { btn.classList.add('denied'); btn.title = 'Notificações bloqueadas — toque para ver como ativar'; btn.textContent = '🔕'; }
-  else { btn.title = 'Ativar notificações de colheita'; btn.textContent = '🔔'; }
+  const perm = geNativePerm();
+  btn.classList.remove('on', 'denied', 'pulse');
+  if (perm === 'granted') {
+    btn.classList.add('on');
+    btn.title = 'Notificações ativas';
+    btn.innerHTML = '<span aria-hidden="true">✓</span>';
+  } else if (perm === 'denied') {
+    btn.classList.add('denied');
+    btn.title = 'Notificações bloqueadas — toque para ver como liberar';
+    btn.innerHTML = '<span aria-hidden="true">🔕</span>';
+  } else {
+    btn.classList.add('pulse');
+    btn.title = 'Ativar notificações de colheita';
+    btn.innerHTML = '<span aria-hidden="true">🔔</span><span class="ge-dot" aria-hidden="true"></span>';
+  }
 };
-document.addEventListener('click', function (ev) {
-  const btn = ev.target && ev.target.closest && ev.target.closest('#geNotifyBtn');
-  if (!btn) return;
-  geEnsurePushPermission(true);
-});
+async function geEnsurePushPermission(forcePrompt) {
+  const help = document.getElementById('geNotifyHelp');
+  try {
+    let OneSignal = window.OneSignal;
+    // espera SDK se ainda não carregou
+    if (!OneSignal && window.OneSignalDeferred) {
+      await new Promise(function (resolve) {
+        var done = false;
+        window.OneSignalDeferred.push(async function (OS) {
+          window.OneSignal = OS;
+          OneSignal = OS;
+          done = true;
+          resolve();
+        });
+        setTimeout(function () { if (!done) resolve(); }, 2500);
+      });
+      OneSignal = window.OneSignal || OneSignal;
+    }
+    let perm = geNativePerm();
+    if (perm === 'granted') {
+      const ext = (S && (S.pass || (S.user && (S.user.id || S.user.numero)))) || '';
+      if (ext && window.__geOsLogin) await window.__geOsLogin(ext);
+      window.__geUpdateNotifyBtn();
+      if (forcePrompt) toast('Notificações já estão ativas ✓', 'ok');
+      return true;
+    }
+    if (perm === 'denied') {
+      if (help) help.classList.add('open');
+      window.__geUpdateNotifyBtn();
+      if (forcePrompt) toast('Permissão bloqueada no navegador', 'bad');
+      return false;
+    }
+    if (!forcePrompt && perm === 'default') {
+      // auto: tenta slidedown OneSignal
+    }
+    if (forcePrompt) toast('Abrindo pedido de notificação…', 'ok');
+    var ok = false;
+    if (OneSignal && OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
+      try {
+        await OneSignal.Slidedown.promptPush({ force: !!forcePrompt });
+        ok = true;
+      } catch (e1) { console.warn('Slidedown', e1); }
+    }
+    if (!ok && OneSignal && OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+      try {
+        await OneSignal.Notifications.requestPermission(true);
+        ok = true;
+      } catch (e2) { console.warn('OS requestPermission', e2); }
+    }
+    if (geNativePerm() === 'default' && typeof Notification !== 'undefined' && Notification.requestPermission) {
+      try {
+        var r = await Notification.requestPermission();
+        ok = ok || r === 'granted';
+      } catch (e3) { console.warn('native requestPermission', e3); }
+    }
+    const ext2 = (S && (S.pass || (S.user && (S.user.id || S.user.numero)))) || '';
+    if (ext2 && window.__geOsLogin) await window.__geOsLogin(ext2);
+    window.__geUpdateNotifyBtn();
+    perm = geNativePerm();
+    if (perm === 'granted') {
+      if (forcePrompt) toast('Notificações ativas! Você será avisado na colheita.', 'ok');
+      try {
+        if (typeof Notification !== 'undefined') {
+          new Notification('Gold Empire', { body: 'Avisos de colheita ativados.', icon: '/icon-192.png' });
+        }
+      } catch (_) {}
+      return true;
+    }
+    if (perm === 'denied') {
+      if (help) help.classList.add('open');
+      if (forcePrompt) toast('Permissão negada. Siga os passos na tela.', 'bad');
+      return false;
+    }
+    if (forcePrompt) toast('Se o pedido não apareceu, confira se o site está em HTTPS.', 'bad');
+    return false;
+  } catch (e) {
+    console.warn('geEnsurePushPermission', e);
+    if (forcePrompt) toast('Erro ao pedir notificação. Recarregue a página.', 'bad');
+    return false;
+  }
+}
+(function bindGeNotify() {
+  function bind() {
+    const btn = document.getElementById('geNotifyBtn');
+    if (!btn || btn.dataset.bound) return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      geEnsurePushPermission(true);
+    });
+    const help = document.getElementById('geNotifyHelp');
+    const helpOk = document.getElementById('geNotifyHelpOk');
+    if (helpOk) helpOk.addEventListener('click', function () {
+      if (help) help.classList.remove('open');
+    });
+    if (help) help.addEventListener('click', function (e) {
+      if (e.target === help) help.classList.remove('open');
+    });
+    window.__geUpdateNotifyBtn();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+})();
 
 
 async function bootSSO(){
@@ -1267,7 +1409,25 @@ bootSSO();
 })();
 </script>
 
-<button type="button" class="ge-float-notify" id="geNotifyBtn" title="Ativar notificações" aria-label="Notificações">🔔</button>
+<div class="ge-float-notify-wrap" id="geFloatNotifyWrap">
+  <button type="button" class="ge-float-notify pulse" id="geNotifyBtn" title="Ativar notificações" aria-label="Ativar notificações">
+    <span aria-hidden="true">🔔</span>
+    <span class="ge-dot" aria-hidden="true"></span>
+  </button>
+</div>
+<div class="ge-notify-help-backdrop" id="geNotifyHelp" role="dialog" aria-modal="true">
+  <div class="ge-notify-help">
+    <h4>🔒 Notificações bloqueadas</h4>
+    <p>O navegador bloqueou o pedido. Libere manualmente:</p>
+    <ol>
+      <li>Toque no <strong>cadeado</strong> na barra de endereço</li>
+      <li>Abra <strong>Notificações</strong></li>
+      <li>Mude para <strong>Permitir</strong></li>
+      <li>Recarregue e toque no sino de novo</li>
+    </ol>
+    <button type="button" class="btn-help-ok" id="geNotifyHelpOk">Entendi</button>
+  </div>
+</div>
 
 </body>
 </html>
