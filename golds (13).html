@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<title>Gold Empire · Fabi Bot</title>
+<meta name="theme-color" content="#070b09"/>
+<link rel="icon" href="/favicon-32x32.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#060908;--card:#0e1612;--line:rgba(255,255,255,.08);--g:#16a34a;--g2:#4ade80;--gold:#fbbf24;--gold2:#fde68a;--cyan:#22d3ee;--purple:#c084fc;--red:#fb7185;--pink:#f472b6;--text:#f0fdf4;--muted:#7d9b8c;--font:'Plus Jakarta Sans',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:
+  radial-gradient(900px 420px at 15% -15%,rgba(22,163,74,.22),transparent 55%),
+  radial-gradient(700px 320px at 100% 0,rgba(251,191,36,.1),transparent 50%),
+  var(--bg);color:var(--text);min-height:100vh}
+.top{position:sticky;top:0;z-index:40;backdrop-filter:blur(16px);background:rgba(6,9,8,.92);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);font-weight:800}
+.brand img{width:34px;height:34px;border-radius:10px;object-fit:cover;box-shadow:0 0 0 2px rgba(22,163,74,.35)}
+.brand span{color:var(--g2)}
+.nav a{color:var(--muted);text-decoration:none;font-size:12px;font-weight:700;padding:7px 11px;border-radius:10px}
+.nav a.on{color:var(--gold2);background:rgba(251,191,36,.12)}
+.shell{max-width:980px;margin:0 auto;padding:16px 14px 80px}
+.hide{display:none!important}
+.btn{border:0;border-radius:14px;padding:13px 16px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed}.btn:active:not(:disabled){transform:scale(.98)}
+.btn-g{background:linear-gradient(135deg,var(--g2),var(--g));color:#052e16}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#d97706);color:#1a1200}
+.btn-red{background:linear-gradient(135deg,#fb7185,#e11d48);color:#fff}
+.btn-cyan{background:linear-gradient(135deg,var(--cyan),#0891b2);color:#042f2e}
+.btn-pink{background:linear-gradient(135deg,var(--pink),#db2777);color:#fff}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}
+.cd{font-size:11px;opacity:.9}
+.login{max-width:400px;margin:48px auto;background:linear-gradient(180deg,#142019,#0c1410);border:1px solid var(--line);border-radius:24px;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.login h1{margin:10px 0 6px;font-size:24px}.login p{color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.5}
+.fld{text-align:left;margin-bottom:10px}
+.fld label{display:block;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;margin-bottom:5px}
+.fld input{width:100%;padding:13px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font:inherit}
+.err{color:var(--red);font-size:12px;min-height:16px;margin:6px 0}
+.hud{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin-bottom:16px}
+@media(max-width:700px){.hud{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.user{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(22,163,74,.14),var(--card))}
+.user img{width:56px;height:56px;border-radius:16px;object-fit:cover;border:2px solid rgba(251,191,36,.45);background:#1a1f2e}
+.bal{background:linear-gradient(145deg,rgba(251,191,36,.14),rgba(14,22,18,.95));border-color:rgba(251,191,36,.35);display:flex;gap:12px;align-items:center}
+.bal .gimg{width:52px;height:52px;border-radius:14px;object-fit:cover;border:2px solid rgba(251,191,36,.35);background:#122;flex-shrink:0}
+.bal .col{flex:1;min-width:0}
+.bal .row{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
+.bal .v{font-size:20px;font-weight:800;color:var(--gold2)}
+.bal .s{font-size:12px;color:var(--muted)}.bal .s b{color:var(--g2);font-weight:800}
+.bal .l{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:800}
+.sec{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:8px 0 10px}
+.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:14px}
+.gcard{text-align:left;padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font-family:inherit;cursor:pointer;transition:.15s;display:flex;gap:10px;align-items:center}
+.gcard:hover{border-color:rgba(255,255,255,.18);transform:translateY(-2px)}
+.gcard.on{border-color:rgba(251,191,36,.55);background:rgba(251,191,36,.1);box-shadow:0 0 0 1px rgba(251,191,36,.25)}
+.gcard img{width:44px;height:44px;border-radius:12px;object-fit:cover;background:#1a1f2e;flex-shrink:0}
+.gcard .meta{min-width:0;flex:1}
+.gcard strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gcard .gg{color:var(--gold2);font-weight:800;margin-top:2px;font-size:13px}
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}
+.gbtn{background:linear-gradient(180deg,#142019,var(--card));border:1px solid var(--line);border-radius:18px;padding:18px 12px;cursor:pointer;font-family:inherit;color:var(--text);text-align:center;box-shadow:0 12px 28px rgba(0,0,0,.25);transition:.15s}
+.gbtn:hover{transform:translateY(-3px);border-color:rgba(251,191,36,.3)}
+.gbtn .ico{font-size:30px;display:block;margin-bottom:8px}
+.gbtn strong{font-size:13px;display:block}
+.gbtn span{font-size:11px;color:var(--muted)}
+.gv{display:none}.gv.on{display:block;animation:up .25s ease}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.back{margin-bottom:12px;padding:9px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-weight:700;font-size:12px;font-family:inherit;cursor:pointer}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+.panel h3{font-size:15px;margin-bottom:4px}
+.sub{font-size:13px;color:var(--muted);line-height:1.45;margin-bottom:10px}
+.bets{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.bets button{flex:1;min-width:52px;padding:10px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-weight:800;font-family:inherit;cursor:pointer}
+.bets button.on{border-color:rgba(22,163,74,.55);background:rgba(22,163,74,.15);color:var(--g2)}
+.amt{display:flex;gap:8px;align-items:center;margin:8px 0}
+.amt input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font:inherit;font-weight:700}
+.amt .hint{font-size:11px;color:var(--muted);white-space:nowrap}
+.arena{min-height:200px;border-radius:20px;border:1px solid var(--line);margin-bottom:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#152018,#070b09);position:relative;overflow:hidden}
+.arena.tig{background:radial-gradient(circle at 50% 85%,rgba(251,191,36,.22),transparent 55%),linear-gradient(180deg,#1c1608,#0a0804)}
+.crash-box{position:relative;height:280px;border-radius:20px;border:1px solid var(--line);margin-bottom:12px;background:linear-gradient(180deg,#0c1220 0%,#070b12 100%);overflow:hidden}
+.crash-box canvas{position:absolute;inset:0;width:100%;height:100%}
+.crash-hud{position:absolute;left:14px;top:12px;z-index:3}
+.crash-hud .mx{font-size:36px;font-weight:800;color:var(--cyan);text-shadow:0 0 20px rgba(34,211,238,.4)}
+.crash-hud .mx.boom{color:var(--red)}
+.crash-hud .tg{font-size:12px;font-weight:700;color:var(--muted);margin-top:2px}
+.crash-rocket{position:absolute;z-index:4;font-size:28px;filter:drop-shadow(0 0 8px rgba(34,211,238,.5));pointer-events:none;transform:translate(-50%,50%) rotate(-25deg)}
+.tag{font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px;background:rgba(251,191,36,.14);color:var(--gold2);z-index:2}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:280px;margin:12px auto}
+.cell{aspect-ratio:1;border-radius:14px;background:#1a1230;border:2px solid rgba(251,191,36,.35);display:grid;place-items:center;font-size:32px}
+.pay{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:11px;color:var(--muted);margin-top:10px}
+.pay div{background:rgba(255,255,255,.03);border-radius:10px;padding:8px;text-align:center;border:1px solid var(--line)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.st{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.st .n{font-weight:800;color:var(--gold2)}.st .l{font-size:10px;color:var(--muted);text-transform:uppercase}
+.ebar{height:8px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;margin:8px 0}
+.ebar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--cyan));transition:width .3s}
+.hist{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.hist h4{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px}
+.hi{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.hi b{color:var(--text)}.hi span{color:var(--muted)}.hi .d{font-weight:800}.hi .d.up{color:var(--g2)}.hi .d.dn{color:var(--red)}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:90px;padding:10px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-weight:800;font-family:inherit;cursor:pointer}
+.tabs button.on{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.4);color:var(--gold2)}
+.ri{display:flex;align-items:center;gap:10px;padding:10px 6px;border-radius:14px;cursor:pointer;transition:.12s}
+.ri:hover{background:rgba(255,255,255,.04)}.ri.me{background:rgba(251,191,36,.1)}
+.ri img{width:40px;height:40px;border-radius:12px;object-fit:cover;background:#1a1f2e}
+.skel{height:48px;border-radius:12px;margin-bottom:6px;background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.08),rgba(255,255,255,.03));background-size:200% 100%;animation:sh 1s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(10px);background:rgba(12,20,16,.96);border:1px solid rgba(22,163,74,.45);color:var(--g2);padding:12px 18px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:92%;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast.bad{border-color:rgba(251,113,133,.5);color:#fecaca}.toast.ok{border-color:rgba(251,191,36,.5);color:var(--gold2)}
+.banner{background:linear-gradient(135deg,rgba(22,163,74,.16),rgba(251,191,36,.08));border:1px solid rgba(251,191,36,.22);border-radius:16px;padding:13px 15px;margin-bottom:14px;font-size:13px;color:var(--muted);line-height:1.45}
+.banner b{color:var(--gold2)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:90;display:flex;align-items:flex-end;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:.2s}
+.modal.on{opacity:1;pointer-events:auto}
+.modal .sheet{background:linear-gradient(180deg,#142019,#0c1410);border:1px solid var(--line);border-radius:22px 22px 16px 16px;padding:18px;width:100%;max-width:440px;max-height:80vh;overflow:auto;transform:translateY(20px);transition:.25s}
+.modal.on .sheet{transform:none}
+.modal .head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.modal .head img{width:56px;height:56px;border-radius:16px;object-fit:cover}
+.gline{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;align-items:center}
+.gline img{width:36px;height:36px;border-radius:10px;object-fit:cover}
+.gline:hover{color:var(--gold2)}
+.raid-pos{font-size:10px;font-weight:800;color:var(--gold);margin-bottom:2px}
+.vitima{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.25);margin:8px 0}
+.vitima img{width:40px;height:40px;border-radius:11px;object-fit:cover}
+footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a{color:var(--g2);text-decoration:none}
+
+.plots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}@media(min-width:700px){.plots{grid-template-columns:repeat(6,1fr)}}.plot.locked{opacity:.85;border-style:dashed}
+.plot{background:linear-gradient(180deg,#1a2a1c,#0e1610);border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.plot.ready{border-color:rgba(74,222,128,.5);box-shadow:0 0 16px rgba(22,163,74,.2)}
+.plot.growing{border-color:rgba(251,191,36,.3)}
+.plot .pe{font-size:36px;line-height:1}
+.plot .pn{font-size:12px;font-weight:700}
+.plot .pr{font-size:11px;color:var(--muted)}
+.pbar{width:100%;height:8px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:4px}
+.pbar>i{display:block;height:100%;background:linear-gradient(90deg,var(--g),var(--cyan));border-radius:99px;transition:width .4s}
+.crop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;max-height:280px;overflow:auto;margin:8px 0}
+.crop{padding:10px 8px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);text-align:center;cursor:pointer;font-family:inherit;color:var(--text)}
+.crop.on{border-color:rgba(74,222,128,.55);background:rgba(22,163,74,.12)}
+.crop .ce{font-size:24px}.crop .cn{font-size:11px;font-weight:700;margin-top:2px}
+.crop .cm{font-size:10px;color:var(--muted);margin-top:2px}
+.crop .cr{font-size:11px;color:var(--gold2);font-weight:800}
+.plot.ready{animation:pulseReady 1.6s ease-in-out infinite;cursor:pointer}
+@keyframes pulseReady{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.35)}50%{box-shadow:0 0 0 6px rgba(74,222,128,.12)}}
+.plot.ready:hover{transform:translateY(-2px);border-color:rgba(74,222,128,.7)}
+.login{position:relative;overflow:hidden}
+.login::before{content:'';position:absolute;inset:-40% -20% auto;height:120px;background:radial-gradient(circle,rgba(251,191,36,.25),transparent 70%);pointer-events:none}
+.top .brand b{letter-spacing:-.3px}
+.gbtn{position:relative;overflow:hidden}
+.gbtn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.04));pointer-events:none}
+.bal .v{letter-spacing:-.5px}
+#btnDaily{box-shadow:0 8px 24px rgba(251,191,36,.2)}
+.chip-live{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;padding:4px 10px;border-radius:999px;background:rgba(22,163,74,.15);color:var(--g2);border:1px solid rgba(22,163,74,.35)}
+.chip-live i{width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:pulseReady 1.2s infinite}
+</style>
+
+<!-- OneSignal Fabi Bot — push de colheita / Golds (igual conectar.html) -->
+<style>
+  #onesignal-slidedown-container { font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important; }
+  #onesignal-slidedown-dialog, #onesignal-popover-dialog {
+    background: linear-gradient(165deg, #0f1f1a 0%, #0a1410 100%) !important;
+    color: #e8eaed !important;
+    border: 1px solid rgba(251, 191, 36, 0.4) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 24px 60px rgba(0,0,0,.55), 0 0 40px rgba(251,191,36,.12) !important;
+    max-width: 420px !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-button.primary,
+  #onesignal-popover-dialog .popover-button.primary {
+    background: linear-gradient(135deg, #fbbf24, #d97706) !important;
+    color: #1a1200 !important; border: none !important; border-radius: 999px !important; font-weight: 800 !important;
+  }
+  #onesignal-slidedown-dialog .slidedown-button.secondary,
+  #onesignal-popover-dialog .popover-button.secondary {
+    background: rgba(255,255,255,.06) !important; color: #94a3b8 !important;
+    border: 1px solid rgba(255,255,255,.12) !important; border-radius: 999px !important;
+  }
+  .ge-float-notify-wrap {
+    position: fixed; bottom: 16px; right: 12px; z-index: 99990;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+  }
+  .ge-float-notify {
+    position: relative; width: 42px; height: 42px; padding: 0; border: none;
+    border-radius: 50%; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(251,191,36,.28);
+    color: #fde68a; font-size: 15px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.28);
+    transition: transform .15s ease, background .15s ease;
+  }
+  .ge-float-notify:hover { transform: translateY(-2px); background: #1e293b; }
+  .ge-float-notify.on { background: rgba(6, 78, 59, 0.9); border-color: rgba(52, 211, 153, 0.4); color: #6ee7b7; }
+  .ge-float-notify.denied { background: rgba(120, 53, 15, 0.9); border-color: rgba(251, 191, 36, 0.35); color: #fcd34d; }
+  .ge-float-notify.pulse { animation: geSoftPulse 2.8s ease-in-out infinite; }
+  @keyframes geSoftPulse {
+    0%, 100% { box-shadow: 0 6px 18px rgba(0,0,0,.28); }
+    50% { box-shadow: 0 6px 18px rgba(251,191,36,.28); }
+  }
+  .ge-float-notify .ge-dot {
+    position: absolute; top: 8px; right: 8px; width: 7px; height: 7px;
+    border-radius: 50%; background: #f43f5e; border: 1.5px solid #0f172a;
+  }
+  .ge-float-notify.on .ge-dot, .ge-float-notify.denied .ge-dot { display: none; }
+  .ge-notify-help-backdrop {
+    position: fixed; inset: 0; z-index: 100000;
+    background: rgba(2,6,23,.72); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .ge-notify-help-backdrop.open { display: flex; }
+  .ge-notify-help {
+    width: min(380px, 100%);
+    background: linear-gradient(165deg, #0f172a, #1e1b4b);
+    border: 1px solid rgba(251,191,36,.35); border-radius: 18px;
+    padding: 22px; color: #e2e8f0; box-shadow: 0 24px 60px rgba(0,0,0,.55);
+  }
+  .ge-notify-help h4 { color: #fff; font-weight: 800; margin: 0 0 8px; font-size: 1.1rem; }
+  .ge-notify-help p { color: #94a3b8; font-size: 13.5px; margin: 0 0 12px; line-height: 1.5; }
+  .ge-notify-help ol { margin: 0 0 16px; padding-left: 18px; color: #cbd5e1; font-size: 13px; }
+  .ge-notify-help ol li { margin-bottom: 5px; }
+  .ge-notify-help .btn-help-ok {
+    width: 100%; border: none; border-radius: 12px; padding: 11px;
+    font-weight: 700; color: #1a1200; cursor: pointer;
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+  }
+  .crop { cursor: pointer; user-select: none; }
+  .crop:active { transform: scale(.97); }
+
+  /* ===== Online badge + floating chat ===== */
+  .ge-online-pill{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:6px 12px;border-radius:999px;
+    background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);
+    color:#6ee7b7;font-size:12px;font-weight:800;letter-spacing:.2px;
+    margin-left:6px;white-space:nowrap;
+  }
+  .ge-online-pill .dot{
+    width:8px;height:8px;border-radius:50%;background:#22c55e;
+    box-shadow:0 0 0 0 rgba(34,197,94,.55);
+    animation:geOnPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes geOnPulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.45);opacity:1}
+    50%{box-shadow:0 0 0 6px rgba(34,197,94,0);opacity:.85}
+  }
+  .ge-chat-fab{
+    position:fixed;left:16px;bottom:18px;z-index:99990;
+    width:42px;height:42px;border-radius:50%;
+    border:1px solid rgba(37,211,102,.4);
+    background:linear-gradient(145deg,#0f291c,#0a1a12);
+    color:#6ee7b7;font-size:18px;cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,0,0,.28);
+    display:flex;align-items:center;justify-content:center;
+    transition:.15s;
+  }
+  .ge-chat-fab:hover{transform:translateY(-2px);border-color:rgba(37,211,102,.7)}
+  .ge-chat-fab .badge{
+    position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;
+    border-radius:999px;background:#ef4444;color:#fff;
+    font-size:10px;font-weight:800;display:none;align-items:center;justify-content:center;
+    padding:0 5px;border:2px solid #060908;
+  }
+  .ge-chat-fab .badge.on{display:flex}
+  .ge-chat-panel{
+    position:fixed;left:16px;bottom:72px;z-index:99991;
+    width:min(360px,calc(100vw - 24px));height:min(480px,calc(100vh - 160px));
+    background:linear-gradient(180deg,#0e1714,#0a100e);
+    border:1px solid rgba(37,211,102,.3);border-radius:20px;
+    box-shadow:0 24px 60px rgba(0,0,0,.55);
+    display:none;flex-direction:column;overflow:hidden;
+  }
+  .ge-chat-panel.open{display:flex;animation:up .2s ease}
+  .ge-chat-hd{
+    display:flex;align-items:center;gap:10px;padding:12px 14px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    background:linear-gradient(90deg,rgba(37,211,102,.12),transparent);
+  }
+  .ge-chat-hd strong{flex:1;font-size:14px}
+  .ge-chat-hd .mini{font-size:11px;color:var(--muted);font-weight:600}
+  .ge-chat-hd button{
+    border:1px solid var(--line);background:rgba(255,255,255,.05);
+    color:var(--text);border-radius:10px;width:32px;height:32px;cursor:pointer;font-size:14px;
+  }
+  .ge-chat-online{
+    padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.06);
+    display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+  }
+  .ge-chat-online::-webkit-scrollbar{display:none}
+  .ge-chat-online .ou{
+    flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;
+    width:52px;font-size:10px;color:var(--muted);text-align:center;
+  }
+  .ge-chat-online .ou img{
+    width:32px;height:32px;border-radius:50%;object-fit:cover;
+    border:2px solid rgba(34,197,94,.55);background:#1a1f2e;
+  }
+  .ge-chat-online .ou span{max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ge-chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+  .ge-chat-msg{display:flex;gap:8px;align-items:flex-start;max-width:92%}
+  .ge-chat-msg.me{align-self:flex-end;flex-direction:row-reverse}
+  .ge-chat-msg img{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#1a1f2e}
+  .ge-chat-msg .bubble{
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;padding:8px 11px;font-size:13px;line-height:1.4;word-break:break-word;
+  }
+  .ge-chat-msg.me .bubble{background:rgba(22,163,74,.18);border-color:rgba(22,163,74,.35)}
+  .ge-chat-msg .meta{font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:700}
+  .ge-chat-ft{
+    display:flex;gap:8px;padding:10px;border-top:1px solid rgba(255,255,255,.08);
+    background:rgba(0,0,0,.2);
+  }
+  .ge-chat-ft input{
+    flex:1;padding:11px 14px;border-radius:12px;border:1px solid var(--line);
+    background:rgba(255,255,255,.04);color:var(--text);font:inherit;font-size:13px;outline:none;
+  }
+  .ge-chat-ft input:focus{border-color:rgba(37,211,102,.5)}
+  .ge-chat-ft button{
+    width:42px;height:42px;border-radius:12px;border:none;cursor:pointer;
+    background:linear-gradient(135deg,#16a34a,#0f766e);color:#fff;font-size:16px;font-weight:800;
+  }
+  .ge-chat-empty{text-align:center;color:var(--muted);font-size:13px;padding:30px 12px;line-height:1.5}
+  @media(max-width:480px){
+    .ge-chat-fab{bottom:16px;left:12px;width:42px;height:42px}
+    .ge-chat-panel{left:8px;right:auto;bottom:68px;height:min(70vh,520px)}
+    .ge-online-pill{font-size:11px;padding:5px 10px}
+  }
+</style>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  window.__geOsReady = false;
+  window.__geOsLogin = async function (extId) {
+    try {
+      if (!window.OneSignal || !extId) return;
+      const id = String(extId).trim();
+      if (!id) return;
+      if (OneSignal.login) await OneSignal.login(id);
+      console.log('✅ OneSignal.login (golds) →', id);
+    } catch (e) { console.warn('OneSignal.login golds:', e); }
+  };
+  OneSignalDeferred.push(async function (OneSignal) {
+    try {
+      await OneSignal.init({
+        appId: "6ba779b7-14c6-4a31-b955-0c8567a9039b",
+        safari_web_id: "web.onesignal.auto.5136aa20-d33c-4de6-8d7f-c3f8c4b264dc",
+        serviceWorkerPath: "OneSignalSDKWorker.js",
+        serviceWorkerParam: { scope: "/" },
+        allowLocalhostAsSecureOrigin: true,
+        notifyButton: { enable: false },
+        promptOptions: {
+          slidedown: {
+            prompts: [{
+              type: "push",
+              autoPrompt: true,
+              text: {
+                actionMessage: "Ative avisos do Gold Empire: colheita pronta, raids e bônus.",
+                acceptButton: "Sim, quero",
+                cancelButton: "Agora não"
+              },
+              delay: { pageViews: 1, timeDelay: 4 }
+            }]
+          }
+        },
+        welcomeNotification: {
+          title: "Gold Empire",
+          message: "Notificações ativas! Você será avisado quando a colheita ficar pronta."
+        }
+      });
+      window.__geOsReady = true;
+      console.log("✅ OneSignal Fabi Bot (golds) inicializado");
+      // liga ao usuário já logado
+      try {
+        const raw = localStorage.getItem('ge_session_v1') || localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
+        if (raw) {
+          const s = JSON.parse(raw);
+          const ext = String((s && (s.pass || s.id || s.numero || s.email || (s.user && (s.user.id || s.user.numero)))) || '').trim();
+          if (ext) await window.__geOsLogin(ext);
+        }
+      } catch (_) {}
+      if (window.__geUpdateNotifyBtn) window.__geUpdateNotifyBtn();
+    } catch (e) {
+      console.warn("OneSignal init golds:", e);
+    }
+  });
+</script>
+
+</head>
+<body>
+<div class="top">
+  <a class="brand" href="index.html"><img src="/flogo.jpg" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'" alt=""/><b>Fabi<span>Bot</span></b></a>
+  <div class="nav" style="margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span class="ge-online-pill" id="geOnlinePill" title="Pessoas no site agora">
+      <span class="dot"></span>
+      <span><b id="geOnlineCount">0</b> online</span>
+    </span>
+    <a href="index.html">Início</a>
+    <a href="golds.html" class="on">👑 Golds</a>
+    <a href="conectar.html">Conectar</a>
+  </div>
+</div>
+
+<div class="shell" id="viewLogin">
+  <div class="login">
+    <div style="font-size:44px">👑</div>
+    <h1>Gold Empire</h1>
+    <p>Mesma conta do <b>/rg</b> no WhatsApp. Se já entrou no site principal, o login é automático.</p>
+    <div class="banner" style="text-align:left;margin:12px 0">
+      <b>Não tem conta?</b> Entre em um grupo com a Fabi Bot e use o comando <b>/rg</b> (registro) para criar sua conta. Depois volte aqui com o mesmo usuário e senha.
+    </div>
+    <div class="fld"><label>Usuário</label><input id="inpUser" placeholder="Nome do /rg"/></div>
+    <div class="fld"><label>Senha</label><input id="inpPass" type="password" placeholder="Senha do /rg"/></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn btn-g" id="btnLogin">Entrar no Império</button>
+    <p class="sub" style="margin-top:12px;margin-bottom:0">Site dos Golds: <a href="https://fabibot.vercel.app/golds" style="color:var(--g2)">fabibot.vercel.app/golds</a></p>
+  </div>
+</div>
+
+<div class="shell hide" id="viewApp">
+  <div class="hud">
+    <div class="card user">
+      <img id="av" referrerpolicy="no-referrer" loading="lazy" alt="" onerror="this.onerror=null;this.src='https://fabibot.vercel.app/flogo.jpg'"/>
+      <div style="flex:1;min-width:0">
+        <strong id="userName" style="display:block;font-size:16px">—</strong>
+        <span id="userSub" style="font-size:12px;color:var(--muted)">Escolha o grupo</span>
+      </div>
+      <button class="btn btn-ghost" id="btnLogout" style="width:auto;padding:8px 12px;font-size:12px">Sair</button>
+    </div>
+    <div class="card bal">
+      <img class="gimg" id="grpImg" referrerpolicy="no-referrer" src="https://fabibot.vercel.app/flogo.jpg" alt="" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'"/>
+      <div class="col">
+        <div class="l">Seu saldo neste grupo</div>
+        <div class="v">💰 <span id="goldBal">0</span></div>
+        <div class="row">
+          <div class="s">Grupo: <b id="grpTotal">0</b></div>
+          <div class="s">Rank: <b id="grpPos">—</b></div>
+        </div>
+        <div class="s" id="grpLabel" style="margin-top:4px">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="viewHome">
+    <div class="banner">Escolha o <b>grupo</b> e jogue. Golds são os mesmos do WhatsApp. <b>Bônus diário</b>, fazenda, raids e ranking — tudo em um lugar.</div>
+    <button class="btn btn-gold" id="btnDaily" style="margin-bottom:12px">🎁 Resgatar bônus diário</button>
+    <div class="sec">1 · Grupo</div>
+    <div class="groups" id="grpGrid"><div class="skel"></div></div>
+    <div class="sec">2 · Arena</div>
+    <div class="games">
+      <button class="gbtn" data-g="mine"><span class="ico">⛏️</span><strong>Minerar</strong><span>Energia & ouro</span></button>
+      <button class="gbtn" data-g="fish"><span class="ico">🎣</span><strong>Pescar</strong><span>Peixes raros</span></button>
+      <button class="gbtn" data-g="crash"><span class="ico">🚀</span><strong>Foguete</strong><span>Crash ao vivo</span></button>
+      <button class="gbtn" data-g="tiger"><span class="ico">🐯</span><strong>Tigrinho</strong><span>Fortune 3×3</span></button>
+      <button class="gbtn" data-g="farm"><span class="ico">🌾</span><strong>Fazenda</strong><span>3 canteiros</span></button>
+      <button class="gbtn" data-g="raid"><span class="ico">🏴‍☠️</span><strong>Roubar</strong><span>Top 10 grupos</span></button>
+      <button class="gbtn" data-g="rank"><span class="ico">🏆</span><strong>Ranking</strong><span>Pessoas & grupos</span></button>
+    </div>
+  </div>
+
+  <div class="gv" id="gv-mine">
+    <button class="back" data-back>← Arena</button>
+    <div class="arena"><div style="font-size:56px" id="pick">⛏️</div><div class="tag" id="mineTag">Minerar</div></div>
+    <div class="stats"><div class="st"><div class="n" id="stP">1</div><div class="l">Poder</div></div><div class="st"><div class="n" id="stL">1</div><div class="l">Nível</div></div><div class="st"><div class="n" id="stS">0</div><div class="l">Combo</div></div></div>
+    <div class="panel"><div class="ebar"><i id="eFill"></i></div><p class="sub" id="eTxt">100/100</p>
+      <button class="btn btn-gold" id="btnMine">MINERAR</button>
+      <button class="btn btn-ghost" id="btnUp" style="margin-top:8px">⬆️ Poder</button>
+      <div class="hist"><h4>Últimas ações · Minerar</h4><div id="hist-mine"></div></div>
+    </div>
+  </div>
+
+  <div class="gv" id="gv-fish">
+    <button class="back" data-back>← Arena</button>
+    <div class="arena" id="fishArena"><div style="font-size:56px" id="rodEmoji">🎣</div><div class="tag" id="fishTag">Pesca RPG</div>
+      <div id="fishResult" class="sub" style="text-align:center;padding:0 12px"></div>
+    </div>
+    <div class="panel">
+      <h3>🎣 Painel do pescador</h3>
+      <p class="sub" id="fishStatus">Carregando…</p>
+      <div class="stats" id="fishStats"></div>
+      <button class="btn btn-cyan" id="btnFish">LANÇAR LINHA</button>
+      <p class="sub" id="fishLog" style="margin-top:10px;margin-bottom:0"></p>
+      <div class="hist"><h4>Últimas ações · Pesca</h4><div id="hist-pescar"></div></div>
+    </div>
+    <div class="panel">
+      <h3>🪵 Varas</h3>
+      <div class="groups" id="rodShop"></div>
+      <h3 style="margin-top:12px">🪱 Iscas</h3>
+      <div class="groups" id="baitShop"></div>
+      <button class="btn btn-ghost" id="btnRepair" style="margin-top:10px">🔧 Reparar vara equipada</button>
+      <p class="sub" style="margin-top:8px;margin-bottom:0">Progresso salvo por grupo · use no site e combine com o bot. Mítico exige Vara + Isca Mítica.</p>
+    </div>
+  </div>
+
+  <div class="gv" id="gv-crash">
+    <button class="back" data-back>← Arena</button>
+    <div class="crash-box" id="crashBox">
+      <canvas id="crashCanvas"></canvas>
+      <div class="crash-rocket" id="rocket">🚀</div>
+      <div class="crash-hud">
+        <div class="mx" id="cMult">1.00x</div>
+        <div class="tg" id="crashTag">Aguardando decolagem</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="sec">Aposta (máx = seu saldo)</div>
+      <div class="amt"><input id="cBetIn" type="number" min="1" step="1" value="100"/><span class="hint" id="cMax">máx 0</span></div>
+      <div class="bets" id="cBets"><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button><button data-v="1000">1k</button><button data-v="all">ALL</button></div>
+      <div class="sec">Cash-out</div>
+      <div class="bets" id="cOuts"><button data-v="1.5" class="on">1.5x</button><button data-v="2">2x</button><button data-v="3">3x</button><button data-v="5">5x</button><button data-v="10">10x</button></div>
+      <button class="btn btn-red" id="btnCrash">DECOLAR 🚀</button>
+      <div class="hist"><h4>Últimas ações · Foguete</h4><div id="hist-foguete"></div></div>
+    </div>
+  </div>
+
+  <div class="gv" id="gv-tiger">
+    <button class="back" data-back>← Arena</button>
+    <div class="panel arena tig" style="min-height:auto;padding:16px">
+      <h3 style="text-align:center">🐯 Fortune Tiger</h3>
+      <p class="sub" style="text-align:center"><b>🍀 = 2x</b> · grade completa = jackpot</p>
+      <div class="grid3" id="tigerGrid">
+        <div class="cell">🐯</div><div class="cell">🍒</div><div class="cell">🎰</div>
+        <div class="cell">🃏</div><div class="cell">🍀</div><div class="cell">🍊</div>
+        <div class="cell">🎰</div><div class="cell">🐯</div><div class="cell">🍀</div>
+      </div>
+      <div class="sec">Aposta</div>
+      <div class="amt"><input id="tBetIn" type="number" min="1" step="1" value="100"/><span class="hint" id="tMax">máx 0</span></div>
+      <div class="bets" id="tBets"><button data-v="10">10</button><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button><button data-v="all">ALL</button></div>
+      <button class="btn btn-gold" id="btnSpin">GIRAR</button>
+      <div class="pay"><div>🐯 15x</div><div>🎰 10x</div><div>🃏 5x</div><div>🍊 4x</div><div>🍒 3x</div><div>🍀 2x</div></div>
+      <p class="sub" id="tigLog" style="margin-top:10px;margin-bottom:0;text-align:center"></p>
+      <div class="hist"><h4>Últimas ações · Tigrinho</h4><div id="hist-tigrinho"></div></div>
+    </div>
+  </div>
+
+  <div class="gv" id="gv-raid">
+    <button class="back" data-back>← Arena</button>
+    <div class="arena"><div style="font-size:56px">🏴‍☠️</div><div class="tag" id="raidTag">Top 10 · não o seu grupo</div></div>
+    <div class="panel">
+      <p class="sub">Escolha um grupo do <b>Top 10</b>. Valor da investida: se falhar, a multa é <b>proporcional</b> ao valor.</p>
+      <div class="sec">Valor da investida</div>
+      <div class="amt"><input id="rAmtIn" type="number" min="10" step="1" value="50"/><span class="hint" id="rMax">máx 0</span></div>
+      <div class="bets" id="rBets"><button data-v="25">25</button><button data-v="50" class="on">50</button><button data-v="100">100</button><button data-v="250">250</button><button data-v="all">ALL</button></div>
+      <div class="sec">Alvo</div>
+      <div class="groups" id="raidTargets"><div class="skel"></div></div>
+      <div class="vitima hide" id="vitimaBox"><img id="vitimaFoto" referrerpolicy="no-referrer" alt=""/><div><strong id="vitimaNome">—</strong><div style="font-size:12px;color:var(--muted)" id="vitimaMeta"></div></div></div>
+      <button class="btn btn-pink" id="btnRaid">TENTAR ROUBO</button>
+      <p class="sub" id="raidLog" style="margin-top:8px;margin-bottom:0"></p>
+      <div class="hist"><h4>Últimas ações · Raid</h4><div id="hist-raid"></div></div>
+    </div>
+  </div>
+
+  
+  <div class="gv" id="gv-farm">
+    <button class="back" data-back>← Arena</button>
+    <div class="panel">
+      <h3>🌾 Fazenda Gold</h3>
+      <p class="sub">Até <b>6 canteiros</b>. O 1º é grátis; os outros desbloqueiam com Golds. Custo de plantio aparece em cada cultura. Aviso quando ficar pronto.</p>
+      <div class="plots" id="farmPlots"></div>
+      <div id="unlockRow" class="hide" style="margin-bottom:10px">
+        <button class="btn btn-gold" id="btnUnlock">🔓 Desbloquear próximo canteiro</button>
+        <p class="sub" id="unlockHint" style="margin-top:6px;margin-bottom:0"></p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="btn btn-g" id="btnHarvest" style="flex:1">🧺 COLHER TUDO</button>
+        <button class="btn btn-ghost" id="btnFarmRefresh" style="flex:1">Atualizar</button>
+      </div>
+      <div class="sec">Plantar cultura</div>
+      <div class="crop-grid" id="cropGrid"></div>
+      <div class="bets" style="margin-top:8px" id="plantQtyRow">
+        <button type="button" class="on" data-q="1">1</button>
+        <button type="button" data-q="2">2</button>
+        <button type="button" data-q="3">3</button>
+        <button type="button" data-q="6">Encher livres</button>
+      </div>
+      <p class="sub" id="plantCostHint" style="margin-bottom:6px">Toque numa cultura para selecionar · <b>toque 2×</b> para plantar na hora</p>
+      <button class="btn btn-gold" id="btnPlant">🌱 PLANTAR</button>
+      <p class="sub" id="farmLog" style="margin-top:8px;margin-bottom:0"></p>
+      <div class="hist"><h4>Últimas ações · Fazenda</h4><div id="hist-fazenda"></div></div>
+    </div>
+    <div class="panel">
+      <h3>👀 Visitar / Roubar fazenda</h3>
+      <p class="sub">Toque em alguém no ranking do grupo e abra o perfil — ou informe o número.</p>
+      <div class="amt"><input id="visitNum" type="text" placeholder="Número WhatsApp (só dígitos)"/><button class="btn btn-cyan" id="btnVisit" style="width:auto;padding:12px 16px">Visitar</button></div>
+      <div id="visitFarm" class="hide"></div>
+    </div>
+  </div>
+
+  <div class="gv" id="gv-rank">
+    <button class="back" data-back>← Arena</button>
+    <div class="tabs">
+      <button class="on" id="tabG">🌍 Pessoas</button>
+      <button id="tabGrp">👥 Grupo</button>
+      <button id="tabGrupos">🏰 Top grupos</button>
+    </div>
+    <div class="panel"><h3 id="rankTitle">🏆 Ranking</h3><p class="sub" id="rankSub">Toque em alguém ou grupo para detalhes</p><div id="rankList"></div>
+      <button class="btn btn-ghost" id="btnRR" style="margin-top:8px">Atualizar</button></div>
+  </div>
+</div>
+
+<div class="modal" id="modalPerfil">
+  <div class="sheet">
+    <div class="head">
+      <img id="mpFoto" referrerpolicy="no-referrer" alt=""/>
+      <div><strong id="mpNome" style="font-size:16px">—</strong><div style="font-size:12px;color:var(--muted)" id="mpMeta">—</div></div>
+    </div>
+    <div class="sec">Grupos com Golds</div>
+    <div id="mpGroups"></div>
+    <button class="btn btn-ghost" style="margin-top:12px" onclick="closeModal()">Fechar</button>
+  </div>
+</div>
+<div class="modal" id="modalGrupo">
+  <div class="sheet">
+    <div class="head">
+      <img id="mgImg" referrerpolicy="no-referrer" src="" alt="" style="width:56px;height:56px;border-radius:16px;object-fit:cover"/>
+      <div><strong id="mgNome" style="font-size:16px">—</strong><div style="font-size:12px;color:var(--muted)" id="mgMeta">—</div></div>
+    </div>
+    <div id="mgLink" class="sub"></div>
+    <div class="sec">Top do grupo</div>
+    <div id="mgTop"></div>
+    <button class="btn btn-ghost" style="margin-top:12px" onclick="closeModal()">Fechar</button>
+  </div>
+</div>
+
+<footer><a href="index.html">Fabi Bot</a> · Gold Empire</footer>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+'use strict';
+const PROXY_HOST='https://orange-hill-2e61.gbscabral15.workers.dev';
+const BACKEND='http://br2.bronxyshost.com:4009';
+const API_URL=PROXY_HOST+'/br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009';
+const SK='fabi_ge_v6', AV='https://fabibot.vercel.app/flogo.jpg';
+const SYM=['🎰','🍒','🍊','🃏','🐯','🍀'];
+function urlsFor(path){
+  const target=BACKEND.replace(/\/$/,'')+path;
+  const hostPath=BACKEND.replace(/^https?:\/\//,'');
+  return [PROXY_HOST+'/'+hostPath+'/proxy?url='+encodeURIComponent(target),PROXY_HOST+'/proxy?url='+encodeURIComponent(target),API_URL+path];
+}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function fmt(n){return Math.floor(Number(n)||0).toLocaleString('pt-BR')}
+function toast(m,k){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(k==='bad'?' bad':k==='ok'?' ok':'');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),2400)}
+function uiAvatar(nome){return 'https://ui-avatars.com/api/?name='+encodeURIComponent(String(nome||'User').slice(0,40))+'&size=128&background=0f766e&color=fff&bold=true'}
+function fixFoto(f,nome){
+  try{
+    const FALLBACK = 'https://dl.dropboxusercontent.com/scl/fi/pe6liwd0tixj39cn1o5o4/1752896153979.jpeg?rlkey=9dchim7lrqdo2zpl1f1usultf&dl=0';
+    f = String(f||'').trim();
+    if(!f || f==='null' || f==='undefined' || f==='false') return FALLBACK;
+    if(f==='/flogo.jpg' || f==='flogo.jpg' || f.endsWith('/flogo.jpg')) return FALLBACK;
+    if(/^data:image\//i.test(f) || /^blob:/i.test(f)) return f;
+    if(f.startsWith('//')) f = 'https:' + f;
+    // Mesmo padrão do index.html: API_URL + caminho relativo (/uploads/...)
+    // API_URL = worker.../proxy?url=http://br2...:4009  → concatena /uploads/x
+    if(f.startsWith('/')){
+      return API_URL + f;
+    }
+    // path relativo sem barra
+    if(!/^https?:\/\//i.test(f)){
+      if(/uploads|perfil|foto|avatar/i.test(f))
+        return API_URL + '/' + f.replace(/^\.\//,'');
+      return FALLBACK;
+    }
+    // http do backend → passa pelo proxy HTTPS (igual index)
+    if(/^http:\/\//i.test(f) && /(bronxyshost|localhost|127\.0\.0\.1|:4009)/i.test(f)){
+      // se já for URL completa do backend, reescreve via API_URL path
+      try{
+        const u = new URL(f);
+        return API_URL + (u.pathname||'') + (u.search||'');
+      }catch(_){
+        return PROXY_HOST + '/proxy?url=' + encodeURIComponent(f);
+      }
+    }
+    if(/^http:\/\/(fabibot\.vercel\.app|dl\.dropboxusercontent\.com|ui-avatars\.com)/i.test(f))
+      f = f.replace(/^http:/i,'https:');
+    return f;
+  }catch(e){
+    return 'https://dl.dropboxusercontent.com/scl/fi/pe6liwd0tixj39cn1o5o4/1752896153979.jpeg?rlkey=9dchim7lrqdo2zpl1f1usultf&dl=0';
+  }
+}
+function setBtnCd(btn,ms,label){if(!btn)return;const end=Date.now()+Math.max(0,ms||0);const base=label||btn.dataset.label||btn.textContent;btn.dataset.label=base;btn.dataset.cooling='1';const tick=()=>{const left=end-Date.now();if(left<=0){btn.disabled=false;delete btn.dataset.cooling;delete btn.dataset.busy;btn.textContent=base;return}btn.disabled=true;btn.innerHTML=base+' <span class="cd">('+Math.ceil(left/1000)+'s)</span>';setTimeout(tick,200)};tick()}
+function paintHist(id,arr){
+  const el=document.getElementById(id);if(!el)return;
+  if(!arr||!arr.length){el.innerHTML='<div class="hi"><span>Nada ainda</span></div>';return}
+  el.innerHTML=arr.slice(0,3).map(a=>{
+    const d=Number(a.delta)||0;const cls=d>0?'up':d<0?'dn':'';
+    return `<div class="hi"><div><b>${esc(a.nome)}</b> <span>${esc(a.texto)}</span></div><div class="d ${cls}">${d>0?'+':''}${fmt(d)}</div></div>`;
+  }).join('');
+}
+function clampBet(v){v=Math.floor(Number(v)||0);if(v<1)v=1;if(v>S.golds)v=Math.max(1,S.golds);return v}
+function syncBetHints(){
+  const m=fmt(S.golds);
+  ['cMax','tMax','rMax'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='máx '+m});
+  const c=document.getElementById('cBetIn');if(c&&+c.value>S.golds)c.value=S.golds||1;
+  const t=document.getElementById('tBetIn');if(t&&+t.value>S.golds)t.value=S.golds||1;
+  const r=document.getElementById('rAmtIn');if(r&&+r.value>S.golds)r.value=Math.max(10,S.golds||10);
+}
+
+const S={user:null,pass:'',foto:AV,groups:[],grupo:'',grupoNome:'',grupoImagem:null,golds:0,grupoTotal:0,grupoPos:null,power:1,level:1,energy:100,maxE:100,streak:0,lastE:Date.now(),bet:100,cashout:1.5,raidAmt:50,rankMode:'total',busy:false,rankCache:null,rankAt:0,targetGrupo:'',top10:[],pendingGold:null};
+window.__GE=S;window.S=S;
+function save(){try{localStorage.setItem(SK,JSON.stringify({user:S.user,pass:S.pass,foto:S.foto,grupo:S.grupo,grupoNome:S.grupoNome,grupoImagem:S.grupoImagem,power:S.power,level:S.level,energy:S.energy,maxE:S.maxE,streak:S.streak,lastE:S.lastE}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'null');if(!d||!d.user||!d.pass)return false;Object.assign(S,d);return true}catch(e){return false}}
+
+async function api(path,opts,ms){
+  const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),ms||16000);
+  let last={ok:false,status:0,data:{message:'Falha'}};
+  try{
+    for(const url of urlsFor(path)){
+      try{
+        const res=await fetch(url,Object.assign({},opts||{},{signal:ctrl.signal,mode:'cors'}));
+        let data={};try{data=await res.json()}catch(e){}
+        last={ok:res.ok,status:res.status,data};
+        if(res.ok||[400,401,403,429].includes(res.status)) return last;
+      }catch(e){last={ok:false,status:0,data:{message:e.name==='AbortError'?'Tempo esgotado':(e.message||'erro')}}}
+    }
+    return last;
+  }finally{clearTimeout(t)}
+}
+
+function setGold(n,opts){
+  S.golds=Math.floor(Number(n)||0);
+  if(opts&&opts.defer){S.pendingGold=S.golds;return}
+  document.getElementById('goldBal').textContent=fmt(S.golds);
+  S.pendingGold=null;
+  const g=S.groups.find(x=>x.grupo===S.grupo);if(g)g.golds=S.golds;renderGroups();syncBetHints();
+}
+function flushGold(){if(S.pendingGold!=null){document.getElementById('goldBal').textContent=fmt(S.pendingGold);S.pendingGold=null}else document.getElementById('goldBal').textContent=fmt(S.golds);renderGroups();syncBetHints()}
+function setGrupoMeta(d){
+  if(!d)return;
+  if(typeof d.grupoTotal==='number'){S.grupoTotal=d.grupoTotal;document.getElementById('grpTotal').textContent=fmt(d.grupoTotal)}
+  if(d.grupoPosicao!=null){S.grupoPos=d.grupoPosicao;document.getElementById('grpPos').textContent=d.grupoPosicao?'#'+d.grupoPosicao:'—'}
+  if(d.grupoNome){S.grupoNome=d.grupoNome;document.getElementById('grpLabel').textContent=d.grupoNome}
+  if(d.grupoImagem){S.grupoImagem=d.grupoImagem;document.getElementById('grpImg').src=fixFoto(d.grupoImagem)}
+}
+function regen(){const now=Date.now();const e=Math.floor((now-S.lastE)/8000);if(e>0&&S.energy<S.maxE){S.energy=Math.min(S.maxE,S.energy+e);S.lastE+=e*8000;save()}}
+function ui(){regen();if(S.pendingGold==null)document.getElementById('goldBal').textContent=fmt(S.golds);document.getElementById('stP').textContent=S.power;document.getElementById('stL').textContent=S.level;document.getElementById('stS').textContent=S.streak;document.getElementById('eFill').style.width=Math.min(100,S.energy/S.maxE*100)+'%';document.getElementById('eTxt').textContent=S.energy+' / '+S.maxE;document.getElementById('userSub').textContent=S.grupoNome?('Grupo: '+S.grupoNome):'Toque em um grupo';syncBetHints()}
+function setAvatar(url){const el=document.getElementById('av');if(!el)return;const src=fixFoto(url||S.foto||AV,S.user&&S.user.nome);el.referrerPolicy='no-referrer';el.onerror=function(){this.onerror=null;this.src='https://dl.dropboxusercontent.com/scl/fi/pe6liwd0tixj39cn1o5o4/1752896153979.jpeg?rlkey=9dchim7lrqdo2zpl1f1usultf&dl=0'};el.src=src;S.foto=src;if(S.user)S.user.foto=src;try{window.__GE=S}catch(_){}}
+
+async function tryLogin(u,p){
+  const body=JSON.stringify({username:u,password:p});
+  const headers={'Content-Type':'application/json','Accept':'application/json'};
+  for(const path of ['/api/login','/login/direto']){
+    const r=await api(path,{method:'POST',headers,body},12000);
+    if(r.ok&&r.data&&(r.data.user||r.data.nome||r.data.success)) return r.data.user||r.data;
+  }
+  const test=await api('/cliente06/game/groups',{method:'POST',headers,body:JSON.stringify({username:u,password:p})},12000);
+  if(test.ok&&test.data&&test.data.success) return {nome:u,numero:(test.data.user&&test.data.user.numero)||'',foto:(test.data.user&&test.data.user.foto)||AV};
+  throw new Error('Conta não encontrada. Use /rg no grupo da Fabi Bot para se registrar.');
+}
+
+function renderGroups(){
+  const box=document.getElementById('grpGrid');
+  if(!S.groups.length){box.innerHTML='<div class="gcard"><strong>Nenhum grupo</strong></div>';return}
+  box.innerHTML=S.groups.map(g=>`<button type="button" class="gcard ${g.grupo===S.grupo?'on':''}" data-g="${esc(g.grupo)}">
+    <img referrerpolicy="no-referrer" src="${esc(fixFoto(g.imagem))}" onerror="this.src='${AV}'" alt=""/>
+    <div class="meta"><strong>${esc(g.nome||String(g.grupo).split('@')[0])}</strong><div class="gg">💰 ${fmt(g.golds)}</div></div>
+  </button>`).join('');
+  box.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const g=S.groups.find(x=>x.grupo===b.getAttribute('data-g'));if(g)selectGroup(g.grupo,g.nome,g.golds,g.imagem)});
+}
+
+async function loadGroups(){
+  const body=JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass});
+  let r=await api('/cliente06/game/groups',{method:'POST',headers:{'Content-Type':'application/json'},body},15000);
+  if(r.ok&&r.data&&r.data.success){
+    S.groups=r.data.groups||[];
+    if(r.data.user){if(r.data.user.foto)setAvatar(r.data.user.foto);if(r.data.user.numero)S.user.numero=r.data.user.numero}
+  }
+  if(!S.groups.length&&S.user.grupo)S.groups=[{grupo:S.user.grupo,nome:'Meu grupo',golds:0,imagem:null}];
+  renderGroups();
+  if(!S.grupo&&S.groups[0])await selectGroup(S.groups[0].grupo,S.groups[0].nome,S.groups[0].golds,S.groups[0].imagem);
+  else if(S.grupo){const g=S.groups.find(x=>x.grupo===S.grupo);if(g)await selectGroup(g.grupo,g.nome,g.golds,g.imagem)}
+}
+
+async function selectGroup(id,nome,golds,imagem){
+  S.grupo=id;S.grupoNome=nome||String(id).split('@')[0];S.grupoImagem=imagem||null;
+  if(S.grupoImagem)document.getElementById('grpImg').src=fixFoto(S.grupoImagem);
+  else document.getElementById('grpImg').src=AV;
+  if(typeof golds==='number')setGold(golds);
+  save();renderGroups();ui();
+  toast('Grupo: '+S.grupoNome,'ok');
+  await refreshGold();
+}
+
+async function refreshGold(){
+  if(!S.user||!S.grupo)return;
+  const body=JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo});
+  let r=await api('/cliente06/game/me',{method:'POST',headers:{'Content-Type':'application/json'},body},12000);
+  if(r.ok&&r.data){
+    if(typeof r.data.golds==='number')setGold(r.data.golds);
+    setGrupoMeta(r.data);
+    if(r.data.user&&r.data.user.foto)setAvatar(r.data.user.foto);
+  }
+  ui();
+}
+
+function showApp(){
+  document.getElementById('viewLogin').classList.add('hide');
+  document.getElementById('viewApp').classList.remove('hide');
+  document.getElementById('userName').textContent=S.user.nome;
+  setAvatar(S.user.foto||S.foto||AV);
+  loadGroups().then(ui);
+  // liga OneSignal ao id da conta e pede permissão se ainda não tiver
+  try {
+    const ext = String(S.pass || (S.user && (S.user.id || S.user.numero)) || '').trim();
+    if (ext && window.__geOsLogin) window.__geOsLogin(ext);
+    setTimeout(function(){ geEnsurePushPermission(false); }, 2500);
+    if (window.__geUpdateNotifyBtn) window.__geUpdateNotifyBtn();
+  } catch (_) {}
+}
+function openGame(n){
+  if(n!=='rank'&&!S.grupo){toast('Escolha um grupo','bad');return}
+  document.getElementById('viewHome').classList.add('hide');
+  document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));
+  document.getElementById('gv-'+n).classList.add('on');
+  if(n==='rank')loadRank(true);
+  if(n==='raid')loadRaidTargets();
+  if(n==='crash') resizeCrash();
+  if(n==='farm')loadFarm();
+  if(n==='fish')loadPesca();
+  const map={mine:'mine',fish:'pescar',crash:'foguete',tiger:'tigrinho',raid:'raid',farm:'fazenda'};
+  if(map[n]) loadRecent(map[n],'hist-'+map[n]);
+  syncBetHints();
+}
+function closeGame(){document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));document.getElementById('viewHome').classList.remove('hide')}
+document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>openGame(b.dataset.g));
+document.querySelectorAll('[data-back]').forEach(b=>b.onclick=closeGame);
+
+async function loadRecent(tipo,elId){
+  const r=await api('/cliente06/game/recent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo,limit:3})},10000);
+  if(r.ok&&r.data&&r.data.recent) paintHist(elId,r.data.recent);
+}
+
+document.getElementById('btnLogin').onclick=async()=>{
+  const u=document.getElementById('inpUser').value.trim();
+  const p=document.getElementById('inpPass').value.trim();
+  const err=document.getElementById('loginErr');err.textContent='';
+  if(!u||!p){err.textContent='Preencha os campos';return}
+  const btn=document.getElementById('btnLogin');btn.disabled=true;btn.textContent='Entrando…';
+  try{
+    const user=await tryLogin(u,p);
+    S.user={nome:user.nome||u,numero:user.numero||'',grupo:user.grupo||'',foto:user.foto||user.avatar||user.fotoPerfil||AV};
+    S.pass=p;S.foto=fixFoto(S.user.foto);save();showApp();toast('Olá, '+S.user.nome,'ok');
+  }catch(e){err.textContent=(e.message||'Falha')+(String(e.message||'').includes('/rg')?'':' — Sem conta? Use /rg no grupo.');}
+  finally{btn.disabled=false;btn.textContent='Entrar no Império'}
+};
+document.getElementById('btnLogout').onclick=()=>{localStorage.removeItem(SK);location.reload()};
+
+function needGroup(){if(!S.grupo){toast('Escolha um grupo','bad');return false}return true}
+async function play(path,body,btn,opts){
+  if(!needGroup())return null;
+  if(S.busy){toast('Aguarde…','bad');return null}
+  S.busy=true;if(btn){btn.disabled=true;btn.dataset.busy='1'}
+  let onCd=false;
+  try{
+    const r=await api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo},body||{}))},18000);
+    if(r.status===429){const ms=(r.data&&r.data.cooldownMs)||3000;if(btn){setBtnCd(btn,ms,btn.dataset.label||btn.textContent);onCd=true}toast((r.data&&r.data.message)||'Cooldown','bad');return null}
+    if(r.ok&&r.data&&r.data.success){
+      if(typeof r.data.golds==='number') setGold(r.data.golds,{defer:opts&&opts.deferGold});
+      if(r.data.cooldownMs&&btn){setBtnCd(btn,r.data.cooldownMs,btn.dataset.label||btn.textContent);onCd=true}
+      if(r.data.recent&&opts&&opts.hist) paintHist(opts.hist,r.data.recent);
+      return r.data;
+    }
+    toast((r.data&&(r.data.message||r.data.error))||('Erro '+r.status),'bad');
+    return null;
+  }catch(e){toast('Rede','bad');return null}
+  finally{
+    S.busy=false;
+    // reabilita o botão se NÃO estiver em cooldown (bug: ficava cinza pra sempre)
+    if(btn && !onCd){
+      btn.disabled=false;
+      delete btn.dataset.busy;
+    }
+    ui();
+  }
+}
+
+document.getElementById('btnMine').onclick=async()=>{const btn=document.getElementById('btnMine');regen();if(S.energy<1)return toast('Sem energia','bad');S.energy--;S.streak++;save();const d=await play('/cliente06/game/mine',{taps:1,power:S.power,level:S.level},btn,{hist:'hist-mine'});if(d){document.getElementById('mineTag').textContent='+'+d.gain;toast('⛏️ +'+d.gain,'ok');setBtnCd(btn,800,'MINERAR')}};
+document.getElementById('btnUp').onclick=()=>{S.power++;if(S.power%3===0)S.level++;S.maxE=Math.min(200,100+S.level*5);save();ui();toast('Poder '+S.power,'ok')};
+
+/* PESCA RPG */
+let pescaState=null;
+function paintPesca(pesca){
+  if(!pesca)return;
+  pescaState=pesca;
+  const st=document.getElementById('fishStatus');
+  if(st) st.innerHTML=pesca.rod.emoji+' <b>'+esc(pesca.rod.nome)+'</b> · '+pesca.bait.emoji+' <b>'+esc(pesca.bait.nome)+'</b><br>Lançadas: <b>'+pesca.castsToday+'/'+pesca.rod.casts+'</b> (restam '+pesca.castsLeft+') · '+esc(pesca.durabilityBar);
+  const stats=document.getElementById('fishStats');
+  if(stats) stats.innerHTML='<div class="st"><div class="n">'+fmt(pesca.totalCaught)+'</div><div class="l">Capturas</div></div><div class="st"><div class="n">'+fmt(pesca.totalGold)+'</div><div class="l">Gold pesca</div></div><div class="st"><div class="n">'+(pesca.best?pesca.best.emoji:'—')+'</div><div class="l">'+(pesca.best?esc(pesca.best.nome):'Recorde')+'</div></div>';
+  const rods=document.getElementById('rodShop');
+  if(rods){
+    rods.innerHTML=(pesca.shopRods||[]).map(function(r){
+      var owned=(pesca.ownedRods||[]).find(function(x){return x.id===r.id});
+      var eq=owned&&owned.equipped;
+      return '<div class="gcard '+(eq?'on':'')+'"><div class="meta" style="width:100%"><strong>'+r.emoji+' '+esc(r.nome)+'</strong><div class="gg">'+(r.cost?fmt(r.cost)+' Golds':'GRÁTIS')+'</div><div style="font-size:11px;color:var(--muted)">'+r.casts+'/dia · usos '+(r.uses<0?'∞':r.uses)+(owned?' · '+esc(owned.bar):'')+'</div><div style="display:flex;gap:6px;margin-top:8px">'+(owned?'<button type="button" class="btn btn-g" style="padding:8px;font-size:11px" data-eq-rod="'+r.id+'">Equipar</button>':'<button type="button" class="btn btn-gold" style="padding:8px;font-size:11px" data-buy-rod="'+r.id+'">Comprar</button>')+'</div></div></div>';
+    }).join('');
+    rods.querySelectorAll('[data-buy-rod]').forEach(function(b){b.onclick=async function(e){e.stopPropagation();var d=await play('/cliente06/game/pesca/comprar',{tipo:'rod',item:b.getAttribute('data-buy-rod')},b);if(d&&d.pesca){paintPesca(d.pesca);toast(d.message||'Comprado','ok')}}});
+    rods.querySelectorAll('[data-eq-rod]').forEach(function(b){b.onclick=async function(e){e.stopPropagation();var d=await play('/cliente06/game/pesca/equipar',{rod:b.getAttribute('data-eq-rod')},b);if(d&&d.pesca){paintPesca(d.pesca);toast('Vara equipada','ok')}}});
+  }
+  var baits=document.getElementById('baitShop');
+  if(baits){
+    baits.innerHTML=(pesca.shopBaits||[]).map(function(b){
+      var owned=(pesca.ownedBaits||[]).find(function(x){return x.id===b.id});
+      var eq=owned&&owned.equipped;
+      return '<div class="gcard '+(eq?'on':'')+'"><div class="meta" style="width:100%"><strong>'+b.emoji+' '+esc(b.nome)+'</strong><div class="gg">'+(b.cost?fmt(b.cost)+'/un':'GRÁTIS diária')+'</div><div style="font-size:11px;color:var(--muted)">Estoque: '+(owned?owned.qty:'0')+'</div><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+(b.cost?'<button type="button" class="btn btn-gold" style="padding:8px;font-size:11px" data-buy-bait="'+b.id+'">Comprar 1</button>':'')+'<button type="button" class="btn btn-g" style="padding:8px;font-size:11px" data-eq-bait="'+b.id+'">Usar</button></div></div></div>';
+    }).join('');
+    baits.querySelectorAll('[data-buy-bait]').forEach(function(b){b.onclick=async function(e){e.stopPropagation();var d=await play('/cliente06/game/pesca/comprar',{tipo:'bait',item:b.getAttribute('data-buy-bait'),qty:1},b);if(d&&d.pesca){paintPesca(d.pesca);toast(d.message||'Comprado','ok')}}});
+    baits.querySelectorAll('[data-eq-bait]').forEach(function(b){b.onclick=async function(e){e.stopPropagation();var d=await play('/cliente06/game/pesca/equipar',{bait:b.getAttribute('data-eq-bait')},b);if(d&&d.pesca){paintPesca(d.pesca);toast('Isca equipada','ok')}}});
+  }
+}
+async function loadPesca(){
+  if(!S.grupo)return;
+  var r=await api('/cliente06/game/pesca',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo})},15000);
+  if(r.ok&&r.data&&r.data.success){if(typeof r.data.golds==='number')setGold(r.data.golds);paintPesca(r.data.pesca)}
+  else toast((r.data&&r.data.message)||'Falha pesca','bad');
+  loadRecent('pescar','hist-pescar');
+}
+document.getElementById('btnFish').onclick=async()=>{
+  const btn=document.getElementById('btnFish');
+  var re=document.getElementById('rodEmoji'); if(re) re.textContent='🎣…';
+  document.getElementById('fishTag').textContent='Pescando…';
+  const d=await play('/cliente06/game/pescar',{},btn,{hist:'hist-pescar'});
+  if(!d){if(re)re.textContent='🎣';return}
+  if(re) re.textContent=d.emoji||'🐟';
+  document.getElementById('fishTag').textContent=(d.rarityLabel||'')+' · '+d.peixe;
+  var fr=document.getElementById('fishResult'); if(fr) fr.textContent=(d.kg?d.kg+' kg · ':'')+(d.gain>0?('+'+fmt(d.gain)+' Golds'):'Sem valor');
+  document.getElementById('fishLog').textContent=(d.warn&&d.warn.length?d.warn.join(' · '):'');
+  if(d.pesca)paintPesca(d.pesca);
+  if(d.gain>0)toast((d.emoji||'🐟')+' +'+fmt(d.gain),'ok'); else toast((d.emoji||'🥾')+' '+d.peixe,'bad');
+  setBtnCd(btn,d.cooldownMs||2500,'LANÇAR LINHA');
+};
+if(document.getElementById('btnRepair')) document.getElementById('btnRepair').onclick=async()=>{
+  const btn=document.getElementById('btnRepair');
+  const d=await play('/cliente06/game/pesca/comprar',{tipo:'reparar'},btn);
+  if(d&&d.pesca){paintPesca(d.pesca);toast(d.message||'Reparada','ok')}
+};
+
+
+
+
+/* FAZENDA */
+let farmCrop='milho', farmQty=1, visitTarget=null, farmCatalog=[];
+function paintPlots(plots){
+  const box=document.getElementById('farmPlots');
+  if(!box)return;
+  box.innerHTML=(plots||[]).map(p=>{
+    if(p.state==='locked'){
+      return `<div class="plot locked" data-unlock="${p.index}">
+        <div class="pe">🔒</div>
+        <div class="pn">Canteiro ${p.index+1}</div>
+        <div class="pr">Desbloquear</div>
+        <div class="pr" style="color:var(--gold2);font-weight:800">${fmt(p.unlockCost)}</div>
+      </div>`;
+    }
+    const cls=p.state==='ready'?'ready':p.state==='growing'?'growing':'';
+    const bar=p.state==='growing'?`<div class="pbar"><i style="width:${p.progress}%"></i></div>`:(p.state==='ready'?'<div class="pr" style="color:var(--g2);font-weight:800">✓ Toque p/ colher</div>':'<div class="pr">Vazio</div>');
+    const reward=p.reward?`<div class="pr">colheita +${fmt(p.reward)}</div>`:'';
+    const dataH = p.state==='ready' ? ` data-harvest="${p.index}"` : '';
+    const hint = p.state==='ready' ? ' style="cursor:pointer"' : '';
+    return `<div class="plot ${cls}"${dataH}${hint}><div class="pe">${p.emoji||'🟫'}</div><div class="pn">${esc(p.nome)}</div>${bar}${p.state==='growing'?`<div class="pr">${esc(p.remaining)}</div>`:''}${reward}</div>`;
+  }).join('');
+  box.querySelectorAll('[data-unlock]').forEach(el=>{
+    el.style.cursor='pointer';
+    el.onclick=()=>document.getElementById('btnUnlock')&&document.getElementById('btnUnlock').click();
+  });
+  // Clique no canteiro pronto = colhe só ele (não precisa ir no botão de baixo)
+  box.querySelectorAll('[data-harvest]').forEach(el=>{
+    el.onclick=async()=>{
+      const plot=el.getAttribute('data-harvest');
+      el.style.opacity='.6';
+      const d=await play('/cliente06/game/fazenda/colher',{plot:Number(plot)},null,{hist:'hist-fazenda'});
+      el.style.opacity='1';
+      if(!d)return;
+      if(d.fazenda){paintPlots(d.fazenda.plots);updateUnlockUI(d.fazenda)}
+      document.getElementById('farmLog').textContent='Colheu +'+fmt(d.gain)+(d.colhidos&&d.colhidos[0]?' · '+(d.colhidos[0].emoji||''):'');
+      toast('🧺 +'+fmt(d.gain),'ok');
+    };
+  });
+}
+function paintCatalog(cat){
+  farmCatalog=cat||[];
+  const box=document.getElementById('cropGrid');
+  if(!box)return;
+  box.innerHTML=farmCatalog.map(c=>`<button type="button" class="crop ${c.id===farmCrop?'on':''}" data-c="${esc(c.id)}">
+    <div class="ce">${c.emoji}</div>
+    <div class="cn">${esc(c.nome)}</div>
+    <div class="cm">${esc(c.tempo)}</div>
+    <div class="cm">Plantar: <b style="color:#fecaca">-${fmt(c.cost)}</b></div>
+    <div class="cr">Colher +${fmt(c.reward)}</div>
+    <div class="cm">Lucro ~${fmt(c.lucro!=null?c.lucro:(c.reward-c.cost))}</div>
+  </button>`).join('');
+  box.querySelectorAll('[data-c]').forEach(b=>{
+    b.title='Clique para selecionar · Clique 2× para plantar na hora';
+    b.onclick=()=>{
+      farmCrop=b.getAttribute('data-c');
+      box.querySelectorAll('.crop').forEach(x=>x.classList.toggle('on',x.getAttribute('data-c')===farmCrop));
+      updatePlantCostHint();
+    };
+    b.ondblclick=async(ev)=>{
+      ev.preventDefault();
+      farmCrop=b.getAttribute('data-c');
+      box.querySelectorAll('.crop').forEach(x=>x.classList.toggle('on',x.getAttribute('data-c')===farmCrop));
+      updatePlantCostHint();
+      // planta direto (1 canteiro no duplo clique)
+      const btn=document.getElementById('btnPlant');
+      if(btn && btn.disabled){toast('Aguarde o botão liberar…','bad');return}
+      toast('🌱 Plantando '+farmCrop+'…','ok');
+      const d=await play('/cliente06/game/fazenda/plantar',{crop:farmCrop,qty:1},btn,{hist:'hist-fazenda'});
+      if(!d)return;
+      if(d.fazenda){paintPlots(d.fazenda.plots);updateUnlockUI(d.fazenda)}
+      document.getElementById('farmLog').textContent='Plantou '+(d.planted||0)+' · -'+fmt(d.cost);
+      toast('🌱 Plantado!','ok');
+    };
+  });
+  updatePlantCostHint();
+}
+function updatePlantCostHint(){
+  const c=farmCatalog.find(x=>x.id===farmCrop);
+  const el=document.getElementById('plantCostHint');
+  if(!el)return;
+  if(!c){el.textContent='Selecione uma cultura (ou clique 2× nela para plantar)';return;}
+  const total=c.cost*farmQty;
+  el.innerHTML=`${c.emoji} <b>${esc(c.nome)}</b> · <span style="color:#fecaca">-${fmt(c.cost)}</span> por canteiro · ${farmQty}× = <b style="color:#fecaca">-${fmt(total)}</span> · colheita <b style="color:var(--g2)">+${fmt(c.reward*farmQty)}</b>`;
+}
+function updateUnlockUI(faz){
+  const row=document.getElementById('unlockRow');
+  const hint=document.getElementById('unlockHint');
+  const btn=document.getElementById('btnUnlock');
+  if(!row||!faz)return;
+  if(faz.nextUnlockCost!=null&&faz.unlockedSlots<6){
+    row.classList.remove('hide');
+    btn.textContent='🔓 Liberar canteiro '+(faz.unlockedSlots+1)+' · '+fmt(faz.nextUnlockCost)+' Golds';
+    hint.textContent='Você tem '+faz.unlockedSlots+' de 6 canteiros · 1º grátis · próximos pagos';
+  } else {
+    row.classList.add('hide');
+  }
+}
+async function loadFarm(){
+  if(!S.grupo)return;
+  const r=await api('/cliente06/game/fazenda',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo})},15000);
+  if(r.ok&&r.data&&r.data.success){
+    if(typeof r.data.golds==='number')setGold(r.data.golds);
+    paintPlots(r.data.fazenda&&r.data.fazenda.plots);
+    paintCatalog(r.data.catalogo);
+    updateUnlockUI(r.data.fazenda);
+    if(r.data.fazenda) document.getElementById('farmLog').textContent='Liberados: '+(r.data.fazenda.unlockedSlots||1)+'/6 · Colheitas: '+fmt(r.data.fazenda.totalHarvest||0)+' · Plantios: '+(r.data.fazenda.totalPlanted||0);
+    if(r.data.alertReady&&r.data.alertReady.ready&&r.data.alertReady.ready.length){
+      toast('🌾 Pronto: '+r.data.alertReady.ready.join(', '),'ok');
+    }
+  } else toast((r.data&&r.data.message)||'Falha fazenda','bad');
+  loadRecent('fazenda','hist-fazenda');
+}
+document.getElementById('plantQtyRow')&&document.getElementById('plantQtyRow').querySelectorAll('[data-q]').forEach(b=>{
+  b.onclick=()=>{
+    document.getElementById('plantQtyRow').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    farmQty=parseInt(b.getAttribute('data-q'),10)||1;
+    updatePlantCostHint();
+  };
+});
+document.getElementById('btnPlant').onclick=async()=>{
+  const btn=document.getElementById('btnPlant');
+  if(!farmCrop){toast('Escolha uma cultura (ou dê 2 cliques nela)','bad');return}
+  const d=await play('/cliente06/game/fazenda/plantar',{crop:farmCrop,qty:farmQty},btn,{hist:'hist-fazenda'});
+  if(btn && !btn.dataset.cooling){btn.disabled=false}
+  if(!d)return;
+  if(d.fazenda){paintPlots(d.fazenda.plots);updateUnlockUI(d.fazenda)}
+  document.getElementById('farmLog').textContent='Plantou '+(d.planted||0)+' canteiro(s) · custo -'+fmt(d.cost)+' ('+fmt(d.costUnit||0)+' cada)';
+  toast('🌱 Plantado em '+(d.planted||1)+' canteiro(s)!','ok');
+};
+document.getElementById('btnHarvest').onclick=async()=>{
+  const btn=document.getElementById('btnHarvest');
+  const d=await play('/cliente06/game/fazenda/colher',{},btn,{hist:'hist-fazenda'});
+  if(!d)return;
+  if(d.fazenda){paintPlots(d.fazenda.plots);updateUnlockUI(d.fazenda)}
+  document.getElementById('farmLog').textContent='Colheu +'+fmt(d.gain);
+  toast('🧺 +'+fmt(d.gain),'ok');
+};
+document.getElementById('btnFarmRefresh').onclick=()=>loadFarm();
+document.getElementById('btnUnlock').onclick=async()=>{
+  const btn=document.getElementById('btnUnlock');
+  const d=await play('/cliente06/game/fazenda/desbloquear',{},btn,{hist:'hist-fazenda'});
+  if(!d)return;
+  if(d.fazenda){paintPlots(d.fazenda.plots);updateUnlockUI(d.fazenda)}
+  toast('🔓 Canteiro '+(d.unlockedSlots)+' liberado!','ok');
+};
+document.getElementById('btnVisit').onclick=async()=>{
+  const num=String(document.getElementById('visitNum').value||'').replace(/\D/g,'');
+  if(!num)return toast('Informe o número','bad');
+  if(!S.grupo)return toast('Escolha grupo','bad');
+  const r=await api('/cliente06/game/fazenda/visitar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo,numero:num})},12000);
+  const box=document.getElementById('visitFarm');
+  if(!r.ok||!r.data||!r.data.success){box.classList.remove('hide');box.innerHTML='<p class="sub">Falha ao visitar</p>';return}
+  visitTarget={numero:num,grupo:S.grupo};
+  const f=r.data.fazenda;
+  box.classList.remove('hide');
+  box.innerHTML=`<div class="user" style="margin:10px 0;padding:10px;border-radius:14px;border:1px solid var(--line)">
+    <img referrerpolicy="no-referrer" src="${esc(fixFoto(f.dono&&f.dono.foto))}" style="width:44px;height:44px;border-radius:12px" onerror="this.src='${AV}'"/>
+    <div><strong>${esc(f.dono&&f.dono.nome)}</strong><div style="font-size:12px;color:var(--muted)">${f.unlockedSlots||1}/6 canteiros · ${f.readyCount||0} prontos</div></div>
+  </div>
+  <div class="plots">${(f.plots||[]).map(p=>`<div class="plot ${p.state}"><div class="pe">${p.emoji}</div><div class="pn">${esc(p.nome)}</div><div class="pr">${p.state==='ready'?'Pronto':p.state==='growing'?esc(p.remaining):p.state==='locked'?'🔒':('Vazio')}</div></div>`).join('')}</div>
+  ${r.data.isOwn?'':'<button class="btn btn-pink" id="btnStealFarm">🦝 TENTAR ROUBAR CANTEIRO PRONTO</button>'}`;
+  const steal=document.getElementById('btnStealFarm');
+  if(steal)steal.onclick=async()=>{
+    const d=await play('/cliente06/game/fazenda/roubar',{numero:visitTarget.numero,grupoAlvo:visitTarget.grupo},steal,{hist:'hist-fazenda'});
+    if(!d)return;
+    if(d.win)toast('🦝 +'+fmt(d.loot)+' ('+(d.crop&&d.crop.emoji||'')+')','ok');
+    else toast(d.message||('Falhou '+d.delta),'bad');
+    if(d.fazendaAlvo){
+      box.querySelector('.plots').innerHTML=(d.fazendaAlvo.plots||[]).map(p=>`<div class="plot ${p.state}"><div class="pe">${p.emoji}</div><div class="pn">${esc(p.nome)}</div><div class="pr">${p.state==='ready'?'Pronto':p.state==='growing'?esc(p.remaining):p.state==='locked'?'🔒':'Vazio'}</div></div>`).join('');
+    }
+  };
+};
+/* bets */
+function wireBet(inputId, chipsId, key, maxKey){
+  const inp=document.getElementById(inputId);
+  document.querySelectorAll('#'+chipsId+' button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#'+chipsId+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    let v=b.dataset.v==='all'?S.golds:+b.dataset.v;
+    v=clampBet(v);S[key]=v;inp.value=v;
+  });
+  inp.oninput=()=>{let v=clampBet(inp.value);inp.value=v;S[key]=v};
+}
+wireBet('cBetIn','cBets','bet');
+wireBet('tBetIn','tBets','bet');
+wireBet('rAmtIn','rBets','raidAmt');
+document.querySelectorAll('#cOuts button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cOuts button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.cashout=+b.dataset.v});
+
+/* CRASH canvas */
+let crashPts=[];
+function resizeCrash(){
+  const box=document.getElementById('crashBox');const cv=document.getElementById('crashCanvas');
+  if(!box||!cv)return;
+  const dpr=window.devicePixelRatio||1;
+  cv.width=box.clientWidth*dpr;cv.height=box.clientHeight*dpr;
+  cv.style.width=box.clientWidth+'px';cv.style.height=box.clientHeight+'px';
+  drawCrash(1,false);
+}
+function drawCrash(mult,crashed){
+  const cv=document.getElementById('crashCanvas');if(!cv)return;
+  const ctx=cv.getContext('2d');const w=cv.width,h=cv.height;const dpr=window.devicePixelRatio||1;
+  ctx.clearRect(0,0,w,h);
+  // grid
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1*dpr;
+  for(let i=1;i<6;i++){const y=h*i/6;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}
+  if(crashPts.length<2)return;
+  const maxM=Math.max(2,mult,crashed?mult:mult*1.05);
+  const pad=20*dpr;
+  function X(i){return pad+(w-pad*2)*(i/(crashPts.length-1||1))}
+  function Y(m){return h-pad-((m-1)/(maxM-1||1))*(h-pad*2)}
+  ctx.beginPath();
+  crashPts.forEach((m,i)=>{const x=X(i),y=Y(m);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});
+  ctx.strokeStyle=crashed?'#fb7185':'#22d3ee';
+  ctx.lineWidth=3*dpr;ctx.lineJoin='round';ctx.stroke();
+  // glow
+  ctx.strokeStyle=crashed?'rgba(251,113,133,.25)':'rgba(34,211,238,.25)';
+  ctx.lineWidth=8*dpr;ctx.stroke();
+  // rocket pos
+  const last=crashPts[crashPts.length-1];
+  const rx=X(crashPts.length-1)/dpr, ry=Y(last)/dpr;
+  const rocket=document.getElementById('rocket');
+  rocket.style.left=rx+'px';rocket.style.bottom=(document.getElementById('crashBox').clientHeight-ry)+'px';
+  rocket.style.opacity=crashed?'0':'1';
+}
+window.addEventListener('resize',()=>{if(document.getElementById('gv-crash').classList.contains('on'))resizeCrash()});
+
+document.getElementById('btnCrash').onclick=async()=>{
+  S.bet=clampBet(document.getElementById('cBetIn').value);
+  document.getElementById('cBetIn').value=S.bet;
+  if(S.golds<S.bet)return toast('Saldo insuficiente','bad');
+  const btn=document.getElementById('btnCrash');
+  const el=document.getElementById('cMult');const tag=document.getElementById('crashTag');
+  el.classList.remove('boom');crashPts=[1];resizeCrash();
+  const d=await play('/cliente06/game/foguete',{bet:S.bet,cashout:S.cashout},btn,{deferGold:true,hist:'hist-foguete'});
+  if(!d){flushGold();return}
+  const target=d.win?d.cashout:d.crashAt;
+  const dur=Math.max(1400,Math.min(12000,d.durationMs||Math.floor(900+Math.log(Math.max(1.05,target))*2300)));
+  const t0=performance.now();
+  function frame(now){
+    const p=Math.min(1,(now-t0)/dur);
+    // exponential-ish curve feel
+    const ease=Math.pow(p,0.85);
+    const m=1+(target-1)*ease;
+    crashPts.push(m);
+    if(crashPts.length>120)crashPts.shift();
+    el.textContent=m.toFixed(2)+'x';
+    tag.textContent=p<1?'Subindo…':(d.win?'SAIU!':'CRASH');
+    drawCrash(m,false);
+    if(p<1) requestAnimationFrame(frame);
+    else {
+      el.textContent=Number(d.crashAt).toFixed(2)+'x';
+      flushGold();
+      if(d.win){toast('🚀 +'+fmt(d.payout),'ok');drawCrash(target,false)}
+      else{
+        el.classList.add('boom');
+        drawCrash(Number(d.crashAt),true);
+        toast('💥 Crash -'+fmt(d.bet),'bad');
+      }
+    }
+  }
+  requestAnimationFrame(frame);
+};
+
+document.getElementById('btnSpin').onclick=async()=>{
+  S.bet=clampBet(document.getElementById('tBetIn').value);
+  document.getElementById('tBetIn').value=S.bet;
+  if(S.golds<S.bet)return toast('Saldo insuficiente','bad');
+  const btn=document.getElementById('btnSpin');
+  const anim=setInterval(()=>{const cells=document.querySelectorAll('#tigerGrid .cell');cells.forEach(c=>c.textContent=SYM[Math.floor(Math.random()*SYM.length)])},70);
+  const d=await play('/cliente06/game/tigrinho',{bet:S.bet},btn,{hist:'hist-tigrinho'});
+  clearInterval(anim);if(!d)return;
+  if(d.reels){const cells=document.querySelectorAll('#tigerGrid .cell');let i=0;for(let r=0;r<3;r++)for(let c=0;c<3;c++)cells[i++].textContent=d.reels[r][c]}
+  const log=document.getElementById('tigLog');
+  if(d.jackpot){log.textContent='🎉 JACKPOT +'+fmt(d.ganho);toast('🐯 JACKPOT','ok')}
+  else if(d.ganho>0){log.textContent='+'+fmt(d.ganho);toast('🐯 +'+fmt(d.ganho),'ok')}
+  else{log.textContent='-'+fmt(d.bet||S.bet);toast('Sem prêmio','bad')}
+};
+
+async function loadRaidTargets(){
+  const box=document.getElementById('raidTargets');
+  box.innerHTML='<div class="skel"></div>';
+  let r=await api('/cliente06/game/rank-grupos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:10})},15000);
+  if(!r.ok)r=await api('/cliente06/game/rank-grupos?limit=10',null,15000);
+  if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha Top 10</p>';return}
+  S.top10=(r.data.top10||r.data.rank||[]).filter(g=>String(g.grupo)!==String(S.grupo));
+  if(!S.top10.length){box.innerHTML='<p class="sub">Só seu grupo no Top 10 — sem alvo</p>';return}
+  if(!S.targetGrupo||String(S.targetGrupo)===String(S.grupo)) S.targetGrupo=S.top10[0].grupo;
+  box.innerHTML=S.top10.map(g=>`<button type="button" class="gcard ${g.grupo===S.targetGrupo?'on':''}" data-tg="${esc(g.grupo)}">
+    <img referrerpolicy="no-referrer" src="${esc(fixFoto(g.imagem))}" onerror="this.src='${AV}'" alt=""/>
+    <div class="meta"><div class="raid-pos">#${g.posicao||''}</div><strong>${esc(g.nome)}</strong>
+    <div class="gg">💰 ${fmt(g.totalGolds||g.golds)}</div></div>
+  </button>`).join('');
+  box.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>{S.targetGrupo=b.getAttribute('data-tg');box.querySelectorAll('.gcard').forEach(c=>c.classList.toggle('on',c.getAttribute('data-tg')===S.targetGrupo))});
+}
+document.getElementById('btnRaid').onclick=async()=>{
+  S.raidAmt=clampBet(document.getElementById('rAmtIn').value);
+  if(S.raidAmt<10)S.raidAmt=10;
+  document.getElementById('rAmtIn').value=S.raidAmt;
+  const btn=document.getElementById('btnRaid');
+  if(!S.targetGrupo)return toast('Escolha um grupo do Top 10','bad');
+  if(String(S.targetGrupo)===String(S.grupo))return toast('Não pode roubar o próprio grupo','bad');
+  if(S.golds<S.raidAmt)return toast('Saldo insuficiente','bad');
+  const d=await play('/cliente06/game/raid',{amount:S.raidAmt,power:Math.max(1,Math.floor(S.raidAmt/20)),level:S.level,targetGrupo:S.targetGrupo},btn,{hist:'hist-raid'});
+  if(!d)return;
+  const box=document.getElementById('vitimaBox');
+  if(d.vitima){box.classList.remove('hide');document.getElementById('vitimaFoto').src=fixFoto(d.vitima.foto);document.getElementById('vitimaNome').textContent=d.vitima.nome||'Rival';document.getElementById('vitimaMeta').textContent='~'+fmt(d.vitima.goldsAntes)+' · '+(d.alvo&&d.alvo.nome||'')}
+  if(d.win){document.getElementById('raidTag').textContent='+'+d.loot;document.getElementById('raidLog').textContent='🏴‍☠️ +'+fmt(d.loot);toast('Raid +'+d.loot,'ok')}
+  else{document.getElementById('raidTag').textContent='Falhou';document.getElementById('raidLog').textContent='Multa '+d.delta;toast('Falhou','bad')}
+  await refreshGold();
+};
+
+async function loadRank(force){
+  const box=document.getElementById('rankList');
+  if(!force&&S.rankCache&&Date.now()-S.rankAt<12000&&S.rankCache.mode===S.rankMode){paint(S.rankCache);return}
+  box.innerHTML='<div class="skel"></div><div class="skel"></div>';
+  if(S.rankMode==='grupos'){
+    let r=await api('/cliente06/game/rank-grupos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:15})},15000);
+    if(!r.ok)r=await api('/cliente06/game/rank-grupos?limit=15',null,15000);
+    if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha</p>';return}
+    S.rankCache={mode:'grupos',arr:r.data.rank||[]};S.rankAt=Date.now();paint(S.rankCache);return;
+  }
+  const body={modo:S.rankMode==='group'?'group':'total',limit:30};if(S.rankMode==='group'&&S.grupo)body.grupo=S.grupo;
+  let r=await api('/cliente06/game/rank',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)},15000);
+  if(!r.ok||!r.data||!r.data.success){box.innerHTML='<p class="sub">Falha</p>';return}
+  S.rankCache={mode:S.rankMode,arr:r.data.rank||[]};S.rankAt=Date.now();paint(S.rankCache);
+}
+function paint(cache){
+  const box=document.getElementById('rankList');const arr=cache.arr||[];
+  if(cache.mode==='grupos'){
+    document.getElementById('rankTitle').textContent='🏰 Top grupos';
+    document.getElementById('rankSub').textContent='Toque no grupo para detalhes e link';
+    box.innerHTML=arr.map((x,i)=>{
+      const m=i===0?'👑':i===1?'🥈':i===2?'🥉':(i+1);
+      return `<div class="ri" data-grupo="${esc(x.grupo)}"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div>
+        <img referrerpolicy="no-referrer" src="${esc(fixFoto(x.imagem))}" onerror="this.src='${AV}'"/>
+        <div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}</strong>
+        <div style="font-size:11px;color:var(--muted)">${x.membros||0} membros · média ${fmt(x.mediaGolds||0)}</div></div>
+        <div style="color:var(--gold2);font-weight:800">${fmt(x.totalGolds||x.golds)}</div></div>`;
+    }).join('')||'<p class="sub">Vazio</p>';
+    box.querySelectorAll('[data-grupo]').forEach(el=>el.onclick=()=>openGrupo(el.getAttribute('data-grupo')));
+    return;
+  }
+  document.getElementById('rankTitle').textContent=S.rankMode==='group'?'🏆 Neste grupo':'🏆 Pessoas';
+  document.getElementById('rankSub').textContent='Toque no perfil para ver grupos';
+  const my=String(S.user.numero||'').replace(/\D/g,'');
+  box.innerHTML=arr.map((x,i)=>{
+    const me=my&&String(x.numero)===my;
+    const m=i===0?'👑':i===1?'🥈':i===2?'🥉':(i+1);
+    return `<div class="ri ${me?'me':''}" data-num="${esc(x.numero)}"><div style="width:26px;text-align:center;font-weight:800;color:var(--gold)">${m}</div>
+      <img referrerpolicy="no-referrer" src="${esc(fixFoto(x.foto))}" onerror="this.src='${AV}'"/><div style="flex:1;min-width:0"><strong style="font-size:13px">${esc(x.nome)}${me?' · você':''}</strong>
+      <div style="font-size:11px;color:var(--muted)">${x.grupos?x.grupos+' grupos':''}</div></div>
+      <div style="color:var(--gold2);font-weight:800">${fmt(x.golds)}</div></div>`;
+  }).join('')||'<p class="sub">Vazio</p>';
+  box.querySelectorAll('[data-num]').forEach(el=>el.onclick=()=>openPerfil(el.getAttribute('data-num')));
+}
+document.getElementById('tabG').onclick=()=>{S.rankMode='total';tabG.classList.add('on');tabGrp.classList.remove('on');tabGrupos.classList.remove('on');loadRank(true)};
+document.getElementById('tabGrp').onclick=()=>{if(!S.grupo)return toast('Escolha grupo','bad');S.rankMode='group';tabGrp.classList.add('on');tabG.classList.remove('on');tabGrupos.classList.remove('on');loadRank(true)};
+document.getElementById('tabGrupos').onclick=()=>{S.rankMode='grupos';tabGrupos.classList.add('on');tabG.classList.remove('on');tabGrp.classList.remove('on');loadRank(true)};
+document.getElementById('btnRR').onclick=()=>{S.rankAt=0;loadRank(true)};
+
+async function openPerfil(numero){
+  const r=await api('/cliente06/game/perfil',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numero})},12000);
+  if(!r.ok||!r.data||!r.data.success)return toast('Perfil indisponível','bad');
+  const u=r.data.user;const gs=r.data.groups||[];
+  document.getElementById('mpFoto').src=fixFoto(u.foto);
+  document.getElementById('mpNome').textContent=u.nome;
+  document.getElementById('mpMeta').textContent='Total: '+fmt(u.totalGolds)+' Golds · '+gs.length+' grupo(s)';
+  document.getElementById('mpGroups').innerHTML=gs.map(g=>`<div class="gline" data-g="${esc(g.grupo)}">
+    <img referrerpolicy="no-referrer" src="${esc(fixFoto(g.imagem))}" onerror="this.src='${AV}'"/>
+    <div style="flex:1"><b>${esc(g.nome)}</b><div style="font-size:11px;color:var(--muted)">${g.posicao?'#'+g.posicao+' · ':''}${fmt(g.totalGolds)} no grupo</div></div>
+    <div style="color:var(--gold2);font-weight:800">${fmt(g.golds)}</div></div>`).join('')||'<p class="sub">Sem grupos</p>';
+  document.getElementById('mpGroups').querySelectorAll('[data-g]').forEach(el=>el.onclick=()=>{closeModal();openGrupo(el.getAttribute('data-g'))});
+  // botão visitar fazenda desta pessoa no grupo atual
+  const extra=document.createElement('div');
+  extra.style.marginTop='12px';
+  extra.innerHTML='<button class="btn btn-cyan" id="btnVisitFromProfile">🌾 Ver fazenda desta pessoa</button>';
+  const old=document.getElementById('btnVisitFromProfile');if(old)old.parentElement.remove();
+  document.getElementById('mpGroups').parentElement.appendChild(extra);
+  document.getElementById('btnVisitFromProfile').onclick=()=>{
+    closeModal();
+    openGame('farm');
+    document.getElementById('visitNum').value=String(numero).replace(/\D/g,'');
+    setTimeout(()=>document.getElementById('btnVisit').click(),300);
+  };
+  document.getElementById('modalPerfil').classList.add('on');
+}
+async function openGrupo(grupo){
+  const r=await api('/cliente06/game/grupo-info',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({grupo})},12000);
+  if(!r.ok||!r.data||!r.data.success)return toast('Grupo indisponível','bad');
+  const d=r.data;
+  document.getElementById('mgImg').src=fixFoto(d.imagem);
+  document.getElementById('mgNome').textContent=d.nome||'Grupo';
+  document.getElementById('mgMeta').textContent=(d.posicao?'#'+d.posicao+' · ':'')+fmt(d.totalGolds)+' Golds · '+d.membros+' membros · média '+fmt(d.mediaGolds);
+  const link=document.getElementById('mgLink');
+  if(d.link) link.innerHTML='🔗 <a href="'+esc(d.link)+'" target="_blank" rel="noopener" style="color:var(--g2)">Entrar no grupo</a>';
+  else link.textContent='Link de convite indisponível no grupos.json';
+  document.getElementById('mgTop').innerHTML=(d.top||[]).map((x,i)=>`<div class="ri" data-num="${esc(x.numero)}"><div style="width:22px;font-weight:800;color:var(--gold)">${i+1}</div>
+    <img referrerpolicy="no-referrer" src="${esc(fixFoto(x.foto))}" onerror="this.src='${AV}'"/><div style="flex:1"><strong style="font-size:13px">${esc(x.nome)}</strong></div>
+    <div style="color:var(--gold2);font-weight:800">${fmt(x.golds)}</div></div>`).join('')||'<p class="sub">Sem dados</p>';
+  document.getElementById('mgTop').querySelectorAll('[data-num]').forEach(el=>el.onclick=()=>{closeModal();openPerfil(el.getAttribute('data-num'))});
+  document.getElementById('modalGrupo').classList.add('on');
+}
+window.closeModal=function(){document.getElementById('modalPerfil').classList.remove('on');document.getElementById('modalGrupo').classList.remove('on')};
+document.getElementById('modalPerfil').onclick=e=>{if(e.target.id==='modalPerfil')closeModal()};
+document.getElementById('modalGrupo').onclick=e=>{if(e.target.id==='modalGrupo')closeModal()};
+
+document.getElementById('btnDaily')&&(document.getElementById('btnDaily').onclick=async()=>{
+  if(!S.grupo)return toast('Escolha um grupo primeiro','bad');
+  const btn=document.getElementById('btnDaily');
+  const d=await play('/cliente06/game/daily',{},btn);
+  if(!d)return;
+  toast((d.message||('Bônus +'+fmt(d.gain)))+(d.streak?' · 🔥'+d.streak+'d':''),'ok');
+});
+setInterval(()=>{if(S.user){regen();ui()}},5000);
+setInterval(()=>{if(S.user&&S.grupo&&S.pendingGold==null)refreshGold()},20000);
+
+
+/* ===== OneSignal / permissão — estilo conectar.html (robusto) ===== */
+function geNativePerm() {
+  try { if (typeof Notification !== 'undefined') return Notification.permission; } catch (e) {}
+  return 'default';
+}
+window.__geUpdateNotifyBtn = function () {
+  const btn = document.getElementById('geNotifyBtn');
+  if (!btn) return;
+  const perm = geNativePerm();
+  btn.classList.remove('on', 'denied', 'pulse');
+  if (perm === 'granted') {
+    btn.classList.add('on');
+    btn.title = 'Notificações ativas';
+    btn.innerHTML = '<span aria-hidden="true">✓</span>';
+  } else if (perm === 'denied') {
+    btn.classList.add('denied');
+    btn.title = 'Notificações bloqueadas — toque para ver como liberar';
+    btn.innerHTML = '<span aria-hidden="true">🔕</span>';
+  } else {
+    btn.classList.add('pulse');
+    btn.title = 'Ativar notificações de colheita';
+    btn.innerHTML = '<span aria-hidden="true">🔔</span><span class="ge-dot" aria-hidden="true"></span>';
+  }
+};
+async function geEnsurePushPermission(forcePrompt) {
+  const help = document.getElementById('geNotifyHelp');
+  try {
+    let OneSignal = window.OneSignal;
+    // espera SDK se ainda não carregou
+    if (!OneSignal && window.OneSignalDeferred) {
+      await new Promise(function (resolve) {
+        var done = false;
+        window.OneSignalDeferred.push(async function (OS) {
+          window.OneSignal = OS;
+          OneSignal = OS;
+          done = true;
+          resolve();
+        });
+        setTimeout(function () { if (!done) resolve(); }, 2500);
+      });
+      OneSignal = window.OneSignal || OneSignal;
+    }
+    let perm = geNativePerm();
+    if (perm === 'granted') {
+      const ext = (S && (S.pass || (S.user && (S.user.id || S.user.numero)))) || '';
+      if (ext && window.__geOsLogin) await window.__geOsLogin(ext);
+      window.__geUpdateNotifyBtn();
+      if (forcePrompt) toast('Notificações já estão ativas ✓', 'ok');
+      return true;
+    }
+    if (perm === 'denied') {
+      if (help) help.classList.add('open');
+      window.__geUpdateNotifyBtn();
+      if (forcePrompt) toast('Permissão bloqueada no navegador', 'bad');
+      return false;
+    }
+    if (!forcePrompt && perm === 'default') {
+      // auto: tenta slidedown OneSignal
+    }
+    if (forcePrompt) toast('Abrindo pedido de notificação…', 'ok');
+    var ok = false;
+    if (OneSignal && OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
+      try {
+        await OneSignal.Slidedown.promptPush({ force: !!forcePrompt });
+        ok = true;
+      } catch (e1) { console.warn('Slidedown', e1); }
+    }
+    if (!ok && OneSignal && OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+      try {
+        await OneSignal.Notifications.requestPermission(true);
+        ok = true;
+      } catch (e2) { console.warn('OS requestPermission', e2); }
+    }
+    if (geNativePerm() === 'default' && typeof Notification !== 'undefined' && Notification.requestPermission) {
+      try {
+        var r = await Notification.requestPermission();
+        ok = ok || r === 'granted';
+      } catch (e3) { console.warn('native requestPermission', e3); }
+    }
+    const ext2 = (S && (S.pass || (S.user && (S.user.id || S.user.numero)))) || '';
+    if (ext2 && window.__geOsLogin) await window.__geOsLogin(ext2);
+    window.__geUpdateNotifyBtn();
+    perm = geNativePerm();
+    if (perm === 'granted') {
+      if (forcePrompt) toast('Notificações ativas! Você será avisado na colheita.', 'ok');
+      try {
+        if (typeof Notification !== 'undefined') {
+          new Notification('Gold Empire', { body: 'Avisos de colheita ativados.', icon: '/icon-192.png' });
+        }
+      } catch (_) {}
+      return true;
+    }
+    if (perm === 'denied') {
+      if (help) help.classList.add('open');
+      if (forcePrompt) toast('Permissão negada. Siga os passos na tela.', 'bad');
+      return false;
+    }
+    if (forcePrompt) toast('Se o pedido não apareceu, confira se o site está em HTTPS.', 'bad');
+    return false;
+  } catch (e) {
+    console.warn('geEnsurePushPermission', e);
+    if (forcePrompt) toast('Erro ao pedir notificação. Recarregue a página.', 'bad');
+    return false;
+  }
+}
+(function bindGeNotify() {
+  function bind() {
+    const btn = document.getElementById('geNotifyBtn');
+    if (!btn || btn.dataset.bound) return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      geEnsurePushPermission(true);
+    });
+    const help = document.getElementById('geNotifyHelp');
+    const helpOk = document.getElementById('geNotifyHelpOk');
+    if (helpOk) helpOk.addEventListener('click', function () {
+      if (help) help.classList.remove('open');
+    });
+    if (help) help.addEventListener('click', function (e) {
+      if (e.target === help) help.classList.remove('open');
+    });
+    window.__geUpdateNotifyBtn();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+})();
+
+
+async function bootSSO(){
+  // 1) Sessão já salva no Gold Empire
+  try {
+    if (load() && S.user && S.pass) {
+      showApp();
+      toast('Bem-vindo de volta, ' + (S.user.nome || '') + '!', 'ok');
+      return;
+    }
+  } catch (e) {}
+
+  // 2) Reaproveita login do index.html (fabi_session / neconecta)
+  try {
+    const raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    if (s.foto || s.avatar) S.foto = fixFoto(s.foto || s.avatar);
+
+    const user = String(s.nome || s.username || s.user || s.numero || '').trim();
+    // senha no site principal costuma ser o "id" do /rg
+    const candidates = [
+      s.id, s.password, s.senha, s.pass, s.token, s.userId
+    ].map(x => String(x || '').trim()).filter(Boolean);
+
+    if (user) document.getElementById('inpUser').value = user;
+
+    if (user && candidates.length) {
+      let logged = null, passOk = null;
+      for (const pass of candidates) {
+        try {
+          logged = await tryLogin(user, pass);
+          passOk = pass;
+          break;
+        } catch (_) {}
+      }
+      // tenta também pelo número se o nome falhar
+      if (!logged && s.numero) {
+        const num = String(s.numero).replace(/\D/g, '');
+        for (const pass of candidates) {
+          try {
+            logged = await tryLogin(num, pass);
+            passOk = pass;
+            break;
+          } catch (_) {}
+        }
+      }
+      if (logged && passOk) {
+        S.user = {
+          nome: logged.nome || user,
+          numero: logged.numero || s.numero || '',
+          grupo: logged.grupo || s.grupo || '',
+          foto: logged.foto || logged.avatar || logged.fotoPerfil || s.foto || s.avatar || s.fotoPerfil || AV
+        };
+        S.pass = passOk;
+        S.foto = fixFoto(S.user.foto);
+        save();
+        showApp();
+        toast('Entrada automática: ' + S.user.nome, 'ok');
+        return;
+      }
+      if (candidates[0]) document.getElementById('inpPass').value = candidates[0];
+      document.getElementById('loginErr').textContent = 'Sessão do site detectada — confirme a senha do /rg se precisar.';
+    }
+  } catch (e) {}
+}
+bootSSO();
+})();
+</script>
+
+
+<!-- Floating Chat Gold Empire -->
+<button type="button" class="ge-chat-fab" id="geChatFab" title="Chat global" aria-label="Abrir chat">
+  💬
+  <span class="badge" id="geChatBadge">0</span>
+</button>
+<div class="ge-chat-panel" id="geChatPanel" role="dialog" aria-label="Chat global">
+  <div class="ge-chat-hd">
+    <div>
+      <strong>Chat global</strong>
+      <div class="mini"><span id="geChatOnlineLabel">0</span> online · mesmo chat do site</div>
+    </div>
+    <button type="button" id="geChatRefresh" title="Atualizar">↻</button>
+    <button type="button" id="geChatClose" title="Fechar">✕</button>
+  </div>
+  <div class="ge-chat-online" id="geChatOnlineList"></div>
+  <div class="ge-chat-msgs" id="geChatMsgs"><div class="ge-chat-empty">Carregando mensagens…</div></div>
+  <div class="ge-chat-ft">
+    <input id="geChatInput" type="text" maxlength="500" placeholder="Mensagem (precisa estar logado)…" autocomplete="off"/>
+    <button type="button" id="geChatSend" title="Enviar">➤</button>
+  </div>
+</div>
+
+<div class="ge-float-notify-wrap" id="geFloatNotifyWrap">
+  <button type="button" class="ge-float-notify pulse" id="geNotifyBtn" title="Ativar notificações" aria-label="Ativar notificações">
+    <span aria-hidden="true">🔔</span>
+    <span class="ge-dot" aria-hidden="true"></span>
+  </button>
+</div>
+<div class="ge-notify-help-backdrop" id="geNotifyHelp" role="dialog" aria-modal="true">
+  <div class="ge-notify-help">
+    <h4>🔒 Notificações bloqueadas</h4>
+    <p>O navegador bloqueou o pedido. Libere manualmente:</p>
+    <ol>
+      <li>Toque no <strong>cadeado</strong> na barra de endereço</li>
+      <li>Abra <strong>Notificações</strong></li>
+      <li>Mude para <strong>Permitir</strong></li>
+      <li>Recarregue e toque no sino de novo</li>
+    </ol>
+    <button type="button" class="btn-help-ok" id="geNotifyHelpOk">Entendi</button>
+  </div>
+</div>
+
+
+<script>
+/* ===== Online + Floating Chat (mesmo backend do index) ===== */
+(function(){
+  'use strict';
+  const PROXY_HOST = 'https://orange-hill-2e61.gbscabral15.workers.dev';
+  const BACKEND = 'http://br2.bronxyshost.com:4009';
+  function geApiUrls(path){
+    const target = BACKEND.replace(/\/$/,'') + path;
+    const hostPath = BACKEND.replace(/^https?:\/\//,'');
+    return [
+      PROXY_HOST + '/' + hostPath + '/proxy?url=' + encodeURIComponent(target),
+      PROXY_HOST + '/proxy?url=' + encodeURIComponent(target)
+    ];
+  }
+  async function geFetch(path, opts, timeoutMs){
+    const urls = geApiUrls(path);
+    let lastErr = null;
+    for (const url of urls){
+      const ctrl = new AbortController();
+      const to = setTimeout(()=>ctrl.abort(), timeoutMs || 12000);
+      try{
+        const r = await fetch(url, Object.assign({}, opts||{}, {signal: ctrl.signal, mode:'cors'}));
+        clearTimeout(to);
+        const text = await r.text();
+        let data = null;
+        try { data = JSON.parse(text); } catch(_){ data = text; }
+        if (r.ok) return { ok:true, data, status:r.status };
+        lastErr = new Error('HTTP '+r.status);
+      }catch(e){
+        clearTimeout(to);
+        lastErr = e;
+      }
+    }
+    return { ok:false, error: lastErr };
+  }
+  function geEsc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function geAvatarUrl(u){
+    const a = (u && (u.avatar || u.foto || u.fotoPerfil)) || '';
+    if (a && /^https?:\/\//i.test(a)) return a;
+    if (a && a.startsWith('/')) return BACKEND.replace(/\/$/,'') + a;
+    return 'https://ui-avatars.com/api/?name='+encodeURIComponent((u&&u.nome)||'User')+'&size=64&background=0f766e&color=fff';
+  }
+  function geGetSession(){
+    // 1) estado global do Gold Empire
+    try{
+      const g = window.__GE || window.S;
+      if (g && g.user && g.pass) return g;
+    }catch(_){}
+    // 2) localStorage do Golds
+    try{
+      const d = JSON.parse(localStorage.getItem('fabi_ge_v6')||'null');
+      if (d && d.user && d.pass) return d;
+    }catch(_){}
+    // 3) sessão do index.html
+    try{
+      const raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
+      if (raw){
+        const s = JSON.parse(raw);
+        if (s && (s.nome || s.username || s.numero)){
+          return {
+            user: {
+              nome: s.nome || s.username || s.numero,
+              numero: s.numero || '',
+              foto: s.avatar || s.foto || s.fotoPerfil || ''
+            },
+            pass: s.id || s.password || s.senha || s.pass || '',
+            foto: s.avatar || s.foto || s.fotoPerfil || ''
+          };
+        }
+      }
+    }catch(_){}
+    return null;
+  }
+  function geIdentity(){
+    const sess = geGetSession();
+    if (sess && sess.user){
+      const u = sess.user;
+      const id = String(sess.pass || u.numero || u.nome || u.id || '').trim();
+      if (id){
+        return {
+          userId: id,
+          nome: u.nome || 'Jogador',
+          avatar: sess.foto || u.foto || u.avatar || u.fotoPerfil || ''
+        };
+      }
+    }
+    let gid = localStorage.getItem('ge_guest_id');
+    if (!gid){ gid = 'guest_'+Math.random().toString(36).slice(2,10); localStorage.setItem('ge_guest_id', gid); }
+    return { userId: gid, nome: 'Visitante', avatar: '' };
+  }
+  function geIsLogged(){
+    const sess = geGetSession();
+    return !!(sess && sess.user && (sess.pass || (sess.user && (sess.user.numero || sess.user.nome))));
+  }
+
+  let lastMsgCount = 0;
+  let chatOpen = false;
+  let pollTimer = null;
+
+  async function pingOnline(){
+    const id = geIdentity();
+    const r = await geFetch('/cliente06/online/ping', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId: id.userId, nome: id.nome, avatar: id.avatar, visitante: !geIsLogged() })
+    }, 8000);
+    if (r.ok && r.data && r.data.totalOnline != null){
+      const n = Number(r.data.totalOnline)||0;
+      const el = document.getElementById('geOnlineCount');
+      if (el) el.textContent = String(n);
+      const lab = document.getElementById('geChatOnlineLabel');
+      if (lab) lab.textContent = String(n);
+    }
+  }
+  async function loadOnlineList(){
+    const r = await geFetch('/cliente06/online', { method:'GET' }, 8000);
+    if (!r.ok || !r.data) return;
+    const n = Number(r.data.totalOnline)||0;
+    const el = document.getElementById('geOnlineCount');
+    if (el) el.textContent = String(n);
+    const lab = document.getElementById('geChatOnlineLabel');
+    if (lab) lab.textContent = String(n);
+    const box = document.getElementById('geChatOnlineList');
+    if (!box) return;
+    const users = Array.isArray(r.data.usuarios) ? r.data.usuarios : [];
+    if (!users.length){
+      box.innerHTML = '<div class="ge-chat-empty" style="padding:6px;font-size:11px">Ninguém online</div>';
+      return;
+    }
+    box.innerHTML = users.slice(0,12).map(u => {
+      const nome = geEsc((u.nome||'User').slice(0,10));
+      const av = geEsc(geAvatarUrl(u));
+      return '<div class="ou" title="'+geEsc(u.nome||'')+'"><img referrerpolicy="no-referrer" src="'+av+'" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/><span>'+nome+'</span></div>';
+    }).join('');
+  }
+
+  function renderMsgs(list){
+    const box = document.getElementById('geChatMsgs');
+    if (!box) return;
+    if (!list || !list.length){
+      box.innerHTML = '<div class="ge-chat-empty">Nenhuma mensagem ainda.<br>Seja o primeiro a falar! 👑</div>';
+      return;
+    }
+    const me = geIdentity();
+    const sorted = list.slice().sort((a,b)=> new Date(a.createdAt||0) - new Date(b.createdAt||0));
+    const last = sorted.slice(-60);
+    box.innerHTML = last.map(m => {
+      const u = m.usuario || {};
+      const isMe = String(u.id||'') === String(me.userId) || String(u.nome||'') === String(me.nome);
+      const nome = m.anonimo ? 'Anônimo' : (u.nome || 'User');
+      const av = m.anonimo ? 'https://ui-avatars.com/api/?name=?&background=334155&color=fff' : geAvatarUrl(u);
+      const txt = geEsc(m.texto || m.text || '');
+      const when = m.createdAt ? new Date(m.createdAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
+      return '<div class="ge-chat-msg'+(isMe?' me':'')+'">'+
+        '<img referrerpolicy="no-referrer" src="'+geEsc(av)+'" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/>'+
+        '<div class="bubble"><div class="meta">'+geEsc(nome)+(when?' · '+when:'')+'</div>'+txt+'</div></div>';
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+    if (!chatOpen && list.length > lastMsgCount && lastMsgCount > 0){
+      const badge = document.getElementById('geChatBadge');
+      if (badge){ badge.textContent = String(Math.min(99, list.length - lastMsgCount)); badge.classList.add('on'); }
+    }
+    lastMsgCount = list.length;
+  }
+
+  async function loadChat(){
+    const r = await geFetch('/cliente06/chat-global/mensagens', { method:'GET' }, 12000);
+    if (!r.ok){
+      const box = document.getElementById('geChatMsgs');
+      if (box) box.innerHTML = '<div class="ge-chat-empty">Não foi possível carregar o chat.</div>';
+      return;
+    }
+    const list = Array.isArray(r.data) ? r.data : (r.data && r.data.mensagens) || [];
+    renderMsgs(list);
+  }
+
+  async function sendChat(){
+    if (!geIsLogged()){
+      if (typeof toast === 'function') toast('Entre na conta para falar no chat','bad');
+      else alert('Entre na conta para falar no chat');
+      return;
+    }
+    const inp = document.getElementById('geChatInput');
+    const texto = (inp && inp.value || '').trim();
+    if (!texto) return;
+    const id = geIdentity();
+    const btn = document.getElementById('geChatSend');
+    if (btn) btn.disabled = true;
+    try{
+      const mensagem = {
+        usuario: { id: id.userId, nome: id.nome, avatar: id.avatar },
+        texto: texto.slice(0,500),
+        anonimo: false,
+        createdAt: new Date().toISOString()
+      };
+      const r = await geFetch('/cliente06/chat-global/mensagens', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(mensagem)
+      }, 12000);
+      if (r.ok){
+        if (inp) inp.value = '';
+        await loadChat();
+      } else {
+        if (typeof toast === 'function') toast('Falha ao enviar','bad');
+      }
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  function openChat(){
+    chatOpen = true;
+    const panel = document.getElementById('geChatPanel');
+    if (panel) panel.classList.add('open');
+    const badge = document.getElementById('geChatBadge');
+    if (badge){ badge.classList.remove('on'); badge.textContent='0'; }
+    loadOnlineList();
+    loadChat();
+    const inp = document.getElementById('geChatInput');
+    if (inp) setTimeout(()=>inp.focus(), 150);
+  }
+  function closeChat(){
+    chatOpen = false;
+    const panel = document.getElementById('geChatPanel');
+    if (panel) panel.classList.remove('open');
+  }
+
+  function startLoops(){
+    pingOnline();
+    loadOnlineList();
+    loadChat();
+    setInterval(pingOnline, 45000);
+    setInterval(loadOnlineList, 60000);
+    setInterval(()=>{ if (chatOpen) loadChat(); else loadChat(); }, 25000);
+  }
+
+  function bind(){
+    const fab = document.getElementById('geChatFab');
+    const close = document.getElementById('geChatClose');
+    const refresh = document.getElementById('geChatRefresh');
+    const send = document.getElementById('geChatSend');
+    const inp = document.getElementById('geChatInput');
+    if (fab) fab.addEventListener('click', ()=>{
+      const panel = document.getElementById('geChatPanel');
+      if (panel && panel.classList.contains('open')) closeChat(); else openChat();
+    });
+    if (close) close.addEventListener('click', closeChat);
+    if (refresh) refresh.addEventListener('click', ()=>{ loadOnlineList(); loadChat(); });
+    if (send) send.addEventListener('click', sendChat);
+    if (inp) inp.addEventListener('keydown', e=>{ if (e.key==='Enter'){ e.preventDefault(); sendChat(); }});
+    window.addEventListener('beforeunload', ()=>{
+      try{
+        const id = geIdentity();
+        const urls = geApiUrls('/cliente06/online/offline');
+        const body = JSON.stringify({ userId: id.userId });
+        if (navigator.sendBeacon){
+          // beacon may not set content-type json; best-effort via fetch keepalive
+        }
+        fetch(urls[0], { method:'POST', headers:{'Content-Type':'application/json'}, body, keepalive:true }).catch(()=>{});
+      }catch(_){}
+    });
+    startLoops();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+})();
+</script>
+
+</body>
+</html>
