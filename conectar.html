@@ -3126,8 +3126,11 @@ function renderizarListaSessoes(sessoes) {
         const st = (s.status && (s.status.status || s.status)) || s.state || 'pending';
         const stStr = String(st).toLowerCase();
         const msg = (s.status && s.status.message) || s.message || '';
-        const isActive = s.isActive || stStr === 'connected' || stStr === 'open';
-        const onlineBadge = isActive ? ' <span class="badge bg-success ms-2">ONLINE</span>' : '';
+        // Badge ONLINE só se status real for aberto — nunca se for error/desconectado
+        const offlineLike = ['error','close','closed','offline','disconnected','logout','desconectado','cancelled','timeout','abandoned'].some(function(k){ return stStr.indexOf(k) >= 0; });
+        const onlineLike = ['open','connected','online','conectado'].some(function(k){ return stStr.indexOf(k) >= 0; });
+        const isActive = !offlineLike && !!(s.isActive) && onlineLike;
+        const onlineBadge = isActive ? ' <span class="badge bg-success ms-2">ONLINE</span>' : ' <span class="badge bg-secondary ms-2">OFFLINE</span>';
         const pairing = s.pairingCode || (s.pairing && s.pairing.code) || s.code || '';
         const btnCodigo = pairing
             ? `<button class="btn btn-sm btn-success mb-1" onclick="mostrarCodigo('${pairing}', '${name}')"><i class="fas fa-qrcode"></i> Código</button>`
@@ -3175,7 +3178,8 @@ function aplicarStatsSessoes(data, listaFiltrada) {
             if (!s) return false;
             if (s.isActive) return true;
             var st = String((s.status && (s.status.status || s.status)) || s.state || '').toLowerCase();
-            return ['open', 'connected', 'online', 'conectado'].some(function (k) { return st.indexOf(k) >= 0; });
+            if (['error','close','closed','offline','disconnected','logout','desconectado','cancelled','timeout'].some(function(k){ return st.indexOf(k) >= 0; })) return false;
+            return !!s.isActive && ['open', 'connected', 'online', 'conectado'].some(function (k) { return st.indexOf(k) >= 0; });
         }).length;
         var pendentes = Math.max(0, total - conectadas);
         if (data && data.stats && !listaFiltrada) {
@@ -3327,12 +3331,22 @@ function atualizarSessao(sessionName) {
                 statusBadge.text(data.status.status.toUpperCase());
                 card.find('small:first').html(`<i class="fas fa-info-circle"></i> ${data.status.message || ''}`);
                 card.find('.update-time').text('agora mesmo');
-                if (data.isActive) {
-                    if (!card.find('.badge.bg-success').length) {
-                        card.find('h6').append(' <span class="badge bg-success ms-2">ONLINE</span>');
-                    }
+                // Atualiza badge ONLINE/OFFLINE de forma consistente com o status
+                var stU = String((data.status && data.status.status) || data.status || '').toLowerCase();
+                var offlineU = ['error','close','closed','offline','disconnected','logout','desconectado','cancelled','timeout'].some(function(k){ return stU.indexOf(k) >= 0; });
+                var onlineU = !offlineU && !!data.isActive && ['open','connected','online','conectado'].some(function(k){ return stU.indexOf(k) >= 0; });
+                card.find('h6 .badge.bg-success, h6 .badge.bg-secondary').remove();
+                // também atualiza o pontinho
+                card.find('.status-dot').removeClass(function(i,c){ return (c.match(/(^|\s)status-dot-\S+/g) || []).join(' '); }).addClass('status-dot status-dot-' + (stU || 'unknown'));
+                if (onlineU) {
+                    card.find('h6').append(' <span class="badge bg-success ms-2">ONLINE</span>');
                 } else {
-                    card.find('.badge.bg-success').remove();
+                    card.find('h6').append(' <span class="badge bg-secondary ms-2">OFFLINE</span>');
+                }
+                // mensagem de status
+                var msgEl = card.find('p.mb-1.mt-2.small, p.small').first();
+                if (msgEl.length && data.status && data.status.message) {
+                    msgEl.html('<i class="fas fa-info-circle"></i> ' + data.status.message);
                 }
             }
         })
