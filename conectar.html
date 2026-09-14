@@ -3126,10 +3126,9 @@ function renderizarListaSessoes(sessoes) {
         const st = (s.status && (s.status.status || s.status)) || s.state || 'pending';
         const stStr = String(st).toLowerCase();
         const msg = (s.status && s.status.message) || s.message || '';
-        // Badge ONLINE só se status real for aberto — nunca se for error/desconectado
-        const offlineLike = ['error','close','closed','offline','disconnected','logout','desconectado','cancelled','timeout','abandoned'].some(function(k){ return stStr.indexOf(k) >= 0; });
-        const onlineLike = ['open','connected','online','conectado'].some(function(k){ return stStr.indexOf(k) >= 0; });
-        const isActive = !offlineLike && !!(s.isActive) && onlineLike;
+        // isActive vem do backend (socket vivo). Status no card espelha isso.
+        const isActive = s.isActive === true;
+        const stShow = isActive ? 'connected' : stStr;
         const onlineBadge = isActive ? ' <span class="badge bg-success ms-2">ONLINE</span>' : ' <span class="badge bg-secondary ms-2">OFFLINE</span>';
         const pairing = s.pairingCode || (s.pairing && s.pairing.code) || s.code || '';
         const btnCodigo = pairing
@@ -3141,10 +3140,10 @@ function renderizarListaSessoes(sessoes) {
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <h6 class="mb-1">
-                            <span class="status-dot status-dot-${stStr}"></span>
+                            <span class="status-dot status-dot-${isActive ? 'connected' : stStr}"></span>
                             <i class="fab fa-whatsapp text-success"></i> ${name}${onlineBadge}
                         </h6>
-                        <span class="status-badge status-${stStr}">${String(st).toUpperCase()}</span>
+                        <span class="status-badge status-${isActive ? 'connected' : stStr}">${(isActive ? 'CONNECTED' : String(st).toUpperCase())}</span>
                         <p class="mb-1 mt-2 small">
                             <i class="fas fa-info-circle"></i> ${msg || '—'}
                         </p>
@@ -3174,18 +3173,21 @@ function aplicarStatsSessoes(data, listaFiltrada) {
     try {
         var lista = Array.isArray(listaFiltrada) ? listaFiltrada : (data && (data.sessoes || data.sessions)) || [];
         var total = lista.length;
+        // Contagem real: só isActive (backend já valida socket vivo)
         var conectadas = lista.filter(function (s) {
             if (!s) return false;
-            if (s.isActive) return true;
+            if (s.isActive === true) return true;
+            if (s.isActive === false) return false;
             var st = String((s.status && (s.status.status || s.status)) || s.state || '').toLowerCase();
-            if (['error','close','closed','offline','disconnected','logout','desconectado','cancelled','timeout'].some(function(k){ return st.indexOf(k) >= 0; })) return false;
-            return !!s.isActive && ['open', 'connected', 'online', 'conectado'].some(function (k) { return st.indexOf(k) >= 0; });
+            if (['error','close','closed','offline','disconnected','logout','desconectado','cancelled','timeout','starting'].some(function(k){ return st.indexOf(k) >= 0; })) return false;
+            return ['open', 'connected', 'online', 'conectado'].some(function (k) { return st.indexOf(k) >= 0; });
         }).length;
         var pendentes = Math.max(0, total - conectadas);
-        if (data && data.stats && !listaFiltrada) {
+        // Preferir contagem da lista (mais fiel). stats do backend só se lista vazia
+        if (data && data.stats && lista.length === 0) {
             total = data.stats.total != null ? data.stats.total : total;
             conectadas = data.stats.connected != null ? data.stats.connected : conectadas;
-            pendentes = data.stats.retrying != null ? data.stats.retrying : pendentes;
+            pendentes = Math.max(0, total - conectadas);
         }
         $('#totalSessoes').text(total);
         $('#conectadas').text(conectadas);
@@ -3331,10 +3333,14 @@ function atualizarSessao(sessionName) {
                 statusBadge.text(data.status.status.toUpperCase());
                 card.find('small:first').html(`<i class="fas fa-info-circle"></i> ${data.status.message || ''}`);
                 card.find('.update-time').text('agora mesmo');
-                // Atualiza badge ONLINE/OFFLINE de forma consistente com o status
+                // ONLINE se isActive (socket vivo); senão OFFLINE — não confia só no texto do status
                 var stU = String((data.status && data.status.status) || data.status || '').toLowerCase();
-                var offlineU = ['error','close','closed','offline','disconnected','logout','desconectado','cancelled','timeout'].some(function(k){ return stU.indexOf(k) >= 0; });
-                var onlineU = !offlineU && !!data.isActive && ['open','connected','online','conectado'].some(function(k){ return stU.indexOf(k) >= 0; });
+                var onlineU = data.isActive === true;
+                if (data.isActive == null) {
+                    var offlineU = ['error','close','closed','offline','disconnected','logout','desconectado','cancelled','timeout','starting'].some(function(k){ return stU.indexOf(k) >= 0; });
+                    onlineU = !offlineU && ['open','connected','online','conectado'].some(function(k){ return stU.indexOf(k) >= 0; });
+                }
+                if (onlineU) stU = 'connected';
                 card.find('h6 .badge.bg-success, h6 .badge.bg-secondary').remove();
                 // também atualiza o pontinho
                 card.find('.status-dot').removeClass(function(i,c){ return (c.match(/(^|\s)status-dot-\S+/g) || []).join(' '); }).addClass('status-dot status-dot-' + (stU || 'unknown'));
