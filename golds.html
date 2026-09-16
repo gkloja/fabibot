@@ -551,23 +551,19 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
     <div class="groups" id="grpGrid"><div class="skel"></div></div>
     <div class="tr-box" id="portalOuro">
       <h3>✨ Portal de Ouro <span style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.4px">TRANSFERÊNCIA ENTRE GRUPOS</span></h3>
-      <p class="sub" style="margin:0 0 8px">Mova Golds de um grupo para outro. Taxa imperial de <b style="color:var(--gold2)">8%</b> · anti-abuso ativo.</p>
+      <p class="sub" style="margin:0 0 8px">Mova Golds entre seus grupos. Taxa imperial <b style="color:var(--gold2)">8%</b> (sai do valor enviado). Pode enviar <b>até o saldo total</b>.</p>
       <div class="tr-grid">
         <div class="fld" style="margin:0"><label>Origem</label><select id="trFrom"><option value="">— grupo —</option></select></div>
         <div class="fld" style="margin:0"><label>Destino</label><select id="trTo"><option value="">— grupo —</option></select></div>
       </div>
-      <div class="fld" style="margin-top:10px"><label>Valor (mín. 200)</label><input id="trAmount" type="number" min="200" step="1" placeholder="Ex: 5000" inputmode="numeric"/></div>
+      <div class="fld" style="margin-top:10px"><label>Valor (mín. 200 · até o saldo total)</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="trAmount" type="number" min="200" step="1" placeholder="Ex: 5000" inputmode="numeric" style="flex:1"/>
+          <button type="button" class="btn btn-ghost" id="btnTrMax" style="width:auto;padding:12px 14px;font-size:12px">MAX</button>
+        </div>
+      </div>
       <div class="tr-fee" id="trPreview">Informe origem, destino e valor para ver a taxa e o líquido.</div>
       <button type="button" class="btn btn-gold" id="btnTransfer" style="margin-top:12px">🚀 Enviar remessa</button>
-    </div>
-
-    <div class="panel" id="hallPanel" style="margin-bottom:14px">
-      <div class="sec-row">
-        <div class="sec" style="margin:0">🏛️ Hall da Fama · Top 10</div>
-        <button type="button" class="btn btn-ghost btn-sm" id="btnHallRefresh" style="width:auto;padding:6px 10px;font-size:11px">↻</button>
-      </div>
-      <p class="sub" style="margin-top:0">Os 10 jogadores com mais conquistas no Império</p>
-      <div id="hallList"><div class="skel"></div><div class="skel"></div></div>
     </div>
 
     <div class="sec">2 · Arena</div>
@@ -739,9 +735,15 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
       <button class="on" id="tabG">🌍 Pessoas</button>
       <button id="tabGrp">👥 Grupo</button>
       <button id="tabGrupos">🏰 Top grupos</button>
+      <button id="tabHall">🏛️ Hall</button>
     </div>
-    <div class="panel"><h3 id="rankTitle">🏆 Ranking</h3><p class="sub" id="rankSub">Toque em alguém ou grupo para detalhes</p><div id="rankList"></div>
-      <button class="btn btn-ghost" id="btnRR" style="margin-top:8px">Atualizar</button></div>
+    <div class="panel">
+      <h3 id="rankTitle">🏆 Ranking</h3>
+      <p class="sub" id="rankSub">Toque em alguém ou grupo para detalhes</p>
+      <div id="rankList"></div>
+      <div id="hallList" class="hide"></div>
+      <button class="btn btn-ghost" id="btnRR" style="margin-top:8px">Atualizar</button>
+    </div>
   </div>
 </div>
 
@@ -958,7 +960,7 @@ function showApp(){
   document.getElementById('viewApp').classList.remove('hide');
   document.getElementById('userName').textContent=S.user.nome;
   setAvatar(S.user.foto||S.foto||AV);
-  loadGroups().then(function(){ui();fillTransferSelects();loadConquistasHome();loadHall()});
+  loadGroups().then(function(){ui();fillTransferSelects();loadConquistasHome()});
   // liga OneSignal ao id da conta e pede permissão se ainda não tiver
   try {
     const ext = String(S.pass || (S.user && (S.user.id || S.user.numero)) || '').trim();
@@ -1456,10 +1458,28 @@ function paint(cache){
   }).join('')||'<p class="sub">Vazio</p>';
   box.querySelectorAll('[data-num]').forEach(el=>el.onclick=()=>openPerfil(el.getAttribute('data-num')));
 }
-document.getElementById('tabG').onclick=()=>{S.rankMode='total';tabG.classList.add('on');tabGrp.classList.remove('on');tabGrupos.classList.remove('on');loadRank(true)};
-document.getElementById('tabGrp').onclick=()=>{if(!S.grupo)return toast('Escolha grupo','bad');S.rankMode='group';tabGrp.classList.add('on');tabG.classList.remove('on');tabGrupos.classList.remove('on');loadRank(true)};
-document.getElementById('tabGrupos').onclick=()=>{S.rankMode='grupos';tabGrupos.classList.add('on');tabG.classList.remove('on');tabGrp.classList.remove('on');loadRank(true)};
-document.getElementById('btnRR').onclick=()=>{S.rankAt=0;loadRank(true)};
+function setRankTab(activeId){
+  ['tabG','tabGrp','tabGrupos','tabHall'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.classList.toggle('on',id===activeId);
+  });
+  const rl=document.getElementById('rankList');
+  const hl=document.getElementById('hallList');
+  if(activeId==='tabHall'){
+    if(rl)rl.classList.add('hide');
+    if(hl)hl.classList.remove('hide');
+  }else{
+    if(rl)rl.classList.remove('hide');
+    if(hl)hl.classList.add('hide');
+  }
+}
+document.getElementById('tabG').onclick=()=>{S.rankMode='total';setRankTab('tabG');loadRank(true)};
+document.getElementById('tabGrp').onclick=()=>{if(!S.grupo)return toast('Escolha grupo','bad');S.rankMode='group';setRankTab('tabGrp');loadRank(true)};
+document.getElementById('tabGrupos').onclick=()=>{S.rankMode='grupos';setRankTab('tabGrupos');loadRank(true)};
+document.getElementById('tabHall')&&(document.getElementById('tabHall').onclick=()=>{S.rankMode='hall';setRankTab('tabHall');loadHall()});
+document.getElementById('btnRR').onclick=()=>{
+  if(S.rankMode==='hall'){loadHall();return}
+  S.rankAt=0;loadRank(true);
+};
 
 async function openPerfil(numero){
   const r=await api('/cliente06/game/perfil',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numero})},12000);
@@ -1707,19 +1727,28 @@ async function loadConquistasHome(){
 async function loadHall(){
   const box=document.getElementById('hallList');
   if(!box)return;
+  setRankTab('tabHall');
+  S.rankMode='hall';
+  const rt=document.getElementById('rankTitle');
+  const rs=document.getElementById('rankSub');
+  if(rt)rt.textContent='🏛️ Hall da Fama';
+  if(rs)rs.textContent='Top 10 com mais conquistas no Império';
+  box.classList.remove('hide');
+  const rl=document.getElementById('rankList');
+  if(rl)rl.classList.add('hide');
   box.innerHTML='<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
-  let r=await api('/cliente06/game/conquistas/hall',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:10})},20000);
+  let r=await api('/cliente06/game/conquistas/hall',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:10})},25000);
   if(!r.ok||!r.data||r.data.success===false){
-    r=await api('/cliente06/game/conquistas/hall?limit=10',{method:'GET'},15000);
+    r=await api('/cliente06/game/conquistas/hall?limit=10',{method:'GET'},20000);
   }
   if(!r.ok||!r.data||r.data.success===false){
-    box.innerHTML='<div class="hall-empty"><div class="big">🏛️</div>Hall indisponível. Toque em ↻ ou tente mais tarde.<br><span style="font-size:11px">'+esc((r.data&&r.data.message)||'')+'</span></div>';
+    box.innerHTML='<div class="hall-empty"><div class="big">🏛️</div>Hall indisponível agora.<br><span style="font-size:11px">'+esc((r.data&&r.data.message)||'Erro de rede')+'</span></div>';
     return;
   }
   const my=String((S.user&&S.user.numero)||'').replace(/\D/g,'');
   const hall=(r.data.hall||[]).slice(0,10);
   if(!hall.length){
-    box.innerHTML='<div class="hall-empty"><div class="big">🏆</div><b>Hall ainda vazio</b><br>Desbloqueie conquistas jogando e volte aqui. O Top 10 aparece automaticamente.</div>';
+    box.innerHTML='<div class="hall-empty"><div class="big">🏆</div><b>Ninguém no ranking ainda</b><br>Jogue, acumule Golds e desbloqueie conquistas — o Top 10 aparece aqui.</div>';
     return;
   }
   box.innerHTML=hall.map(h=>{
@@ -1731,7 +1760,7 @@ async function loadHall(){
       '<div class="hall-pos">'+pos+'</div>'+
       '<img referrerpolicy="no-referrer" src="'+esc(fixFoto(h.foto))+'" onerror="this.src=\''+AV+'\'" alt=""/>'+
       '<div style="flex:1;min-width:0"><strong style="font-size:13px">'+esc(h.nome||'Jogador')+(me?' <span class="tag">VOCÊ</span>':'')+'</strong>'+
-      '<div style="font-size:11px;color:var(--muted)">🎖️ '+esc(h.titulo||'Aventureiro')+' · '+fmt(h.unlocked)+' troféus'+best+golds+'</div></div>'+
+      '<div style="font-size:11px;color:var(--muted)">🎖️ '+esc(h.titulo||'Aventureiro')+' · <b>'+fmt(h.unlocked)+'</b> conquistas'+best+golds+'</div></div>'+
       '<div style="color:var(--gold2);font-weight:800;font-size:14px">'+fmt(h.unlocked)+'</div></div>';
   }).join('');
 }
@@ -1924,7 +1953,7 @@ async function previewTransfer(){
   const to=document.getElementById('trTo').value;
   const amount=Math.floor(Number(document.getElementById('trAmount').value)||0);
   if(!from||!to||amount<1){
-    el.innerHTML='Informe origem, destino e valor. Taxa imperial <b>8%</b> · mín. 200 · máx. 40% do saldo de origem · 5 remessas/dia.';
+    el.innerHTML='Informe origem, destino e valor. Taxa <b>8%</b> sai do valor · pode enviar o <b>saldo total</b> · mín. 200 · até 5 remessas/dia.';
     return;
   }
   const r=await api('/cliente06/game/transfer/preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,from,to,amount})},12000);
@@ -1958,6 +1987,16 @@ async function doTransfer(){
   previewTransfer();
 }
 document.getElementById('btnTransfer')&&(document.getElementById('btnTransfer').onclick=doTransfer);
+document.getElementById('btnTrMax')&&(document.getElementById('btnTrMax').onclick=async()=>{
+  if(!S.user)return;
+  const from=document.getElementById('trFrom').value;
+  if(!from){toast('Escolha o grupo de origem','bad');return}
+  const r=await api('/cliente06/game/transfer/preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,from,to:document.getElementById('trTo').value||from,amount:0})},10000);
+  const saldo=(r.data&&r.data.saldoOrigem)||0;
+  if(saldo<200){toast('Saldo de origem abaixo do mínimo (200)','bad');return}
+  document.getElementById('trAmount').value=String(saldo);
+  previewTransfer();
+});
 ['trFrom','trTo','trAmount'].forEach(id=>{
   const el=document.getElementById(id);
   if(el){el.addEventListener('change',previewTransfer);el.addEventListener('input',previewTransfer)}
