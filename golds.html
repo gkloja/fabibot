@@ -8,13 +8,48 @@
 <link rel="icon" href="/favicon-32x32.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#060908;--card:#0e1612;--line:rgba(255,255,255,.08);--g:#16a34a;--g2:#4ade80;--gold:#fbbf24;--gold2:#fde68a;--cyan:#22d3ee;--purple:#c084fc;--red:#fb7185;--pink:#f472b6;--text:#f0fdf4;--muted:#7d9b8c;--font:'Plus Jakarta Sans',system-ui,sans-serif}
+:root{
+  --bg:#05070a;
+  --bg2:#0a0e14;
+  --card:rgba(14,18,26,.82);
+  --card-solid:#0e121a;
+  --line:rgba(255,255,255,.07);
+  --line2:rgba(255,255,255,.12);
+  --g:#10b981;--g2:#34d399;
+  --gold:#e8c547;--gold2:#f5e6a3;--gold3:#b8962e;
+  --cyan:#22d3ee;--purple:#a78bfa;--red:#f87171;--pink:#f472b6;
+  --text:#f4f7fb;--muted:#8b9cb3;
+  --font:'Plus Jakarta Sans',system-ui,sans-serif;
+  --radius:18px;
+  --shadow:0 20px 50px rgba(0,0,0,.45);
+  --glow-gold:0 0 40px rgba(232,197,71,.12);
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:var(--font);background:
-  radial-gradient(900px 420px at 15% -15%,rgba(22,163,74,.22),transparent 55%),
-  radial-gradient(700px 320px at 100% 0,rgba(251,191,36,.1),transparent 50%),
-  var(--bg);color:var(--text);min-height:100vh}
-.top{position:sticky;top:0;z-index:40;backdrop-filter:blur(16px);background:rgba(6,9,8,.92);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:
+    radial-gradient(ellipse 100% 60% at 0% -10%,rgba(16,185,129,.14),transparent 50%),
+    radial-gradient(ellipse 80% 50% at 100% 0%,rgba(232,197,71,.09),transparent 45%),
+    radial-gradient(ellipse 60% 40% at 50% 100%,rgba(34,211,238,.05),transparent 50%),
+    linear-gradient(180deg,#05070a 0%,#080c12 50%,#05070a 100%);
+  color:var(--text);min-height:100vh;
+  letter-spacing:-.01em;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+.top,.shell,.ge-float-notify-wrap,.ge-chat-fab,.ge-chat-panel,.toast,.cq-notif,.modal{position:relative;z-index:1}
+.top{
+  position:sticky;top:0;z-index:40;
+  backdrop-filter:blur(20px) saturate(1.4);
+  background:rgba(5,7,10,.85);
+  border-bottom:1px solid var(--line);
+  padding:12px 16px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  box-shadow:0 8px 32px rgba(0,0,0,.25);
+}
 .brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);font-weight:800}
 .brand img{width:34px;height:34px;border-radius:10px;object-fit:cover;box-shadow:0 0 0 2px rgba(22,163,74,.35)}
 .brand span{color:var(--g2)}
@@ -22,16 +57,16 @@ body{font-family:var(--font);background:
 .nav a.on{color:var(--gold2);background:rgba(251,191,36,.12)}
 .shell{max-width:980px;margin:0 auto;padding:16px 14px 80px}
 .hide{display:none!important}
-.btn{border:0;border-radius:14px;padding:13px 16px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;width:100%}
+.btn{border:0;border-radius:14px;padding:13px 16px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;width:100%;transition:transform .15s,box-shadow .2s,filter .15s;letter-spacing:.2px}
 .btn:disabled{opacity:.5;cursor:not-allowed}.btn:active:not(:disabled){transform:scale(.98)}
-.btn-g{background:linear-gradient(135deg,var(--g2),var(--g));color:#052e16}
-.btn-gold{background:linear-gradient(135deg,var(--gold),#d97706);color:#1a1200}
+.btn-g{background:linear-gradient(135deg,#34d399,#059669);color:#042f1a;box-shadow:0 8px 24px rgba(16,185,129,.22)}
+.btn-gold{background:linear-gradient(135deg,#f0d060,var(--gold3));color:#1a1200;box-shadow:0 8px 24px rgba(232,197,71,.25)}.btn-gold:hover{filter:brightness(1.06);box-shadow:0 10px 28px rgba(232,197,71,.35)}
 .btn-red{background:linear-gradient(135deg,#fb7185,#e11d48);color:#fff}
 .btn-cyan{background:linear-gradient(135deg,var(--cyan),#0891b2);color:#042f2e}
 .btn-pink{background:linear-gradient(135deg,var(--pink),#db2777);color:#fff}
 .btn-ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}
 .cd{font-size:11px;opacity:.9}
-.login{max-width:400px;margin:48px auto;background:linear-gradient(180deg,#142019,#0c1410);border:1px solid var(--line);border-radius:24px;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.login{max-width:420px;margin:56px auto;background:linear-gradient(165deg,rgba(16,22,32,.95),rgba(8,12,18,.98));border:1px solid rgba(232,197,71,.2);border-radius:28px;padding:32px 28px;text-align:center;box-shadow:var(--shadow),var(--glow-gold);position:relative;overflow:hidden}
 .login h1{margin:10px 0 6px;font-size:24px}.login p{color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.5}
 .fld{text-align:left;margin-bottom:10px}
 .fld label{display:block;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;margin-bottom:5px}
@@ -39,10 +74,10 @@ body{font-family:var(--font);background:
 .err{color:var(--red);font-size:12px;min-height:16px;margin:6px 0}
 .hud{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin-bottom:16px}
 @media(max-width:700px){.hud{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
-.user{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(22,163,74,.14),var(--card))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+.user{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(14,18,26,.9));border-color:rgba(16,185,129,.2)}
 .user img{width:56px;height:56px;border-radius:16px;object-fit:cover;border:2px solid rgba(251,191,36,.45);background:#1a1f2e}
-.bal{background:linear-gradient(145deg,rgba(251,191,36,.14),rgba(14,22,18,.95));border-color:rgba(251,191,36,.35);display:flex;gap:12px;align-items:center}
+.bal{background:linear-gradient(145deg,rgba(232,197,71,.14),rgba(14,18,26,.95));border-color:rgba(232,197,71,.35);display:flex;gap:12px;align-items:center;box-shadow:var(--glow-gold)}
 .bal .gimg{width:52px;height:52px;border-radius:14px;object-fit:cover;border:2px solid rgba(251,191,36,.35);background:#122;flex-shrink:0}
 .bal .col{flex:1;min-width:0}
 .bal .row{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
@@ -59,15 +94,15 @@ body{font-family:var(--font);background:
 .gcard strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gcard .gg{color:var(--gold2);font-weight:800;margin-top:2px;font-size:13px}
 .games{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}
-.gbtn{background:linear-gradient(180deg,#142019,var(--card));border:1px solid var(--line);border-radius:18px;padding:18px 12px;cursor:pointer;font-family:inherit;color:var(--text);text-align:center;box-shadow:0 12px 28px rgba(0,0,0,.25);transition:.15s}
-.gbtn:hover{transform:translateY(-3px);border-color:rgba(251,191,36,.3)}
+.gbtn{background:linear-gradient(165deg,rgba(22,28,40,.9),rgba(10,14,20,.95));border:1px solid var(--line);border-radius:20px;padding:20px 12px;cursor:pointer;font-family:inherit;color:var(--text);text-align:center;box-shadow:0 12px 32px rgba(0,0,0,.3);transition:.2s cubic-bezier(.2,.8,.2,1)}
+.gbtn:hover{transform:translateY(-4px);border-color:rgba(232,197,71,.4);box-shadow:0 16px 40px rgba(0,0,0,.4),0 0 0 1px rgba(232,197,71,.15)}
 .gbtn .ico{font-size:30px;display:block;margin-bottom:8px}
 .gbtn strong{font-size:13px;display:block}
 .gbtn span{font-size:11px;color:var(--muted)}
 .gv{display:none}.gv.on{display:block;animation:up .25s ease}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .back{margin-bottom:12px;padding:9px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-weight:700;font-size:12px;font-family:inherit;cursor:pointer}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px;backdrop-filter:blur(10px);box-shadow:0 12px 32px rgba(0,0,0,.2)}
 .panel h3{font-size:15px;margin-bottom:4px}
 .sub{font-size:13px;color:var(--muted);line-height:1.45;margin-bottom:10px}
 .bets{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
@@ -109,7 +144,7 @@ body{font-family:var(--font);background:
 @keyframes sh{to{background-position:-200% 0}}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(10px);background:rgba(12,20,16,.96);border:1px solid rgba(22,163,74,.45);color:var(--g2);padding:12px 18px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:92%;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast.bad{border-color:rgba(251,113,133,.5);color:#fecaca}.toast.ok{border-color:rgba(251,191,36,.5);color:var(--gold2)}
-.banner{background:linear-gradient(135deg,rgba(22,163,74,.16),rgba(251,191,36,.08));border:1px solid rgba(251,191,36,.22);border-radius:16px;padding:13px 15px;margin-bottom:14px;font-size:13px;color:var(--muted);line-height:1.45}
+.banner{background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(232,197,71,.08));border:1px solid rgba(232,197,71,.22);border-radius:16px;padding:14px 16px;margin-bottom:14px;font-size:13px;color:var(--muted);line-height:1.5}
 .banner b{color:var(--gold2)}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:90;display:flex;align-items:flex-end;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:.2s}
 .modal.on{opacity:1;pointer-events:auto}
@@ -156,7 +191,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 
 
 /* Portal de Ouro + Hall polish */
-.tr-box{background:linear-gradient(165deg,rgba(251,191,36,.12),rgba(22,163,74,.06));border:1px solid rgba(251,191,36,.28);border-radius:18px;padding:14px;margin-bottom:14px}
+.tr-box{background:linear-gradient(165deg,rgba(232,197,71,.1),rgba(16,185,129,.05));border:1px solid rgba(232,197,71,.28);border-radius:20px;padding:16px;margin-bottom:14px;box-shadow:var(--glow-gold)}
 .tr-box h3{font-size:14px;margin:0 0 4px;display:flex;align-items:center;gap:8px}
 .tr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 @media(max-width:560px){.tr-grid{grid-template-columns:1fr}}
@@ -204,7 +239,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 .banner.cq-ban .btn{width:auto;padding:9px 14px;font-size:12px}
 
 /* ===== Conquistas Hall ===== */
-.cq-hero{background:linear-gradient(135deg,rgba(251,191,36,.18),rgba(22,163,74,.1) 45%,rgba(14,22,18,.95));border:1px solid rgba(251,191,36,.3);border-radius:20px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.cq-hero{background:linear-gradient(135deg,rgba(232,197,71,.16),rgba(16,185,129,.08) 50%,rgba(10,14,20,.95));border:1px solid rgba(232,197,71,.3);border-radius:22px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:var(--glow-gold)}
 .cq-hero::after{content:'🏆';position:absolute;right:10px;top:6px;font-size:56px;opacity:.12;transform:rotate(12deg);pointer-events:none}
 .cq-hero h3{font-size:17px;margin-bottom:4px}
 .cq-titulo{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:5px 12px;border-radius:999px;background:rgba(251,191,36,.14);border:1px solid rgba(251,191,36,.35);color:var(--gold2);font-size:12px;font-weight:800}
@@ -486,8 +521,9 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 
 <div class="shell" id="viewLogin">
   <div class="login">
-    <div style="font-size:44px">👑</div>
+    <div class="login-crown">👑</div>
     <h1>Gold Empire</h1>
+    <p class="login-tag">O império dos Golds · Fabi Bot</p>
     <p>Mesma conta do <b>/rg</b> no WhatsApp. Se já entrou no site principal, o login é automático.</p>
     <div class="banner" style="text-align:left;margin:12px 0">
       <b>Não tem conta?</b> Entre em um grupo com a Fabi Bot e use o comando <b>/rg</b> (registro) para criar sua conta. Depois volte aqui com o mesmo usuário e senha.
@@ -575,7 +611,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
       <button class="gbtn" data-g="tiger"><span class="ico">🐯</span><strong>Tigrinho</strong><span>Fortune 3×3</span></button>
       <button class="gbtn" data-g="farm"><span class="ico">🌾</span><strong>Fazenda</strong><span>3 canteiros</span></button>
       <button class="gbtn" data-g="raid"><span class="ico">🏴‍☠️</span><strong>Roubar</strong><span>Top 10 grupos</span></button>
-      <button class="gbtn" data-g="rank"><span class="ico">🏅</span><strong>Ranking</strong><span>Pessoas & grupos</span></button>
+      <button class="gbtn" data-g="rank"><span class="ico">🏅</span><strong>Ranking</strong><span>Pessoas · Hall · Grupos</span></button>
     </div>
   </div>
 
@@ -1718,8 +1754,19 @@ async function loadConquistasHome(){
     setUserTitle(r.data.titulo);
     paintShowcase(r.data.top3||[], r.data.unlocked||0, r.data.total||0);
     if(r.data.pendingNotifs&&r.data.pendingNotifs.length){
-      setCqDot(true);
-      showCqNotifications(r.data.pendingNotifs);
+      // evita spam: se já ackou nesta sessão (local), não mostra de novo
+      const seen=new Set(JSON.parse(localStorage.getItem('ge_cq_acked')||'[]'));
+      const fresh=r.data.pendingNotifs.filter(x=>x&&x.id&&!seen.has(x.id));
+      if(fresh.length){
+        setCqDot(true);
+        showCqNotifications(fresh);
+      } else {
+        setCqDot(false);
+        // sincroniza servidor
+        try{
+          await api('/cliente06/game/conquistas/ack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,ids:r.data.pendingNotifs.map(x=>x.id)})},8000);
+        }catch(_){}
+      }
     } else setCqDot(false);
   }catch(e){console.warn('cq home',e)}
 }
@@ -1737,12 +1784,12 @@ async function loadHall(){
   const rl=document.getElementById('rankList');
   if(rl)rl.classList.add('hide');
   box.innerHTML='<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
-  let r=await api('/cliente06/game/conquistas/hall',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:10})},25000);
+  let r=await api('/cliente06/game/conquistas/hall',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:10})},35000);
   if(!r.ok||!r.data||r.data.success===false){
     r=await api('/cliente06/game/conquistas/hall?limit=10',{method:'GET'},20000);
   }
   if(!r.ok||!r.data||r.data.success===false){
-    box.innerHTML='<div class="hall-empty"><div class="big">🏛️</div>Hall indisponível agora.<br><span style="font-size:11px">'+esc((r.data&&r.data.message)||'Erro de rede')+'</span></div>';
+    box.innerHTML='<div class="hall-empty"><div class="big">🏛️</div><b>Hall indisponível</b><br><span style="font-size:12px">Reinicie o Node com o <code>connect.js</code> atualizado e toque em Atualizar.</span><br><span style="font-size:11px;opacity:.7">'+esc((r.data&&r.data.message)||'Erro de rede')+'</span></div>';
     return;
   }
   const my=String((S.user&&S.user.numero)||'').replace(/\D/g,'');
@@ -1803,6 +1850,13 @@ async function ackCqNotifs(){
   const modal=document.getElementById('cqNotifModal');
   if(modal)modal.classList.remove('on');
   setCqDot(false);
+  if(ids.length){
+    try{
+      const prev=JSON.parse(localStorage.getItem('ge_cq_acked')||'[]');
+      const set=new Set(prev.concat(ids));
+      localStorage.setItem('ge_cq_acked',JSON.stringify([...set].slice(-200)));
+    }catch(_){}
+  }
   if(!ids.length||!S.user)return;
   try{
     await api('/cliente06/game/conquistas/ack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,ids})},10000);
