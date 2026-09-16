@@ -154,6 +154,19 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 .chip-live i{width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:pulseReady 1.2s infinite}
 
 
+
+/* Portal de Ouro + Hall polish */
+.tr-box{background:linear-gradient(165deg,rgba(251,191,36,.12),rgba(22,163,74,.06));border:1px solid rgba(251,191,36,.28);border-radius:18px;padding:14px;margin-bottom:14px}
+.tr-box h3{font-size:14px;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+.tr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:560px){.tr-grid{grid-template-columns:1fr}}
+.tr-box select,.tr-box input{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--text);font:inherit;font-size:14px}
+.tr-fee{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.4}
+.tr-fee b{color:var(--gold2)}
+.hall-empty{text-align:center;padding:18px 10px;color:var(--muted);font-size:13px}
+.hall-empty .big{font-size:36px;margin-bottom:6px}
+.hall-row .tag{font-size:9px;font-weight:800;padding:2px 6px;border-radius:6px;background:rgba(251,191,36,.15);color:var(--gold2);margin-left:4px}
+
 /* ===== Gold Empire v2 UI ===== */
 .user-title{display:inline-flex;align-items:center;gap:5px;margin-left:6px;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.4px;background:linear-gradient(135deg,rgba(251,191,36,.22),rgba(22,163,74,.12));border:1px solid rgba(251,191,36,.4);color:var(--gold2);vertical-align:middle;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .user strong{display:inline;font-size:16px}
@@ -536,12 +549,24 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 
     <div class="sec-row"><div class="sec">1 · Grupo</div></div>
     <div class="groups" id="grpGrid"><div class="skel"></div></div>
+    <div class="tr-box" id="portalOuro">
+      <h3>✨ Portal de Ouro <span style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.4px">TRANSFERÊNCIA ENTRE GRUPOS</span></h3>
+      <p class="sub" style="margin:0 0 8px">Mova Golds de um grupo para outro. Taxa imperial de <b style="color:var(--gold2)">8%</b> · anti-abuso ativo.</p>
+      <div class="tr-grid">
+        <div class="fld" style="margin:0"><label>Origem</label><select id="trFrom"><option value="">— grupo —</option></select></div>
+        <div class="fld" style="margin:0"><label>Destino</label><select id="trTo"><option value="">— grupo —</option></select></div>
+      </div>
+      <div class="fld" style="margin-top:10px"><label>Valor (mín. 200)</label><input id="trAmount" type="number" min="200" step="1" placeholder="Ex: 5000" inputmode="numeric"/></div>
+      <div class="tr-fee" id="trPreview">Informe origem, destino e valor para ver a taxa e o líquido.</div>
+      <button type="button" class="btn btn-gold" id="btnTransfer" style="margin-top:12px">🚀 Enviar remessa</button>
+    </div>
+
     <div class="panel" id="hallPanel" style="margin-bottom:14px">
       <div class="sec-row">
-        <div class="sec" style="margin:0">🏛️ Hall da Fama</div>
+        <div class="sec" style="margin:0">🏛️ Hall da Fama · Top 10</div>
         <button type="button" class="btn btn-ghost btn-sm" id="btnHallRefresh" style="width:auto;padding:6px 10px;font-size:11px">↻</button>
       </div>
-      <p class="sub" style="margin-top:0">Quem mais coleciona troféus no Império</p>
+      <p class="sub" style="margin-top:0">Os 10 jogadores com mais conquistas no Império</p>
       <div id="hallList"><div class="skel"></div><div class="skel"></div></div>
     </div>
 
@@ -902,6 +927,7 @@ async function loadGroups(){
   renderGroups();
   if(!S.grupo&&S.groups[0])await selectGroup(S.groups[0].grupo,S.groups[0].nome,S.groups[0].golds,S.groups[0].imagem);
   else if(S.grupo){const g=S.groups.find(x=>x.grupo===S.grupo);if(g)await selectGroup(g.grupo,g.nome,g.golds,g.imagem)}
+  try{fillTransferSelects()}catch(_){}
 }
 
 async function selectGroup(id,nome,golds,imagem){
@@ -912,7 +938,7 @@ async function selectGroup(id,nome,golds,imagem){
   save();renderGroups();ui();
   toast('Grupo: '+S.grupoNome,'ok');
   await refreshGold();
-  try{loadConquistasHome()}catch(_){}
+  try{fillTransferSelects();loadConquistasHome()}catch(_){}
 }
 
 async function refreshGold(){
@@ -932,7 +958,7 @@ function showApp(){
   document.getElementById('viewApp').classList.remove('hide');
   document.getElementById('userName').textContent=S.user.nome;
   setAvatar(S.user.foto||S.foto||AV);
-  loadGroups().then(function(){ui();loadConquistasHome();loadHall()});
+  loadGroups().then(function(){ui();fillTransferSelects();loadConquistasHome();loadHall()});
   // liga OneSignal ao id da conta e pede permissão se ainda não tiver
   try {
     const ext = String(S.pass || (S.user && (S.user.id || S.user.numero)) || '').trim();
@@ -1681,27 +1707,35 @@ async function loadConquistasHome(){
 async function loadHall(){
   const box=document.getElementById('hallList');
   if(!box)return;
-  box.innerHTML='<div class="skel"></div><div class="skel"></div>';
-  const r=await api('/cliente06/game/conquistas/hall',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:12})},15000);
-  if(!r.ok||!r.data||!r.data.success){
-    box.innerHTML='<p class="sub">Hall indisponível no momento</p>';
+  box.innerHTML='<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
+  let r=await api('/cliente06/game/conquistas/hall',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:10})},20000);
+  if(!r.ok||!r.data||r.data.success===false){
+    r=await api('/cliente06/game/conquistas/hall?limit=10',{method:'GET'},15000);
+  }
+  if(!r.ok||!r.data||r.data.success===false){
+    box.innerHTML='<div class="hall-empty"><div class="big">🏛️</div>Hall indisponível. Toque em ↻ ou tente mais tarde.<br><span style="font-size:11px">'+esc((r.data&&r.data.message)||'')+'</span></div>';
     return;
   }
   const my=String((S.user&&S.user.numero)||'').replace(/\D/g,'');
-  const hall=r.data.hall||[];
-  if(!hall.length){box.innerHTML='<p class="sub">Ainda vazio — seja o primeiro no Hall!</p>';return}
+  const hall=(r.data.hall||[]).slice(0,10);
+  if(!hall.length){
+    box.innerHTML='<div class="hall-empty"><div class="big">🏆</div><b>Hall ainda vazio</b><br>Desbloqueie conquistas jogando e volte aqui. O Top 10 aparece automaticamente.</div>';
+    return;
+  }
   box.innerHTML=hall.map(h=>{
     const me=my&&String(h.numero||'').replace(/\D/g,'')===my;
     const pos=h.posicao===1?'👑':h.posicao===2?'🥈':h.posicao===3?'🥉':('#'+h.posicao);
-    const best=h.best?(' · '+(h.best.emoji||'')+' '+h.best.nome):'';
+    const best=h.best?(' · '+(h.best.emoji||'')+' '+esc(h.best.nome)):'';
+    const golds=typeof h.totalGolds==='number'?(' · 💰 '+fmt(h.totalGolds)):'';
     return '<div class="hall-row'+(me?' me':'')+'">'+
       '<div class="hall-pos">'+pos+'</div>'+
       '<img referrerpolicy="no-referrer" src="'+esc(fixFoto(h.foto))+'" onerror="this.src=\''+AV+'\'" alt=""/>'+
-      '<div style="flex:1;min-width:0"><strong style="font-size:13px">'+esc(h.nome)+(me?' · você':'')+'</strong>'+
-      '<div style="font-size:11px;color:var(--muted)">🎖️ '+esc(h.titulo||'Aventureiro')+' · '+fmt(h.unlocked)+' troféus'+esc(best)+'</div></div>'+
-      '<div style="color:var(--gold2);font-weight:800;font-size:13px">'+fmt(h.unlocked)+'</div></div>';
+      '<div style="flex:1;min-width:0"><strong style="font-size:13px">'+esc(h.nome||'Jogador')+(me?' <span class="tag">VOCÊ</span>':'')+'</strong>'+
+      '<div style="font-size:11px;color:var(--muted)">🎖️ '+esc(h.titulo||'Aventureiro')+' · '+fmt(h.unlocked)+' troféus'+best+golds+'</div></div>'+
+      '<div style="color:var(--gold2);font-weight:800;font-size:14px">'+fmt(h.unlocked)+'</div></div>';
   }).join('');
 }
+
 
 function showCqNotifications(list){
   if(!list||!list.length)return;
@@ -1862,6 +1896,72 @@ document.getElementById('navCq')&&(document.getElementById('navCq').onclick=func
 if(location.hash==='#conquistas'){
   setTimeout(function(){if(S.user)openGame('conquistas')},800);
 }
+
+
+
+/* ===== PORTAL DE OURO ===== */
+function fillTransferSelects(){
+  const from=document.getElementById('trFrom');
+  const to=document.getElementById('trTo');
+  if(!from||!to)return;
+  const list=S.groups||S.grupos||[];
+  const opts=['<option value="">— grupo —</option>'].concat(list.map(g=>{
+    const id=String(g.grupo||g.id||'');
+    const nome=g.nome||g.name||String(id).split('@')[0];
+    const golds=typeof g.golds==='number'?(' · 💰 '+fmt(g.golds)):'';
+    return '<option value="'+esc(id)+'">'+esc(nome)+esc(golds)+'</option>';
+  }));
+  const html=opts.join('');
+  const fv=from.value,tv=to.value;
+  from.innerHTML=html;to.innerHTML=html;
+  if(fv)from.value=fv;if(tv)to.value=tv;
+  if(S.grupo&&!from.value)from.value=S.grupo;
+}
+async function previewTransfer(){
+  const el=document.getElementById('trPreview');
+  if(!el||!S.user)return;
+  const from=document.getElementById('trFrom').value;
+  const to=document.getElementById('trTo').value;
+  const amount=Math.floor(Number(document.getElementById('trAmount').value)||0);
+  if(!from||!to||amount<1){
+    el.innerHTML='Informe origem, destino e valor. Taxa imperial <b>8%</b> · mín. 200 · máx. 40% do saldo de origem · 5 remessas/dia.';
+    return;
+  }
+  const r=await api('/cliente06/game/transfer/preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,from,to,amount})},12000);
+  if(!r.ok||!r.data||!r.data.success){
+    el.innerHTML=esc((r.data&&r.data.message)||'Não foi possível calcular');
+    return;
+  }
+  const d=r.data;
+  el.innerHTML='Saldo origem: <b>'+fmt(d.saldoOrigem)+'</b> · Bruto <b>'+fmt(d.bruto)+'</b> · Taxa <b>'+fmt(d.taxa)+'</b> ('+d.feePct+'%) · Você recebe <b style="color:var(--g2)">'+fmt(d.liquido)+'</b> · Restam <b>'+d.dailyLeft+'</b> remessas hoje'+(d.cooldownSec?(' · cooldown '+d.cooldownSec+'s'):'');
+}
+async function doTransfer(){
+  if(!S.user){toast('Faça login','bad');return}
+  const from=document.getElementById('trFrom').value;
+  const to=document.getElementById('trTo').value;
+  const amount=Math.floor(Number(document.getElementById('trAmount').value)||0);
+  if(!from||!to){toast('Escolha origem e destino','bad');return}
+  if(from===to){toast('Grupos devem ser diferentes','bad');return}
+  if(amount<200){toast('Mínimo 200 Golds','bad');return}
+  const btn=document.getElementById('btnTransfer');
+  if(btn)btn.disabled=true;
+  const r=await api('/cliente06/game/transfer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,from,to,amount})},20000);
+  if(btn)btn.disabled=false;
+  if(!r.ok||!r.data||!r.data.success){
+    toast((r.data&&r.data.message)||'Remessa recusada','bad');
+    previewTransfer();
+    return;
+  }
+  toast('✨ +'+fmt(r.data.liquido)+' no destino (taxa '+fmt(r.data.taxa)+')','ok');
+  document.getElementById('trAmount').value='';
+  if(S.grupo===from||S.grupo===to)await refreshGold();
+  previewTransfer();
+}
+document.getElementById('btnTransfer')&&(document.getElementById('btnTransfer').onclick=doTransfer);
+['trFrom','trTo','trAmount'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el){el.addEventListener('change',previewTransfer);el.addEventListener('input',previewTransfer)}
+});
 
 
 async function bootSSO(){
