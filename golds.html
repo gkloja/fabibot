@@ -153,6 +153,43 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 .chip-live{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;padding:4px 10px;border-radius:999px;background:rgba(22,163,74,.15);color:var(--g2);border:1px solid rgba(22,163,74,.35)}
 .chip-live i{width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:pulseReady 1.2s infinite}
 
+
+/* ===== Gold Empire v2 UI ===== */
+.user-title{display:inline-flex;align-items:center;gap:5px;margin-left:6px;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.4px;background:linear-gradient(135deg,rgba(251,191,36,.22),rgba(22,163,74,.12));border:1px solid rgba(251,191,36,.4);color:var(--gold2);vertical-align:middle;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user strong{display:inline;font-size:16px}
+.cq-home{margin-bottom:14px}
+.cq-home-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.cq-home-head h3{font-size:13px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:0}
+.cq-showcase{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:560px){.cq-showcase{grid-template-columns:1fr}}
+.cq-mini{background:linear-gradient(165deg,rgba(251,191,36,.1),var(--card));border:1px solid rgba(251,191,36,.25);border-radius:16px;padding:12px 10px;text-align:center;min-height:108px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative;overflow:hidden}
+.cq-mini.empty{opacity:.55;border-style:dashed;background:rgba(255,255,255,.02)}
+.cq-mini .me{font-size:28px;line-height:1;filter:drop-shadow(0 4px 12px rgba(251,191,36,.25))}
+.cq-mini strong{font-size:12px;display:block;line-height:1.25}
+.cq-mini .mr{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;opacity:.85}
+.cq-mini .slot{position:absolute;top:6px;left:8px;font-size:9px;font-weight:800;color:var(--gold);opacity:.7}
+.hall-row{display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:14px;border:1px solid transparent;transition:.12s}
+.hall-row:hover{background:rgba(255,255,255,.04);border-color:var(--line)}
+.hall-row.me{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.25)}
+.hall-pos{width:28px;text-align:center;font-weight:800;color:var(--gold);font-size:14px}
+.hall-row img{width:40px;height:40px;border-radius:12px;object-fit:cover;background:#1a1f2e;border:2px solid rgba(251,191,36,.25)}
+.cq-notif{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(6px)}
+.cq-notif.on{display:flex;animation:up .25s ease}
+.cq-notif .box{width:min(400px,100%);background:linear-gradient(165deg,#1a1608,#0c1410);border:1px solid rgba(251,191,36,.45);border-radius:22px;padding:22px 18px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 40px rgba(251,191,36,.12);position:relative;overflow:hidden}
+.cq-notif .box::before{content:'';position:absolute;inset:-40% -20% auto;height:120px;background:radial-gradient(circle,rgba(251,191,36,.3),transparent 70%);pointer-events:none}
+.cq-notif .big{font-size:48px;margin:4px 0 8px;filter:drop-shadow(0 0 16px rgba(251,191,36,.4))}
+.cq-notif h3{font-size:18px;margin:0 0 6px}
+.cq-notif p{color:var(--muted);font-size:13px;line-height:1.45;margin:0 0 14px}
+.cq-notif .stack{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:200px;overflow:auto}
+.cq-notif .item{display:flex;align-items:center;gap:10px;text-align:left;padding:10px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.cq-notif .item .e{font-size:22px}
+.hud .user{position:relative}
+.pulse-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#f43f5e;margin-left:4px;box-shadow:0 0 0 0 rgba(244,63,94,.5);animation:geOnPulse 1.5s infinite}
+.sec-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0 10px}
+.sec-row .sec{margin:0}
+.banner.cq-ban{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.banner.cq-ban .btn{width:auto;padding:9px 14px;font-size:12px}
+
 /* ===== Conquistas Hall ===== */
 .cq-hero{background:linear-gradient(135deg,rgba(251,191,36,.18),rgba(22,163,74,.1) 45%,rgba(14,22,18,.95));border:1px solid rgba(251,191,36,.3);border-radius:20px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
 .cq-hero::after{content:'🏆';position:absolute;right:10px;top:6px;font-size:56px;opacity:.12;transform:rotate(12deg);pointer-events:none}
@@ -455,8 +492,12 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
     <div class="card user">
       <img id="av" referrerpolicy="no-referrer" loading="lazy" alt="" onerror="this.onerror=null;this.src='https://fabibot.vercel.app/flogo.jpg'"/>
       <div style="flex:1;min-width:0">
-        <strong id="userName" style="display:block;font-size:16px">—</strong>
-        <span id="userSub" style="font-size:12px;color:var(--muted)">Escolha o grupo</span>
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
+          <strong id="userName" style="font-size:16px">—</strong>
+          <span class="user-title hide" id="userTitle">Aventureiro</span>
+          <span class="pulse-dot hide" id="cqNotifDot" title="Novas conquistas"></span>
+        </div>
+        <span id="userSub" style="font-size:12px;color:var(--muted);display:block;margin-top:2px">Escolha o grupo</span>
       </div>
       <button class="btn btn-ghost" id="btnLogout" style="width:auto;padding:8px 12px;font-size:12px">Sair</button>
     </div>
@@ -475,10 +516,35 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
   </div>
 
   <div id="viewHome">
-    <div class="banner">Escolha o <b>grupo</b> e jogue. Golds são os mesmos do WhatsApp. Desbloqueie <b>conquistas</b>, resgate o <b>bônus diário</b>, cultive a fazenda e dispute o ranking.</div>
-    <button class="btn btn-gold" id="btnDaily" style="margin-bottom:12px">🎁 Resgatar bônus diário</button>
-    <div class="sec">1 · Grupo</div>
+    <div class="banner cq-ban">
+      <div style="flex:1;min-width:180px">Escolha o <b>grupo</b> e jogue. Golds iguais ao WhatsApp. Desbloqueie <b>conquistas</b>, resgate o daily e suba no <b>Hall da Fama</b>.</div>
+      <button type="button" class="btn btn-gold" id="btnDaily">🎁 Daily</button>
+    </div>
+
+    <div class="cq-home" id="cqHomeBox">
+      <div class="cq-home-head">
+        <h3>🏆 Suas joias mais raras</h3>
+        <button type="button" class="btn btn-ghost btn-sm" id="btnCqVerMais" style="width:auto;padding:7px 12px;font-size:11px">Ver todas →</button>
+      </div>
+      <div class="cq-showcase" id="cqShowcase">
+        <div class="cq-mini empty"><div class="me">❔</div><strong>Slot 1</strong><div class="mr">desbloqueie</div></div>
+        <div class="cq-mini empty"><div class="me">❔</div><strong>Slot 2</strong><div class="mr">desbloqueie</div></div>
+        <div class="cq-mini empty"><div class="me">❔</div><strong>Slot 3</strong><div class="mr">desbloqueie</div></div>
+      </div>
+      <p class="sub" id="cqHomeHint" style="margin:8px 0 0;font-size:12px">Carregando conquistas…</p>
+    </div>
+
+    <div class="sec-row"><div class="sec">1 · Grupo</div></div>
     <div class="groups" id="grpGrid"><div class="skel"></div></div>
+    <div class="panel" id="hallPanel" style="margin-bottom:14px">
+      <div class="sec-row">
+        <div class="sec" style="margin:0">🏛️ Hall da Fama</div>
+        <button type="button" class="btn btn-ghost btn-sm" id="btnHallRefresh" style="width:auto;padding:6px 10px;font-size:11px">↻</button>
+      </div>
+      <p class="sub" style="margin-top:0">Quem mais coleciona troféus no Império</p>
+      <div id="hallList"><div class="skel"></div><div class="skel"></div></div>
+    </div>
+
     <div class="sec">2 · Arena</div>
     <div class="games">
       <button class="gbtn cq-feat" data-g="conquistas"><span class="ico">🏆</span><strong>Conquistas</strong><span>Troféus & títulos</span></button>
@@ -678,6 +744,18 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
   </div>
 </div>
 
+
+<div class="cq-notif" id="cqNotifModal" role="dialog" aria-modal="true">
+  <div class="box">
+    <div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--gold2)">Nova conquista</div>
+    <div class="big" id="cqNotifEmoji">🏆</div>
+    <h3 id="cqNotifTitle">Conquista desbloqueada!</h3>
+    <p id="cqNotifDesc">Você desbloqueou um novo troféu.</p>
+    <div class="stack" id="cqNotifStack"></div>
+    <button type="button" class="btn btn-gold" id="cqNotifOk">Continuar</button>
+  </div>
+</div>
+
 <footer><a href="index.html">Fabi Bot</a> · Gold Empire</footer>
 <div class="toast" id="toast"></div>
 <script>
@@ -834,6 +912,7 @@ async function selectGroup(id,nome,golds,imagem){
   save();renderGroups();ui();
   toast('Grupo: '+S.grupoNome,'ok');
   await refreshGold();
+  try{loadConquistasHome()}catch(_){}
 }
 
 async function refreshGold(){
@@ -853,7 +932,7 @@ function showApp(){
   document.getElementById('viewApp').classList.remove('hide');
   document.getElementById('userName').textContent=S.user.nome;
   setAvatar(S.user.foto||S.foto||AV);
-  loadGroups().then(ui);
+  loadGroups().then(function(){ui();loadConquistasHome();loadHall()});
   // liga OneSignal ao id da conta e pede permissão se ainda não tiver
   try {
     const ext = String(S.pass || (S.user && (S.user.id || S.user.numero)) || '').trim();
@@ -1544,8 +1623,131 @@ async function geEnsurePushPermission(forcePrompt) {
 
 
 
+
 /* ===== CONQUISTAS ===== */
-S.cqCat='all';S.cqData=null;
+S.cqCat='all';S.cqData=null;S.cqTitulo='Aventureiro';
+const CQ_RAR_ORDER={comum:1,incomum:2,raro:3,'épico':4,epico:4,'lendário':5,lendario:5,'mítico':6,mitico:6};
+
+function setUserTitle(titulo){
+  S.cqTitulo=titulo||'Aventureiro';
+  const el=document.getElementById('userTitle');
+  if(!el)return;
+  el.textContent=S.cqTitulo;
+  el.classList.remove('hide');
+  el.title='Título no Gold Empire';
+}
+function setCqDot(on){
+  const d=document.getElementById('cqNotifDot');
+  if(d)d.classList.toggle('hide',!on);
+}
+
+function paintShowcase(top3, unlocked, total){
+  const box=document.getElementById('cqShowcase');
+  const hint=document.getElementById('cqHomeHint');
+  if(!box)return;
+  const slots=[0,1,2].map(i=>(top3&&top3[i])||null);
+  box.innerHTML=slots.map((item,i)=>{
+    if(!item){
+      return '<div class="cq-mini empty"><div class="slot">#'+(i+1)+'</div><div class="me">❔</div><strong>Vazio</strong><div class="mr">desbloqueie no Império</div></div>';
+    }
+    const rar=String(item.raridade||'comum').toLowerCase();
+    return '<div class="cq-mini" title="'+esc(item.desc||'')+'"><div class="slot">#'+(i+1)+'</div><div class="me">'+esc(item.emoji||'🏅')+'</div><strong>'+esc(item.nome)+'</strong><div class="mr cq-rar '+esc(rar)+'">'+esc(item.raridade||'')+'</div></div>';
+  }).join('');
+  if(hint){
+    if(!unlocked)hint.textContent='Nenhuma conquista ainda — jogue, caçe e suba no ranking!';
+    else hint.innerHTML='<b>'+unlocked+'/'+total+'</b> desbloqueadas · mostrando as <b>3 mais raras</b>';
+  }
+}
+
+async function loadConquistasHome(){
+  if(!S.user||!S.pass)return;
+  try{
+    const body={username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo||''};
+    let r=await api('/cliente06/game/conquistas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)},16000);
+    if((!r.ok||!r.data||r.data.success===false)&&S.user.numero){
+      r=await api('/cliente06/game/conquistas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.numero,password:S.pass,grupo:S.grupo||''})},16000);
+    }
+    if(!r.ok||!r.data||r.data.success===false)return;
+    S.cqData=r.data;
+    setUserTitle(r.data.titulo);
+    paintShowcase(r.data.top3||[], r.data.unlocked||0, r.data.total||0);
+    if(r.data.pendingNotifs&&r.data.pendingNotifs.length){
+      setCqDot(true);
+      showCqNotifications(r.data.pendingNotifs);
+    } else setCqDot(false);
+  }catch(e){console.warn('cq home',e)}
+}
+
+async function loadHall(){
+  const box=document.getElementById('hallList');
+  if(!box)return;
+  box.innerHTML='<div class="skel"></div><div class="skel"></div>';
+  const r=await api('/cliente06/game/conquistas/hall',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:12})},15000);
+  if(!r.ok||!r.data||!r.data.success){
+    box.innerHTML='<p class="sub">Hall indisponível no momento</p>';
+    return;
+  }
+  const my=String((S.user&&S.user.numero)||'').replace(/\D/g,'');
+  const hall=r.data.hall||[];
+  if(!hall.length){box.innerHTML='<p class="sub">Ainda vazio — seja o primeiro no Hall!</p>';return}
+  box.innerHTML=hall.map(h=>{
+    const me=my&&String(h.numero||'').replace(/\D/g,'')===my;
+    const pos=h.posicao===1?'👑':h.posicao===2?'🥈':h.posicao===3?'🥉':('#'+h.posicao);
+    const best=h.best?(' · '+(h.best.emoji||'')+' '+h.best.nome):'';
+    return '<div class="hall-row'+(me?' me':'')+'">'+
+      '<div class="hall-pos">'+pos+'</div>'+
+      '<img referrerpolicy="no-referrer" src="'+esc(fixFoto(h.foto))+'" onerror="this.src=\''+AV+'\'" alt=""/>'+
+      '<div style="flex:1;min-width:0"><strong style="font-size:13px">'+esc(h.nome)+(me?' · você':'')+'</strong>'+
+      '<div style="font-size:11px;color:var(--muted)">🎖️ '+esc(h.titulo||'Aventureiro')+' · '+fmt(h.unlocked)+' troféus'+esc(best)+'</div></div>'+
+      '<div style="color:var(--gold2);font-weight:800;font-size:13px">'+fmt(h.unlocked)+'</div></div>';
+  }).join('');
+}
+
+function showCqNotifications(list){
+  if(!list||!list.length)return;
+  const modal=document.getElementById('cqNotifModal');
+  if(!modal)return;
+  // se já tem fila, acumula
+  if(!window.__cqNotifQueue)window.__cqNotifQueue=list.slice();
+  else {
+    const have=new Set(window.__cqNotifQueue.map(x=>x.id));
+    list.forEach(x=>{if(!have.has(x.id))window.__cqNotifQueue.push(x)});
+  }
+  paintCqNotifModal();
+}
+function paintCqNotifModal(){
+  const modal=document.getElementById('cqNotifModal');
+  const q=window.__cqNotifQueue||[];
+  if(!modal||!q.length){if(modal)modal.classList.remove('on');return}
+  const first=q[0];
+  document.getElementById('cqNotifEmoji').textContent=first.emoji||'🏆';
+  document.getElementById('cqNotifTitle').textContent=q.length===1?(first.nome||'Conquista!'):(q.length+' conquistas novas!');
+  document.getElementById('cqNotifDesc').textContent=q.length===1?(first.desc||''):('Você desbloqueou '+q.length+' troféus. Confira:');
+  const stack=document.getElementById('cqNotifStack');
+  stack.innerHTML=q.slice(0,6).map(x=>'<div class="item"><span class="e">'+esc(x.emoji||'🏅')+'</span><div style="flex:1;min-width:0"><b style="font-size:13px">'+esc(x.nome)+'</b><div style="font-size:11px;color:var(--muted)">'+esc(x.raridade||'')+(x.premio?(' · +'+fmt(x.premio)+' Golds'):'')+'</div></div></div>').join('');
+  modal.classList.add('on');
+  // browser notification se permitido
+  try{
+    if(typeof Notification!=='undefined'&&Notification.permission==='granted'){
+      new Notification('🏆 '+ (first.nome||'Conquista'),{body:first.desc||'Nova conquista no Gold Empire',icon:'/icon-192.png'});
+    }
+  }catch(_){}
+}
+async function ackCqNotifs(){
+  const q=window.__cqNotifQueue||[];
+  const ids=q.map(x=>x.id).filter(Boolean);
+  window.__cqNotifQueue=[];
+  const modal=document.getElementById('cqNotifModal');
+  if(modal)modal.classList.remove('on');
+  setCqDot(false);
+  if(!ids.length||!S.user)return;
+  try{
+    await api('/cliente06/game/conquistas/ack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,ids})},10000);
+  }catch(_){}
+}
+document.getElementById('cqNotifOk')&&(document.getElementById('cqNotifOk').onclick=ackCqNotifs);
+document.getElementById('cqNotifModal')&&(document.getElementById('cqNotifModal').onclick=function(e){if(e.target.id==='cqNotifModal')ackCqNotifs()});
+
 async function loadConquistas(){
   const grid=document.getElementById('cqGrid');
   if(!grid)return;
@@ -1561,6 +1763,8 @@ async function loadConquistas(){
     return;
   }
   S.cqData=r.data;
+  setUserTitle(r.data.titulo);
+  paintShowcase(r.data.top3||[], r.data.unlocked||0, r.data.total||0);
   const tit=document.getElementById('cqTitulo');
   if(tit)tit.textContent='🎖️ Título: '+(r.data.titulo||'Aventureiro');
   const p=document.getElementById('cqProg');if(p)p.textContent=(r.data.unlocked||0)+'/'+(r.data.total||0);
@@ -1568,6 +1772,10 @@ async function loadConquistas(){
   const rk=document.getElementById('cqRank');if(rk)rk.textContent=r.data.rankPos?('#'+r.data.rankPos):'—';
   paintCqTabs(r.data.cats||[]);
   paintCqCards(r.data.lista||[]);
+  if(r.data.pendingNotifs&&r.data.pendingNotifs.length){
+    setCqDot(true);
+    showCqNotifications(r.data.pendingNotifs);
+  }
   if(r.data.novas&&r.data.novas.length)toast('🎉 '+(r.data.novas.length)+' conquista(s) nova(s)!','ok');
 }
 function paintCqTabs(cats){
@@ -1626,6 +1834,7 @@ async function claimConquista(id,btn){
   if(typeof r.data.golds==='number')setGold(r.data.golds);
   toast('🎁 +'+fmt(r.data.premio)+' · '+(r.data.nome||'Conquista'),'ok');
   loadConquistas();
+  loadHall();
 }
 async function claimAllConquistas(){
   if(!S.grupo){toast('Escolha um grupo','bad');return}
@@ -1639,9 +1848,12 @@ async function claimAllConquistas(){
   if(typeof r.data.golds==='number')setGold(r.data.golds);
   await refreshGold();
   loadConquistas();
+  loadHall();
 }
 document.getElementById('btnCqClaimAll')&&(document.getElementById('btnCqClaimAll').onclick=claimAllConquistas);
 document.getElementById('btnCqRefresh')&&(document.getElementById('btnCqRefresh').onclick=loadConquistas);
+document.getElementById('btnCqVerMais')&&(document.getElementById('btnCqVerMais').onclick=()=>openGame('conquistas'));
+document.getElementById('btnHallRefresh')&&(document.getElementById('btnHallRefresh').onclick=loadHall);
 document.getElementById('navCq')&&(document.getElementById('navCq').onclick=function(e){
   e.preventDefault();
   if(!S.user){toast('Entre na conta primeiro','bad');return}
