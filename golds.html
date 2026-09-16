@@ -152,6 +152,40 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
 #btnDaily{box-shadow:0 8px 24px rgba(251,191,36,.2)}
 .chip-live{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;padding:4px 10px;border-radius:999px;background:rgba(22,163,74,.15);color:var(--g2);border:1px solid rgba(22,163,74,.35)}
 .chip-live i{width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:pulseReady 1.2s infinite}
+
+/* ===== Conquistas Hall ===== */
+.cq-hero{background:linear-gradient(135deg,rgba(251,191,36,.18),rgba(22,163,74,.1) 45%,rgba(14,22,18,.95));border:1px solid rgba(251,191,36,.3);border-radius:20px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.cq-hero::after{content:'🏆';position:absolute;right:10px;top:6px;font-size:56px;opacity:.12;transform:rotate(12deg);pointer-events:none}
+.cq-hero h3{font-size:17px;margin-bottom:4px}
+.cq-titulo{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:5px 12px;border-radius:999px;background:rgba(251,191,36,.14);border:1px solid rgba(251,191,36,.35);color:var(--gold2);font-size:12px;font-weight:800}
+.cq-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0;overflow-x:auto}
+.cq-tabs button{flex:0 0 auto;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-weight:800;font-size:11px;font-family:inherit;cursor:pointer}
+.cq-tabs button.on{background:rgba(251,191,36,.14);border-color:rgba(251,191,36,.45);color:var(--gold2)}
+.cq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.cq-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;transition:.15s}
+.cq-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.16)}
+.cq-card.done{border-color:rgba(74,222,128,.35);background:linear-gradient(160deg,rgba(22,163,74,.1),var(--card))}
+.cq-card.claim{border-color:rgba(251,191,36,.5);box-shadow:0 0 0 1px rgba(251,191,36,.2),0 10px 24px rgba(251,191,36,.08)}
+.cq-card .crow{display:flex;gap:10px;align-items:flex-start}
+.cq-card .cico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;background:rgba(255,255,255,.05);border:1px solid var(--line);flex-shrink:0}
+.cq-card.done .cico{background:rgba(22,163,74,.15);border-color:rgba(74,222,128,.35)}
+.cq-card h4{font-size:13px;margin-bottom:2px}
+.cq-card p{font-size:11px;color:var(--muted);line-height:1.4;margin:0}
+.cq-rar{display:inline-block;margin-top:5px;font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:999px}
+.cq-rar.comum{background:rgba(148,163,184,.15);color:#cbd5e1}
+.cq-rar.incomum{background:rgba(74,222,128,.12);color:#4ade80}
+.cq-rar.raro{background:rgba(56,189,248,.12);color:#38bdf8}
+.cq-rar.épico,.cq-rar.epico{background:rgba(192,132,252,.15);color:#c084fc}
+.cq-rar.lendário,.cq-rar.lendario{background:rgba(251,191,36,.15);color:#fbbf24}
+.cq-rar.mítico,.cq-rar.mitico{background:rgba(251,113,133,.15);color:#fb7185}
+.cq-bar{height:7px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;margin:8px 0 4px}
+.cq-bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--g),var(--cyan));transition:width .35s}
+.cq-card.done .cq-bar>i{background:linear-gradient(90deg,var(--gold),#d97706)}
+.cq-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.cq-meta b{color:var(--gold2)}
+.cq-act{margin-top:8px}
+.gbtn.cq-feat{border-color:rgba(251,191,36,.4);background:linear-gradient(180deg,#1c1808,#0e1612)}
+.gbtn.cq-feat .ico{filter:drop-shadow(0 0 8px rgba(251,191,36,.35))}
 </style>
 
 <!-- OneSignal Fabi Bot — push de colheita / Golds (igual conectar.html) -->
@@ -395,6 +429,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
     </span>
     <a href="index.html">Início</a>
     <a href="golds.html" class="on">👑 Golds</a>
+    <a href="golds.html#conquistas" id="navCq">🏆 Conquistas</a>
     <a href="conectar.html">Conectar</a>
   </div>
 </div>
@@ -440,23 +475,46 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
   </div>
 
   <div id="viewHome">
-    <div class="banner">Escolha o <b>grupo</b> e jogue. Golds são os mesmos do WhatsApp. <b>Bônus diário</b>, fazenda, raids e ranking — tudo em um lugar.</div>
+    <div class="banner">Escolha o <b>grupo</b> e jogue. Golds são os mesmos do WhatsApp. Desbloqueie <b>conquistas</b>, resgate o <b>bônus diário</b>, cultive a fazenda e dispute o ranking.</div>
     <button class="btn btn-gold" id="btnDaily" style="margin-bottom:12px">🎁 Resgatar bônus diário</button>
     <div class="sec">1 · Grupo</div>
     <div class="groups" id="grpGrid"><div class="skel"></div></div>
     <div class="sec">2 · Arena</div>
     <div class="games">
+      <button class="gbtn cq-feat" data-g="conquistas"><span class="ico">🏆</span><strong>Conquistas</strong><span>Troféus & títulos</span></button>
       <button class="gbtn" data-g="mine"><span class="ico">⛏️</span><strong>Minerar</strong><span>Energia & ouro</span></button>
       <button class="gbtn" data-g="fish"><span class="ico">🎣</span><strong>Pescar</strong><span>Peixes raros</span></button>
       <button class="gbtn" data-g="crash"><span class="ico">🚀</span><strong>Foguete</strong><span>Crash ao vivo</span></button>
       <button class="gbtn" data-g="tiger"><span class="ico">🐯</span><strong>Tigrinho</strong><span>Fortune 3×3</span></button>
       <button class="gbtn" data-g="farm"><span class="ico">🌾</span><strong>Fazenda</strong><span>3 canteiros</span></button>
       <button class="gbtn" data-g="raid"><span class="ico">🏴‍☠️</span><strong>Roubar</strong><span>Top 10 grupos</span></button>
-      <button class="gbtn" data-g="rank"><span class="ico">🏆</span><strong>Ranking</strong><span>Pessoas & grupos</span></button>
+      <button class="gbtn" data-g="rank"><span class="ico">🏅</span><strong>Ranking</strong><span>Pessoas & grupos</span></button>
     </div>
   </div>
 
-  <div class="gv" id="gv-mine">
+  
+  <div class="gv" id="gv-conquistas">
+    <button class="back" data-back>← Arena</button>
+    <div class="cq-hero">
+      <h3>Hall de Conquistas</h3>
+      <p class="sub" style="margin:0">Troféus do Império: patrimônio, caçada, VIP e ranking. Resgate prêmios em Golds no grupo selecionado.</p>
+      <div class="cq-titulo" id="cqTitulo">🎖️ Título: Aventureiro</div>
+      <div class="stats" style="margin-top:12px">
+        <div class="st"><div class="n" id="cqProg">0/0</div><div class="l">Desbloqueadas</div></div>
+        <div class="st"><div class="n" id="cqGold">0</div><div class="l">Patrimônio</div></div>
+        <div class="st"><div class="n" id="cqRank">—</div><div class="l">Rank grupo</div></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <button class="btn btn-gold" id="btnCqClaimAll" style="flex:1">🎁 Resgatar todos</button>
+      <button class="btn btn-ghost" id="btnCqRefresh" style="flex:1">↻ Atualizar</button>
+    </div>
+    <div class="cq-tabs" id="cqTabs"></div>
+    <div class="cq-grid" id="cqGrid"><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div></div>
+    <p class="sub" style="margin-top:12px;margin-bottom:0;text-align:center">No WhatsApp use <b>/conquistas</b> · progresso sincronizado</p>
+  </div>
+
+<div class="gv" id="gv-mine">
     <button class="back" data-back>← Arena</button>
     <div class="arena"><div style="font-size:56px" id="pick">⛏️</div><div class="tag" id="mineTag">Minerar</div></div>
     <div class="stats"><div class="st"><div class="n" id="stP">1</div><div class="l">Poder</div></div><div class="st"><div class="n" id="stL">1</div><div class="l">Nível</div></div><div class="st"><div class="n" id="stS">0</div><div class="l">Combo</div></div></div>
@@ -805,15 +863,19 @@ function showApp(){
   } catch (_) {}
 }
 function openGame(n){
-  if(n!=='rank'&&!S.grupo){toast('Escolha um grupo','bad');return}
+  if(n!=='rank'&&n!=='conquistas'&&!S.grupo){toast('Escolha um grupo','bad');return}
+  if(n==='conquistas'&&!S.grupo){toast('Escolha um grupo para resgatar prêmios','bad');/* ainda abre */}
   document.getElementById('viewHome').classList.add('hide');
   document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));
-  document.getElementById('gv-'+n).classList.add('on');
+  const gv=document.getElementById('gv-'+n);
+  if(!gv){toast('Área indisponível','bad');return}
+  gv.classList.add('on');
   if(n==='rank')loadRank(true);
   if(n==='raid')loadRaidTargets();
   if(n==='crash') resizeCrash();
   if(n==='farm')loadFarm();
   if(n==='fish')loadPesca();
+  if(n==='conquistas')loadConquistas();
   const map={mine:'mine',fish:'pescar',crash:'foguete',tiger:'tigrinho',raid:'raid',farm:'fazenda'};
   if(map[n]) loadRecent(map[n],'hist-'+map[n]);
   syncBetHints();
@@ -1479,6 +1541,115 @@ async function geEnsurePushPermission(forcePrompt) {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
   else bind();
 })();
+
+
+
+/* ===== CONQUISTAS ===== */
+S.cqCat='all';S.cqData=null;
+async function loadConquistas(){
+  const grid=document.getElementById('cqGrid');
+  if(!grid)return;
+  grid.innerHTML='<div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div>';
+  if(!S.user||!S.pass){grid.innerHTML='<p class="sub">Faça login</p>';return}
+  const body={username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo||''};
+  let r=await api('/cliente06/game/conquistas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)},18000);
+  if((!r.ok||!r.data||r.data.success===false)&&S.user.numero){
+    r=await api('/cliente06/game/conquistas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.numero,password:S.pass,grupo:S.grupo||''})},18000);
+  }
+  if(!r.ok||!r.data||r.data.success===false){
+    grid.innerHTML='<p class="sub">Não foi possível carregar conquistas.<br>'+esc((r.data&&r.data.message)||'')+'</p>';
+    return;
+  }
+  S.cqData=r.data;
+  const tit=document.getElementById('cqTitulo');
+  if(tit)tit.textContent='🎖️ Título: '+(r.data.titulo||'Aventureiro');
+  const p=document.getElementById('cqProg');if(p)p.textContent=(r.data.unlocked||0)+'/'+(r.data.total||0);
+  const g=document.getElementById('cqGold');if(g)g.textContent=fmt(r.data.totalGolds);
+  const rk=document.getElementById('cqRank');if(rk)rk.textContent=r.data.rankPos?('#'+r.data.rankPos):'—';
+  paintCqTabs(r.data.cats||[]);
+  paintCqCards(r.data.lista||[]);
+  if(r.data.novas&&r.data.novas.length)toast('🎉 '+(r.data.novas.length)+' conquista(s) nova(s)!','ok');
+}
+function paintCqTabs(cats){
+  const box=document.getElementById('cqTabs');if(!box)return;
+  const all=['all'].concat(cats||[]);
+  box.innerHTML=all.map(c=>{
+    const label=c==='all'?'Todas':c;
+    return '<button type="button" data-c="'+esc(c)+'" class="'+(S.cqCat===c?'on':'')+'">'+esc(label)+'</button>';
+  }).join('');
+  box.querySelectorAll('button').forEach(b=>{
+    b.onclick=()=>{S.cqCat=b.getAttribute('data-c');paintCqTabs(cats);paintCqCards((S.cqData&&S.cqData.lista)||[])};
+  });
+}
+function paintCqCards(lista){
+  const grid=document.getElementById('cqGrid');if(!grid)return;
+  let arr=(lista||[]).slice();
+  if(S.cqCat&&S.cqCat!=='all')arr=arr.filter(x=>x.cat===S.cqCat);
+  arr.sort((a,b)=>{
+    const ca=(a.unlocked&&!a.claimed&&a.premio>0)?0:a.unlocked?2:1;
+    const cb=(b.unlocked&&!b.claimed&&b.premio>0)?0:b.unlocked?2:1;
+    if(ca!==cb)return ca-cb;
+    return(b.pct||0)-(a.pct||0);
+  });
+  if(!arr.length){grid.innerHTML='<p class="sub">Nenhuma conquista nesta categoria.</p>';return}
+  grid.innerHTML=arr.map(item=>{
+    const done=!!item.unlocked;
+    const claimable=done&&!item.claimed&&item.premio>0;
+    const cls='cq-card'+(done?' done':'')+(claimable?' claim':'');
+    const rar=String(item.raridade||'comum').toLowerCase();
+    const when=item.unlockedAt?new Date(item.unlockedAt).toLocaleDateString('pt-BR'):'';
+    let act='';
+    if(claimable)act='<button class="btn btn-gold" style="padding:9px;font-size:12px" data-cq-claim="'+esc(item.id)+'">Resgatar +'+fmt(item.premio)+'</button>';
+    else if(done&&item.claimed)act='<span style="font-size:11px;font-weight:800;color:var(--g2)">✅ Prêmio resgatado'+(when?' · '+when:'')+'</span>';
+    else if(done)act='<span style="font-size:11px;font-weight:800;color:var(--g2)">✅ Desbloqueada'+(when?' · '+when:'')+'</span>';
+    else act='<span style="font-size:11px;color:var(--muted)">🔒 Em progresso</span>';
+    return '<div class="'+cls+'"><div class="crow"><div class="cico">'+esc(item.emoji||'🏅')+'</div><div style="flex:1;min-width:0">'+
+      '<h4>'+esc(item.nome)+'</h4><p>'+esc(item.desc)+'</p>'+
+      '<span class="cq-rar '+esc(rar)+'">'+esc(item.raridade||'comum')+'</span>'+
+      '<div class="cq-bar"><i style="width:'+(done?100:(item.pct||0))+'%"></i></div>'+
+      '<div class="cq-meta"><span>'+fmt(item.progress)+' / '+fmt(item.meta)+'</span><b>'+(item.premio?('+'+fmt(item.premio)):'—')+'</b></div>'+
+      '<div class="cq-act">'+act+'</div></div></div></div>';
+  }).join('');
+  grid.querySelectorAll('[data-cq-claim]').forEach(btn=>{
+    btn.onclick=()=>claimConquista(btn.getAttribute('data-cq-claim'),btn);
+  });
+}
+async function claimConquista(id,btn){
+  if(!S.grupo){toast('Escolha um grupo para receber o prêmio','bad');return}
+  if(btn)btn.disabled=true;
+  const r=await api('/cliente06/game/conquistas/claim',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo,id})},15000);
+  if(!r.ok||!r.data||!r.data.success){
+    toast((r.data&&r.data.message)||'Falha ao resgatar','bad');
+    if(btn)btn.disabled=false;
+    return;
+  }
+  if(typeof r.data.golds==='number')setGold(r.data.golds);
+  toast('🎁 +'+fmt(r.data.premio)+' · '+(r.data.nome||'Conquista'),'ok');
+  loadConquistas();
+}
+async function claimAllConquistas(){
+  if(!S.grupo){toast('Escolha um grupo','bad');return}
+  const btn=document.getElementById('btnCqClaimAll');
+  if(btn)btn.disabled=true;
+  const r=await api('/cliente06/game/conquistas/claim-all',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo})},20000);
+  if(btn)btn.disabled=false;
+  if(!r.ok||!r.data||!r.data.success){toast((r.data&&r.data.message)||'Nada a resgatar','bad');return}
+  if(!r.data.count)toast('Nenhum prêmio pendente');
+  else toast('🎁 '+r.data.count+' prêmio(s) · +'+fmt(r.data.total)+' Golds','ok');
+  if(typeof r.data.golds==='number')setGold(r.data.golds);
+  await refreshGold();
+  loadConquistas();
+}
+document.getElementById('btnCqClaimAll')&&(document.getElementById('btnCqClaimAll').onclick=claimAllConquistas);
+document.getElementById('btnCqRefresh')&&(document.getElementById('btnCqRefresh').onclick=loadConquistas);
+document.getElementById('navCq')&&(document.getElementById('navCq').onclick=function(e){
+  e.preventDefault();
+  if(!S.user){toast('Entre na conta primeiro','bad');return}
+  openGame('conquistas');
+});
+if(location.hash==='#conquistas'){
+  setTimeout(function(){if(S.user)openGame('conquistas')},800);
+}
 
 
 async function bootSSO(){

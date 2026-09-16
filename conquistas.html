@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<title>Conquistas · Gold Empire · Fabi Bot</title>
+<meta name="theme-color" content="#070b09"/>
+<link rel="icon" href="/favicon-32x32.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#060908;--card:#0e1612;--line:rgba(255,255,255,.08);--g:#16a34a;--g2:#4ade80;--gold:#fbbf24;--gold2:#fde68a;--cyan:#22d3ee;--purple:#c084fc;--red:#fb7185;--text:#f0fdf4;--muted:#7d9b8c;--font:'Plus Jakarta Sans',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:
+  radial-gradient(900px 420px at 15% -15%,rgba(22,163,74,.22),transparent 55%),
+  radial-gradient(700px 320px at 100% 0,rgba(251,191,36,.12),transparent 50%),
+  radial-gradient(600px 300px at 50% 100%,rgba(192,132,252,.08),transparent 45%),
+  var(--bg);color:var(--text);min-height:100vh}
+.top{position:sticky;top:0;z-index:40;backdrop-filter:blur(16px);background:rgba(6,9,8,.92);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);font-weight:800}
+.brand img{width:34px;height:34px;border-radius:10px;object-fit:cover;box-shadow:0 0 0 2px rgba(22,163,74,.35)}
+.brand span{color:var(--g2)}
+.nav a{color:var(--muted);text-decoration:none;font-size:12px;font-weight:700;padding:7px 11px;border-radius:10px}
+.nav a.on{color:var(--gold2);background:rgba(251,191,36,.12)}
+.shell{max-width:980px;margin:0 auto;padding:16px 14px 80px}
+.hide{display:none!important}
+.btn{border:0;border-radius:14px;padding:13px 16px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed}.btn:active:not(:disabled){transform:scale(.98)}
+.btn-g{background:linear-gradient(135deg,var(--g2),var(--g));color:#052e16}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#d97706);color:#1a1200}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}
+.btn-sm{padding:8px 12px;font-size:12px;width:auto;border-radius:10px}
+.login{max-width:400px;margin:48px auto;background:linear-gradient(180deg,#142019,#0c1410);border:1px solid var(--line);border-radius:24px;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.login h1{margin:10px 0 6px;font-size:24px}.login p{color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.5}
+.fld{text-align:left;margin-bottom:10px}
+.fld label{display:block;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;margin-bottom:5px}
+.fld input{width:100%;padding:13px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font:inherit}
+.err{color:var(--red);font-size:12px;min-height:16px;margin:6px 0}
+.hero{background:linear-gradient(135deg,rgba(251,191,36,.16),rgba(22,163,74,.1) 40%,rgba(14,22,18,.95));border:1px solid rgba(251,191,36,.28);border-radius:22px;padding:18px;margin-bottom:16px;position:relative;overflow:hidden}
+.hero::after{content:'🏆';position:absolute;right:12px;top:8px;font-size:64px;opacity:.12;transform:rotate(12deg)}
+.hero h2{font-size:20px;margin-bottom:4px}
+.hero .sub{color:var(--muted);font-size:13px;line-height:1.45}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.st{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.st .n{font-weight:800;color:var(--gold2);font-size:16px}.st .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.titulo-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.35);color:var(--gold2);font-size:12px;font-weight:800;margin-top:10px}
+.tabs{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap;overflow-x:auto}
+.tabs button{flex:0 0 auto;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-weight:800;font-size:12px;font-family:inherit;cursor:pointer}
+.tabs button.on{background:rgba(251,191,36,.14);border-color:rgba(251,191,36,.45);color:var(--gold2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;position:relative;transition:.15s;overflow:hidden}
+.card:hover{border-color:rgba(255,255,255,.16);transform:translateY(-2px)}
+.card.done{border-color:rgba(74,222,128,.35);background:linear-gradient(160deg,rgba(22,163,74,.12),var(--card))}
+.card.claimable{border-color:rgba(251,191,36,.5);box-shadow:0 0 0 1px rgba(251,191,36,.2),0 12px 28px rgba(251,191,36,.08)}
+.card .row{display:flex;gap:12px;align-items:flex-start}
+.card .ico{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:24px;background:rgba(255,255,255,.05);border:1px solid var(--line);flex-shrink:0}
+.card.done .ico{background:rgba(22,163,74,.15);border-color:rgba(74,222,128,.35)}
+.card h3{font-size:14px;margin-bottom:3px}
+.card p{font-size:12px;color:var(--muted);line-height:1.4}
+.rarity{font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:3px 8px;border-radius:999px;display:inline-block;margin-top:6px}
+.rarity.comum{background:rgba(148,163,184,.15);color:#cbd5e1}
+.rarity.incomum{background:rgba(74,222,128,.12);color:#4ade80}
+.rarity.raro{background:rgba(56,189,248,.12);color:#38bdf8}
+.rarity.épico,.rarity.epico{background:rgba(192,132,252,.15);color:#c084fc}
+.rarity.lendário,.rarity.lendario{background:rgba(251,191,36,.15);color:#fbbf24}
+.rarity.mítico,.rarity.mitico{background:rgba(251,113,133,.15);color:#fb7185}
+.bar{height:8px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;margin:10px 0 6px}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--g),var(--cyan));width:0;transition:width .4s}
+.card.done .bar>i{background:linear-gradient(90deg,var(--gold),#d97706)}
+.meta{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.meta b{color:var(--gold2)}
+.actions{margin-top:10px;display:flex;gap:8px;align-items:center}
+.chip-ok{font-size:11px;font-weight:800;color:var(--g2)}
+.chip-lock{font-size:11px;font-weight:700;color:var(--muted)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.groups{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px}
+.gchip{flex:0 0 auto;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap}
+.gchip.on{border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.12);color:var(--gold2)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(10px);background:rgba(12,20,16,.96);border:1px solid rgba(22,163,74,.45);color:var(--g2);padding:12px 18px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:92%;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast.bad{border-color:rgba(251,113,133,.5);color:#fecaca}
+.skel{height:120px;border-radius:18px;background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.08),rgba(255,255,255,.03));background-size:200% 100%;animation:sh 1s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a{color:var(--g2);text-decoration:none}
+.userbar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.userbar img{width:42px;height:42px;border-radius:12px;object-fit:cover;border:2px solid rgba(251,191,36,.4)}
+.empty{text-align:center;padding:40px 16px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="brand" href="index.html"><img src="/flogo.jpg" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'" alt=""/><b>Fabi<span>Bot</span></b></a>
+  <div class="nav" style="margin-left:auto;display:flex;gap:4px;flex-wrap:wrap">
+    <a href="golds.html">👑 Golds</a>
+    <a href="conquistas.html" class="on">🏆 Conquistas</a>
+    <a href="conectar.html">Conectar</a>
+  </div>
+</div>
+
+<div class="shell" id="viewLogin">
+  <div class="login">
+    <div style="font-size:44px">🏆</div>
+    <h1>Hall de Conquistas</h1>
+    <p>Entre com a mesma conta do <b>/rg</b> e do Gold Empire para ver troféus, títulos e resgatar prêmios.</p>
+    <div class="fld"><label>Usuário</label><input id="inpUser" placeholder="Nome do /rg"/></div>
+    <div class="fld"><label>Senha</label><input id="inpPass" type="password" placeholder="Senha / id do /rg"/></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn btn-g" id="btnLogin">Entrar no Hall</button>
+    <p style="margin-top:12px;font-size:12px;color:var(--muted)">Também disponível no WhatsApp: <b>/conquistas</b></p>
+  </div>
+</div>
+
+<div class="shell hide" id="viewApp">
+  <div class="userbar">
+    <img id="uFoto" src="https://ui-avatars.com/api/?name=Fabi&background=0f766e&color=fff" alt=""/>
+    <div style="flex:1;min-width:0">
+      <strong id="uNome">—</strong>
+      <div style="font-size:12px;color:var(--muted)" id="uMeta">Carregando…</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="btnOut">Sair</button>
+  </div>
+
+  <div class="hero">
+    <h2>Hall de Conquistas</h2>
+    <div class="sub">Desbloqueie troféus jogando no WhatsApp e no site. Cada conquista pode render <b>Golds de prêmio</b> — resgate no grupo escolhido.</div>
+    <div class="titulo-badge" id="tituloBadge">🎖️ Título: Aventureiro</div>
+    <div class="stats">
+      <div class="st"><div class="n" id="stProg">0/0</div><div class="l">Desbloqueadas</div></div>
+      <div class="st"><div class="n" id="stGold">0</div><div class="l">Patrimônio</div></div>
+      <div class="st"><div class="n" id="stRank">—</div><div class="l">Rank grupo</div></div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-gold btn-sm" id="btnClaimAll">🎁 Resgatar todos os prêmios</button>
+    <button class="btn btn-ghost btn-sm" id="btnRefresh">↻ Atualizar</button>
+  </div>
+
+  <div class="sub" style="font-size:12px;color:var(--muted);margin-bottom:6px">Grupo para receber prêmios:</div>
+  <div class="groups" id="groupList"><span class="empty" style="padding:8px">Carregando grupos…</span></div>
+
+  <div class="tabs" id="catTabs"></div>
+  <div class="grid" id="cqGrid"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<footer>Fabi Bot · <a href="https://fabibot.vercel.app/golds">Gold Empire</a> · WhatsApp <b>/conquistas</b></footer>
+
+<script>
+(function(){
+  'use strict';
+  const PROXY_HOST = 'https://orange-hill-2e61.gbscabral15.workers.dev';
+  const BACKEND = 'http://br2.bronxyshost.com:4009';
+  const AV = 'https://ui-avatars.com/api/?name=Fabi&background=0f766e&color=fff';
+  const S = { user:null, pass:'', grupo:'', foto:AV, data:null, cat:'all' };
+
+  function apiUrls(path){
+    const target = BACKEND.replace(/\/$/,'') + path;
+    const hostPath = BACKEND.replace(/^https?:\/\//,'');
+    return [
+      PROXY_HOST + '/' + hostPath + '/proxy?url=' + encodeURIComponent(target),
+      PROXY_HOST + '/proxy?url=' + encodeURIComponent(target)
+    ];
+  }
+  async function api(path, opts, timeoutMs){
+    const urls = apiUrls(path);
+    let lastErr = null;
+    for (const url of urls){
+      const ctrl = new AbortController();
+      const to = setTimeout(()=>ctrl.abort(), timeoutMs || 15000);
+      try{
+        const r = await fetch(url, Object.assign({}, opts||{}, { signal: ctrl.signal, mode:'cors' }));
+        clearTimeout(to);
+        const text = await r.text();
+        let data = null;
+        try { data = JSON.parse(text); } catch(_){ data = text; }
+        if (r.ok) return { ok:true, data, status:r.status };
+        lastErr = new Error((data && data.message) || ('HTTP '+r.status));
+        if (r.status === 401 || r.status === 400) return { ok:false, data, status:r.status, error:lastErr };
+      }catch(e){ clearTimeout(to); lastErr = e; }
+    }
+    return { ok:false, error: lastErr };
+  }
+  function toast(msg, type){
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast show' + (type==='bad'?' bad':'');
+    setTimeout(()=>el.classList.remove('show'), 2800);
+  }
+  function fmt(n){ return Number(n||0).toLocaleString('pt-BR'); }
+  function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function save(){ try{ localStorage.setItem('ge_cq_v1', JSON.stringify({ user:S.user, pass:S.pass, grupo:S.grupo, foto:S.foto })); }catch(_){} }
+  function load(){
+    try{
+      const d = JSON.parse(localStorage.getItem('ge_cq_v1')||'null');
+      if (d && d.user && d.pass){ S.user=d.user; S.pass=d.pass; S.grupo=d.grupo||''; S.foto=d.foto||AV; return true; }
+    }catch(_){}
+    try{
+      const d = JSON.parse(localStorage.getItem('fabi_ge_v6')||'null');
+      if (d && d.user && d.pass){ S.user=d.user; S.pass=d.pass; S.grupo=d.grupo||''; S.foto=d.foto||AV; return true; }
+    }catch(_){}
+    try{
+      const raw = localStorage.getItem('fabi_session')||localStorage.getItem('neconecta_user_session');
+      if (!raw) return false;
+      const s = JSON.parse(raw);
+      const user = { nome: s.nome||s.username||s.numero||'', numero: s.numero||'', foto: s.foto||s.avatar||AV };
+      const pass = String(s.id||s.password||s.senha||s.pass||'').trim();
+      if (user.nome && pass){ S.user=user; S.pass=pass; S.foto=user.foto; return true; }
+    }catch(_){}
+    return false;
+  }
+
+  async function tryLogin(user, pass){
+    const r = await api('/cliente06/game/groups', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ username:user, password:pass })
+    }, 15000);
+    if (!r.ok || !r.data || !r.data.success) throw new Error((r.data&&r.data.message)||'Login inválido');
+    return r.data;
+  }
+
+  async function doLogin(){
+    const user = document.getElementById('inpUser').value.trim();
+    const pass = document.getElementById('inpPass').value.trim();
+    const err = document.getElementById('loginErr');
+    err.textContent = '';
+    if (!user || !pass){ err.textContent = 'Preencha usuário e senha'; return; }
+    try{
+      const data = await tryLogin(user, pass);
+      S.user = data.user || { nome:user, numero:'' };
+      S.pass = pass;
+      S.foto = (S.user.foto)||AV;
+      if (data.groups && data.groups[0]) S.grupo = data.groups[0].grupo || data.groups[0].id || '';
+      save();
+      showApp(data.groups||[]);
+      toast('Bem-vindo ao Hall de Conquistas!');
+    }catch(e){ err.textContent = e.message||'Falha no login'; }
+  }
+
+  function showApp(groups){
+    document.getElementById('viewLogin').classList.add('hide');
+    document.getElementById('viewApp').classList.remove('hide');
+    document.getElementById('uNome').textContent = S.user.nome || 'Jogador';
+    document.getElementById('uFoto').src = S.foto || AV;
+    renderGroups(groups||[]);
+    loadConquistas();
+  }
+
+  function renderGroups(groups){
+    const box = document.getElementById('groupList');
+    if (!groups.length){
+      box.innerHTML = '<span class="empty" style="padding:8px">Nenhum grupo com Golds. Use /rg em um grupo com a Fabi.</span>';
+      return;
+    }
+    if (!S.grupo && groups[0]) S.grupo = groups[0].grupo || groups[0].id || '';
+    box.innerHTML = groups.map(g=>{
+      const id = g.grupo||g.id||'';
+      const nome = g.nome||g.name||id.slice(0,18);
+      const on = id===S.grupo ? ' on' : '';
+      return '<button type="button" class="gchip'+on+'" data-g="'+esc(id)+'">'+esc(nome)+'</button>';
+    }).join('');
+    box.querySelectorAll('[data-g]').forEach(el=>{
+      el.onclick = ()=>{ S.grupo = el.getAttribute('data-g'); save(); renderGroups(groups); loadConquistas(); };
+    });
+  }
+
+  async function loadConquistas(){
+    const grid = document.getElementById('cqGrid');
+    grid.innerHTML = '<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
+    const body = { username: S.user.nome, password: S.pass, grupo: S.grupo };
+    // tenta também por numero se nome falhar
+    let r = await api('/cliente06/game/conquistas', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
+    }, 18000);
+    if ((!r.ok) && S.user.numero){
+      r = await api('/cliente06/game/conquistas', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ username: S.user.numero, password: S.pass, grupo: S.grupo })
+      }, 18000);
+    }
+    if (!r.ok || !r.data || r.data.success===false){
+      grid.innerHTML = '<div class="empty">Não foi possível carregar conquistas.<br>'+esc((r.data&&r.data.message)|| (r.error&&r.error.message)||'')+'</div>';
+      return;
+    }
+    S.data = r.data;
+    document.getElementById('tituloBadge').textContent = '🎖️ Título: ' + (r.data.titulo||'Aventureiro');
+    document.getElementById('stProg').textContent = (r.data.unlocked||0)+'/'+(r.data.total||0);
+    document.getElementById('stGold').textContent = fmt(r.data.totalGolds);
+    document.getElementById('stRank').textContent = r.data.rankPos ? ('#'+r.data.rankPos) : '—';
+    document.getElementById('uMeta').textContent = (r.data.unlocked||0)+' conquistas · '+fmt(r.data.totalGolds)+' Golds globais';
+    renderTabs(r.data.cats||[]);
+    renderCards(r.data.lista||[]);
+  }
+
+  function renderTabs(cats){
+    const box = document.getElementById('catTabs');
+    const all = ['all', ...cats];
+    box.innerHTML = all.map(c=>{
+      const label = c==='all' ? 'Todas' : c;
+      const on = S.cat===c ? ' on' : '';
+      return '<button type="button" data-c="'+esc(c)+'" class="'+on.trim()+'">'+esc(label)+'</button>';
+    }).join('');
+    box.querySelectorAll('button').forEach(b=>{
+      b.onclick = ()=>{ S.cat = b.getAttribute('data-c'); renderTabs(cats); renderCards((S.data&&S.data.lista)||[]); };
+    });
+  }
+
+  function renderCards(lista){
+    const grid = document.getElementById('cqGrid');
+    let arr = lista.slice();
+    if (S.cat && S.cat!=='all') arr = arr.filter(x=>x.cat===S.cat);
+    // claimable first, then locked by pct desc, then done
+    arr.sort((a,b)=>{
+      const ca = (a.unlocked && !a.claimed && a.premio>0)?0 : a.unlocked?2:1;
+      const cb = (b.unlocked && !b.claimed && b.premio>0)?0 : b.unlocked?2:1;
+      if (ca!==cb) return ca-cb;
+      return (b.pct||0)-(a.pct||0);
+    });
+    if (!arr.length){ grid.innerHTML = '<div class="empty">Nenhuma conquista nesta categoria.</div>'; return; }
+    grid.innerHTML = arr.map(item=>{
+      const done = !!item.unlocked;
+      const claimable = done && !item.claimed && item.premio>0;
+      const cls = 'card'+(done?' done':'')+(claimable?' claimable':'');
+      const rar = String(item.raridade||'comum').toLowerCase();
+      const when = item.unlockedAt ? new Date(item.unlockedAt).toLocaleDateString('pt-BR') : '';
+      let action = '';
+      if (claimable) action = '<button class="btn btn-gold btn-sm" data-claim="'+esc(item.id)+'">Resgatar +'+fmt(item.premio)+'</button>';
+      else if (done && item.claimed) action = '<span class="chip-ok">✅ Prêmio resgatado'+(when?' · '+when:'')+'</span>';
+      else if (done) action = '<span class="chip-ok">✅ Desbloqueada'+(when?' · '+when:'')+'</span>';
+      else action = '<span class="chip-lock">🔒 Em progresso</span>';
+      return '<div class="'+cls+'"><div class="row"><div class="ico">'+esc(item.emoji||'🏅')+'</div><div style="flex:1;min-width:0">'+
+        '<h3>'+esc(item.nome)+'</h3><p>'+esc(item.desc)+'</p>'+
+        '<span class="rarity '+esc(rar)+'">'+esc(item.raridade||'comum')+'</span>'+
+        '<div class="bar"><i style="width:'+(done?100:(item.pct||0))+'%"></i></div>'+
+        '<div class="meta"><span>'+fmt(item.progress)+' / '+fmt(item.meta)+'</span><b>'+(item.premio?('+'+fmt(item.premio)+' Golds'):'—')+'</b></div>'+
+        '<div class="actions">'+action+'</div></div></div></div>';
+    }).join('');
+    grid.querySelectorAll('[data-claim]').forEach(btn=>{
+      btn.onclick = ()=> claimOne(btn.getAttribute('data-claim'), btn);
+    });
+  }
+
+  async function claimOne(id, btn){
+    if (!S.grupo){ toast('Escolha um grupo para receber o prêmio','bad'); return; }
+    if (btn) btn.disabled = true;
+    const r = await api('/cliente06/game/conquistas/claim', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ username:S.user.nome, password:S.pass, grupo:S.grupo, id })
+    }, 15000);
+    if (!r.ok || !r.data || !r.data.success){
+      toast((r.data&&r.data.message)||'Falha ao resgatar','bad');
+      if (btn) btn.disabled = false;
+      return;
+    }
+    toast('🎁 +'+fmt(r.data.premio)+' Golds · '+ (r.data.nome||'Conquista'));
+    loadConquistas();
+  }
+
+  async function claimAll(){
+    if (!S.grupo){ toast('Escolha um grupo','bad'); return; }
+    const r = await api('/cliente06/game/conquistas/claim-all', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ username:S.user.nome, password:S.pass, grupo:S.grupo })
+    }, 20000);
+    if (!r.ok || !r.data || !r.data.success){
+      toast((r.data&&r.data.message)||'Nada a resgatar','bad');
+      return;
+    }
+    if (!r.data.count) toast('Nenhum prêmio pendente');
+    else toast('🎁 Resgatados '+r.data.count+' prêmios · +'+fmt(r.data.total)+' Golds');
+    loadConquistas();
+  }
+
+  document.getElementById('btnLogin').onclick = doLogin;
+  document.getElementById('btnOut').onclick = ()=>{
+    S.user=null;S.pass='';S.data=null;
+    try{ localStorage.removeItem('ge_cq_v1'); }catch(_){}
+    document.getElementById('viewApp').classList.add('hide');
+    document.getElementById('viewLogin').classList.remove('hide');
+  };
+  document.getElementById('btnRefresh').onclick = loadConquistas;
+  document.getElementById('btnClaimAll').onclick = claimAll;
+  document.getElementById('inpPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+  // SSO boot
+  (async function boot(){
+    if (!load()) return;
+    try{
+      const data = await tryLogin(S.user.nome || S.user.numero, S.pass);
+      S.user = Object.assign({}, S.user, data.user||{});
+      if (!S.grupo && data.groups && data.groups[0]) S.grupo = data.groups[0].grupo || data.groups[0].id || '';
+      showApp(data.groups||[]);
+    }catch(_){
+      // tenta numero
+      try{
+        if (S.user.numero){
+          const data = await tryLogin(S.user.numero, S.pass);
+          S.user = Object.assign({}, S.user, data.user||{});
+          showApp(data.groups||[]);
+        }
+      }catch(__){}
+    }
+  })();
+})();
+</script>
+</body>
+</html>
