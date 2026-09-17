@@ -3280,6 +3280,27 @@ bootSSO();
 
 <!-- Floating Chat Gold Empire -->
 
+<button type="button" 
+<!-- ===== BOLSA VIP (Premium) ===== -->
+<section class="zone" id="zoneBolsaVip" style="display:none">
+  <div class="zone-head">
+    <div>
+      <h2>📈 Bolsa VIP</h2>
+      <p>Compre ativos baratos, liquide no alto. Preços oscilam a cada ~15 min. Exclusivo Premium.</p>
+    </div>
+    <span class="zone-badge">PREMIUM</span>
+  </div>
+  <div class="tip-strip" id="bolsaResumo">Carregando mercado…</div>
+  <div class="sec" style="margin-top:14px">Mercado</div>
+  <div class="groups" id="bolsaMercado" style="margin-top:10px"></div>
+  <div class="sec" style="margin-top:18px">Seu portfólio</div>
+  <div class="groups" id="bolsaPortfolio" style="margin-top:10px"></div>
+  <div class="tip-strip" style="margin-top:14px">
+    <span>💡</span>
+    <div>No WhatsApp: <b>/bolsa</b> · <b>/investir 1/2</b> (ID/qtd) · <b>/liquidar 1</b> · <b>/vender tudo</b> (Pokémon/minérios) · <b>/mvender tudo</b> (armas VIP)</div>
+  </div>
+</section>
+
 <button type="button" class="ge-money-fab" id="geMoneyFab" title="Comprar Golds" aria-label="Comprar Golds">💰</button>
 <div class="shop-modal-backdrop" id="shopModal" role="dialog" aria-modal="true">
   <div class="shop-modal">
@@ -3620,6 +3641,138 @@ bootSSO();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
   else bind();
+})();
+</script>
+
+
+<script>
+/* ===== Bolsa VIP ===== */
+(function(){
+  'use strict';
+  function creds(){
+    try{
+      const S = window.S || window.__GE || {};
+      if (!S.user || !S.pass) return null;
+      return {
+        username: S.user.nome || S.user.numero || '',
+        password: S.pass,
+        grupo: S.grupo || ''
+      };
+    }catch(_){ return null; }
+  }
+  async function apiBolsa(path, body){
+    if (typeof api === 'function') {
+      return api(path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) }, 15000);
+    }
+    return { ok:false };
+  }
+  function fmt(n){ return Number(n||0).toLocaleString('pt-BR'); }
+  function paint(data){
+    const zone = document.getElementById('zoneBolsaVip');
+    if (!zone) return;
+    zone.style.display = '';
+    const resumo = document.getElementById('bolsaResumo');
+    if (resumo && data.resumo){
+      const r = data.resumo;
+      const sign = r.pnl >= 0 ? '+' : '';
+      resumo.innerHTML = '<span>📊</span><div>Investido: <b style="color:var(--gold2)">'+fmt(r.totalInvestido)+'</b> · Mercado: <b>'+fmt(r.totalMercado)+'</b> · P&amp;L: <b style="color:'+(r.pnl>=0?'var(--mint)':'var(--danger)')+'">'+sign+fmt(r.pnl)+'</b></div>';
+    }
+    const merc = document.getElementById('bolsaMercado');
+    if (merc){
+      merc.innerHTML = (data.mercado||[]).map(a => (
+        '<div class="gcard" style="flex-direction:column;align-items:stretch;gap:8px">'+
+          '<div style="display:flex;justify-content:space-between;gap:8px"><strong>#'+a.id+' '+a.nome+'</strong><span class="gg">'+fmt(a.valor)+'</span></div>'+
+          '<span style="font-size:11px;color:var(--muted)">'+(a.descricao||'')+'</span>'+
+          '<div style="display:flex;gap:6px">'+
+            '<button type="button" class="btn btn-sm btn-gold" data-buy="'+a.id+'" data-price="'+a.valor+'">Comprar 1</button>'+
+            '<button type="button" class="btn btn-sm btn-ghost" data-buy5="'+a.id+'">×5</button>'+
+          '</div>'+
+        '</div>'
+      )).join('') || '<div class="sub">Mercado vazio</div>';
+      merc.querySelectorAll('[data-buy]').forEach(btn => {
+        btn.onclick = function(){ comprar(Number(btn.getAttribute('data-buy')), 1); };
+      });
+      merc.querySelectorAll('[data-buy5]').forEach(btn => {
+        btn.onclick = function(){ comprar(Number(btn.getAttribute('data-buy5')), 5); };
+      });
+    }
+    const port = document.getElementById('bolsaPortfolio');
+    if (port){
+      const list = data.portfolio || [];
+      if (!list.length){
+        port.innerHTML = '<div class="sub">Sem posições. Compre no mercado acima.</div>';
+      } else {
+        port.innerHTML = list.map(a => {
+          const sign = a.pnl >= 0 ? '+' : '';
+          return '<div class="gcard" style="flex-direction:column;align-items:stretch;gap:8px">'+
+            '<div style="display:flex;justify-content:space-between"><strong>#'+a.id+' '+a.nome+'</strong><span class="gg">'+a.quantidade+' un.</span></div>'+
+            '<span style="font-size:11px;color:var(--muted)">Compra '+fmt(a.valorCompra)+' → agora '+fmt(a.valorAtual)+'</span>'+
+            '<span style="font-size:12px;font-weight:800;color:'+(a.pnl>=0?'var(--mint)':'var(--danger)')+'">P&amp;L '+sign+fmt(a.pnl)+' ('+sign+a.pnlPct+'%)</span>'+
+            '<button type="button" class="btn btn-sm btn-red" data-liq="'+a.id+'">Liquidar tudo</button>'+
+          '</div>';
+        }).join('');
+        port.querySelectorAll('[data-liq]').forEach(btn => {
+          btn.onclick = function(){ liquidar(Number(btn.getAttribute('data-liq'))); };
+        });
+      }
+    }
+  }
+  async function loadBolsa(){
+    const c = creds();
+    if (!c) return;
+    const r = await apiBolsa('/cliente06/game/bolsa', c);
+    if (!r.ok || !r.data){
+      const zone = document.getElementById('zoneBolsaVip');
+      if (zone && r.data && r.data.premiumRequired) zone.style.display = 'none';
+      return;
+    }
+    if (r.data.premiumRequired) {
+      const zone = document.getElementById('zoneBolsaVip');
+      if (zone) zone.style.display = 'none';
+      return;
+    }
+    if (r.data.success) paint(r.data);
+  }
+  async function comprar(id, qtd){
+    const c = creds();
+    if (!c || !c.grupo){ if (typeof toast==='function') toast('Selecione um grupo','bad'); return; }
+    if (!confirm('Comprar '+qtd+' unidade(s) do ativo #'+id+'?')) return;
+    const r = await apiBolsa('/cliente06/game/investir', Object.assign({}, c, { id: id, quantidade: qtd }));
+    if (!r.ok || !r.data || !r.data.success){
+      if (typeof toast==='function') toast((r.data && r.data.message) || 'Falha ao investir','bad');
+      return;
+    }
+    if (typeof toast==='function') toast(r.data.message || 'Comprado!','ok');
+    if (r.data.golds != null && window.S){ try{ /* refresh balance via existing loaders */ }catch(_){}}
+    if (typeof loadMe === 'function') try{ loadMe(); }catch(_){}
+    loadBolsa();
+  }
+  async function liquidar(id){
+    const c = creds();
+    if (!c || !c.grupo){ if (typeof toast==='function') toast('Selecione um grupo','bad'); return; }
+    if (!confirm('Liquidar todo o ativo #'+id+'?')) return;
+    const r = await apiBolsa('/cliente06/game/liquidar', Object.assign({}, c, { id: id, quantidade: 'tudo' }));
+    if (!r.ok || !r.data || !r.data.success){
+      if (typeof toast==='function') toast((r.data && r.data.message) || 'Falha ao liquidar','bad');
+      return;
+    }
+    if (typeof toast==='function') toast(r.data.message || 'Liquidado!','ok');
+    loadBolsa();
+  }
+  window.geLoadBolsa = loadBolsa;
+  // show when premium loads
+  const _lp = window.geLoadPremium;
+  window.geLoadPremium = async function(){
+    if (typeof _lp === 'function') await _lp();
+    try {
+      if (window.S && window.S.premium && window.S.premium.isPremium) loadBolsa();
+      else {
+        const z = document.getElementById('zoneBolsaVip');
+        if (z) z.style.display = 'none';
+      }
+    } catch(_){}
+  };
+  setTimeout(function(){ try{ if (window.S && window.S.premium && window.S.premium.isPremium) loadBolsa(); }catch(_){} }, 2500);
 })();
 </script>
 
