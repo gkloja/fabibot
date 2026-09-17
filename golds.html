@@ -1135,6 +1135,19 @@ footer a:hover{text-decoration:underline}
 
 /* ===== BOLSA VIP ===== */
 
+.bolsa-news{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
+.bolsa-news .nitem{
+  padding:12px 14px;border-radius:14px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  font-size:12px;line-height:1.45;
+}
+.bolsa-news .nitem.bull{border-color:rgba(46,230,168,.28)}
+.bolsa-news .nitem.bear{border-color:rgba(255,77,109,.28)}
+.bolsa-news .nitem strong{display:block;font-size:12px;margin-bottom:3px}
+.bolsa-news .nmeta{font-size:10px;color:var(--muted);margin-top:4px}
+.janela-tag{font-size:9px;font-weight:800;padding:3px 7px;border-radius:999px;background:rgba(76,201,240,.12);color:var(--sky);border:1px solid rgba(76,201,240,.28)}
+
+
 .risco-tag{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:3px 7px;border-radius:999px}
 .risco-alto{background:rgba(255,77,109,.15);color:#ff8fab;border:1px solid rgba(255,77,109,.3)}
 .risco-medio{background:rgba(245,197,66,.12);color:var(--gold2);border:1px solid rgba(245,197,66,.28)}
@@ -1368,8 +1381,8 @@ footer a:hover{text-decoration:underline}
     <section class="zone-bolsa" id="zoneBolsaVip">
       <div class="bolsa-hero">
         <div>
-          <h2>📈 Bolsa VIP</h2>
-          <p>Mercado ao vivo · compre na baixa, liquide na alta. Preços mudam a cada ~15 min. Sincronizado com o WhatsApp.</p>
+          <h2>📈 Bolsa Empire</h2>
+          <p>Notícias movem o mercado · IPO 48h · falência com residual 50% · tick ~12 min · Golds 1:1 WhatsApp.</p>
         </div>
         <span class="bolsa-pill" id="bolsaPill">PREMIUM</span>
       </div>
@@ -1381,17 +1394,21 @@ footer a:hover{text-decoration:underline}
         </div>
         <div id="bolsaLock" class="bolsa-lock hide">
           <h3>🔒 Operar é Premium</h3>
-          <p>Você pode <b>ver o pregão</b> livremente. Comprar e liquidar exige Premium — mercado com risco real de alta, queda e <b>falência</b> (residual 50%). Mesma lógica do <b>/investir</b> no WhatsApp.</p>
+          <p>Pregão e <b>notícias</b> são públicos. Comprar/liquidar exige Premium. Ativos podem <b>falir</b> (residual 50%). IPOs abrem por <b>48h</b> e o mercado ticka a cada ~12 min.</p>
           <button type="button" class="btn btn-gold" id="btnBolsaGetPrem" style="width:auto;display:inline-block">Ver planos Premium</button>
         </div>
         <div id="bolsaContent">
-          <div class="sec-bolsa">Mercado</div>
+          <div class="sec-bolsa">📰 Fio de notícias</div>
+          <div id="bolsaNews" class="bolsa-news"><div class="sub">Carregando manchetes…</div></div>
+          <div class="sec-bolsa">Mercado <span id="bolsaTickHint" style="font-weight:600;color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px"></span></div>
           <div class="bolsa-grid" id="bolsaMercado"><div class="skel" style="height:90px"></div></div>
           <div class="sec-bolsa">Seu portfólio</div>
           <div class="bolsa-grid" id="bolsaPortfolio"><div class="sub">Carregando…</div></div>
+          <div class="sec-bolsa">Alertas</div>
+          <div id="bolsaAlertas" class="sub">—</div>
           <div class="tip-strip" style="margin-top:14px">
             <span>💡</span>
-            <div>WhatsApp: <b>/bolsa</b> · <b>/investir 1/2</b> · <b>/liquidar 1</b></div>
+            <div>Notícias influenciam o próximo tick. WhatsApp: <b>/bolsa</b> · <b>/investir 1/2</b> · <b>/liquidar 1</b></div>
           </div>
         </div>
       </div>
@@ -3744,13 +3761,13 @@ bootSSO();
 
 
 <script>
-/* ===== Bolsa VIP ===== */
+/* ===== Bolsa Empire ===== */
 (function(){
   'use strict';
   function toastMsg(m,k){ if(typeof toast==='function') toast(m,k||'ok'); else try{console.log(m)}catch(_){} }
   function creds(){
     try{
-      const S = window.S || window.__GE || {};
+      var S = window.S || window.__GE || {};
       if (!S.user || !S.pass) return null;
       return {
         username: S.user.nome || S.user.numero || '',
@@ -3768,28 +3785,42 @@ bootSSO();
   }
   async function apiBolsa(path, body){
     if (typeof api === 'function') {
-      return api(path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body||{}) }, 20000);
+      return api(path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body||{}) }, 22000);
     }
     return { ok:false, data:null };
   }
   function setPremiumUI(isPrem){
     var lock = document.getElementById('bolsaLock');
-    var content = document.getElementById('bolsaContent');
     var pill = document.getElementById('bolsaPill');
     var cta = document.getElementById('btnBolsaOpen');
     if (pill) pill.textContent = isPrem ? 'PREMIUM ATIVO' : 'LEITURA · PREMIUM PARA OPERAR';
     if (cta) {
       cta.classList.toggle('locked', !isPrem);
       cta.innerHTML = isPrem
-        ? '<span class="ico">📈</span> Investir · Bolsa VIP'
-        : '<span class="ico">🔒</span> Ver Bolsa · Premium para operar';
+        ? '<span class="ico">📈</span> Investir · Bolsa Empire'
+        : '<span class="ico">🔒</span> Bolsa Empire · ver mercado';
     }
-    // mercado sempre visível; lock só avisa compra
     if (lock) {
       if (isPrem) lock.classList.add('hide');
       else lock.classList.remove('hide');
     }
+    var content = document.getElementById('bolsaContent');
     if (content) content.classList.remove('hide');
+  }
+  function paintNews(list){
+    var box = document.getElementById('bolsaNews');
+    if (!box) return;
+    if (!list || !list.length) {
+      box.innerHTML = '<div class="sub">Nenhuma manchete ainda — o fio atualiza sozinho.</div>';
+      return;
+    }
+    box.innerHTML = list.map(function(n){
+      var cls = n.bias > 0 ? 'bull' : (n.bias < 0 ? 'bear' : '');
+      var when = n.em ? new Date(n.em).toLocaleString('pt-BR', { hour:'2-digit', minute:'2-digit', day:'2-digit', month:'2-digit' }) : '';
+      var tone = n.bias > 0 ? '🟢 viés de alta' : (n.bias < 0 ? '🔴 viés de baixa' : '⚪ neutro');
+      return '<div class="nitem '+cls+'"><strong>'+esc(n.titulo)+'</strong>'+esc(n.texto)+
+        '<div class="nmeta">#'+esc(String(n.ativoId))+' '+esc(n.ativoNome||'')+' · '+tone+' · '+when+'</div></div>';
+    }).join('');
   }
   function paint(data){
     var isPrem = !!(data.premium && !data.premiumRequired);
@@ -3808,16 +3839,25 @@ bootSSO();
         pnl.className = 'val ' + (v>0?'up':v<0?'down':'');
       }
     }
+    paintNews(data.noticias || []);
+    var hint = document.getElementById('bolsaTickHint');
+    if (hint && data.meta) {
+      var min = Math.ceil((data.meta.nextTickEm||0)/60000);
+      hint.textContent = ' · próximo tick ~' + (min > 0 ? min + ' min' : 'agora') + ' · IPO ' + (data.meta.ipoHoras||48) + 'h';
+    }
     var merc = document.getElementById('bolsaMercado');
     if (merc) {
       var list = data.mercado || [];
       if (!list.length) {
-        merc.innerHTML = '<div class="sub">Nenhum ativo no pregão. Tente atualizar em instantes.</div>';
+        merc.innerHTML = '<div class="sub">Pregão vazio — gerando IPOs… atualize em instantes.</div>';
       } else {
         merc.innerHTML = list.map(function(a){
           var v = Number(a.variacaoPct)||0;
           var vcls = v>0?'var-up':(v<0?'var-down':'');
           var vtxt = (v>0?'+':'')+v+'%';
+          var janela = a.janelaAberta
+            ? '<span class="janela-tag">IPO '+(a.horasRestantes!=null?a.horasRestantes+'h':'aberto')+'</span>'
+            : '<span class="janela-tag" style="opacity:.7">maduro</span>';
           var btns = isPrem
             ? ('<div class="acts">'+
                 '<button type="button" class="btn btn-gold" data-buy="'+a.id+'" style="flex:1">Comprar 1</button>'+
@@ -3826,11 +3866,10 @@ bootSSO();
             : '<div class="sub" style="font-size:11px;margin-top:6px">Premium para comprar</div>';
           return '<div class="bolsa-card">'+
             '<div class="top"><span class="name">#'+a.id+' '+esc(a.nome||'')+'</span><span class="price">'+fmt(a.valor)+'</span></div>'+
-            '<div style="display:flex;gap:6px;align-items:center;margin:4px 0 6px">'+riscoTag(a.risco)+
+            '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:4px 0 6px">'+riscoTag(a.risco)+janela+
               '<span class="'+vcls+'" style="font-size:11px;font-weight:700;font-family:var(--mono)">'+vtxt+'</span>'+
               '<span style="font-size:10px;color:var(--muted)">'+(a.setor||'')+'</span></div>'+
-            '<div class="desc">'+esc(a.descricao||'Ativo digital')+'</div>'+
-            btns+'</div>';
+            '<div class="desc">'+esc(a.descricao||'')+'</div>'+btns+'</div>';
         }).join('');
         if (isPrem) {
           merc.querySelectorAll('[data-buy]').forEach(function(btn){
@@ -3845,22 +3884,20 @@ bootSSO();
     var port = document.getElementById('bolsaPortfolio');
     if (port) {
       if (!isPrem) {
-        port.innerHTML = '<div class="sub">Portfólio disponível para assinantes Premium.</div>';
+        port.innerHTML = '<div class="sub">Portfólio · exclusivo Premium</div>';
       } else {
-        var list = data.portfolio || [];
-        if (!list.length) {
-          port.innerHTML = '<div class="sub" style="padding:8px 0">Nenhuma posição. Escolha um ativo no mercado.</div>';
-        } else {
-          port.innerHTML = list.map(function(a){
+        var pl = data.portfolio || [];
+        if (!pl.length) port.innerHTML = '<div class="sub">Nenhuma posição. Leia as notícias e escolha um ativo.</div>';
+        else {
+          port.innerHTML = pl.map(function(a){
             var sign = a.pnl >= 0 ? '+' : '';
             var col = a.pnl >= 0 ? 'var(--mint)' : 'var(--danger)';
-            var extra = a.falido ? ' <span class="risco-tag risco-alto">falido · residual 50%</span>' : '';
+            var extra = a.falido ? ' <span class="risco-tag risco-alto">falido · 50%</span>' : '';
             return '<div class="bolsa-card'+(a.falido?' falido':'')+'">'+
               '<div class="top"><span class="name">#'+a.id+' '+esc(a.nome||'')+extra+'</span><span class="price">'+a.quantidade+' un.</span></div>'+
-              '<div class="desc">Média '+fmt(a.valorCompra)+' → agora '+fmt(a.valorAtual)+'</div>'+
+              '<div class="desc">Média '+fmt(a.valorCompra)+' → '+fmt(a.valorAtual)+'</div>'+
               '<div style="font-size:12px;font-weight:800;color:'+col+';margin-bottom:8px">P&L '+sign+fmt(a.pnl)+' ('+sign+a.pnlPct+'%)</div>'+
-              '<button type="button" class="btn btn-red" data-liq="'+a.id+'">Liquidar tudo</button>'+
-            '</div>';
+              '<button type="button" class="btn btn-red" data-liq="'+a.id+'">Liquidar tudo</button></div>';
           }).join('');
           port.querySelectorAll('[data-liq]').forEach(function(btn){
             btn.onclick = function(){ liquidar(Number(btn.getAttribute('data-liq'))); };
@@ -3868,49 +3905,53 @@ bootSSO();
         }
       }
     }
-    // eventos
-    if (data.eventos && data.eventos.length) {
-      console.log('[Bolsa eventos]', data.eventos);
+    var al = document.getElementById('bolsaAlertas');
+    if (al) {
+      var alerts = data.alertas || [];
+      if (!isPrem) al.innerHTML = '<div class="sub">Alertas pessoais com Premium</div>';
+      else if (!alerts.length) al.innerHTML = '<div class="sub">Sem alertas — movimentos fortes no portfólio aparecem aqui.</div>';
+      else al.innerHTML = alerts.map(function(a){
+        return '<div class="nitem" style="margin-bottom:6px">'+esc(a.texto)+'</div>';
+      }).join('');
     }
   }
   async function loadBolsa(){
     var c = creds();
     var merc = document.getElementById('bolsaMercado');
-    if (merc) merc.innerHTML = '<div class="sub">Carregando pregão…</div>';
+    if (merc) merc.innerHTML = '<div class="sub">Carregando Bolsa Empire…</div>';
     if (!c) {
       setPremiumUI(false);
-      if (merc) merc.innerHTML = '<div class="sub">Faça login para ver a bolsa.</div>';
+      if (merc) merc.innerHTML = '<div class="sub">Faça login para ver o pregão.</div>';
       return;
     }
     var r = await apiBolsa('/cliente06/game/bolsa', c);
     if (!r || !r.ok || !r.data) {
-      var msg = (r && r.data && r.data.message) || 'Não foi possível carregar a bolsa';
+      var msg = (r && r.data && r.data.message) || 'Falha ao carregar. Confirme se o servidor reiniciou com a Bolsa Empire.';
       if (merc) merc.innerHTML = '<div class="sub" style="color:var(--danger)">'+esc(msg)+'</div>';
-      if (r && r.data && r.data.premiumRequired) setPremiumUI(false);
       return;
     }
     if (r.data.success) paint(r.data);
-    else if (merc) merc.innerHTML = '<div class="sub">'+(esc(r.data.message)||'Erro')+'</div>';
+    else if (merc) merc.innerHTML = '<div class="sub">'+esc(r.data.message||'Erro')+'</div>';
   }
   async function comprar(id, qtd){
     var c = creds();
     if (!c) return toastMsg('Faça login','bad');
     if (!c.grupo) return toastMsg('Selecione um grupo primeiro','bad');
-    if (!confirm('Comprar '+qtd+' unidade(s) do ativo #'+id+'?\n\nRisco: ativos podem subir, cair ou falir. Em falência você recebe 50% do capital investido ao liquidar.')) return;
+    if (!confirm('Comprar '+qtd+'× ativo #'+id+'?\n\n• Preços mudam a cada ~12 min\n• Notícias alteram a chance de alta/baixa\n• Falência devolve 50% do capital ao liquidar')) return;
     var r = await apiBolsa('/cliente06/game/investir', Object.assign({}, c, { id: id, quantidade: qtd }));
-    if (!r.ok || !r.data || !r.data.success) return toastMsg((r.data && r.data.message) || 'Falha ao investir','bad');
-    toastMsg(r.data.message || 'Compra ok!','ok');
+    if (!r.ok || !r.data || !r.data.success) return toastMsg((r.data && r.data.message) || 'Falha','bad');
+    toastMsg(r.data.message || 'Comprado','ok');
     try { if (typeof loadMe === 'function') loadMe(); } catch(_){}
     loadBolsa();
   }
   async function liquidar(id){
     var c = creds();
     if (!c) return toastMsg('Faça login','bad');
-    if (!c.grupo) return toastMsg('Selecione um grupo primeiro','bad');
+    if (!c.grupo) return toastMsg('Selecione um grupo','bad');
     if (!confirm('Liquidar todo o ativo #'+id+'?')) return;
     var r = await apiBolsa('/cliente06/game/liquidar', Object.assign({}, c, { id: id, quantidade: 'tudo' }));
-    if (!r.ok || !r.data || !r.data.success) return toastMsg((r.data && r.data.message) || 'Falha ao liquidar','bad');
-    toastMsg(r.data.message || 'Liquidado!','ok');
+    if (!r.ok || !r.data || !r.data.success) return toastMsg((r.data && r.data.message) || 'Falha','bad');
+    toastMsg(r.data.message || 'Liquidado','ok');
     try { if (typeof loadMe === 'function') loadMe(); } catch(_){}
     loadBolsa();
   }
@@ -3923,11 +3964,9 @@ bootSSO();
     if (open) open.addEventListener('click', function(){ scrollBolsa(); loadBolsa(); });
     var getPrem = document.getElementById('btnBolsaGetPrem');
     if (getPrem) getPrem.addEventListener('click', function(){
-      var el = document.getElementById('shopPremGrid') || document.querySelector('[data-prem]');
-      if (el) {
-        var box = el.closest('.zone') || el;
-        box.scrollIntoView({ behavior:'smooth', block:'center' });
-      } else toastMsg('Veja os planos Premium abaixo ou /premium no WhatsApp','ok');
+      var el = document.getElementById('shopPremGrid');
+      if (el) (el.closest('.zone')||el).scrollIntoView({ behavior:'smooth', block:'center' });
+      else toastMsg('Planos Premium mais abaixo ou /premium no WhatsApp','ok');
     });
   }
   window.geLoadBolsa = loadBolsa;
@@ -3938,8 +3977,9 @@ bootSSO();
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
   else bind();
-  setTimeout(function(){ try{ if (window.S && window.S.user) loadBolsa(); }catch(_){} }, 1500);
-  setTimeout(function(){ try{ loadBolsa(); }catch(_){} }, 3500);
+  setTimeout(function(){ try{ loadBolsa(); }catch(_){} }, 1200);
+  setTimeout(function(){ try{ loadBolsa(); }catch(_){} }, 4000);
+  setInterval(function(){ try{ if (window.S && window.S.user) loadBolsa(); }catch(_){} }, 90000);
 })();
 </script>
 
