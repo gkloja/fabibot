@@ -2572,7 +2572,21 @@ async function loadConquistas(){
   const tit=document.getElementById('cqTitulo');
   if(tit)tit.textContent='🎖️ Título: '+(r.data.titulo||'Aventureiro');
   const p=document.getElementById('cqProg');if(p)p.textContent=(r.data.unlocked||0)+'/'+(r.data.total||0);
-  const g=document.getElementById('cqGold');if(g)g.textContent=fmt(r.data.totalGolds);
+  // Patrimônio: API (soma global) · fallback saldo do grupo ativo se backend vier 0
+  const patrimonio=Math.max(Number(r.data.totalGolds)||0, Number(r.data.maxGolds)||0, Number(S.golds)||0);
+  const g=document.getElementById('cqGold');if(g)g.textContent=fmt(patrimonio);
+  // Se barras de ouro vierem 0 mas há saldo local, corrige progresso visual das cards tipo golds
+  if(Array.isArray(r.data.lista)&&patrimonio>0){
+    r.data.lista=r.data.lista.map(function(it){
+      if(it&&it.tipo==='golds'&&!(Number(it.progress)>0)){
+        const meta=Number(it.meta)||1;
+        const prog=Math.min(patrimonio, meta);
+        return Object.assign({},it,{progress:patrimonio,pct:Math.min(100,Math.floor(patrimonio/meta*100)),unlocked:it.unlocked||patrimonio>=meta});
+      }
+      return it;
+    });
+    S.cqData.lista=r.data.lista;
+  }
   const rk=document.getElementById('cqRank');if(rk)rk.textContent=r.data.rankPos?('#'+r.data.rankPos):'—';
   paintCqTabs(r.data.cats||[]);
   paintCqCards(r.data.lista||[]);
