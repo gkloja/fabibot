@@ -1079,9 +1079,6 @@ footer a:hover{text-decoration:underline}
 .ge-money-fab:hover{transform:scale(1.06)}
 
 /* ===== PREMIUM + LOJA ===== */
-.bal-prem{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
-.bal-prem-txt{font-size:11px;color:var(--muted);font-weight:600}
-.bal-prem-txt b{color:var(--gold2)}
 .prem-badge{
   display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:999px;
   font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
@@ -1131,6 +1128,10 @@ footer a:hover{text-decoration:underline}
   font-size:16px;cursor:pointer;
 }
 
+
+.bal-prem{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.bal-prem-txt{font-size:11px;color:var(--muted);font-weight:600}
+.bal-prem-txt b{color:var(--gold2)}
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -1349,10 +1350,10 @@ footer a:hover{text-decoration:underline}
       </div>
       <div class="sec" style="margin-top:14px">💎 Premium VIP <span style="font-weight:600;color:var(--muted);font-size:11px">(Golds do grupo ativo)</span></div>
       <div class="shop-grid" id="shopPremGrid">
-        <button type="button" class="shop-card" data-prem="1"><span class="si">🥉</span><strong>Bronze</strong><em>1 dia</em><b>100.000 G</b></button>
-        <button type="button" class="shop-card" data-prem="7"><span class="si">🥈</span><strong>Prata</strong><em>7 dias</em><b>500.000 G</b></button>
-        <button type="button" class="shop-card" data-prem="14"><span class="si">🥇</span><strong>Ouro</strong><em>14 dias</em><b>1.000.000 G</b></button>
-        <button type="button" class="shop-card" data-prem="30"><span class="si">💎</span><strong>Diamante</strong><em>30 dias</em><b>2.000.000 G</b></button>
+        <button type="button" class="shop-card" data-prem="1"><span class="si">🥉</span><strong>Bronze</strong><em>1 dia · Teste</em><b>500.000 G</b></button>
+        <button type="button" class="shop-card" data-prem="7"><span class="si">🥈</span><strong>Prata</strong><em>7 dias</em><b>2.500.000 G</b></button>
+        <button type="button" class="shop-card" data-prem="14"><span class="si">🥇</span><strong>Ouro</strong><em>14 dias</em><b>5.000.000 G</b></button>
+        <button type="button" class="shop-card" data-prem="30"><span class="si">💎</span><strong>Diamante</strong><em>30 dias VIP</em><b>12.000.000 G</b></button>
       </div>
       <div class="sec" style="margin-top:18px">💰 Comprar Golds <span style="font-weight:600;color:var(--muted);font-size:11px">(PIX · R$ 1 = 1.000.000)</span></div>
       <div class="shop-grid" id="shopGoldGrid">
@@ -3130,18 +3131,23 @@ async function bootSSO(){
 /* ===== LOJA PREMIUM + GOLDS (R$1 = 1M) ===== */
 (function(){
   let shopTxId=null, shopPoll=null;
-  function shopCreds(){
+    function shopCreds(){
     const u=S&&S.user?S.user:{};
-    const username=u.nome||u.numero||u.id||'';
-    const password=S.pass||u.id||u.senha||u.password||'';
-    return {username:String(username),password:String(password)};
+    // backend geAuthUser aceita nome OU número + id (password do login)
+    const username=String(u.nome||u.numero||u.id||'').trim();
+    const password=String(S.pass||u.id||u.senha||u.password||'').trim();
+    return {username:username,password:password,numero:String(u.numero||'').replace(/\D/g,'')};
   }
   async function loadPremiumStatus(){
     if(!window.S||!S.user)return;
     try{
       const c=shopCreds();
-      if(!c.username||!c.password)return;
-      const r=await api('/cliente06/game/premium',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c)},12000);
+      if(!c.username||!c.password){
+        const title=document.getElementById('shopPremTitle');
+        if(title)title.textContent='Faça login para ver o Premium';
+        return;
+      }
+      const r=await api('/cliente06/game/premium',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c)},15000);
       const badge=document.getElementById('premBadge');
       const balB=document.getElementById('balPremBadge');
       const balT=document.getElementById('balPremTxt');
@@ -3149,9 +3155,11 @@ async function bootSSO(){
       const title=document.getElementById('shopPremTitle');
       const sub=document.getElementById('shopPremSub');
       if(!r.ok||!r.data||!r.data.success){
+        const msg=(r.data&&(r.data.message||r.data.error))||('Erro HTTP '+(r.status||'?'));
         if(title)title.textContent='Não foi possível carregar o Premium';
-        if(sub)sub.textContent=(r.data&&r.data.message)||('HTTP '+(r.status||'?'));
-        if(balT)balT.textContent='status indisponível';
+        if(sub)sub.textContent=msg;
+        if(balT)balT.textContent=msg;
+        console.warn('[premium]', r.status, r.data);
         return;
       }
       const d=r.data; S.premium=d;
@@ -3197,8 +3205,10 @@ async function bootSSO(){
     if(box)box.classList.remove('hide');
     const r=await api('/cliente06/game/golds/buy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(shopCreds(),{grupo:S.grupo,amount:Number(amount)}))},25000);
     if(!r.ok||!r.data||!r.data.success){
-      toast((r.data&&r.data.message)||'Falha ao gerar PIX','bad');
-      if(log)log.textContent=(r.data&&r.data.message)||'Erro';
+      const msg=(r.data&&(r.data.message||r.data.error))||('Falha PIX HTTP '+(r.status||'?'));
+      toast(msg,'bad');
+      if(log)log.textContent=msg;
+      console.warn('[shop pix]', r.status, r.data);
       return;
     }
     shopTxId=r.data.transactionId;
