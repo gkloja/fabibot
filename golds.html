@@ -1146,13 +1146,6 @@ footer a:hover{text-decoration:underline}
 .bolsa-news .nitem strong{display:block;font-size:12px;margin-bottom:3px}
 .bolsa-news .nmeta{font-size:10px;color:var(--muted);margin-top:4px}
 .janela-tag{font-size:9px;font-weight:800;padding:3px 7px;border-radius:999px;background:rgba(76,201,240,.12);color:var(--sky);border:1px solid rgba(76,201,240,.28)}
-.inv-row{display:flex;align-items:center;gap:4px;margin:8px 0 4px;min-height:26px}
-.inv-face{display:inline-flex;width:24px;height:24px;border-radius:50%;overflow:hidden;border:2px solid rgba(5,5,10,.9);margin-left:-6px;box-shadow:0 2px 8px rgba(0,0,0,.35)}
-.inv-face:first-child{margin-left:0}
-.inv-face img{width:100%;height:100%;object-fit:cover}
-.inv-more{font-size:10px;font-weight:800;color:var(--muted);margin-left:4px}
-.inv-label{font-size:10px;color:var(--muted);margin-left:6px;font-weight:600}
-.inv-empty{font-size:10px;color:var(--muted);opacity:.7}
 
 
 .risco-tag{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:3px 7px;border-radius:999px}
@@ -1834,11 +1827,10 @@ function fixFoto(f,nome){
 function setBtnCd(btn,ms,label){if(!btn)return;const end=Date.now()+Math.max(0,ms||0);const base=label||btn.dataset.label||btn.textContent;btn.dataset.label=base;btn.dataset.cooling='1';const tick=()=>{const left=end-Date.now();if(left<=0){btn.disabled=false;delete btn.dataset.cooling;delete btn.dataset.busy;btn.textContent=base;return}btn.disabled=true;btn.innerHTML=base+' <span class="cd">('+Math.ceil(left/1000)+'s)</span>';setTimeout(tick,200)};tick()}
 function paintHist(id,arr){
   const el=document.getElementById(id);if(!el)return;
-  if(!arr||!arr.length){el.innerHTML='<div class="hi"><span>Nenhuma jogada recente ainda — jogue para aparecer aqui.</span></div>';return}
+  if(!arr||!arr.length){el.innerHTML='<div class="hi"><span>Nada ainda</span></div>';return}
   el.innerHTML=arr.slice(0,3).map(a=>{
     const d=Number(a.delta)||0;const cls=d>0?'up':d<0?'dn':'';
-    const av=fixFoto(a.foto||a.avatar||'', a.nome);
-    return `<div class="hi"><div style="display:flex;align-items:center;gap:8px;min-width:0"><img src="${esc(av)}" alt="" style="width:28px;height:28px;border-radius:9px;object-fit:cover;border:1px solid rgba(255,255,255,.1);flex-shrink:0" onerror="this.src='https://ui-avatars.com/api/?name=U&background=0f766e&color=fff'"/><div style="min-width:0"><b>${esc(a.nome)}</b> <span>${esc(a.texto)}</span></div></div><div class="d ${cls}">${d>0?'+':''}${fmt(d)}</div></div>`;
+    return `<div class="hi"><div><b>${esc(a.nome)}</b> <span>${esc(a.texto)}</span></div><div class="d ${cls}">${d>0?'+':''}${fmt(d)}</div></div>`;
   }).join('');
 }
 function clampBet(v){v=Math.floor(Number(v)||0);if(v<1)v=1;if(v>S.golds)v=Math.max(1,S.golds);return v}
@@ -1870,11 +1862,6 @@ async function api(path,opts,ms){
     return last;
   }finally{clearTimeout(t)}
 }
-window.geApi=api;
-window.geUrlsFor=urlsFor;
-window.geFixFoto=fixFoto;
-window.geFmt=fmt;
-window.geToast=toast;
 
 function setGold(n,opts){
   S.golds=Math.floor(Number(n)||0);
@@ -3797,37 +3784,10 @@ bootSSO();
     return '<span class="risco-tag '+cls+'">'+esc(r)+'</span>';
   }
   async function apiBolsa(path, body){
-    var opts = { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(body||{}) };
-    // 1) api global do Gold Empire (já usa Cloudflare Worker)
-    if (typeof window.geApi === 'function') {
-      return window.geApi(path, opts, 22000);
-    }
     if (typeof api === 'function') {
-      return api(path, opts, 22000);
+      return api(path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body||{}) }, 22000);
     }
-    // 2) fallback: mesmo proxy Cloudflare das outras rotas
-    var PROXY_HOST = 'https://orange-hill-2e61.gbscabral15.workers.dev';
-    var BACKEND = 'http://br2.bronxyshost.com:4009';
-    var target = BACKEND.replace(/\/$/,'') + path;
-    var hostPath = BACKEND.replace(/^https?:\/\//,'');
-    var urls = [
-      PROXY_HOST + '/' + hostPath + '/proxy?url=' + encodeURIComponent(target),
-      PROXY_HOST + '/proxy?url=' + encodeURIComponent(target),
-      PROXY_HOST + '/br2.bronxyshost.com:4009/proxy?url=' + encodeURIComponent(BACKEND) + path
-    ];
-    var last = { ok:false, status:0, data:{ message:'Falha de rede' } };
-    for (var i=0;i<urls.length;i++){
-      try {
-        var res = await fetch(urls[i], Object.assign({}, opts, { mode:'cors' }));
-        var data = {};
-        try { data = await res.json(); } catch(_){}
-        last = { ok: res.ok, status: res.status, data: data };
-        if (res.ok || [400,401,403,429].indexOf(res.status) >= 0) return last;
-      } catch (e) {
-        last = { ok:false, status:0, data:{ message: e.message || 'erro' } };
-      }
-    }
-    return last;
+    return { ok:false, data:null };
   }
   function setPremiumUI(isPrem){
     var lock = document.getElementById('bolsaLock');
@@ -3861,16 +3821,6 @@ bootSSO();
       return '<div class="nitem '+cls+'"><strong>'+esc(n.titulo)+'</strong>'+esc(n.texto)+
         '<div class="nmeta">#'+esc(String(n.ativoId))+' '+esc(n.ativoNome||'')+' · '+tone+' · '+when+'</div></div>';
     }).join('');
-  }
-  function invRow(a){
-    var inv = a.investidores || [];
-    if (!inv.length) return '<div class="inv-row"><span class="inv-empty">Ninguém nesta posição ainda</span></div>';
-    var faces = inv.slice(0,5).map(function(u){
-      var av = (typeof window.geFixFoto==='function') ? window.geFixFoto(u.foto||'', u.nome) : (u.foto||'https://ui-avatars.com/api/?name='+encodeURIComponent(u.nome||'U')+'&background=0f766e&color=fff');
-      return '<span class="inv-face" title="'+esc(u.nome)+' · '+fmt(u.quantidade)+' un."><img src="'+esc(av)+'" alt="" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/></span>';
-    }).join('');
-    var more = inv.length > 5 ? '<span class="inv-more">+'+(inv.length-5)+'</span>' : '';
-    return '<div class="inv-row">'+faces+more+'<span class="inv-label">'+inv.length+' investidor'+(inv.length>1?'es':'')+'</span></div>';
   }
   function paint(data){
     var isPrem = !!(data.premium && !data.premiumRequired);
@@ -3919,9 +3869,7 @@ bootSSO();
             '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:4px 0 6px">'+riscoTag(a.risco)+janela+
               '<span class="'+vcls+'" style="font-size:11px;font-weight:700;font-family:var(--mono)">'+vtxt+'</span>'+
               '<span style="font-size:10px;color:var(--muted)">'+(a.setor||'')+'</span></div>'+
-            '<div class="desc">'+esc(a.descricao||'')+'</div>'+
-            invRow(a)+
-            btns+'</div>';
+            '<div class="desc">'+esc(a.descricao||'')+'</div>'+btns+'</div>';
         }).join('');
         if (isPrem) {
           merc.querySelectorAll('[data-buy]').forEach(function(btn){
