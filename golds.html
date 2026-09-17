@@ -1079,6 +1079,9 @@ footer a:hover{text-decoration:underline}
 .ge-money-fab:hover{transform:scale(1.06)}
 
 /* ===== PREMIUM + LOJA ===== */
+.bal-prem{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.bal-prem-txt{font-size:11px;color:var(--muted);font-weight:600}
+.bal-prem-txt b{color:var(--gold2)}
 .prem-badge{
   display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:999px;
   font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
@@ -1254,6 +1257,7 @@ footer a:hover{text-decoration:underline}
       <div class="col">
         <div class="l">Saldo neste grupo</div>
         <div class="v">💰 <span id="goldBal">0</span></div>
+        <div class="bal-prem" id="balPremLine"><span class="prem-badge" id="balPremBadge">…</span> <span class="bal-prem-txt" id="balPremTxt">status</span></div>
         <div class="row">
           <div class="s">Grupo: <b id="grpTotal">0</b></div>
           <div class="s">Rank: <b id="grpPos">—</b></div>
@@ -3126,23 +3130,43 @@ async function bootSSO(){
 /* ===== LOJA PREMIUM + GOLDS (R$1 = 1M) ===== */
 (function(){
   let shopTxId=null, shopPoll=null;
+  function shopCreds(){
+    const u=S&&S.user?S.user:{};
+    const username=u.nome||u.numero||u.id||'';
+    const password=S.pass||u.id||u.senha||u.password||'';
+    return {username:String(username),password:String(password)};
+  }
   async function loadPremiumStatus(){
-    if(!window.S||!S.user||!S.pass)return;
+    if(!window.S||!S.user)return;
     try{
-      const r=await api('/cliente06/game/premium',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass})},12000);
-      if(!r.ok||!r.data||!r.data.success)return;
-      const d=r.data; S.premium=d;
+      const c=shopCreds();
+      if(!c.username||!c.password)return;
+      const r=await api('/cliente06/game/premium',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c)},12000);
       const badge=document.getElementById('premBadge');
+      const balB=document.getElementById('balPremBadge');
+      const balT=document.getElementById('balPremTxt');
       const lojaB=document.getElementById('lojaPremBadge');
       const title=document.getElementById('shopPremTitle');
       const sub=document.getElementById('shopPremSub');
+      if(!r.ok||!r.data||!r.data.success){
+        if(title)title.textContent='Não foi possível carregar o Premium';
+        if(sub)sub.textContent=(r.data&&r.data.message)||('HTTP '+(r.status||'?'));
+        if(balT)balT.textContent='status indisponível';
+        return;
+      }
+      const d=r.data; S.premium=d;
       if(d.isPremium){
-        if(badge){badge.textContent='💎 PREMIUM'+(d.diasRestantes?(' · '+d.diasRestantes+'d'):'');badge.classList.add('on')}
+        const label='💎 PREMIUM'+(d.diasRestantes?(' · '+d.diasRestantes+'d'):'');
+        if(badge){badge.textContent=label;badge.classList.add('on')}
+        if(balB){balB.textContent=label;balB.classList.add('on')}
+        if(balT)balT.innerHTML=d.expiresAtISO?('até <b>'+new Date(d.expiresAtISO).toLocaleDateString('pt-BR')+'</b>'):'<b>ativo</b>';
         if(lojaB)lojaB.textContent='VIP ativo';
         if(title)title.textContent='💎 Você é Premium'+(d.diasRestantes?(' · '+d.diasRestantes+' dia(s)'):'');
         if(sub)sub.textContent=d.expiresAtISO?('Válido até '+new Date(d.expiresAtISO).toLocaleString('pt-BR')):'Plano ativo';
       }else{
         if(badge){badge.textContent='FREE';badge.classList.remove('on')}
+        if(balB){balB.textContent='FREE';balB.classList.remove('on')}
+        if(balT)balT.textContent='assine na Loja Imperial';
         if(lojaB)lojaB.textContent='FREE';
         if(title)title.textContent='Conta gratuita';
         if(sub)sub.textContent='Ative Premium com Golds ou compre Golds via PIX';
@@ -3154,7 +3178,7 @@ async function bootSSO(){
   async function buyPremium(plano){
     if(!S.grupo){toast('Escolha um grupo para debitar os Golds','bad');return}
     if(!confirm('Comprar Premium '+plano+' dia(s) com Golds do grupo ativo?'))return;
-    const r=await api('/cliente06/game/premium/buy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo,plano:String(plano)})},20000);
+    const r=await api('/cliente06/game/premium/buy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(shopCreds(),{grupo:S.grupo,plano:String(plano)}))},20000);
     if(!r.ok||!r.data||!r.data.success){toast((r.data&&r.data.message)||'Falha na compra Premium','bad');return}
     if(typeof r.data.golds==='number'&&typeof setGold==='function')setGold(r.data.golds);
     toast(r.data.message||'Premium ativado!','ok');
@@ -3171,7 +3195,7 @@ async function bootSSO(){
     const inp=document.getElementById(modalOpen?'modalPixCopy':'shopPixCopy');
     if(log)log.textContent='Gerando PIX…';
     if(box)box.classList.remove('hide');
-    const r=await api('/cliente06/game/golds/buy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,grupo:S.grupo,amount:Number(amount)})},25000);
+    const r=await api('/cliente06/game/golds/buy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(shopCreds(),{grupo:S.grupo,amount:Number(amount)}))},25000);
     if(!r.ok||!r.data||!r.data.success){
       toast((r.data&&r.data.message)||'Falha ao gerar PIX','bad');
       if(log)log.textContent=(r.data&&r.data.message)||'Erro';
@@ -3188,7 +3212,7 @@ async function bootSSO(){
 
   async function checkPix(silent){
     if(!shopTxId)return;
-    const r=await api('/cliente06/game/golds/buy/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:S.user.nome||S.user.numero,password:S.pass,transactionId:shopTxId})},15000);
+    const r=await api('/cliente06/game/golds/buy/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(shopCreds(),{transactionId:shopTxId}))},15000);
     const logs=[document.getElementById('shopPixLog'),document.getElementById('modalPixLog')];
     if(!r.ok||!r.data){if(!silent)logs.forEach(function(l){if(l)l.textContent='Falha ao verificar'});return}
     if(r.data.status==='approved'){
