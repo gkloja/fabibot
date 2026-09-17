@@ -3164,13 +3164,13 @@ async function bootSSO(){
       }
       const d=r.data; S.premium=d;
       if(d.isPremium){
-        const label='💎 PREMIUM'+(d.diasRestantes?(' · '+d.diasRestantes+'d'):'');
+        const label='💎 PREMIUM'+(d.tempoRestanteTxt?(' · '+d.tempoRestanteTxt):(d.diasRestantes?(' · '+d.diasRestantes+'d'):''));
         if(badge){badge.textContent=label;badge.classList.add('on')}
         if(balB){balB.textContent=label;balB.classList.add('on')}
-        if(balT)balT.innerHTML=d.expiresAtISO?('até <b>'+new Date(d.expiresAtISO).toLocaleDateString('pt-BR')+'</b>'):'<b>ativo</b>';
+        if(balT)balT.innerHTML=(d.tempoRestanteTxt?('resta <b>'+d.tempoRestanteTxt+'</b>'):'')+(d.expiresAtISO?(' · até '+new Date(d.expiresAtISO).toLocaleString('pt-BR')):'');
         if(lojaB)lojaB.textContent='VIP ativo';
-        if(title)title.textContent='💎 Você é Premium'+(d.diasRestantes?(' · '+d.diasRestantes+' dia(s)'):'');
-        if(sub)sub.textContent=d.expiresAtISO?('Válido até '+new Date(d.expiresAtISO).toLocaleString('pt-BR')):'Plano ativo';
+        if(title)title.textContent='💎 Você é Premium'+(d.tempoRestanteTxt?(' · '+d.tempoRestanteTxt):(d.diasRestantes?(' · '+d.diasRestantes+' dia(s)'):''));
+        if(sub)sub.textContent=(d.tempoRestanteTxt?('Tempo restante: '+d.tempoRestanteTxt+' · '):'')+(d.expiresAtISO?('até '+new Date(d.expiresAtISO).toLocaleString('pt-BR')):'Plano ativo');
       }else{
         if(badge){badge.textContent='FREE';badge.classList.remove('on')}
         if(balB){balB.textContent='FREE';balB.classList.remove('on')}
