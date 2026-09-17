@@ -436,6 +436,10 @@ body{
   color:#1a1400;background:linear-gradient(135deg,rgba(255,233,163,.95),rgba(245,197,66,.9));
   box-shadow:0 6px 18px rgba(245,197,66,.3);
 }
+.ge-dock button[data-dock="raid"].on{
+  color:#ffe4ef;background:rgba(255,107,157,.16);
+  box-shadow:inset 0 0 0 1px rgba(255,107,157,.35);
+}
 .ge-dock button[data-dock="rank"].on{
   color:var(--sky);background:rgba(76,201,240,.12);
   box-shadow:inset 0 0 0 1px rgba(76,201,240,.3);
@@ -1203,16 +1207,16 @@ footer a:hover{text-decoration:underline}
       <div class="zone-head">
         <div>
           <h2>✨ Portal de Ouro</h2>
-          <p>Transferência entre grupos · taxa imperial 8%</p>
+          <p>Envie quanto quiser (até o saldo) · taxa 8% · sem limite diário</p>
         </div>
-        <span class="zone-badge">Transfer</span>
+        <span class="zone-badge">Livre · 8%</span>
       </div>
-      <p class="sub" style="margin:0 0 10px">Mova Golds entre seus grupos. Taxa <b>8%</b> sobre o valor. Pode enviar até o saldo total.</p>
+      <p class="sub" style="margin:0 0 10px">Mova Golds entre seus grupos sem limite de remessas por dia. Taxa <b>8%</b> sai do valor enviado — o destino recebe o líquido. Só precisa ter saldo na origem.</p>
       <div class="tr-grid">
         <div class="fld" style="margin:0"><label>Origem</label><select id="trFrom"><option value="">— grupo —</option></select></div>
         <div class="fld" style="margin:0"><label>Destino</label><select id="trTo"><option value="">— grupo —</option></select></div>
       </div>
-      <div class="fld" style="margin-top:10px"><label>Valor (mín. 200 · até o saldo total)</label>
+      <div class="fld" style="margin-top:10px"><label>Valor (mín. 200 · máximo = seu saldo na origem)</label>
         <div style="display:flex;gap:8px;align-items:center">
           <input id="trAmount" type="number" min="200" step="1" placeholder="Ex: 5000" inputmode="numeric" style="flex:1"/>
           <button type="button" class="btn btn-ghost" id="btnTrMax" style="width:auto;padding:12px 14px;font-size:12px">MAX</button>
@@ -1463,6 +1467,7 @@ footer a:hover{text-decoration:underline}
   <button type="button" data-dock="crash"><span class="di">🚀</span>Crash</button>
   <button type="button" data-dock="tiger"><span class="di">🐯</span>Tiger</button>
   <button type="button" data-dock="farm"><span class="di">🌾</span>Farm</button>
+  <button type="button" data-dock="raid" id="dockRaid"><span class="di">🏴‍☠️</span>Roubar</button>
   <button type="button" data-dock="rank" id="dockRank"><span class="di">🏛️</span>Rank</button>
 </nav>
 
@@ -2720,7 +2725,7 @@ async function previewTransfer(){
     return;
   }
   const d=r.data;
-  el.innerHTML='Saldo origem: <b>'+fmt(d.saldoOrigem)+'</b> · Bruto <b>'+fmt(d.bruto)+'</b> · Taxa <b>'+fmt(d.taxa)+'</b> ('+d.feePct+'%) · Você recebe <b style="color:var(--g2)">'+fmt(d.liquido)+'</b> · Restam <b>'+d.dailyLeft+'</b> remessas hoje'+(d.cooldownSec?(' · cooldown '+d.cooldownSec+'s'):'');
+  el.innerHTML='Saldo origem: <b>'+fmt(d.saldoOrigem)+'</b> · Envia <b>'+fmt(d.bruto)+'</b> · Taxa <b>'+fmt(d.taxa)+'</b> ('+d.feePct+'%) · Destino recebe <b style="color:var(--g2)">'+fmt(d.liquido)+'</b>'+(d.cooldownSec?(' · aguarde <b>'+d.cooldownSec+'s</b>'):' · sem limite diário');
 }
 async function doTransfer(){
   if(!S.user){toast('Faça login','bad');return}
@@ -2878,7 +2883,7 @@ async function bootSSO(){
 (function(){
   const tips=[
     'Resgate o <b>Daily</b> todo dia para subir o streak e liberar conquistas de rotina.',
-    'No <b>Portal</b>, a taxa de 8% sai do valor enviado — planeje transferências grandes.',
+    'No <b>Portal</b> você transfere o quanto quiser por dia — a taxa de 8% sai do valor enviado.',
     'A <b>Vara Mítica + Isca Mítica</b> é o único caminho para peixes míticos na pesca.',
     'Clique em alguém no <b>Hall da Fama</b> para ver conquistas ordenadas por raridade.',
     'Golds do site e do WhatsApp são os <b>mesmos</b> — o que você ganha aqui aparece no grupo.',
