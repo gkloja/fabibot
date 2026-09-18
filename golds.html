@@ -510,7 +510,7 @@ body{
 }
 
 /* notify */
-.ge-float-notify-wrap{position:fixed;right:18px;bottom:160px;z-index:64}
+.ge-float-notify-wrap{/* rail */ }
 .ge-float-notify{
   width:48px;height:48px;border-radius:16px;border:1px solid var(--stroke);
   background:rgba(16,18,28,.92);color:var(--text);cursor:pointer;font-size:18px;
@@ -1078,29 +1078,61 @@ footer a:hover{text-decoration:underline}
 .ge-dock button[data-dock="rank"].on{color:#e4dcff;background:rgba(155,123,255,.16);box-shadow:0 0 0 1px rgba(155,123,255,.35)}
 @media(max-width:420px){.ge-dock button{width:42px;height:42px}.ge-dock button .di{font-size:17px}}
 
-/* ===== FABS ===== */
-.ge-chat-fab{
-  position:fixed;right:14px;bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:72;
-  width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.12);
-  background:rgba(15,17,26,.94);backdrop-filter:blur(16px);
-  box-shadow:0 10px 28px rgba(0,0,0,.45);cursor:pointer;font-size:17px;
-  display:flex;align-items:center;justify-content:center;transition:.2s;
+/* ===== FAB RAIL (chat · golds · notify) — coluna limpa ===== */
+.ge-fab-rail{
+  position:fixed;right:12px;bottom:calc(86px + env(safe-area-inset-bottom,0px));
+  z-index:72;display:flex;flex-direction:column;gap:11px;align-items:center;
+  pointer-events:none;
 }
-.ge-chat-fab:hover{transform:scale(1.06);border-color:rgba(245,197,66,.45)}
+.ge-fab-rail > *{pointer-events:auto}
+.ge-chat-fab,.ge-money-fab,.ge-float-notify{
+  position:relative!important;right:auto!important;bottom:auto!important;left:auto!important;top:auto!important;
+  width:48px;height:48px;border-radius:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:.22s cubic-bezier(.22,1,.36,1);
+  font-size:18px;border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 12px 28px rgba(0,0,0,.42);
+}
+.ge-chat-fab{
+  background:rgba(15,17,26,.94);backdrop-filter:blur(16px);
+}
+.ge-chat-fab:hover{transform:translateY(-2px) scale(1.05);border-color:rgba(245,197,66,.5)}
 .ge-chat-fab .badge{
-  position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;padding:0 4px;
+  position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 5px;
   border-radius:999px;background:var(--danger);color:#fff;font-size:9px;font-weight:800;
-  display:none;align-items:center;justify-content:center;
+  display:none;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(255,77,109,.45);
 }
 .ge-chat-fab .badge.on{display:inline-flex}
 .ge-money-fab{
-  position:fixed;right:14px;bottom:calc(128px + env(safe-area-inset-bottom,0px));z-index:72;
-  width:42px;height:42px;border-radius:50%;border:1px solid rgba(245,197,66,.4);
-  background:linear-gradient(145deg,rgba(245,197,66,.25),rgba(15,17,26,.95));
-  box-shadow:0 10px 28px rgba(0,0,0,.45),0 0 18px rgba(245,197,66,.15);
-  cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:.2s;
+  background:linear-gradient(145deg,rgba(245,197,66,.32),rgba(18,16,10,.96));
+  border-color:rgba(245,197,66,.45);
+  box-shadow:0 12px 28px rgba(0,0,0,.42),0 0 20px rgba(245,197,66,.18);
 }
-.ge-money-fab:hover{transform:scale(1.06)}
+.ge-money-fab:hover{transform:translateY(-2px) scale(1.05);filter:brightness(1.08)}
+.ge-float-notify-wrap{
+  position:relative!important;right:auto!important;bottom:auto!important;z-index:auto;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.ge-float-notify{
+  background:linear-gradient(145deg,rgba(76,201,240,.22),rgba(15,17,26,.95));
+  border-color:rgba(76,201,240,.4);
+  box-shadow:0 12px 28px rgba(0,0,0,.42),0 0 16px rgba(76,201,240,.12);
+}
+.ge-float-notify:hover{transform:translateY(-2px) scale(1.05)}
+.ge-float-notify.pulse{animation:blink 2s ease infinite}
+.ge-float-notify .ge-dot{
+  position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;
+  background:var(--mint);box-shadow:0 0 8px var(--mint);
+}
+.ge-fab-label{
+  font-size:9px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  color:var(--muted);text-align:center;line-height:1;max-width:56px;
+  text-shadow:0 1px 4px rgba(0,0,0,.8);
+}
+@media(max-width:420px){
+  .ge-fab-rail{right:8px;gap:10px}
+  .ge-chat-fab,.ge-money-fab,.ge-float-notify{width:44px;height:44px;border-radius:14px;font-size:16px}
+  .ge-fab-label{display:none}
+}
 
 /* ===== PREMIUM + LOJA ===== */
 .prem-badge{
@@ -1169,6 +1201,7 @@ footer a:hover{text-decoration:underline}
 .bolsa-news .nitem.bear{border-color:rgba(255,77,109,.28)}
 .bolsa-news .nitem strong{display:block;font-size:12px;margin-bottom:3px}
 .bolsa-news .nmeta{font-size:10px;color:var(--muted);margin-top:4px}
+#bolsaNewsMore{align-self:flex-start}
 .janela-tag{font-size:9px;font-weight:800;padding:3px 7px;border-radius:999px;background:rgba(76,201,240,.12);color:var(--sky);border:1px solid rgba(76,201,240,.28)}
 
 
@@ -1359,6 +1392,36 @@ footer a:hover{text-decoration:underline}
 .pf-pos-empty{
   text-align:center;padding:18px 12px;border-radius:14px;
   border:1px dashed rgba(255,255,255,.1);color:var(--muted);font-size:12px;line-height:1.5;
+}
+
+
+/* FAB spacing override — coluna direita, sem sobrepor dock */
+.ge-money-fab{
+  position:fixed!important;right:12px!important;
+  bottom:calc(150px + env(safe-area-inset-bottom,0px))!important;
+  z-index:73!important;width:48px!important;height:48px!important;border-radius:16px!important;
+}
+.ge-chat-fab{
+  position:fixed!important;right:12px!important;
+  bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
+  z-index:73!important;width:48px!important;height:48px!important;border-radius:16px!important;
+}
+.ge-float-notify-wrap{
+  position:fixed!important;right:12px!important;
+  bottom:calc(208px + env(safe-area-inset-bottom,0px))!important;
+  z-index:73!important;
+}
+.ge-float-notify{
+  width:48px!important;height:48px!important;border-radius:16px!important;
+  position:relative!important;right:auto!important;bottom:auto!important;
+  background:linear-gradient(145deg,rgba(76,201,240,.25),rgba(15,17,26,.95))!important;
+  border:1px solid rgba(76,201,240,.45)!important;
+}
+@media(max-width:420px){
+  .ge-money-fab,.ge-chat-fab,.ge-float-notify{width:44px!important;height:44px!important}
+  .ge-float-notify-wrap{bottom:calc(198px + env(safe-area-inset-bottom,0px))!important}
+  .ge-money-fab{bottom:calc(142px + env(safe-area-inset-bottom,0px))!important}
+  .ge-chat-fab{bottom:calc(88px + env(safe-area-inset-bottom,0px))!important}
 }
 
 </style>
@@ -2142,7 +2205,7 @@ function openGame(n){
   if(map[n]) loadRecent(map[n],'hist-'+map[n]);
   syncBetHints();
 }
-function closeGame(){document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));document.getElementById('viewHome').classList.remove('hide')}
+function closeGame(){document.querySelectorAll('.gv').forEach(v=>v.classList.remove('on'));document.getElementById('viewHome').classList.remove('hide')} window.closeGame=closeGame;
 document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>openGame(b.dataset.g));
 document.querySelectorAll('[data-back]').forEach(b=>b.onclick=closeGame);
 
@@ -4017,20 +4080,43 @@ bootSSO();
     var content = document.getElementById('bolsaContent');
     if (content) content.classList.remove('hide');
   }
+  var _bolsaNewsAll = [];
+  var _bolsaNewsOpen = false;
   function paintNews(list){
     var box = document.getElementById('bolsaNews');
     if (!box) return;
-    if (!list || !list.length) {
+    if (list && list.length) {
+      _bolsaNewsAll = list.slice().sort(function(a,b){
+        return (Number(b.em)||0) - (Number(a.em)||0);
+      });
+    }
+    if (!_bolsaNewsAll.length) {
       box.innerHTML = '<div class="sub">Nenhuma manchete ainda — o fio atualiza sozinho.</div>';
       return;
     }
-    box.innerHTML = list.map(function(n){
+    var show = _bolsaNewsOpen ? _bolsaNewsAll : _bolsaNewsAll.slice(0, 3);
+    var htmlN = show.map(function(n){
       var cls = n.bias > 0 ? 'bull' : (n.bias < 0 ? 'bear' : '');
       var when = n.em ? new Date(n.em).toLocaleString('pt-BR', { hour:'2-digit', minute:'2-digit', day:'2-digit', month:'2-digit' }) : '';
       var tone = n.bias > 0 ? '🟢 viés de alta' : (n.bias < 0 ? '🔴 viés de baixa' : '⚪ neutro');
       return '<div class="nitem '+cls+'"><strong>'+esc(n.titulo)+'</strong>'+esc(n.texto)+
         '<div class="nmeta">#'+esc(String(n.ativoId))+' '+esc(n.ativoNome||'')+' · '+tone+' · '+when+'</div></div>';
     }).join('');
+    if (_bolsaNewsAll.length > 3) {
+      htmlN += '<button type="button" class="btn btn-ghost btn-sm" id="bolsaNewsMore" style="width:auto;margin-top:6px;padding:8px 14px">' +
+        (_bolsaNewsOpen
+          ? ('Mostrar menos')
+          : ('Ver mais · +' + (_bolsaNewsAll.length - 3) + ' manchetes')) +
+        '</button>';
+    }
+    box.innerHTML = htmlN;
+    var more = document.getElementById('bolsaNewsMore');
+    if (more) {
+      more.onclick = function(){
+        _bolsaNewsOpen = !_bolsaNewsOpen;
+        paintNews(null);
+      };
+    }
   }
   function paint(data){
     var _ownedIds = {};
@@ -4325,10 +4411,21 @@ bootSSO();
 
   function revealBolsa(){
     _bolsaOpen = true;
+    try {
+      // Se estiver em Tigrinho/Crash/etc, volta pro home antes de abrir o Trader
+      if (typeof window.closeGame === 'function') window.closeGame(); else if (typeof closeGame === 'function') closeGame();
+      else {
+        document.querySelectorAll('.gv').forEach(function(v){ v.classList.remove('on'); });
+        var vh = document.getElementById('viewHome');
+        if (vh) vh.classList.remove('hide');
+      }
+    } catch(_){}
     var z = document.getElementById('zoneBolsaVip');
     if (z) z.classList.remove('bolsa-collapsed');
     loadBolsa();
-    if (z) z.scrollIntoView({ behavior:'smooth', block:'start' });
+    setTimeout(function(){
+      if (z) z.scrollIntoView({ behavior:'smooth', block:'start' });
+    }, 60);
   }
 
   function bindTradeDesk(){
@@ -4473,10 +4570,20 @@ bootSSO();
 (function(){
   function go(){
     try {
+      try {
+        if (typeof window.closeGame === 'function') window.closeGame(); else if (typeof closeGame === 'function') closeGame();
+        else {
+          document.querySelectorAll('.gv').forEach(function(v){ v.classList.remove('on'); });
+          var vh = document.getElementById('viewHome');
+          if (vh) vh.classList.remove('hide');
+        }
+      } catch(_){}
       var z = document.getElementById('zoneBolsaVip');
       if (z) z.classList.remove('bolsa-collapsed');
       if (typeof window.geLoadBolsa === 'function') window.geLoadBolsa();
-      if (z) z.scrollIntoView({ behavior:'smooth', block:'start' });
+      setTimeout(function(){
+        if (z) z.scrollIntoView({ behavior:'smooth', block:'start' });
+      }, 60);
     } catch(e){ console.error('bolsa reveal', e); }
   }
   function wire(){
