@@ -1516,6 +1516,7 @@ function setGold(n,opts){
   S.pendingGold=null;
   const g=S.groups.find(x=>x.grupo===S.grupo);if(g)g.golds=S.golds;renderGroups();syncBetHints();
 }
+window.setGold=setGold;
 function flushGold(){if(S.pendingGold!=null){document.getElementById('goldBal').textContent=fmt(S.pendingGold);S.pendingGold=null}else document.getElementById('goldBal').textContent=fmt(S.golds);renderGroups();syncBetHints()}
 function setGrupoMeta(d){
   if(!d)return;
@@ -3829,7 +3830,11 @@ bootSSO();
 
   function maxQtyFor(asset){
     var preco = Math.max(0.01, Number(asset.valor) || 0);
-    return Math.max(0, Math.floor(goldsSaldo() / preco));
+    var saldo = goldsSaldo();
+    // maior q com Math.ceil(preco * q) <= saldo (mesmo critério do servidor)
+    var max = Math.floor(saldo / preco);
+    while (max > 0 && Math.ceil(preco * max) > saldo) max--;
+    return Math.max(0, max);
   }
 
   function updateTradeCost(){
@@ -3959,19 +3964,42 @@ bootSSO();
     if (reveal) reveal.onclick = revealBolsa;
   }
 
+  function applyGoldsFromResponse(r){
+    try {
+      var n = r && r.data && r.data.golds;
+      if (typeof n === 'number' && isFinite(n)) {
+        if (typeof window.setGold === 'function') window.setGold(n);
+        else if (typeof setGold === 'function') setGold(n);
+        else {
+          var S = window.S || window.__GE;
+          if (S) {
+            S.golds = Math.floor(n);
+            var el = document.getElementById('goldBal');
+            if (el) el.textContent = fmt(S.golds);
+            if (S.groups && S.grupo) {
+              var g0 = S.groups.find(function(x){ return x.grupo === S.grupo; });
+              if (g0) g0.golds = S.golds;
+            }
+          }
+        }
+      }
+    } catch(e){ console.warn('[bolsa golds]', e); }
+    try { if (typeof loadGroups === 'function') loadGroups(); } catch(_){}
+  }
   async function comprar(id, qtd){
     var c = creds();
     if (!c) return toastMsg('Faça login','bad');
     if (!c.grupo) return toastMsg('Selecione um grupo primeiro','bad');
+    qtd = Math.max(1, Math.floor(Number(qtd) || 1));
     if (!confirm('Confirmar ordem: '+qtd+' un. do ativo #'+id+'?\n\n1 posição por ativo — para comprar de novo, liquide tudo.\nSaldo conferido no servidor.')) return;
     var r = await apiBolsa('/cliente06/game/investir', Object.assign({}, c, { id: id, quantidade: qtd }));
     if (!r.ok || !r.data || !r.data.success) {
-      var msg = (r.data && r.data.message) || 'Falha';
+      var msg = (r.data && r.data.message) || ('Falha' + (r.status ? ' HTTP '+r.status : ''));
       if (r.data && r.data.alreadyOwned) msg = 'Já tem posição neste ativo — liquide primeiro';
       return toastMsg(msg,'bad');
     }
     toastMsg(r.data.message || 'Comprado','ok');
-    try { if (typeof loadMe === 'function') loadMe(); } catch(_){}
+    applyGoldsFromResponse(r);
     loadBolsa();
   }
   async function liquidar(id){
@@ -3982,7 +4010,7 @@ bootSSO();
     var r = await apiBolsa('/cliente06/game/liquidar', Object.assign({}, c, { id: id, quantidade: 'tudo' }));
     if (!r.ok || !r.data || !r.data.success) return toastMsg((r.data && r.data.message) || 'Falha ao liquidar','bad');
     toastMsg(r.data.message || 'Liquidado','ok');
-    try { if (typeof loadMe === 'function') loadMe(); } catch(_){}
+    applyGoldsFromResponse(r);
     loadBolsa();
   }
   function scrollBolsa(){
