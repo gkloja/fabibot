@@ -1372,6 +1372,10 @@ footer a:hover{text-decoration:underline}
       <span><b id="geOnlineCount">0</b> online</span>
     </span>
     <a href="index.html" class="nav-link">Início</a>
+    <button type="button" class="nav-pill nav-pill-bolsa" id="navBolsaBtn" title="Bolsa Empire">
+      <span class="np-ico">📈</span>
+      <span class="np-txt"><b>Bolsa</b><small>investir</small></span>
+    </button>
     <a href="golds.html" class="nav-link on">Golds</a>
     <a href="golds.html#conquistas" id="navCq" class="hide">Conquistas</a>
     <!-- tools movidos para o dock inferior -->
@@ -4015,11 +4019,19 @@ bootSSO();
             var sign = a.pnl >= 0 ? '+' : '';
             var col = a.pnl >= 0 ? 'var(--mint)' : 'var(--danger)';
             var extra = a.falido ? ' <span class="risco-tag risco-alto">falido · 50%</span>' : '';
+            var investido = (Number(a.valorCompra)||0) * (Number(a.quantidade)||0);
+            var mercado = (Number(a.valorAtual)||0) * (Number(a.quantidade)||0);
             return '<div class="bolsa-card'+(a.falido?' falido':'')+'">'+
               '<div class="top"><span class="name">#'+a.id+' '+esc(a.nome||'')+extra+'</span><span class="price">'+a.quantidade+' un.</span></div>'+
-              '<div class="desc">Média '+fmt(a.valorCompra)+' → '+fmt(a.valorAtual)+'</div>'+
-              '<div style="font-size:12px;font-weight:800;color:'+col+';margin-bottom:8px">P&L '+sign+fmt(a.pnl)+' ('+sign+a.pnlPct+'%)</div>'+
-              '<button type="button" class="btn btn-red" data-liq="'+a.id+'">Liquidar tudo</button></div>';
+              '<div class="desc">Média '+fmt(a.valorCompra)+' · cotação '+fmt(a.valorAtual)+'</div>'+
+              '<div class="bolsa-pos-row">'+
+                '<div class="bolsa-pos-metrics">'+
+                  '<span class="lbl">Investido → mercado</span>'+
+                  '<span class="val">'+fmt(Math.round(investido))+' → '+fmt(Math.round(mercado))+'</span>'+
+                  '<span class="subv" style="color:'+col+';font-weight:800">P&L '+sign+fmt(a.pnl)+' ('+sign+a.pnlPct+'%)</span>'+
+                '</div>'+
+                '<button type="button" class="btn btn-red btn-liq" data-liq="'+a.id+'">Liquidar</button>'+
+              '</div></div>';
           }).join('');
           port.querySelectorAll('[data-liq]').forEach(function(btn){
             btn.onclick = function(){ liquidar(Number(btn.getAttribute('data-liq'))); };
@@ -4265,6 +4277,8 @@ bootSSO();
     bindTradeDesk();
     var open = document.getElementById('btnBolsaOpen');
     if (open) open.addEventListener('click', function(){ revealBolsa(); });
+    var navB = document.getElementById('navBolsaBtn');
+    if (navB) navB.addEventListener('click', function(e){ e.preventDefault(); revealBolsa(); });
     var getPrem = document.getElementById('btnBolsaGetPrem');
     if (getPrem) getPrem.addEventListener('click', function(){
       var el = document.getElementById('shopPremGrid');
@@ -4336,7 +4350,7 @@ bootSSO();
     } catch(e){ console.error('bolsa reveal', e); }
   }
   function wire(){
-    ['btnBolsaOpen','btnBolsaReveal'].forEach(function(id){
+    ['btnBolsaOpen','btnBolsaReveal','navBolsaBtn'].forEach(function(id){
       var el = document.getElementById(id);
       if (el && !el.__bolsaWired) {
         el.__bolsaWired = true;
