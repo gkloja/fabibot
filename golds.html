@@ -1424,6 +1424,90 @@ footer a:hover{text-decoration:underline}
   .ge-chat-fab{bottom:calc(88px + env(safe-area-inset-bottom,0px))!important}
 }
 
+
+/* ===== Comprar Golds no header ===== */
+.nav-pill-buy{
+  display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(245,197,66,.45);
+  background:linear-gradient(135deg,rgba(245,197,66,.22),rgba(28,22,10,.9));
+  color:var(--gold2);border-radius:14px;padding:7px 12px;cursor:pointer;font-family:inherit;
+  box-shadow:0 6px 20px rgba(245,197,66,.15);transition:.2s var(--ease);
+}
+.nav-pill-buy:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.nav-pill-buy .np-txt{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1}
+.nav-pill-buy .np-txt b{font-size:12px;font-weight:800;color:var(--gold2)}
+.nav-pill-buy .np-txt small{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.nav-pill-buy .np-ico{font-size:16px}
+
+/* Online pill = button */
+button.ge-online-pill{
+  border:0;cursor:pointer;font:inherit;
+}
+button.ge-online-pill:hover{background:rgba(46,230,168,.18);border-color:rgba(46,230,168,.4)}
+
+/* Painel quem está online */
+.ge-online-panel{
+  position:absolute;top:calc(100% + 10px);left:12px;z-index:90;
+  width:min(320px,92vw);max-height:min(420px,70vh);overflow:auto;
+  background:linear-gradient(165deg,rgba(18,20,32,.98),rgba(8,10,16,.99));
+  border:1px solid rgba(46,230,168,.28);border-radius:18px;
+  box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04);
+  padding:0;backdrop-filter:blur(20px);
+}
+.ge-online-panel[hidden]{display:none!important}
+.ge-online-panel-hd{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.07);
+  position:sticky;top:0;background:rgba(12,14,22,.95);backdrop-filter:blur(12px);
+}
+.ge-online-panel-hd strong{font-size:13px}
+.ge-online-panel-x{
+  border:0;background:rgba(255,255,255,.06);color:var(--muted);width:28px;height:28px;
+  border-radius:10px;cursor:pointer;font-size:14px;
+}
+.ge-online-panel-x:hover{background:rgba(255,255,255,.12);color:var(--text)}
+.ge-online-panel-body{padding:10px 12px 14px;display:flex;flex-direction:column;gap:8px}
+.ge-online-row{
+  display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+}
+.ge-online-row img{width:36px;height:36px;border-radius:12px;object-fit:cover;background:#1a1f30}
+.ge-online-row .nm{font-size:12px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ge-online-row .tag{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  padding:3px 8px;border-radius:999px;background:rgba(46,230,168,.12);color:var(--mint);border:1px solid rgba(46,230,168,.25)}
+.ge-online-row.guest .tag{background:rgba(255,255,255,.06);color:var(--muted);border-color:rgba(255,255,255,.1)}
+.top{position:sticky} /* ensure absolute panel anchors */
+.top .nav{position:relative}
+
+/* FABs: chat ESQUERDA · notify DIREITA — alinhados */
+.ge-chat-fab{
+  position:fixed!important;left:14px!important;right:auto!important;
+  bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
+  z-index:73!important;width:50px!important;height:50px!important;border-radius:16px!important;
+  background:rgba(15,17,26,.94)!important;border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.5)!important;
+}
+.ge-float-notify-wrap{
+  position:fixed!important;right:14px!important;left:auto!important;
+  bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
+  z-index:73!important;
+}
+.ge-float-notify{
+  width:50px!important;height:50px!important;border-radius:16px!important;
+  background:linear-gradient(145deg,rgba(76,201,240,.28),rgba(15,17,26,.95))!important;
+  border:1px solid rgba(76,201,240,.45)!important;
+}
+.ge-money-fab{display:none!important}
+@media(max-width:420px){
+  .ge-chat-fab,.ge-float-notify{width:46px!important;height:46px!important}
+  .ge-chat-fab{left:10px!important}
+  .ge-float-notify-wrap{right:10px!important}
+}
+
+/* Design polish — shell & cards */
+.shell{padding-top:18px}
+.zone{border-color:rgba(255,255,255,.08)}
+.gbtn:hover .ico{transform:scale(1.08);transition:.2s}
+
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -1498,16 +1582,28 @@ footer a:hover{text-decoration:underline}
     </div>
   </a>
   <div class="nav">
-    <span class="ge-online-pill" id="geOnlinePill" title="Pessoas no site agora">
+    <button type="button" class="ge-online-pill" id="geOnlinePill" title="Ver quem está online" aria-haspopup="dialog">
       <span class="dot"></span>
       <span><b id="geOnlineCount">0</b> online</span>
-    </span>
+    </button>
+    <div class="ge-online-panel" id="geOnlinePanel" role="dialog" aria-label="Quem está online" hidden>
+      <div class="ge-online-panel-hd">
+        <strong>👥 Online agora</strong>
+        <button type="button" class="ge-online-panel-x" id="geOnlinePanelClose" aria-label="Fechar">✕</button>
+      </div>
+      <div class="ge-online-panel-body" id="geOnlinePanelBody">
+        <div class="ge-chat-empty" style="padding:12px;font-size:12px">Carregando…</div>
+      </div>
+    </div>
     <a href="index.html" class="nav-link">Início</a>
     <button type="button" class="nav-pill nav-pill-bolsa" id="navBolsaBtn" title="Trader Desk · Gold Empire">
       <span class="np-ico">📊</span>
       <span class="np-txt"><b>Trader</b><small>desk</small></span>
     </button>
-    <a href="golds.html" class="nav-link on">Golds</a>
+    <button type="button" class="nav-pill nav-pill-buy" id="navBuyGolds" title="Comprar Golds via PIX">
+      <span class="np-ico">💰</span>
+      <span class="np-txt"><b>Comprar</b><small>golds</small></span>
+    </button>
     <a href="golds.html#conquistas" id="navCq" class="hide">Conquistas</a>
     <!-- tools movidos para o dock inferior -->
     <div class="nav-divider hide" id="navLoggedOnly"></div>
@@ -3658,7 +3754,7 @@ bootSSO();
 
 <!-- Floating Chat Gold Empire -->
 
-<button type="button" class="ge-money-fab" id="geMoneyFab" title="Comprar Golds" aria-label="Comprar Golds">💰</button>
+<!-- geMoneyFab removido: Comprar Golds no header (#navBuyGolds) -->
 <div class="shop-modal-backdrop" id="shopModal" role="dialog" aria-modal="true">
   <div class="shop-modal">
     <button type="button" class="close-x" id="shopModalClose" aria-label="Fechar">✕</button>
@@ -3864,9 +3960,23 @@ bootSSO();
     box.innerHTML = users.slice(0,12).map(u => {
       const nome = geEsc((u.nome||'User').slice(0,10));
       const av = geEsc(geAvatarUrl(u));
-      return '<div class="ou" title="'+geEsc(u.nome||'')+'"><img referrerpolicy="no-referrer" src="'+av+'" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/><span>'+nome+'</span></div>';
+      return '<div class="ou" title="'+geEsc(u.nome||'')+'"><img referrerpolicy="no-referrer" src="'+av+'" onerror="this.style.opacity=0.4"/><span>'+nome+'</span></div>';
     }).join('');
   }
+    try {
+      var panelBody = document.getElementById('geOnlinePanelBody');
+      var panel = document.getElementById('geOnlinePanel');
+      if (panelBody && panel && !panel.hidden) {
+        if (!users.length) panelBody.innerHTML = '<div class="ge-chat-empty" style="padding:14px;font-size:12px;text-align:center">Ninguém online</div>';
+        else panelBody.innerHTML = users.map(function(u){
+          var nome = geEsc((u.nome||'User').slice(0,24));
+          var av = geEsc(geAvatarUrl(u));
+          var guest = !!(u.visitante || String(u.userId||'').indexOf('guest_')===0);
+          return '<div class="ge-online-row'+(guest?' guest':'')+'"><img referrerpolicy="no-referrer" src="'+av+'" onerror="this.style.opacity=.4"/><span class="nm">'+nome+'</span><span class="tag">'+(guest?'visitante':'conta')+'</span></div>';
+        }).join('');
+      }
+    } catch(_){}
+
 
   function renderMsgs(list){
     const box = document.getElementById('geChatMsgs');
@@ -3886,7 +3996,7 @@ bootSSO();
       const txt = geEsc(m.texto || m.text || '');
       const when = m.createdAt ? new Date(m.createdAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
       return '<div class="ge-chat-msg'+(isMe?' me':'')+'">'+
-        '<img referrerpolicy="no-referrer" src="'+geEsc(av)+'" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/>'+
+        '<img referrerpolicy="no-referrer" src="'+geEsc(av)+'" onerror="this.style.opacity=0.4"/>'+
         '<div class="bubble"><div class="meta">'+geEsc(nome)+(when?' · '+when:'')+'</div>'+txt+'</div></div>';
     }).join('');
     box.scrollTop = box.scrollHeight;
@@ -4174,7 +4284,7 @@ bootSSO();
           if (inv.length) {
             invHtml = '<div class="inv-row">'+inv.slice(0,5).map(function(u){
               var av = u.foto || ('https://ui-avatars.com/api/?name='+encodeURIComponent(u.nome||'U')+'&background=0f766e&color=fff');
-              return '<span class="inv-face" title="'+esc(u.nome)+'"><img src="'+esc(av)+'" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/></span>';
+              return '<span class="inv-face" title="'+esc(u.nome)+'"><img src="'+esc(av)+'" onerror="this.style.opacity=0.4"/></span>';
             }).join('')+'<span class="inv-label">'+inv.length+' no livro</span></div>';
           } else {
             invHtml = '<div class="inv-row"><span class="inv-empty">Ninguém nesta posição</span></div>';
@@ -4599,6 +4709,91 @@ bootSSO();
   else wire();
   setTimeout(wire, 500);
   setTimeout(wire, 2000);
+})();
+</script>
+
+
+/* Online panel — clicar no contador */
+(function(){
+  function fillPanel(users){
+    var body=document.getElementById('geOnlinePanelBody');
+    if(!body)return;
+    if(!users||!users.length){
+      body.innerHTML='<div class="ge-chat-empty" style="padding:14px;font-size:12px;text-align:center">Ninguém online no momento</div>';
+      return;
+    }
+    body.innerHTML=users.map(function(u){
+      var nome=String(u.nome||'User').slice(0,24);
+      var av=u.avatar||u.foto||('https://ui-avatars.com/api/?name='+encodeURIComponent(nome)+'&background=0f766e&color=fff&size=72');
+      var guest=!!(u.visitante||String(u.userId||'').indexOf('guest_')===0);
+      return '<div class="ge-online-row'+(guest?' guest':'')+'">'+
+        '<img referrerpolicy="no-referrer" src="'+av.replace(/"/g,'')+'" alt="" onerror="this.style.opacity=0.4"/>'+
+        '<span class="nm">'+nome.replace(/</g,'&lt;')+'</span>'+
+        '<span class="tag">'+(guest?'visitante':'conta')+'</span></div>';
+    }).join('');
+  }
+  async function openOnlinePanel(){
+    var panel=document.getElementById('geOnlinePanel');
+    if(!panel)return;
+    panel.hidden=false;
+    var body=document.getElementById('geOnlinePanelBody');
+    if(body)body.innerHTML='<div class="ge-chat-empty" style="padding:12px;font-size:12px">Atualizando…</div>';
+    try{
+      if(typeof loadOnlineList==='function'){ /* chat list */ }
+      var r=null;
+      if(typeof geFetch==='function'){
+        r=await geFetch('/cliente06/online',{method:'GET'},8000);
+      }
+      var users=(r&&r.ok&&r.data&&r.data.usuarios)||[];
+      fillPanel(users);
+    }catch(e){
+      if(body)body.innerHTML='<div class="ge-chat-empty" style="padding:12px;font-size:12px">Falha ao carregar</div>';
+    }
+  }
+  function closeOnlinePanel(){
+    var panel=document.getElementById('geOnlinePanel');
+    if(panel)panel.hidden=true;
+  }
+  function bind(){
+    var pill=document.getElementById('geOnlinePill');
+    var close=document.getElementById('geOnlinePanelClose');
+    if(pill)pill.addEventListener('click',function(e){
+      e.preventDefault();e.stopPropagation();
+      var panel=document.getElementById('geOnlinePanel');
+      if(panel && !panel.hidden){ closeOnlinePanel(); return; }
+      openOnlinePanel();
+    });
+    if(close)close.addEventListener('click',function(e){e.stopPropagation();closeOnlinePanel();});
+    document.addEventListener('click',function(e){
+      var panel=document.getElementById('geOnlinePanel');
+      var pill=document.getElementById('geOnlinePill');
+      if(!panel||panel.hidden)return;
+      if(panel.contains(e.target)|| (pill&&pill.contains(e.target)))return;
+      closeOnlinePanel();
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+})();
+
+
+<script>
+(function(){
+  function wire(){
+    var b=document.getElementById('navBuyGolds');
+    if(!b||b.__buyWired)return;
+    b.__buyWired=true;
+    b.addEventListener('click',function(e){
+      e.preventDefault();
+      if(typeof window.geOpenShop==='function'){ window.geOpenShop(); return; }
+      var m=document.getElementById('shopModal');
+      if(m)m.classList.add('open');
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);
+  else wire();
+  setTimeout(wire,400);
+  setTimeout(wire,1500);
 })();
 </script>
 
