@@ -647,6 +647,30 @@ footer a:hover{text-decoration:underline}
 }
 .nav-pill-daily:hover{background:linear-gradient(135deg,rgba(46,230,168,.32),rgba(18,185,129,.22));transform:translateY(-1px)}
 .nav-pill-daily .np-ico{background:rgba(46,230,168,.2)}
+/* Trader desk — header */
+.nav-pill-bolsa{
+  color:#e8f4ff;
+  background:
+    linear-gradient(135deg,rgba(76,201,240,.22) 0%,rgba(155,123,255,.18) 50%,rgba(46,230,168,.12) 100%);
+  border:1px solid rgba(76,201,240,.45);
+  box-shadow:0 8px 24px rgba(76,201,240,.18),inset 0 1px 0 rgba(255,255,255,.12);
+}
+.nav-pill-bolsa:hover{
+  transform:translateY(-1px);
+  border-color:rgba(76,201,240,.7);
+  box-shadow:0 12px 28px rgba(76,201,240,.28),0 0 20px rgba(155,123,255,.12);
+  filter:brightness(1.05);
+}
+.nav-pill-bolsa .np-ico{
+  background:linear-gradient(145deg,rgba(76,201,240,.35),rgba(155,123,255,.25));
+  box-shadow:0 0 12px rgba(76,201,240,.25);
+}
+.nav-pill-bolsa .np-txt b{
+  background:linear-gradient(90deg,#e8f7ff,#4cc9f0,#9b7bff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.nav-pill-bolsa .np-txt small{color:rgba(200,230,255,.85);opacity:1}
 @media(max-width:520px){
   .nav-ico em{display:none}
   .nav-ico{min-width:40px;padding:8px}
@@ -1157,11 +1181,13 @@ footer a:hover{text-decoration:underline}
 
 .bolsa-cta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .bolsa-cta{
-  flex:1;min-width:120px;display:flex;align-items:center;justify-content:center;gap:8px;
-  padding:11px 14px;border-radius:14px;border:1px solid rgba(245,197,66,.35);
-  background:linear-gradient(135deg,rgba(245,197,66,.18),rgba(155,123,255,.12));
-  color:var(--gold2);font-weight:800;font-size:12px;cursor:pointer;font-family:inherit;
-  box-shadow:0 8px 24px rgba(245,197,66,.12);transition:.2s var(--ease);
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 16px;border-radius:14px;cursor:pointer;font-family:inherit;
+  font-weight:800;font-size:12px;color:#e8f4ff;
+  background:linear-gradient(135deg,rgba(76,201,240,.2),rgba(155,123,255,.15));
+  border:1px solid rgba(76,201,240,.4);
+  box-shadow:0 8px 22px rgba(76,201,240,.15);
+  transition:.2s var(--ease);
 }
 .bolsa-cta:hover{transform:translateY(-2px);border-color:rgba(245,197,66,.55);filter:brightness(1.06)}
 .bolsa-cta .ico{font-size:16px}
@@ -1414,9 +1440,9 @@ footer a:hover{text-decoration:underline}
       <span><b id="geOnlineCount">0</b> online</span>
     </span>
     <a href="index.html" class="nav-link">Início</a>
-    <button type="button" class="nav-pill nav-pill-bolsa" id="navBolsaBtn" title="Bolsa Empire">
-      <span class="np-ico">📈</span>
-      <span class="np-txt"><b>Bolsa</b><small>investir</small></span>
+    <button type="button" class="nav-pill nav-pill-bolsa" id="navBolsaBtn" title="Trader Desk · Gold Empire">
+      <span class="np-ico">📊</span>
+      <span class="np-txt"><b>Trader</b><small>desk</small></span>
     </button>
     <a href="golds.html" class="nav-link on">Golds</a>
     <a href="golds.html#conquistas" id="navCq" class="hide">Conquistas</a>
@@ -1472,8 +1498,8 @@ footer a:hover{text-decoration:underline}
         </div>
         <div class="s" id="grpLabel" style="margin-top:4px">—</div>
         <div class="bolsa-cta-row">
-          <button type="button" class="bolsa-cta" id="btnBolsaOpen" title="Bolsa VIP">
-            <span class="ico">📈</span> Investir · Bolsa VIP
+          <button type="button" class="bolsa-cta" id="btnBolsaOpen" title="Abrir Trader Desk">
+            <span class="ico">📊</span> Trader Desk
           </button>
         </div>
       </div>
@@ -1493,20 +1519,20 @@ footer a:hover{text-decoration:underline}
     <!-- BOLSA VIP — topo, logo após o banner -->
     <section class="zone-bolsa bolsa-collapsed" id="zoneBolsaVip">
       <div class="bolsa-teaser" id="bolsaTeaser">
-        <div style="font-size:42px;margin-bottom:8px;filter:drop-shadow(0 8px 20px rgba(245,197,66,.35))">📈</div>
-        <h3 style="margin:0 0 6px;font-size:18px;font-weight:800;color:var(--text)">Bolsa Empire</h3>
+        <div style="font-size:42px;margin-bottom:8px;filter:drop-shadow(0 8px 20px rgba(76,201,240,.4))">📊</div>
+        <h3 style="margin:0 0 6px;font-size:18px;font-weight:800;color:var(--text)">Trader Desk</h3>
         <p style="color:var(--muted);font-size:13px;line-height:1.5;max-width:380px;margin:0 auto 14px">
-          Mercado com <b style="color:var(--gold2)">velas de trader</b>, notícias e risco real.
-          Toque em <b style="color:var(--gold2)">Investir</b> para abrir o pregão.
+          Mesa profissional com <b style="color:var(--sky)">velas em tempo real</b>, notícias e risco.
+          Abra o desk e opere com seus Golds.
         </p>
-        <button type="button" class="btn btn-gold" id="btnBolsaReveal" style="width:auto;padding:12px 22px;display:inline-flex;margin:0 auto">
-          📈 Abrir pregão · Investir
+        <button type="button" class="btn btn-cyan" id="btnBolsaReveal" style="width:auto;padding:12px 22px;display:inline-flex;margin:0 auto;box-shadow:0 10px 28px rgba(76,201,240,.25)">
+          📊 Abrir Trader Desk
         </button>
       </div>
       <div class="bolsa-hero">
         <div>
-          <h2>📈 Bolsa Empire</h2>
-          <p>Notícias movem o mercado · IPO 48h · falência com residual 50% · tick ~12 min · Golds 1:1 WhatsApp.</p>
+          <h2>📊 Trader Desk</h2>
+          <p>Notícias movem o preço · IPO 48h · falência residual 50% · tick ~12 min · Golds 1:1 com o WhatsApp.</p>
         </div>
         <span class="bolsa-pill" id="bolsaPill">PREMIUM</span>
       </div>
@@ -1530,7 +1556,7 @@ footer a:hover{text-decoration:underline}
         </div>
         <div id="bolsaLock" class="bolsa-lock hide">
           <h3>🔒 Operar é Premium</h3>
-          <p>Pregão e <b>notícias</b> são públicos. Comprar/liquidar exige Premium. Ativos podem <b>falir</b> (residual 50%). IPOs abrem por <b>48h</b> e o mercado ticka a cada ~12 min.</p>
+          <p>Mercado e <b>notícias</b> são públicos. Comprar/liquidar exige Premium. Ativos podem <b>falir</b> (residual 50%). IPOs abrem por <b>48h</b> e o preço ticka a cada ~12 min.</p>
           <button type="button" class="btn btn-gold" id="btnBolsaGetPrem" style="width:auto;display:inline-block">Ver planos Premium</button>
         </div>
         <div id="bolsaContent">
@@ -3965,8 +3991,8 @@ bootSSO();
     if (cta) {
       cta.classList.toggle('locked', !isPrem);
       cta.innerHTML = isPrem
-        ? '<span class="ico">📈</span> Investir · Bolsa Empire'
-        : '<span class="ico">🔒</span> Bolsa Empire · ver mercado';
+        ? '<span class="ico">📊</span> Trader Desk'
+        : '<span class="ico">🔒</span> Trader · ver mercado';
     }
     if (lock) {
       if (isPrem) lock.classList.add('hide');
@@ -4017,7 +4043,7 @@ bootSSO();
     if (merc) {
       var list = data.mercado || [];
       if (!list.length) {
-        merc.innerHTML = '<div class="sub">Pregão vazio — gerando IPOs… atualize em instantes.</div>';
+        merc.innerHTML = '<div class="sub">Mercado vazio — gerando IPOs… atualize em instantes.</div>';
       } else {
         merc.innerHTML = list.map(function(a){
           var v = Number(a.variacaoPct)||0;
@@ -4070,7 +4096,7 @@ bootSSO();
         var pl = data.portfolio || [];
         if (hint) hint.textContent = pl.length
           ? (pl.length + ' posição(ões) · toque em Liquidar para realizar')
-          : 'Sem posições · compre no pregão abaixo';
+          : 'Sem posições · compre no mercado abaixo';
         if (!pl.length) {
           port.innerHTML = '<div class="pf-pos-empty">Nenhuma posição aberta.<br/>Escolha um ativo no mercado e monte sua carteira.</div>';
         } else {
@@ -4112,15 +4138,15 @@ bootSSO();
   async function loadBolsa(){
     var c = creds();
     var merc = document.getElementById('bolsaMercado');
-    if (merc) merc.innerHTML = '<div class="sub">Carregando Bolsa Empire…</div>';
+    if (merc) merc.innerHTML = '<div class="sub">Carregando Trader Desk…</div>';
     if (!c) {
       setPremiumUI(false);
-      if (merc) merc.innerHTML = '<div class="sub">Faça login para ver o pregão.</div>';
+      if (merc) merc.innerHTML = '<div class="sub">Faça login para abrir o Trader Desk.</div>';
       return;
     }
     var r = await apiBolsa('/cliente06/game/bolsa', c);
     if (!r || !r.ok || !r.data) {
-      var msg = (r && r.data && (r.data.message || r.data.erro)) || ('Falha ao carregar (HTTP '+(r&&r.status||0)+'). Reinicie o servidor com a Bolsa Empire.');
+      var msg = (r && r.data && (r.data.message || r.data.erro)) || ('Falha ao carregar (HTTP '+(r&&r.status||0)+'). Reinicie o servidor com o Trader Desk.');
       if (merc) merc.innerHTML = '<div class="sub" style="color:var(--danger)">'+esc(msg)+'</div>';
       return;
     }
@@ -4226,7 +4252,7 @@ bootSSO();
     var desk = document.getElementById('tradeDesk');
     if (!desk) return;
     document.getElementById('tradeTitle').textContent = '#'+asset.id+' '+(asset.nome||'Ativo');
-    document.getElementById('tradeSub').textContent = (asset.setor||'')+' · '+(asset.descricao||'Bolsa Empire');
+    document.getElementById('tradeSub').textContent = (asset.setor||'')+' · '+(asset.descricao||'Trader Desk');
     document.getElementById('tradePrice').textContent = fmt(asset.valor);
     var v = Number(asset.variacaoPct)||0;
     var tv = document.getElementById('tradeVar');
