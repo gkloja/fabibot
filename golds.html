@@ -4017,6 +4017,18 @@ bootSSO();
     }).join('');
   }
   function paint(data){
+    var _ownedIds = {};
+    try {
+      (data.portfolio || []).forEach(function(p){
+        if (p && Number(p.quantidade) > 0) _ownedIds[Number(p.id)] = p;
+      });
+    } catch(_){}
+    try {
+      (data.mercado || []).forEach(function(a){
+        if (a && _ownedIds[Number(a.id)]) a._owned = true;
+      });
+    } catch(_){}
+
     var isPrem = !!(data.premium && !data.premiumRequired);
     setPremiumUI(isPrem);
     var r = data.resumo || {};
@@ -4251,15 +4263,18 @@ bootSSO();
     _tradePrem = !!isPrem;
     var desk = document.getElementById('tradeDesk');
     if (!desk) return;
-    document.getElementById('tradeTitle').textContent = '#'+asset.id+' '+(asset.nome||'Ativo');
-    document.getElementById('tradeSub').textContent = (asset.setor||'')+' · '+(asset.descricao||'Trader Desk');
+    var owned = !!(asset && asset._owned);
+    document.getElementById('tradeTitle').textContent = '#'+asset.id+' '+(asset.nome||'Ativo')+(owned?' · em carteira':'');
+    document.getElementById('tradeSub').textContent = owned
+      ? 'Você já tem posição neste ativo. Liquide tudo para comprar de novo.'
+      : ((asset.setor||'')+' · '+(asset.descricao||'Trader Desk')+' · 1 compra por ativo');
     document.getElementById('tradePrice').textContent = fmt(asset.valor);
     var v = Number(asset.variacaoPct)||0;
     var tv = document.getElementById('tradeVar');
     tv.textContent = (v>0?'+':'')+v+'%';
     tv.className = 'v '+(v>0?'up':v<0?'down':'');
     document.getElementById('tradeRisk').textContent = String(asset.risco||'medio').toUpperCase();
-    document.getElementById('tradeMax').textContent = fmt(maxQtyFor(asset));
+    document.getElementById('tradeMax').textContent = owned ? '—' : fmt(maxQtyFor(asset));
     drawCandles(document.getElementById('tradeCanvas'), asset.candles || [], false);
     var box = document.getElementById('tradeInv');
     if (box) {
@@ -4271,8 +4286,17 @@ bootSSO();
       }).join('') + '<span class="inv-label">'+inv.length+' no livro</span>';
     }
     var inp = document.getElementById('tradeQty');
-    if (inp) inp.value = '1';
+    if (inp) { inp.value = '1'; inp.disabled = !!owned; }
     updateTradeCost();
+    var buy = document.getElementById('tradeBuy');
+    if (buy) {
+      if (owned) {
+        buy.disabled = true;
+        buy.textContent = 'Já em carteira · liquide primeiro';
+      } else {
+        buy.textContent = 'Comprar';
+      }
+    }
     desk.classList.add('open');
     desk.setAttribute('aria-hidden','false');
   }
@@ -4337,9 +4361,13 @@ bootSSO();
     var c = creds();
     if (!c) return toastMsg('Faça login','bad');
     if (!c.grupo) return toastMsg('Selecione um grupo primeiro','bad');
-    if (!confirm('Confirmar ordem: '+qtd+' unidade(s) do ativo #'+id+'?\n\nLimitado ao seu saldo de Golds.\nVelas atualizam a cada tick (~12 min).')) return;
+    if (!confirm('Confirmar ordem: '+qtd+' un. do ativo #'+id+'?\n\n1 posição por ativo — para comprar de novo, liquide tudo.\nSaldo conferido no servidor.')) return;
     var r = await apiBolsa('/cliente06/game/investir', Object.assign({}, c, { id: id, quantidade: qtd }));
-    if (!r.ok || !r.data || !r.data.success) return toastMsg((r.data && r.data.message) || 'Falha','bad');
+    if (!r.ok || !r.data || !r.data.success) {
+      var msg = (r.data && r.data.message) || 'Falha';
+      if (r.data && r.data.alreadyOwned) msg = 'Já tem posição neste ativo — liquide primeiro';
+      return toastMsg(msg,'bad');
+    }
     toastMsg(r.data.message || 'Comprado','ok');
     try { if (typeof loadMe === 'function') loadMe(); } catch(_){}
     loadBolsa();
@@ -4348,9 +4376,9 @@ bootSSO();
     var c = creds();
     if (!c) return toastMsg('Faça login','bad');
     if (!c.grupo) return toastMsg('Selecione um grupo','bad');
-    if (!confirm('Liquidar todo o ativo #'+id+'?')) return;
+    if (!confirm('Liquidar 100% da posição #'+id+'?\nDepois poderá comprar este ativo de novo.')) return;
     var r = await apiBolsa('/cliente06/game/liquidar', Object.assign({}, c, { id: id, quantidade: 'tudo' }));
-    if (!r.ok || !r.data || !r.data.success) return toastMsg((r.data && r.data.message) || 'Falha','bad');
+    if (!r.ok || !r.data || !r.data.success) return toastMsg((r.data && r.data.message) || 'Falha ao liquidar','bad');
     toastMsg(r.data.message || 'Liquidado','ok');
     try { if (typeof loadMe === 'function') loadMe(); } catch(_){}
     loadBolsa();
