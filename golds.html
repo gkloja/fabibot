@@ -1725,8 +1725,7 @@ footer a:hover{text-decoration:underline}
     <div class="panel"><div class="ebar"><i id="eFill"></i></div><p class="sub" id="eTxt">100/100</p>
       <button class="btn btn-gold" id="btnMine">MINERAR</button>
       <button class="btn btn-ghost" id="btnUp" style="margin-top:8px">⬆️ Poder</button>
-      <div class="hist"><h4>Últimas ações · Minerar</h4><div id="hist-mine"></div>
-        <button type="button" class="btn btn-ghost btn-sm hist-more" data-hist="hist-mine" data-tipo="mine" style="width:auto;margin-top:8px;padding:8px 14px">Ver mais</button></div>
+      <div class="hist"><h4>Últimas ações · Minerar</h4><div id="hist-mine"></div></div>
     </div>
   </div>
 
@@ -1741,8 +1740,7 @@ footer a:hover{text-decoration:underline}
       <div class="stats" id="fishStats"></div>
       <button class="btn btn-cyan" id="btnFish">LANÇAR LINHA</button>
       <p class="sub" id="fishLog" style="margin-top:10px;margin-bottom:0"></p>
-      <div class="hist"><h4>Últimas ações · Pesca</h4><div id="hist-pescar"></div>
-        <button type="button" class="btn btn-ghost btn-sm hist-more" data-hist="hist-pescar" data-tipo="pescar" style="width:auto;margin-top:8px;padding:8px 14px">Ver mais</button></div>
+      <div class="hist"><h4>Últimas ações · Pesca</h4><div id="hist-pescar"></div></div>
     </div>
     <div class="panel">
       <h3>🪵 Varas</h3>
@@ -1771,8 +1769,7 @@ footer a:hover{text-decoration:underline}
       <div class="sec">Cash-out</div>
       <div class="bets" id="cOuts"><button data-v="1.5" class="on">1.5x</button><button data-v="2">2x</button><button data-v="3">3x</button><button data-v="5">5x</button><button data-v="10">10x</button></div>
       <button class="btn btn-red" id="btnCrash">DECOLAR 🚀</button>
-      <div class="hist"><h4>Últimas ações · Foguete</h4><div id="hist-foguete"></div>
-        <button type="button" class="btn btn-ghost btn-sm hist-more" data-hist="hist-foguete" data-tipo="foguete" style="width:auto;margin-top:8px;padding:8px 14px">Ver mais</button></div>
+      <div class="hist"><h4>Últimas ações · Foguete</h4><div id="hist-foguete"></div></div>
     </div>
   </div>
 
@@ -1792,8 +1789,7 @@ footer a:hover{text-decoration:underline}
       <button class="btn btn-gold" id="btnSpin">GIRAR</button>
       <div class="pay"><div>🐯 18x</div><div>🎰 10x</div><div>🃏 6x</div><div>🍊 4x</div><div>🍀 3x</div><div>🍒 2x</div></div>
       <p class="sub" id="tigLog" style="margin-top:10px;margin-bottom:0;text-align:center"></p>
-      <div class="hist"><h4>Últimas ações · Tigrinho</h4><div id="hist-tigrinho"></div>
-        <button type="button" class="btn btn-ghost btn-sm hist-more" data-hist="hist-tigrinho" data-tipo="tigrinho" style="width:auto;margin-top:8px;padding:8px 14px">Ver mais</button></div>
+      <div class="hist"><h4>Últimas ações · Tigrinho</h4><div id="hist-tigrinho"></div></div>
     </div>
   </div>
 
@@ -1810,8 +1806,7 @@ footer a:hover{text-decoration:underline}
       <div class="vitima hide" id="vitimaBox"><img id="vitimaFoto" referrerpolicy="no-referrer" alt=""/><div><strong id="vitimaNome">—</strong><div style="font-size:12px;color:var(--muted)" id="vitimaMeta"></div></div></div>
       <button class="btn btn-pink" id="btnRaid">TENTAR ROUBO</button>
       <p class="sub" id="raidLog" style="margin-top:8px;margin-bottom:0"></p>
-      <div class="hist"><h4>Últimas ações · Raid</h4><div id="hist-raid"></div>
-        <button type="button" class="btn btn-ghost btn-sm hist-more" data-hist="hist-raid" data-tipo="raid" style="width:auto;margin-top:8px;padding:8px 14px">Ver mais</button></div>
+      <div class="hist"><h4>Últimas ações · Raid</h4><div id="hist-raid"></div></div>
     </div>
   </div>
 
@@ -1848,8 +1843,7 @@ footer a:hover{text-decoration:underline}
       <p class="sub" id="plantCostHint" style="margin-bottom:6px">Toque numa cultura para selecionar · <b>toque 2×</b> para plantar na hora</p>
       <button class="btn btn-gold" id="btnPlant">🌱 PLANTAR</button>
       <p class="sub" id="farmLog" style="margin-top:8px;margin-bottom:0"></p>
-      <div class="hist"><h4>Últimas ações · Fazenda</h4><div id="hist-fazenda"></div>
-        <button type="button" class="btn btn-ghost btn-sm hist-more" data-hist="hist-fazenda" data-tipo="fazenda" style="width:auto;margin-top:8px;padding:8px 14px">Ver mais</button></div>
+      <div class="hist"><h4>Últimas ações · Fazenda</h4><div id="hist-fazenda"></div></div>
     </div>
     <div class="panel">
       <h3>👀 Visitar / Roubar fazenda</h3>
@@ -2146,21 +2140,8 @@ function closeGame(){document.querySelectorAll('.gv').forEach(v=>v.classList.rem
 document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>openGame(b.dataset.g));
 document.querySelectorAll('[data-back]').forEach(b=>b.onclick=closeGame);
 
-async function loadRecent(tipo,elId,limit){
-  limit=limit||3;
-  const r=await api('/cliente06/game/recent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo,limit:limit})},10000);
-  if(r.ok&&r.data&&r.data.recent) paintHist(elId,r.data.recent,limit>3);
-}
-document.addEventListener('click',function(e){
-  var b=e.target&&e.target.closest&&e.target.closest('.hist-more');
-  if(!b)return;
-  var tipo=b.getAttribute('data-tipo');
-  var hid=b.getAttribute('data-hist');
-  if(!tipo||!hid)return;
-  b.disabled=true;b.textContent='Carregando…';
-  loadRecent(tipo,hid,25).then(function(){b.textContent='Ver mais';b.disabled=false;}).catch(function(){b.textContent='Ver mais';b.disabled=false;});
-});
-,body:JSON.stringify({tipo,limit:3})},10000);
+async function loadRecent(tipo,elId){
+  const r=await api('/cliente06/game/recent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo,limit:3})},10000);
   if(r.ok&&r.data&&r.data.recent) paintHist(elId,r.data.recent);
 }
 
