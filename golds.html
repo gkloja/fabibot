@@ -1294,86 +1294,45 @@ footer a:hover{text-decoration:underline}
 .sec-bolsa{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:16px 0 10px}
 
 
-/* ===== TRADE NAV — terminal style ===== */
-.nav-trade{
-  position:relative;cursor:pointer;border:1px solid rgba(245,197,66,.35);
+/* ===== PORTFÓLIO DESK (KPIs + liquidar) ===== */
+.pf-desk{
+  margin-bottom:16px;padding:16px;border-radius:20px;
   background:
-    linear-gradient(135deg,rgba(245,197,66,.16),rgba(46,230,168,.08)),
-    rgba(12,14,22,.95);
-  color:var(--gold2);padding:6px 12px 6px 10px;border-radius:14px;
-  display:inline-flex;align-items:center;gap:8px;font-family:inherit;
-  transition:.22s var(--ease);box-shadow:0 0 0 1px rgba(245,197,66,.08),0 8px 22px rgba(0,0,0,.35);
-  overflow:hidden;
-}
-.nav-trade::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.06) 50%,transparent 60%);
-  transform:translateX(-100%);transition:transform .6s ease;
-}
-.nav-trade:hover::before{transform:translateX(100%)}
-.nav-trade:hover{
-  border-color:rgba(245,197,66,.6);transform:translateY(-1px);
-  box-shadow:0 0 0 1px rgba(245,197,66,.18),0 12px 28px rgba(245,197,66,.22);
-}
-.nav-trade .nt-live{
-  width:7px;height:7px;border-radius:50%;background:var(--mint);
-  box-shadow:0 0 0 3px rgba(46,230,168,.2),0 0 10px var(--mint);
-  animation:blink 1.5s ease infinite;flex-shrink:0;
-}
-.nav-trade .nt-ico{
-  width:26px;height:26px;border-radius:9px;display:grid;place-items:center;
-  font-size:13px;font-weight:800;color:#1a1400;
-  background:linear-gradient(135deg,var(--gold2),var(--gold3));
-  box-shadow:0 4px 12px rgba(245,197,66,.35);
-}
-.nav-trade .nt-txt{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;text-align:left}
-.nav-trade .nt-txt b{font-size:12px;font-weight:800;letter-spacing:-.2px;color:var(--text)}
-.nav-trade .nt-txt small{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
-.nav-trade .nt-arrow{font-size:12px;opacity:.7;margin-left:2px;color:var(--mint)}
-@media(max-width:520px){
-  .nav-trade .nt-txt small{display:none}
-  .nav-trade{padding:7px 10px}
-}
-
-/* ===== PORTFOLIO STRIP no topo (HUD) ===== */
-.pf-strip{
-  margin-bottom:14px;padding:14px 16px;border-radius:20px;
-  display:grid;grid-template-columns:1.1fr repeat(3,1fr) auto;gap:12px;align-items:center;
-  background:
-    radial-gradient(420px 120px at 0% 50%,rgba(46,230,168,.1),transparent 55%),
-    radial-gradient(360px 100px at 100% 0%,rgba(245,197,66,.12),transparent 50%),
-    linear-gradient(145deg,rgba(16,18,28,.97),rgba(8,10,16,.99));
+    radial-gradient(380px 100px at 0% 0%,rgba(46,230,168,.1),transparent 55%),
+    linear-gradient(160deg,rgba(18,20,32,.98),rgba(8,10,16,.99));
   border:1px solid rgba(245,197,66,.22);
-  box-shadow:0 16px 40px rgba(0,0,0,.32);
-  animation:cardIn .5s var(--ease) both;
+  box-shadow:0 14px 36px rgba(0,0,0,.28);
 }
-@media(max-width:860px){.pf-strip{grid-template-columns:1fr 1fr;gap:10px}}
-@media(max-width:480px){.pf-strip{grid-template-columns:1fr}}
-.pf-brand{display:flex;align-items:center;gap:12px;min-width:0}
-.pf-brand .pf-mark{
-  width:42px;height:42px;border-radius:14px;flex-shrink:0;
-  display:grid;place-items:center;font-size:18px;font-weight:800;color:#1a1400;
-  background:linear-gradient(135deg,var(--gold2),var(--gold3));
-  box-shadow:0 6px 18px rgba(245,197,66,.35);
+.pf-desk-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.pf-desk-title{font-size:13px;font-weight:800;letter-spacing:-.2px}
+.pf-desk-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.pf-desk .bolsa-stats{margin:0 0 12px}
+.pf-desk-list{display:flex;flex-direction:column;gap:8px}
+.pf-pos{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:12px 14px;border-radius:16px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
+  transition:.18s var(--ease);
 }
-.pf-brand .pf-copy{min-width:0}
-.pf-brand .pf-copy b{display:block;font-size:13px;font-weight:800;letter-spacing:-.2px}
-.pf-brand .pf-copy span{font-size:11px;color:var(--muted)}
-.pf-kpi{min-width:0}
-.pf-kpi .lbl{font-size:9px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--muted)}
-.pf-kpi .val{font-size:16px;font-weight:800;font-family:var(--mono);margin-top:3px;color:var(--gold2);letter-spacing:-.3px}
-.pf-kpi .val.up{color:var(--mint)}.pf-kpi .val.down{color:var(--danger)}
-.pf-kpi .val.dim{color:var(--muted);font-size:14px}
-.pf-cta{
-  border:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:12px;
-  padding:12px 16px;border-radius:14px;white-space:nowrap;
-  color:#1a1400;background:linear-gradient(135deg,var(--gold2),var(--gold3));
-  box-shadow:0 8px 22px rgba(245,197,66,.3);transition:.2s var(--ease);
+.pf-pos:hover{border-color:rgba(245,197,66,.28);background:rgba(255,255,255,.045)}
+.pf-pos.falido{border-color:rgba(255,77,109,.35);opacity:.92}
+.pf-pos-main{flex:1;min-width:140px}
+.pf-pos-main .nm{font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pf-pos-main .meta{font-size:11px;color:var(--muted);margin-top:3px}
+.pf-pos-nums{text-align:right;min-width:110px}
+.pf-pos-nums .mkt{font-size:14px;font-weight:800;font-family:var(--mono);color:var(--gold2)}
+.pf-pos-nums .pnl{font-size:12px;font-weight:800;margin-top:2px}
+.pf-pos-nums .pnl.up{color:var(--mint)}.pf-pos-nums .pnl.down{color:var(--danger)}
+.pf-pos .btn-liq{
+  width:auto;padding:10px 14px;font-size:12px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,#ff8fab,var(--danger));color:#fff;border:0;
+  font-weight:800;cursor:pointer;font-family:inherit;
+  box-shadow:0 6px 16px rgba(255,77,109,.25);transition:.18s;
 }
-.pf-cta:hover{filter:brightness(1.06);transform:translateY(-1px)}
-.pf-cta.ghost{
-  color:var(--text);background:rgba(255,255,255,.05);
-  border:1px solid var(--stroke);box-shadow:none;
+.pf-pos .btn-liq:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.pf-pos-empty{
+  text-align:center;padding:18px 12px;border-radius:14px;
+  border:1px dashed rgba(255,255,255,.1);color:var(--muted);font-size:12px;line-height:1.5;
 }
 
 </style>
@@ -1455,11 +1414,9 @@ footer a:hover{text-decoration:underline}
       <span><b id="geOnlineCount">0</b> online</span>
     </span>
     <a href="index.html" class="nav-link">Início</a>
-    <button type="button" class="nav-trade" id="navBolsaBtn" title="Abrir Bolsa Empire">
-      <span class="nt-live"></span>
-      <span class="nt-ico">◈</span>
-      <span class="nt-txt"><b>Trade</b><small>Bolsa Empire</small></span>
-      <span class="nt-arrow">↗</span>
+    <button type="button" class="nav-pill nav-pill-bolsa" id="navBolsaBtn" title="Bolsa Empire">
+      <span class="np-ico">📈</span>
+      <span class="np-txt"><b>Bolsa</b><small>investir</small></span>
     </button>
     <a href="golds.html" class="nav-link on">Golds</a>
     <a href="golds.html#conquistas" id="navCq" class="hide">Conquistas</a>
@@ -1515,7 +1472,7 @@ footer a:hover{text-decoration:underline}
         </div>
         <div class="s" id="grpLabel" style="margin-top:4px">—</div>
         <div class="bolsa-cta-row">
-          <button type="button" class="bolsa-cta" id="btnBolsaOpen" title="Abrir terminal Bolsa Empire">
+          <button type="button" class="bolsa-cta" id="btnBolsaOpen" title="Bolsa VIP">
             <span class="ico">📈</span> Investir · Bolsa VIP
           </button>
         </div>
@@ -1524,32 +1481,7 @@ footer a:hover{text-decoration:underline}
   </div>
 
   <div id="viewHome">
-    
-    <!-- PORTFOLIO STRIP — resumo ao vivo no topo -->
-    <div class="pf-strip" id="pfStrip">
-      <div class="pf-brand">
-        <div class="pf-mark">◈</div>
-        <div class="pf-copy">
-          <b>Portfólio · Bolsa Empire</b>
-          <span id="pfStripSub">Pregão ao vivo · Golds 1:1 WhatsApp</span>
-        </div>
-      </div>
-      <div class="pf-kpi">
-        <div class="lbl">Investido</div>
-        <div class="val dim" id="pfInv">—</div>
-      </div>
-      <div class="pf-kpi">
-        <div class="lbl">Valor de mercado</div>
-        <div class="val dim" id="pfMkt">—</div>
-      </div>
-      <div class="pf-kpi">
-        <div class="lbl">Lucro / prejuízo</div>
-        <div class="val dim" id="pfPnl">—</div>
-      </div>
-      <button type="button" class="pf-cta" id="pfOpenBolsa">Negociar ↗</button>
-    </div>
-
-<div class="banner cq-ban">
+    <div class="banner cq-ban">
       <div style="flex:1;min-width:180px">
         <div class="page-kicker">Gold Empire · Live</div>
         <div style="font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.4px">Economia, jogos e glória — num só lugar</div>
@@ -1567,8 +1499,8 @@ footer a:hover{text-decoration:underline}
           Mercado com <b style="color:var(--gold2)">velas de trader</b>, notícias e risco real.
           Toque em <b style="color:var(--gold2)">Investir</b> para abrir o pregão.
         </p>
-        <button type="button" class="btn btn-gold" id="btnBolsaReveal" style="width:auto;padding:13px 24px;display:inline-flex;align-items:center;gap:8px;margin:0 auto">
-          <span style="opacity:.9">◈</span> Abrir terminal · Negociar
+        <button type="button" class="btn btn-gold" id="btnBolsaReveal" style="width:auto;padding:12px 22px;display:inline-flex;margin:0 auto">
+          📈 Abrir pregão · Investir
         </button>
       </div>
       <div class="bolsa-hero">
@@ -1579,10 +1511,22 @@ footer a:hover{text-decoration:underline}
         <span class="bolsa-pill" id="bolsaPill">PREMIUM</span>
       </div>
       <div class="bolsa-body">
-        <div class="bolsa-stats" id="bolsaStats">
-          <div class="bolsa-stat"><div class="lbl">Investido</div><div class="val" id="bolsaInv">—</div></div>
-          <div class="bolsa-stat"><div class="lbl">Valor de mercado</div><div class="val" id="bolsaMkt">—</div></div>
-          <div class="bolsa-stat"><div class="lbl">Lucro / prejuízo</div><div class="val" id="bolsaPnl">—</div></div>
+        <div class="pf-desk" id="bolsaStats">
+          <div class="pf-desk-hd">
+            <div>
+              <div class="pf-desk-title">Portfólio ao vivo</div>
+              <div class="pf-desk-sub" id="bolsaPortHint">Posições · liquidar aqui</div>
+            </div>
+            <span class="bolsa-pill" id="bolsaPillMini" style="display:none">PREMIUM</span>
+          </div>
+          <div class="bolsa-stats">
+            <div class="bolsa-stat"><div class="lbl">Investido</div><div class="val" id="bolsaInv">—</div></div>
+            <div class="bolsa-stat"><div class="lbl">Valor de mercado</div><div class="val" id="bolsaMkt">—</div></div>
+            <div class="bolsa-stat"><div class="lbl">Lucro / prejuízo</div><div class="val" id="bolsaPnl">—</div></div>
+          </div>
+          <div class="pf-desk-list" id="bolsaPortList">
+            <div class="sub">Carregando posições…</div>
+          </div>
         </div>
         <div id="bolsaLock" class="bolsa-lock hide">
           <h3>🔒 Operar é Premium</h3>
@@ -1594,8 +1538,7 @@ footer a:hover{text-decoration:underline}
           <div id="bolsaNews" class="bolsa-news"><div class="sub">Carregando manchetes…</div></div>
           <div class="sec-bolsa">Mercado <span id="bolsaTickHint" style="font-weight:600;color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px"></span></div>
           <div class="bolsa-grid" id="bolsaMercado"><div class="skel" style="height:90px"></div></div>
-          <div class="sec-bolsa">Seu portfólio</div>
-          <div class="bolsa-grid" id="bolsaPortfolio"><div class="sub">Carregando…</div></div>
+          <div class="hide" id="bolsaPortfolio" aria-hidden="true"></div>
           <div class="sec-bolsa">Alertas</div>
           <div id="bolsaAlertas" class="sub">—</div>
           <div class="tip-strip" style="margin-top:14px">
@@ -4022,8 +3965,8 @@ bootSSO();
     if (cta) {
       cta.classList.toggle('locked', !isPrem);
       cta.innerHTML = isPrem
-        ? '<span class="ico">◈</span> Terminal · Negociar'
-        : '<span class="ico">◈</span> Ver pregão';
+        ? '<span class="ico">📈</span> Investir · Bolsa Empire'
+        : '<span class="ico">🔒</span> Bolsa Empire · ver mercado';
     }
     if (lock) {
       if (isPrem) lock.classList.add('hide');
@@ -4051,33 +3994,19 @@ bootSSO();
     var isPrem = !!(data.premium && !data.premiumRequired);
     setPremiumUI(isPrem);
     var r = data.resumo || {};
-    function fillKpi(id, text, cls){
-      var el = document.getElementById(id);
-      if (!el) return;
-      el.textContent = text;
-      el.className = cls || 'val';
+    var inv = document.getElementById('bolsaInv');
+    var mkt = document.getElementById('bolsaMkt');
+    var pnl = document.getElementById('bolsaPnl');
+    if (inv) inv.textContent = isPrem ? fmt(r.totalInvestido) : '—';
+    if (mkt) mkt.textContent = isPrem ? fmt(r.totalMercado) : '—';
+    if (pnl) {
+      if (!isPrem) { pnl.textContent='—'; pnl.className='val'; }
+      else {
+        var v = Number(r.pnl)||0;
+        pnl.textContent = (v>=0?'+':'') + fmt(v);
+        pnl.className = 'val ' + (v>0?'up':v<0?'down':'');
+      }
     }
-    var invTxt = isPrem ? fmt(r.totalInvestido) : '—';
-    var mktTxt = isPrem ? fmt(r.totalMercado) : '—';
-    var pnlV = Number(r.pnl)||0;
-    var pnlTxt = isPrem ? ((pnlV>=0?'+':'') + fmt(pnlV)) : '—';
-    var pnlCls = !isPrem ? 'val dim' : ('val ' + (pnlV>0?'up':pnlV<0?'down':''));
-    fillKpi('bolsaInv', invTxt, 'val');
-    fillKpi('bolsaMkt', mktTxt, 'val');
-    fillKpi('bolsaPnl', pnlTxt, isPrem ? ('val ' + (pnlV>0?'up':pnlV<0?'down':'')) : 'val');
-    // topo HUD
-    fillKpi('pfInv', invTxt, isPrem ? 'val' : 'val dim');
-    fillKpi('pfMkt', mktTxt, isPrem ? 'val' : 'val dim');
-    fillKpi('pfPnl', pnlTxt, pnlCls);
-    var sub = document.getElementById('pfStripSub');
-    if (sub) {
-      var nPos = (data.portfolio && data.portfolio.length) || 0;
-      sub.textContent = isPrem
-        ? (nPos ? (nPos + ' posição(ões) aberta(s) · tick ~12 min') : 'Sem posições · abra o pregão e escolha um ativo')
-        : 'Leitura pública · Premium para operar';
-    }
-    var pfCta = document.getElementById('pfOpenBolsa');
-    if (pfCta) pfCta.textContent = isPrem ? 'Negociar ↗' : 'Ver pregão ↗';
     paintNews(data.noticias || []);
     var hint = document.getElementById('bolsaTickHint');
     if (hint && data.meta) {
@@ -4131,31 +4060,38 @@ bootSSO();
         });
       }
     }
-    var port = document.getElementById('bolsaPortfolio');
+    var port = document.getElementById('bolsaPortList') || document.getElementById('bolsaPortfolio');
+    var hint = document.getElementById('bolsaPortHint');
     if (port) {
       if (!isPrem) {
-        port.innerHTML = '<div class="sub">Portfólio · exclusivo Premium</div>';
+        port.innerHTML = '<div class="pf-pos-empty">Portfólio e liquidação · exclusivo <b style="color:var(--gold2)">Premium</b>.</div>';
+        if (hint) hint.textContent = 'Leitura pública · Premium para operar';
       } else {
         var pl = data.portfolio || [];
-        if (!pl.length) port.innerHTML = '<div class="sub">Nenhuma posição. Leia as notícias e escolha um ativo.</div>';
-        else {
+        if (hint) hint.textContent = pl.length
+          ? (pl.length + ' posição(ões) · toque em Liquidar para realizar')
+          : 'Sem posições · compre no pregão abaixo';
+        if (!pl.length) {
+          port.innerHTML = '<div class="pf-pos-empty">Nenhuma posição aberta.<br/>Escolha um ativo no mercado e monte sua carteira.</div>';
+        } else {
           port.innerHTML = pl.map(function(a){
             var sign = a.pnl >= 0 ? '+' : '';
-            var col = a.pnl >= 0 ? 'var(--mint)' : 'var(--danger)';
-            var extra = a.falido ? ' <span class="risco-tag risco-alto">falido · 50%</span>' : '';
-            var investido = (Number(a.valorCompra)||0) * (Number(a.quantidade)||0);
-            var mercado = (Number(a.valorAtual)||0) * (Number(a.quantidade)||0);
-            return '<div class="bolsa-card'+(a.falido?' falido':'')+'">'+
-              '<div class="top"><span class="name">#'+a.id+' '+esc(a.nome||'')+extra+'</span><span class="price">'+a.quantidade+' un.</span></div>'+
-              '<div class="desc">Média '+fmt(a.valorCompra)+' · cotação '+fmt(a.valorAtual)+'</div>'+
-              '<div class="bolsa-pos-row">'+
-                '<div class="bolsa-pos-metrics">'+
-                  '<span class="lbl">Investido → mercado</span>'+
-                  '<span class="val">'+fmt(Math.round(investido))+' → '+fmt(Math.round(mercado))+'</span>'+
-                  '<span class="subv" style="color:'+col+';font-weight:800">P&L '+sign+fmt(a.pnl)+' ('+sign+a.pnlPct+'%)</span>'+
-                '</div>'+
-                '<button type="button" class="btn btn-red btn-liq" data-liq="'+a.id+'">Liquidar</button>'+
-              '</div></div>';
+            var pcls = a.pnl > 0 ? 'up' : (a.pnl < 0 ? 'down' : '');
+            var extra = a.falido ? '<span class="risco-tag risco-alto">falido · 50%</span>' : '';
+            var investido = Math.round((Number(a.valorCompra)||0) * (Number(a.quantidade)||0));
+            var mercado = Math.round((Number(a.valorAtual)||0) * (Number(a.quantidade)||0));
+            return '<div class="pf-pos'+(a.falido?' falido':'')+'">'+
+              '<div class="pf-pos-main">'+
+                '<div class="nm">#'+a.id+' '+esc(a.nome||'')+' '+extra+'</div>'+
+                '<div class="meta">'+a.quantidade+' un. · média '+fmt(a.valorCompra)+' · cotação '+fmt(a.valorAtual)+'</div>'+
+                '<div class="meta">Investido '+fmt(investido)+' → mercado '+fmt(mercado)+'</div>'+
+              '</div>'+
+              '<div class="pf-pos-nums">'+
+                '<div class="mkt">'+fmt(mercado)+'</div>'+
+                '<div class="pnl '+pcls+'">'+sign+fmt(a.pnl)+' ('+sign+a.pnlPct+'%)</div>'+
+              '</div>'+
+              '<button type="button" class="btn-liq" data-liq="'+a.id+'">Liquidar</button>'+
+            '</div>';
           }).join('');
           port.querySelectorAll('[data-liq]').forEach(function(btn){
             btn.onclick = function(){ liquidar(Number(btn.getAttribute('data-liq'))); };
@@ -4474,7 +4410,7 @@ bootSSO();
     } catch(e){ console.error('bolsa reveal', e); }
   }
   function wire(){
-    ['btnBolsaOpen','btnBolsaReveal','navBolsaBtn','pfOpenBolsa'].forEach(function(id){
+    ['btnBolsaOpen','btnBolsaReveal','navBolsaBtn'].forEach(function(id){
       var el = document.getElementById(id);
       if (el && !el.__bolsaWired) {
         el.__bolsaWired = true;
