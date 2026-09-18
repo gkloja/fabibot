@@ -1940,6 +1940,8 @@ async function api(path,opts,ms){
     return last;
   }finally{clearTimeout(t)}
 }
+window.geApi=api;
+window.geUrlsFor=urlsFor;
 
 function setGold(n,opts){
   S.golds=Math.floor(Number(n)||0);
@@ -3862,10 +3864,41 @@ bootSSO();
     return '<span class="risco-tag '+cls+'">'+esc(r)+'</span>';
   }
   async function apiBolsa(path, body){
-    if (typeof api === 'function') {
-      return api(path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body||{}) }, 22000);
+    var opts = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(body || {})
+    };
+    // 1) api global do Gold Empire (proxy Cloudflare)
+    if (typeof window.geApi === 'function') {
+      return window.geApi(path, opts, 22000);
     }
-    return { ok:false, data:null };
+    if (typeof api === 'function') {
+      return api(path, opts, 22000);
+    }
+    // 2) mesmo Worker das outras rotas
+    var PROXY_HOST = 'https://orange-hill-2e61.gbscabral15.workers.dev';
+    var BACKEND = 'http://br2.bronxyshost.com:4009';
+    var target = BACKEND.replace(/\/$/,'') + path;
+    var hostPath = BACKEND.replace(/^https?:\/\//,'');
+    var urls = [
+      PROXY_HOST + '/' + hostPath + '/proxy?url=' + encodeURIComponent(target),
+      PROXY_HOST + '/proxy?url=' + encodeURIComponent(target),
+      PROXY_HOST + '/br2.bronxyshost.com:4009/proxy?url=' + encodeURIComponent(BACKEND) + path
+    ];
+    var last = { ok: false, status: 0, data: { message: 'Falha de rede' } };
+    for (var i = 0; i < urls.length; i++) {
+      try {
+        var res = await fetch(urls[i], Object.assign({}, opts, { mode: 'cors' }));
+        var data = {};
+        try { data = await res.json(); } catch (_) {}
+        last = { ok: res.ok, status: res.status, data: data };
+        if (res.ok || [400, 401, 403, 429].indexOf(res.status) >= 0) return last;
+      } catch (e) {
+        last = { ok: false, status: 0, data: { message: e.message || 'erro' } };
+      }
+    }
+    return last;
   }
   function setPremiumUI(isPrem){
     var lock = document.getElementById('bolsaLock');
@@ -4015,7 +4048,7 @@ bootSSO();
     }
     var r = await apiBolsa('/cliente06/game/bolsa', c);
     if (!r || !r.ok || !r.data) {
-      var msg = (r && r.data && r.data.message) || 'Falha ao carregar. Confirme se o servidor reiniciou com a Bolsa Empire.';
+      var msg = (r && r.data && (r.data.message || r.data.erro)) || ('Falha ao carregar (HTTP '+(r&&r.status||0)+'). Reinicie o servidor com a Bolsa Empire.');
       if (merc) merc.innerHTML = '<div class="sub" style="color:var(--danger)">'+esc(msg)+'</div>';
       return;
     }
