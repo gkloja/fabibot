@@ -1777,17 +1777,17 @@ footer a:hover{text-decoration:underline}
     <button class="back" data-back>← Arena</button>
     <div class="panel arena tig" style="min-height:auto;padding:16px">
       <h3 style="text-align:center">🐯 Fortune Tiger</h3>
-      <p class="sub" style="text-align:center"><b>🍇 = 1x</b> · modo difícil · grade completa = jackpot</p>
+      <p class="sub" style="text-align:center">Modo difícil · quanto maior o mult, mais raro · grade completa = jackpot</p>
       <div class="grid3" id="tigerGrid">
-        <div class="cell">🐯</div><div class="cell">🍇</div><div class="cell">🎰</div>
+        <div class="cell">🐯</div><div class="cell">🍒</div><div class="cell">🎰</div>
         <div class="cell">🃏</div><div class="cell">🍀</div><div class="cell">🍊</div>
-        <div class="cell">🍇</div><div class="cell">🍒</div><div class="cell">🍀</div>
+        <div class="cell">🍊</div><div class="cell">🍒</div><div class="cell">🍀</div>
       </div>
       <div class="sec">Aposta</div>
       <div class="amt"><input id="tBetIn" type="number" min="1" step="1" value="100"/><span class="hint" id="tMax">máx 0</span></div>
       <div class="bets" id="tBets"><button data-v="10">10</button><button data-v="50">50</button><button data-v="100" class="on">100</button><button data-v="500">500</button><button data-v="all">ALL</button></div>
       <button class="btn btn-gold" id="btnSpin">GIRAR</button>
-      <div class="pay"><div>🐯 18x</div><div>🎰 10x</div><div>🃏 6x</div><div>🍊 4x</div><div>🍀 3x</div><div>🍒 2x</div><div>🍇 1x</div></div>
+      <div class="pay"><div>🐯 18x</div><div>🎰 10x</div><div>🃏 6x</div><div>🍊 4x</div><div>🍀 3x</div><div>🍒 2x</div></div>
       <p class="sub" id="tigLog" style="margin-top:10px;margin-bottom:0;text-align:center"></p>
       <div class="hist"><h4>Últimas ações · Tigrinho</h4><div id="hist-tigrinho"></div></div>
     </div>
@@ -1939,7 +1939,7 @@ const PROXY_HOST='https://orange-hill-2e61.gbscabral15.workers.dev';
 const BACKEND='http://br2.bronxyshost.com:4009';
 const API_URL=PROXY_HOST+'/br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009';
 const SK='fabi_ge_v6', AV='https://fabibot.vercel.app/flogo.jpg';
-const SYM=['🎰','🍒','🍊','🃏','🐯','🍀','🍇'];
+const SYM=['🎰','🍒','🍊','🃏','🐯','🍀'];
 function urlsFor(path){
   const target=BACKEND.replace(/\/$/,'')+path;
   const hostPath=BACKEND.replace(/^https?:\/\//,'');
