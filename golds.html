@@ -1293,6 +1293,89 @@ footer a:hover{text-decoration:underline}
 .bolsa-lock p{margin:0 0 14px;font-size:12px;color:var(--muted);line-height:1.5}
 .sec-bolsa{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:16px 0 10px}
 
+
+/* ===== TRADE NAV — terminal style ===== */
+.nav-trade{
+  position:relative;cursor:pointer;border:1px solid rgba(245,197,66,.35);
+  background:
+    linear-gradient(135deg,rgba(245,197,66,.16),rgba(46,230,168,.08)),
+    rgba(12,14,22,.95);
+  color:var(--gold2);padding:6px 12px 6px 10px;border-radius:14px;
+  display:inline-flex;align-items:center;gap:8px;font-family:inherit;
+  transition:.22s var(--ease);box-shadow:0 0 0 1px rgba(245,197,66,.08),0 8px 22px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+.nav-trade::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.06) 50%,transparent 60%);
+  transform:translateX(-100%);transition:transform .6s ease;
+}
+.nav-trade:hover::before{transform:translateX(100%)}
+.nav-trade:hover{
+  border-color:rgba(245,197,66,.6);transform:translateY(-1px);
+  box-shadow:0 0 0 1px rgba(245,197,66,.18),0 12px 28px rgba(245,197,66,.22);
+}
+.nav-trade .nt-live{
+  width:7px;height:7px;border-radius:50%;background:var(--mint);
+  box-shadow:0 0 0 3px rgba(46,230,168,.2),0 0 10px var(--mint);
+  animation:blink 1.5s ease infinite;flex-shrink:0;
+}
+.nav-trade .nt-ico{
+  width:26px;height:26px;border-radius:9px;display:grid;place-items:center;
+  font-size:13px;font-weight:800;color:#1a1400;
+  background:linear-gradient(135deg,var(--gold2),var(--gold3));
+  box-shadow:0 4px 12px rgba(245,197,66,.35);
+}
+.nav-trade .nt-txt{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;text-align:left}
+.nav-trade .nt-txt b{font-size:12px;font-weight:800;letter-spacing:-.2px;color:var(--text)}
+.nav-trade .nt-txt small{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+.nav-trade .nt-arrow{font-size:12px;opacity:.7;margin-left:2px;color:var(--mint)}
+@media(max-width:520px){
+  .nav-trade .nt-txt small{display:none}
+  .nav-trade{padding:7px 10px}
+}
+
+/* ===== PORTFOLIO STRIP no topo (HUD) ===== */
+.pf-strip{
+  margin-bottom:14px;padding:14px 16px;border-radius:20px;
+  display:grid;grid-template-columns:1.1fr repeat(3,1fr) auto;gap:12px;align-items:center;
+  background:
+    radial-gradient(420px 120px at 0% 50%,rgba(46,230,168,.1),transparent 55%),
+    radial-gradient(360px 100px at 100% 0%,rgba(245,197,66,.12),transparent 50%),
+    linear-gradient(145deg,rgba(16,18,28,.97),rgba(8,10,16,.99));
+  border:1px solid rgba(245,197,66,.22);
+  box-shadow:0 16px 40px rgba(0,0,0,.32);
+  animation:cardIn .5s var(--ease) both;
+}
+@media(max-width:860px){.pf-strip{grid-template-columns:1fr 1fr;gap:10px}}
+@media(max-width:480px){.pf-strip{grid-template-columns:1fr}}
+.pf-brand{display:flex;align-items:center;gap:12px;min-width:0}
+.pf-brand .pf-mark{
+  width:42px;height:42px;border-radius:14px;flex-shrink:0;
+  display:grid;place-items:center;font-size:18px;font-weight:800;color:#1a1400;
+  background:linear-gradient(135deg,var(--gold2),var(--gold3));
+  box-shadow:0 6px 18px rgba(245,197,66,.35);
+}
+.pf-brand .pf-copy{min-width:0}
+.pf-brand .pf-copy b{display:block;font-size:13px;font-weight:800;letter-spacing:-.2px}
+.pf-brand .pf-copy span{font-size:11px;color:var(--muted)}
+.pf-kpi{min-width:0}
+.pf-kpi .lbl{font-size:9px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--muted)}
+.pf-kpi .val{font-size:16px;font-weight:800;font-family:var(--mono);margin-top:3px;color:var(--gold2);letter-spacing:-.3px}
+.pf-kpi .val.up{color:var(--mint)}.pf-kpi .val.down{color:var(--danger)}
+.pf-kpi .val.dim{color:var(--muted);font-size:14px}
+.pf-cta{
+  border:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:12px;
+  padding:12px 16px;border-radius:14px;white-space:nowrap;
+  color:#1a1400;background:linear-gradient(135deg,var(--gold2),var(--gold3));
+  box-shadow:0 8px 22px rgba(245,197,66,.3);transition:.2s var(--ease);
+}
+.pf-cta:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.pf-cta.ghost{
+  color:var(--text);background:rgba(255,255,255,.05);
+  border:1px solid var(--stroke);box-shadow:none;
+}
+
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -1372,9 +1455,11 @@ footer a:hover{text-decoration:underline}
       <span><b id="geOnlineCount">0</b> online</span>
     </span>
     <a href="index.html" class="nav-link">Início</a>
-    <button type="button" class="nav-pill nav-pill-bolsa" id="navBolsaBtn" title="Bolsa Empire">
-      <span class="np-ico">📈</span>
-      <span class="np-txt"><b>Bolsa</b><small>investir</small></span>
+    <button type="button" class="nav-trade" id="navBolsaBtn" title="Abrir Bolsa Empire">
+      <span class="nt-live"></span>
+      <span class="nt-ico">◈</span>
+      <span class="nt-txt"><b>Trade</b><small>Bolsa Empire</small></span>
+      <span class="nt-arrow">↗</span>
     </button>
     <a href="golds.html" class="nav-link on">Golds</a>
     <a href="golds.html#conquistas" id="navCq" class="hide">Conquistas</a>
@@ -1430,7 +1515,7 @@ footer a:hover{text-decoration:underline}
         </div>
         <div class="s" id="grpLabel" style="margin-top:4px">—</div>
         <div class="bolsa-cta-row">
-          <button type="button" class="bolsa-cta" id="btnBolsaOpen" title="Bolsa VIP">
+          <button type="button" class="bolsa-cta" id="btnBolsaOpen" title="Abrir terminal Bolsa Empire">
             <span class="ico">📈</span> Investir · Bolsa VIP
           </button>
         </div>
@@ -1439,7 +1524,32 @@ footer a:hover{text-decoration:underline}
   </div>
 
   <div id="viewHome">
-    <div class="banner cq-ban">
+    
+    <!-- PORTFOLIO STRIP — resumo ao vivo no topo -->
+    <div class="pf-strip" id="pfStrip">
+      <div class="pf-brand">
+        <div class="pf-mark">◈</div>
+        <div class="pf-copy">
+          <b>Portfólio · Bolsa Empire</b>
+          <span id="pfStripSub">Pregão ao vivo · Golds 1:1 WhatsApp</span>
+        </div>
+      </div>
+      <div class="pf-kpi">
+        <div class="lbl">Investido</div>
+        <div class="val dim" id="pfInv">—</div>
+      </div>
+      <div class="pf-kpi">
+        <div class="lbl">Valor de mercado</div>
+        <div class="val dim" id="pfMkt">—</div>
+      </div>
+      <div class="pf-kpi">
+        <div class="lbl">Lucro / prejuízo</div>
+        <div class="val dim" id="pfPnl">—</div>
+      </div>
+      <button type="button" class="pf-cta" id="pfOpenBolsa">Negociar ↗</button>
+    </div>
+
+<div class="banner cq-ban">
       <div style="flex:1;min-width:180px">
         <div class="page-kicker">Gold Empire · Live</div>
         <div style="font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.4px">Economia, jogos e glória — num só lugar</div>
@@ -1457,8 +1567,8 @@ footer a:hover{text-decoration:underline}
           Mercado com <b style="color:var(--gold2)">velas de trader</b>, notícias e risco real.
           Toque em <b style="color:var(--gold2)">Investir</b> para abrir o pregão.
         </p>
-        <button type="button" class="btn btn-gold" id="btnBolsaReveal" style="width:auto;padding:12px 22px;display:inline-flex;margin:0 auto">
-          📈 Abrir pregão · Investir
+        <button type="button" class="btn btn-gold" id="btnBolsaReveal" style="width:auto;padding:13px 24px;display:inline-flex;align-items:center;gap:8px;margin:0 auto">
+          <span style="opacity:.9">◈</span> Abrir terminal · Negociar
         </button>
       </div>
       <div class="bolsa-hero">
@@ -3912,8 +4022,8 @@ bootSSO();
     if (cta) {
       cta.classList.toggle('locked', !isPrem);
       cta.innerHTML = isPrem
-        ? '<span class="ico">📈</span> Investir · Bolsa Empire'
-        : '<span class="ico">🔒</span> Bolsa Empire · ver mercado';
+        ? '<span class="ico">◈</span> Terminal · Negociar'
+        : '<span class="ico">◈</span> Ver pregão';
     }
     if (lock) {
       if (isPrem) lock.classList.add('hide');
@@ -3941,19 +4051,33 @@ bootSSO();
     var isPrem = !!(data.premium && !data.premiumRequired);
     setPremiumUI(isPrem);
     var r = data.resumo || {};
-    var inv = document.getElementById('bolsaInv');
-    var mkt = document.getElementById('bolsaMkt');
-    var pnl = document.getElementById('bolsaPnl');
-    if (inv) inv.textContent = isPrem ? fmt(r.totalInvestido) : '—';
-    if (mkt) mkt.textContent = isPrem ? fmt(r.totalMercado) : '—';
-    if (pnl) {
-      if (!isPrem) { pnl.textContent='—'; pnl.className='val'; }
-      else {
-        var v = Number(r.pnl)||0;
-        pnl.textContent = (v>=0?'+':'') + fmt(v);
-        pnl.className = 'val ' + (v>0?'up':v<0?'down':'');
-      }
+    function fillKpi(id, text, cls){
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = text;
+      el.className = cls || 'val';
     }
+    var invTxt = isPrem ? fmt(r.totalInvestido) : '—';
+    var mktTxt = isPrem ? fmt(r.totalMercado) : '—';
+    var pnlV = Number(r.pnl)||0;
+    var pnlTxt = isPrem ? ((pnlV>=0?'+':'') + fmt(pnlV)) : '—';
+    var pnlCls = !isPrem ? 'val dim' : ('val ' + (pnlV>0?'up':pnlV<0?'down':''));
+    fillKpi('bolsaInv', invTxt, 'val');
+    fillKpi('bolsaMkt', mktTxt, 'val');
+    fillKpi('bolsaPnl', pnlTxt, isPrem ? ('val ' + (pnlV>0?'up':pnlV<0?'down':'')) : 'val');
+    // topo HUD
+    fillKpi('pfInv', invTxt, isPrem ? 'val' : 'val dim');
+    fillKpi('pfMkt', mktTxt, isPrem ? 'val' : 'val dim');
+    fillKpi('pfPnl', pnlTxt, pnlCls);
+    var sub = document.getElementById('pfStripSub');
+    if (sub) {
+      var nPos = (data.portfolio && data.portfolio.length) || 0;
+      sub.textContent = isPrem
+        ? (nPos ? (nPos + ' posição(ões) aberta(s) · tick ~12 min') : 'Sem posições · abra o pregão e escolha um ativo')
+        : 'Leitura pública · Premium para operar';
+    }
+    var pfCta = document.getElementById('pfOpenBolsa');
+    if (pfCta) pfCta.textContent = isPrem ? 'Negociar ↗' : 'Ver pregão ↗';
     paintNews(data.noticias || []);
     var hint = document.getElementById('bolsaTickHint');
     if (hint && data.meta) {
@@ -4350,7 +4474,7 @@ bootSSO();
     } catch(e){ console.error('bolsa reveal', e); }
   }
   function wire(){
-    ['btnBolsaOpen','btnBolsaReveal','navBolsaBtn'].forEach(function(id){
+    ['btnBolsaOpen','btnBolsaReveal','navBolsaBtn','pfOpenBolsa'].forEach(function(id){
       var el = document.getElementById(id);
       if (el && !el.__bolsaWired) {
         el.__bolsaWired = true;
