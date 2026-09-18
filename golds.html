@@ -1862,6 +1862,11 @@ async function api(path,opts,ms){
     return last;
   }finally{clearTimeout(t)}
 }
+window.geApi=api;
+window.geUrlsFor=urlsFor;
+window.geFixFoto=typeof fixFoto==='function'?fixFoto:null;
+window.geFmt=fmt;
+window.geToast=toast;
 
 function setGold(n,opts){
   S.golds=Math.floor(Number(n)||0);
@@ -3784,10 +3789,33 @@ bootSSO();
     return '<span class="risco-tag '+cls+'">'+esc(r)+'</span>';
   }
   async function apiBolsa(path, body){
-    if (typeof api === 'function') {
-      return api(path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body||{}) }, 22000);
+    var opts = { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(body||{}) };
+    // Usa a mesma api() do Gold Empire (proxy Cloudflare)
+    if (typeof window.geApi === 'function') return window.geApi(path, opts, 22000);
+    if (typeof api === 'function') return api(path, opts, 22000);
+    // Fallback: proxy Worker igual às outras rotas
+    var PROXY_HOST = 'https://orange-hill-2e61.gbscabral15.workers.dev';
+    var BACKEND = 'http://br2.bronxyshost.com:4009';
+    var target = BACKEND.replace(/\/$/,'') + path;
+    var hostPath = BACKEND.replace(/^https?:\/\//,'');
+    var urls = [
+      PROXY_HOST + '/' + hostPath + '/proxy?url=' + encodeURIComponent(target),
+      PROXY_HOST + '/proxy?url=' + encodeURIComponent(target),
+      PROXY_HOST + '/br2.bronxyshost.com:4009/proxy?url=' + encodeURIComponent(BACKEND) + path
+    ];
+    var last = { ok:false, status:0, data:{ message:'Falha de rede' } };
+    for (var i = 0; i < urls.length; i++) {
+      try {
+        var res = await fetch(urls[i], Object.assign({}, opts, { mode:'cors' }));
+        var data = {};
+        try { data = await res.json(); } catch(_){}
+        last = { ok: res.ok, status: res.status, data: data };
+        if (res.ok || [400,401,403,429].indexOf(res.status) >= 0) return last;
+      } catch (e) {
+        last = { ok:false, status:0, data:{ message: e.message || 'erro' } };
+      }
     }
-    return { ok:false, data:null };
+    return last;
   }
   function setPremiumUI(isPrem){
     var lock = document.getElementById('bolsaLock');
