@@ -4136,7 +4136,7 @@ bootSSO();
       if (!inv.length) box.innerHTML = '<span class="inv-empty">Seja o primeiro neste ativo</span>';
       else box.innerHTML = inv.slice(0,6).map(function(u){
         var av = u.foto || ('https://ui-avatars.com/api/?name='+encodeURIComponent(u.nome||'U')+'&background=0f766e&color=fff');
-        return '<span class="inv-face" title="'+esc(u.nome)+'"><img src="'+esc(av)+'" onerror="this.src=\\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\\'"/></span>';
+        return '<span class="inv-face" title="'+esc(u.nome)+'"><img src="'+esc(av)+'" alt=""/></span>';
       }).join('') + '<span class="inv-label">'+inv.length+' no livro</span>';
     }
     var inp = document.getElementById('tradeQty');
@@ -4289,6 +4289,34 @@ bootSSO();
     <div class="inv-row" id="tradeInv" style="margin-top:14px;justify-content:center"></div>
   </div>
 </div>
+
+
+<script>
+/* Bolsa reveal fallback — garante clique mesmo se o IIFE falhar parcialmente */
+(function(){
+  function go(){
+    try {
+      var z = document.getElementById('zoneBolsaVip');
+      if (z) z.classList.remove('bolsa-collapsed');
+      if (typeof window.geLoadBolsa === 'function') window.geLoadBolsa();
+      if (z) z.scrollIntoView({ behavior:'smooth', block:'start' });
+    } catch(e){ console.error('bolsa reveal', e); }
+  }
+  function wire(){
+    ['btnBolsaOpen','btnBolsaReveal'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el && !el.__bolsaWired) {
+        el.__bolsaWired = true;
+        el.addEventListener('click', function(e){ e.preventDefault(); go(); });
+      }
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+  setTimeout(wire, 500);
+  setTimeout(wire, 2000);
+})();
+</script>
 
 </body>
 </html>
