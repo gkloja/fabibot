@@ -3715,13 +3715,12 @@ bootSSO();
             invHtml = '<div class="inv-book" data-inv-asset="'+a.id+'">'+
               '<div class="inv-stack">'+inv.slice(0,6).map(function(u,i){
                 var av = u.foto || ('https://ui-avatars.com/api/?name='+encodeURIComponent(u.nome||'U')+'&background=0f766e&color=fff&size=72');
-                return '<span class="inv-face" data-inv-i="'+i+'" title="'+esc(u.nome||'')+'"><img src="'+esc(av)+'" alt="" loading="lazy" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/></span>';
+                return '<span class="inv-face" data-inv-i="'+i+'" title="'+esc(u.nome||'')+'"><img src="'+esc(av)+'" alt="" loading="lazy" onerror="this.style.opacity=.4"/></span>';
               }).join('')+'</div>'+
               '<span class="inv-count" data-inv-open="'+a.id+'">'+inv.length+' investidor'+(inv.length>1?'es':'')+'</span>'+
             '</div>';
           } else {
             invHtml = '<div class="inv-book"><span class="inv-empty">Livro vazio · seja o primeiro</span></div>';
-          }
           }
           return '<div class="bolsa-card">'+
             '<div class="top"><span class="name">#'+a.id+' '+esc(a.nome||'')+'</span><span class="price">'+fmt(a.valor)+'</span></div>'+
@@ -3944,7 +3943,7 @@ bootSSO();
           ? (qtd + ' un.' + (media ? ' · média ' + fmt(media) : ''))
           : (media ? 'média ' + fmt(media) : '');
         return '<div class="inv-person">'+
-          '<img src="'+esc(av)+'" alt="" loading="lazy" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/>'+
+          '<img src="'+esc(av)+'" alt="" loading="lazy" onerror="this.style.opacity=.4"/>'+
           '<div class="meta"><div class="nm">'+esc(u.nome||'Investidor')+'</div>'+
           '<div class="sub">Posição aberta no Trader Desk</div></div>'+
           '<div class="amt">'+amtMain+'<small>'+esc(amtSub)+'</small></div></div>';
@@ -3986,7 +3985,7 @@ bootSSO();
         box.innerHTML = '<div class="inv-book" style="justify-content:center">'+
           '<div class="inv-stack">'+inv.slice(0,8).map(function(u,i){
             var av = u.foto || ('https://ui-avatars.com/api/?name='+encodeURIComponent(u.nome||'U')+'&background=0f766e&color=fff&size=72');
-            return '<span class="inv-face" data-inv-open-desk="1" data-inv-i="'+i+'" title="'+esc(u.nome||'')+'"><img src="'+esc(av)+'" alt="" loading="lazy" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/></span>';
+            return '<span class="inv-face" data-inv-open-desk="1" data-inv-i="'+i+'" title="'+esc(u.nome||'')+'"><img src="'+esc(av)+'" alt="" loading="lazy" onerror="this.style.opacity=.4"/></span>';
           }).join('')+'</div>'+
           '<span class="inv-count" data-inv-open-desk="1">'+inv.length+' no livro · toque</span></div>';
         box.querySelectorAll('[data-inv-open-desk]').forEach(function(el){
