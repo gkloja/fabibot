@@ -134,8 +134,8 @@ button.ge-online-pill:hover{background:rgba(79,212,168,.14)}
 }
 @keyframes blink{50%{opacity:.35}}
 
-#navTools,#navLoggedOnly,#navGoldChip,#navTools.on,#navLoggedOnly.on{display:none!important}
-#navGoldChip.on{display:inline-flex!important;align-items:center;gap:6px}
+#navTools,#navLoggedOnly,#navTools.on,#navLoggedOnly.on{display:none!important}
+/* navGoldChip always visible */
 #navGoldChip{padding:7px 12px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(212,179,106,.12);border:1px solid rgba(212,179,106,.3);color:var(--gold2)}
 #navGoldChip b{font-family:var(--mono)}
 .nav-divider{display:none}
@@ -2032,6 +2032,114 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
   .ge-dock-app button .di{font-size:15px !important}
 }
 
+
+/* ===== HEADER GOLD CHIP + BUY + DOCK TOUCH ===== */
+.nav-gold-chip{
+  appearance:none;border:0;cursor:pointer;font-family:inherit;
+  display:inline-flex!important;align-items:center;gap:8px;
+  padding:5px 12px 5px 6px;border-radius:999px;
+  background:linear-gradient(135deg,rgba(212,179,106,.18),rgba(212,179,106,.08));
+  border:1px solid rgba(212,179,106,.4)!important;
+  color:var(--gold2);box-shadow:0 0 20px rgba(212,179,106,.12);
+  max-width:min(42vw,160px);
+}
+.nav-gold-chip .ngc-ico{
+  width:28px;height:28px;border-radius:9px;display:grid;place-items:center;
+  background:rgba(0,0,0,.25);font-size:13px;flex-shrink:0;
+}
+.nav-gold-chip .ngc-col{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05;min-width:0}
+.nav-gold-chip .ngc-col small{
+  font-size:8px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  opacity:.75;color:rgba(234,215,162,.85);
+}
+.nav-gold-chip .ngc-col b{
+  font-family:var(--mono);font-size:13px;font-weight:700;
+  color:var(--gold2);font-variant-numeric:tabular-nums;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px;
+}
+.nav-gold-chip:active{transform:scale(.97)}
+
+.bal-actions{
+  display:grid;grid-template-columns:1.55fr .9fr;gap:8px;margin-top:12px;
+}
+.bal-buy{
+  appearance:none;border:0;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;gap:10px;text-align:left;
+  min-height:50px;padding:10px 12px;border-radius:14px;
+  background:linear-gradient(145deg,#f0dfb0 0%,#e0b84a 48%,#b8892a 100%);
+  color:#1a1200;
+  box-shadow:0 8px 24px rgba(212,179,106,.35), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.bal-buy:active{transform:scale(.98)}
+.bal-buy-ico{
+  width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:rgba(0,0,0,.12);font-size:15px;font-weight:800;flex-shrink:0;
+}
+.bal-buy-txt{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.bal-buy-txt b{font-size:12px;font-weight:800}
+.bal-buy-txt small{font-size:9px;font-weight:600;opacity:.72;text-transform:uppercase;letter-spacing:.3px}
+.bolsa-cta{margin-top:0!important;width:100%!important;min-height:50px!important}
+@media(max-width:380px){.bal-actions{grid-template-columns:1fr!important}}
+
+/* DOCK: full width, big touch targets, reliable taps */
+.ge-dock,
+.ge-dock-app,
+.ge-dock-app.ge-dock{
+  position:fixed !important;
+  left:0 !important;right:0 !important;bottom:0 !important;
+  transform:none !important;
+  width:100% !important;max-width:100vw !important;
+  margin:0 !important;z-index:90 !important;
+  display:flex !important;flex-direction:row !important;
+  align-items:stretch !important;justify-content:space-between !important;
+  gap:0 !important;
+  padding:4px 2px calc(4px + env(safe-area-inset-bottom,0px)) !important;
+  border-radius:0 !important;box-sizing:border-box !important;
+  background:rgba(7,8,12,.97) !important;
+  border-top:1px solid rgba(255,255,255,.1) !important;
+  backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 -8px 32px rgba(0,0,0,.5) !important;
+  pointer-events:auto !important;
+}
+.ge-dock button,
+.ge-dock-app button{
+  flex:1 1 0 !important;
+  min-width:0 !important;max-width:none !important;
+  width:auto !important;height:auto !important;
+  min-height:58px !important;
+  margin:0 !important;padding:8px 1px !important;
+  border-radius:12px !important;border:0 !important;
+  background:transparent !important;color:var(--muted) !important;
+  display:flex !important;flex-direction:column !important;
+  align-items:center !important;justify-content:center !important;
+  gap:4px !important;
+  font-family:inherit !important;cursor:pointer !important;
+  -webkit-tap-highlight-color:transparent !important;
+  touch-action:manipulation !important;
+  pointer-events:auto !important;
+  user-select:none !important;-webkit-user-select:none !important;
+}
+.ge-dock button *,
+.ge-dock-app button *{
+  pointer-events:none !important; /* hits go to the button */
+}
+.ge-dock button .di{font-size:18px !important;line-height:1 !important;display:block !important}
+.ge-dock button span:not(.di){
+  display:block !important;font-size:8px !important;font-weight:700 !important;
+  white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;
+  max-width:100% !important;opacity:.9 !important;pointer-events:none !important;
+}
+.ge-dock button.on{
+  color:var(--gold2) !important;
+  background:rgba(212,179,106,.16) !important;
+}
+.ge-dock button:active{
+  background:rgba(255,255,255,.08) !important;
+  transform:scale(.96) !important;
+}
+/* keep content above dock */
+.shell{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px) + 24px) !important}
+
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -2105,6 +2213,10 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
     </div>
   </a>
   <div class="nav nav-v2" role="navigation" aria-label="Principal">
+    <button type="button" class="nav-gold-chip" id="navGoldChip" title="Seu saldo de Golds" aria-label="Saldo de Golds">
+      <span class="ngc-ico" aria-hidden="true">💰</span>
+      <span class="ngc-col"><small>Golds</small><b id="navGoldBal">0</b></span>
+    </button>
     <button type="button" class="nav-ico-btn" id="geOnlinePill" title="Online agora" aria-haspopup="dialog" aria-label="Usuários online">
       <span class="dot" aria-hidden="true"></span>
       <b id="geOnlineCount">0</b>
@@ -2120,9 +2232,6 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
     </div>
     <button type="button" class="nav-chip" id="navBolsaBtn" title="Trader Desk" aria-label="Abrir Trader">
       <span aria-hidden="true">📈</span><em>Trader</em>
-    </button>
-    <button type="button" class="nav-chip nav-chip-gold" id="navBuyGolds" title="Comprar Golds via PIX" aria-label="Comprar Golds">
-      <span aria-hidden="true">✦</span><em>Buy</em>
     </button>
     <a href="golds.html#conquistas" id="navCq" class="hide">Conquistas</a>
     <div class="nav-divider hide" id="navLoggedOnly"></div>
@@ -2175,9 +2284,13 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
           <div class="s">Rank: <b id="grpPos">—</b></div>
         </div>
         <div class="s" id="grpLabel" style="margin-top:4px">—</div>
-        <div class="bolsa-cta-row">
+        <div class="bal-actions">
+          <button type="button" class="bal-buy" id="navBuyGolds" title="Comprar Golds via PIX" aria-label="Comprar Golds">
+            <span class="bal-buy-ico" aria-hidden="true">✦</span>
+            <span class="bal-buy-txt"><b>Comprar Golds</b><small>PIX · instantâneo</small></span>
+          </button>
           <button type="button" class="bolsa-cta" id="btnBolsaOpen" title="Abrir Trader Desk">
-            <span class="ico">📊</span> Trader Desk
+            <span class="ico" aria-hidden="true">📊</span> Trader
           </button>
         </div>
       </div>
@@ -2722,12 +2835,17 @@ window.geUrlsFor=urlsFor;
 function setGold(n,opts){
   S.golds=Math.floor(Number(n)||0);
   if(opts&&opts.defer){S.pendingGold=S.golds;return}
-  document.getElementById('goldBal').textContent=fmt(S.golds);
+  var gb=document.getElementById('goldBal');
+  if(gb) gb.textContent=fmt(S.golds);
+  var nb=document.getElementById('navGoldBal');
+  if(nb) nb.textContent=fmt(S.golds);
+  var chip=document.getElementById('navGoldChip');
+  if(chip){ chip.classList.add('on'); chip.style.display='inline-flex'; }
   S.pendingGold=null;
   const g=S.groups.find(x=>x.grupo===S.grupo);if(g)g.golds=S.golds;renderGroups();syncBetHints();
 }
 window.setGold=setGold;
-function flushGold(){if(S.pendingGold!=null){document.getElementById('goldBal').textContent=fmt(S.pendingGold);S.pendingGold=null}else document.getElementById('goldBal').textContent=fmt(S.golds);renderGroups();syncBetHints()}
+function flushGold(){if(S.pendingGold!=null){var _gb=document.getElementById('goldBal');if(_gb)_gb.textContent=fmt(S.pendingGold);var _nb=document.getElementById('navGoldBal');if(_nb)_nb.textContent=fmt(S.pendingGold);S.pendingGold=null}else document.getElementById('goldBal').textContent=fmt(S.golds);renderGroups();syncBetHints()}
 function setGrupoMeta(d){
   if(!d)return;
   if(typeof d.grupoTotal==='number'){S.grupoTotal=d.grupoTotal;document.getElementById('grpTotal').textContent=fmt(d.grupoTotal)}
@@ -5550,6 +5668,59 @@ bootSSO();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
   else wire();
   setTimeout(wire, 400);
+})();
+</script>
+
+
+<script>
+/* Header gold chip → scroll ao patrimônio + sync */
+(function(){
+  function syncNavGold(){
+    try{
+      var S = window.S || window.__GE;
+      var n = S && typeof S.golds === 'number' ? S.golds : null;
+      var el = document.getElementById('navGoldBal');
+      var gb = document.getElementById('goldBal');
+      if(el && n != null && typeof window.fmt === 'function') el.textContent = window.fmt(n);
+      else if(el && gb) el.textContent = gb.textContent;
+      var chip = document.getElementById('navGoldChip');
+      if(chip){ chip.style.display = 'inline-flex'; chip.classList.add('on'); }
+    }catch(_){}
+  }
+  function wire(){
+    var chip = document.getElementById('navGoldChip');
+    if(chip && !chip.__wired){
+      chip.__wired = true;
+      chip.addEventListener('click', function(e){
+        e.preventDefault();
+        var bal = document.querySelector('.card.bal') || document.getElementById('goldBal');
+        if(bal) bal.scrollIntoView({behavior:'smooth', block:'center'});
+        else window.scrollTo({top:0, behavior:'smooth'});
+      });
+    }
+    syncNavGold();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+  setInterval(syncNavGold, 2000);
+  // Patch setGold if already defined later
+  var _sg = window.setGold;
+  Object.defineProperty(window, 'setGold', {
+    configurable: true,
+    set: function(fn){
+      _sg = function(n, opts){
+        var r = fn.apply(this, arguments);
+        try{
+          var nb = document.getElementById('navGoldBal');
+          if(nb && typeof window.fmt === 'function') nb.textContent = window.fmt(Math.floor(Number(n)||0));
+          else if(nb) nb.textContent = String(Math.floor(Number(n)||0));
+        }catch(_){}
+        return r;
+      };
+      window.__setGoldImpl = _sg;
+    },
+    get: function(){ return _sg || window.__setGoldImpl; }
+  });
 })();
 </script>
 
