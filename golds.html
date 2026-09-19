@@ -432,7 +432,7 @@ button.ge-online-pill:hover{background:rgba(79,212,168,.14)}
   cursor:pointer;display:flex;align-items:center;justify-content:center;
   transition:background .18s,color .18s,transform .18s;
 }
-.ge-dock button span:not(.di){display:none!important}
+.ge-dock button span:not(.di){display:block!important;font-size:9px;font-weight:700}
 .ge-dock button .di{font-size:18px;line-height:1;display:block}
 .ge-dock button:hover{color:var(--text);background:rgba(255,255,255,.06);transform:translateY(-1px)}
 .ge-dock button.on{color:var(--gold2);background:rgba(212,179,106,.16)}
@@ -1936,7 +1936,58 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
   box-shadow:0 20px 50px rgba(0,0,0,.5)!important;
 }
 
+
+/* Comprar Golds no patrimônio */
+.bal-actions{display:grid;grid-template-columns:1.5fr .85fr;gap:8px;margin-top:12px}
+.bal-buy{
+  appearance:none;border:0;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;gap:10px;text-align:left;
+  min-height:48px;padding:10px 12px;border-radius:14px;
+  background:linear-gradient(145deg,#f0dfb0 0%,#e0b84a 48%,#b8892a 100%);
+  color:#1a1200;
+  box-shadow:0 8px 24px rgba(212,179,106,.35), inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .18s ease, filter .18s;
+}
+.bal-buy:hover{filter:brightness(1.05)}
+.bal-buy:active{transform:scale(.98)}
+.bal-buy-ico{
+  width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:rgba(0,0,0,.12);font-size:15px;font-weight:800;flex-shrink:0;
+}
+.bal-buy-txt{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.bal-buy-txt b{font-size:12px;font-weight:800;letter-spacing:-.2px}
+.bal-buy-txt small{font-size:9px;font-weight:600;opacity:.72;text-transform:uppercase;letter-spacing:.35px}
+.bolsa-cta{margin-top:0!important;width:100%!important;min-height:48px!important}
+@media(max-width:380px){.bal-actions{grid-template-columns:1fr!important}}
+
+/* Dock full width + room to tap */
+.ge-dock button span:not(.di){display:block!important;font-size:9px;font-weight:700}
+.ge-dock-app{left:0!important;right:0!important;width:100%!important}
+.ge-dock-app button{flex:1 1 0!important;max-width:none!important;min-width:0!important}
+.ge-dock-app #geChatFab,.ge-dock-app .dock-chat{
+  position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;
+  width:auto!important;height:auto!important;opacity:1!important;box-shadow:none!important;
+  border-radius:14px!important;background:transparent!important;border:0!important;color:inherit!important;
+}
+.ge-dock-app #geChatBadge{
+  position:absolute!important;top:2px!important;right:8px!important;
+  min-width:15px!important;height:15px!important;padding:0 4px!important;
+  border-radius:999px!important;background:#e0566a!important;color:#fff!important;
+  font-size:8px!important;font-weight:800!important;font-style:normal!important;
+  display:none;align-items:center;justify-content:center;line-height:1;
+}
+.ge-dock-app #geChatBadge.on{display:inline-flex!important}
+
+
+/* chat no dock override */
+.ge-chat-fab:not(.dock-chat):not(#geChatFab){display:none!important}
+button#geChatFab.dock-chat,
+#geDock #geChatFab{
+  position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;
+  width:auto!important;height:auto!important;opacity:1!important;
+}
 </style>
+
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -2022,6 +2073,9 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
         <div class="ge-chat-empty" style="padding:12px;font-size:12px">Carregando…</div>
       </div>
     </div>
+    <button type="button" class="nav-chip" id="navBolsaBtn" title="Trader Desk" aria-label="Abrir Trader">
+      <span aria-hidden="true">📈</span><em>Trader</em>
+    </button>
     <a href="golds.html#conquistas" id="navCq" class="hide">Conquistas</a>
     <div class="nav-divider hide" id="navLoggedOnly"></div>
     <div class="nav-tools hide" id="navTools"></div>
@@ -2073,9 +2127,13 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
           <div class="s">Rank: <b id="grpPos">—</b></div>
         </div>
         <div class="s" id="grpLabel" style="margin-top:4px">—</div>
-        <div class="bolsa-cta-row">
+        <div class="bal-actions">
+          <button type="button" class="bal-buy" id="navBuyGolds" title="Comprar Golds via PIX" aria-label="Comprar Golds">
+            <span class="bal-buy-ico" aria-hidden="true">✦</span>
+            <span class="bal-buy-txt"><b>Comprar Golds</b><small>PIX instantâneo</small></span>
+          </button>
           <button type="button" class="bolsa-cta" id="btnBolsaOpen" title="Abrir Trader Desk">
-            <span class="ico">📊</span> Trader Desk
+            <span class="ico" aria-hidden="true">📊</span> Trader
           </button>
         </div>
       </div>
@@ -2499,8 +2557,10 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
   <button type="button" data-dock="farm" title="Fazenda"><span class="di" aria-hidden="true">🌾</span><span>Farm</span></button>
   <button type="button" data-dock="raid" id="dockRaid" title="Roubo"><span class="di" aria-hidden="true">🏴‍☠️</span><span>Raid</span></button>
   <button type="button" data-dock="rank" id="dockRank" title="Ranking"><span class="di" aria-hidden="true">🏆</span><span>Rank</span></button>
-  <button type="button" id="navBolsaBtn" title="Trader Desk" aria-label="Trader Desk"><span class="di" aria-hidden="true">📈</span><span>Trader</span></button>
-  <button type="button" id="navBuyGolds" title="Comprar Golds" aria-label="Comprar Golds"><span class="di" aria-hidden="true">✦</span><span>Buy</span></button>
+  <button type="button" id="geChatFab" class="dock-chat" title="Chat global" aria-label="Abrir chat">
+    <span class="di" aria-hidden="true">💬</span><span>Chat</span>
+    <i class="badge" id="geChatBadge">0</i>
+  </button>
 </nav>
 
 <footer>
@@ -3600,28 +3660,18 @@ function showCqNotifications(list){
   if(!list||!list.length)return;
   const modal=document.getElementById('cqNotifModal');
   if(!modal)return;
-  var seen=[];
-  try{ seen=JSON.parse(localStorage.getItem('ge_cq_acked')||'[]'); }catch(_){ seen=[]; }
-  var seenSet=new Set(seen);
-  list=(list||[]).filter(function(x){ return x&&x.id&&!seenSet.has(x.id); });
-  if(!list.length){ if(typeof setCqDot==='function')setCqDot(false); return; }
+  // se já tem fila, acumula
   if(!window.__cqNotifQueue)window.__cqNotifQueue=list.slice();
   else {
-    const have=new Set(window.__cqNotifQueue.map(function(x){return x.id}));
-    list.forEach(function(x){ if(!have.has(x.id)&&!seenSet.has(x.id)) window.__cqNotifQueue.push(x); });
+    const have=new Set(window.__cqNotifQueue.map(x=>x.id));
+    list.forEach(x=>{if(!have.has(x.id))window.__cqNotifQueue.push(x)});
   }
-  window.__cqNotifQueue=(window.__cqNotifQueue||[]).filter(function(x){ return x&&x.id&&!seenSet.has(x.id); });
-  if(!window.__cqNotifQueue.length){ if(typeof setCqDot==='function')setCqDot(false); return; }
   paintCqNotifModal();
 }
 function paintCqNotifModal(){
   const modal=document.getElementById('cqNotifModal');
-  var seen=[];
-  try{ seen=JSON.parse(localStorage.getItem('ge_cq_acked')||'[]'); }catch(_){ seen=[]; }
-  var seenSet=new Set(seen);
-  window.__cqNotifQueue=(window.__cqNotifQueue||[]).filter(function(x){ return x&&x.id&&!seenSet.has(x.id); });
   const q=window.__cqNotifQueue||[];
-  if(!modal||!q.length){if(modal)modal.classList.remove('on');if(typeof setCqDot==='function')setCqDot(false);return}
+  if(!modal||!q.length){if(modal)modal.classList.remove('on');return}
   const first=q[0];
   document.getElementById('cqNotifEmoji').textContent=first.emoji||'🏆';
   document.getElementById('cqNotifTitle').textContent=q.length===1?(first.nome||'Conquista!'):(q.length+' conquistas novas!');
@@ -4276,10 +4326,7 @@ bootSSO();
   </div>
 </div>
 
-<button type="button" class="ge-chat-fab" id="geChatFab" title="Chat global" aria-label="Abrir chat">
-  💬
-  <span class="badge" id="geChatBadge">0</span>
-</button>
+<!-- chat no dock -->
 <div class="ge-chat-panel" id="geChatPanel" role="dialog" aria-label="Chat global">
   <div class="ge-chat-hd">
     <div>
