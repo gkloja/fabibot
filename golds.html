@@ -134,7 +134,7 @@ button.ge-online-pill:hover{background:rgba(79,212,168,.14)}
 }
 @keyframes blink{50%{opacity:.35}}
 
-#navTools,#navLoggedOnly,#navGoldChip,#navTools.on,#navLoggedOnly.on{display:none!important}
+#navTools,#navLoggedOnly,#navTools.on,#navLoggedOnly.on{display:none!important}
 #navGoldChip.on{display:inline-flex!important;align-items:center;gap:6px}
 #navGoldChip{padding:7px 12px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(212,179,106,.12);border:1px solid rgba(212,179,106,.3);color:var(--gold2)}
 #navGoldChip b{font-family:var(--mono)}
@@ -2033,91 +2033,35 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
 }
 
 
-/* DOCK TOUCH FIX v2 — Raid/Rank confiáveis */
-#geDock.ge-dock,
-#geDock.ge-dock-app,
-nav#geDock{
-  position:fixed !important;
-  left:0 !important; right:0 !important; bottom:0 !important;
-  transform:none !important;
-  width:100% !important; max-width:100vw !important;
-  z-index:9999 !important;
-  display:flex !important;
-  flex-direction:row !important;
-  align-items:stretch !important;
-  justify-content:space-between !important;
-  gap:0 !important;
-  padding:2px 0 calc(2px + env(safe-area-inset-bottom,0px)) !important;
-  margin:0 !important;
-  border-radius:0 !important;
-  background:rgba(6,7,11,.98) !important;
-  border-top:1px solid rgba(255,255,255,.12) !important;
-  box-shadow:0 -12px 40px rgba(0,0,0,.55) !important;
-  pointer-events:auto !important;
-  overflow:visible !important;
-  isolation:isolate;
+/* HEADER GOLD CHIP */
+#navGoldChip.nav-gold-chip,
+.nav-gold-chip{
+  appearance:none;border:0;cursor:pointer;font-family:inherit;
+  display:inline-flex !important;align-items:center;gap:7px;
+  padding:5px 11px 5px 5px;border-radius:999px;
+  background:linear-gradient(135deg,rgba(212,179,106,.2),rgba(212,179,106,.08));
+  border:1px solid rgba(212,179,106,.42) !important;
+  color:var(--gold2,#ead7a2);
+  box-shadow:0 0 18px rgba(212,179,106,.15);
+  max-width:min(46vw,168px);
+  flex-shrink:1;min-width:0;
 }
-#geDock button[data-dock],
-#geDock button{
-  flex:1 1 0 !important;
-  min-width:0 !important;
-  max-width:none !important;
-  min-height:64px !important;
-  height:64px !important;
-  margin:0 !important;
-  padding:0 2px !important;
-  border:0 !important;
-  border-radius:0 !important;
-  background:transparent !important;
-  color:var(--muted, #9a9386) !important;
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap:2px !important;
-  cursor:pointer !important;
-  touch-action:manipulation !important;
-  -webkit-tap-highlight-color:rgba(212,179,106,.25) !important;
-  pointer-events:auto !important;
-  position:relative !important;
-  z-index:1 !important;
-  user-select:none !important;
-  -webkit-user-select:none !important;
+.nav-gold-chip .ngc-ico{
+  width:26px;height:26px;border-radius:8px;display:grid;place-items:center;
+  background:rgba(0,0,0,.28);font-size:12px;flex-shrink:0;
 }
-#geDock button *{
-  pointer-events:none !important;
+.nav-gold-chip .ngc-col{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05;min-width:0}
+.nav-gold-chip .ngc-col small{
+  font-size:8px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  opacity:.8;color:rgba(234,215,162,.9);
 }
-#geDock button .di{
-  font-size:20px !important;
-  line-height:1 !important;
-  display:block !important;
-  filter:none !important;
+.nav-gold-chip .ngc-col b{
+  font-family:var(--mono,'IBM Plex Mono',monospace);font-size:12px;font-weight:700;
+  color:var(--gold2,#ead7a2);font-variant-numeric:tabular-nums;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;
 }
-#geDock button span:not(.di){
-  display:block !important;
-  font-size:9px !important;
-  font-weight:700 !important;
-  line-height:1.1 !important;
-  white-space:nowrap !important;
-  max-width:100% !important;
-  overflow:hidden !important;
-  text-overflow:ellipsis !important;
-}
-#geDock button:active,
-#geDock button.on{
-  background:rgba(212,179,106,.18) !important;
-  color:var(--gold2, #ead7a2) !important;
-}
-/* área de toque extra invisível (melhor em bordas) */
-#geDock button[data-dock="raid"]::before,
-#geDock button[data-dock="rank"]::before{
-  content:'' !important;
-  position:absolute !important;
-  inset:-6px -4px !important;
-  z-index:0 !important;
-}
-footer{ padding-bottom:calc(80px + env(safe-area-inset-bottom,0px)) !important; }
-.shell{ padding-bottom:calc(88px + env(safe-area-inset-bottom,0px)) !important; }
+#navGoldChip{display:inline-flex !important}
+#navTools,#navLoggedOnly{display:none!important}
 
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
@@ -2192,6 +2136,10 @@ footer{ padding-bottom:calc(80px + env(safe-area-inset-bottom,0px)) !important; 
     </div>
   </a>
   <div class="nav nav-v2" role="navigation" aria-label="Principal">
+    <button type="button" class="nav-gold-chip on" id="navGoldChip" title="Seu saldo de Golds" aria-label="Saldo de Golds">
+      <span class="ngc-ico" aria-hidden="true">💰</span>
+      <span class="ngc-col"><small>Golds</small><b id="navGoldBal">0</b></span>
+    </button>
     <button type="button" class="nav-ico-btn" id="geOnlinePill" title="Online agora" aria-haspopup="dialog" aria-label="Usuários online">
       <span class="dot" aria-hidden="true"></span>
       <b id="geOnlineCount">0</b>
@@ -2686,7 +2634,7 @@ footer{ padding-bottom:calc(80px + env(safe-area-inset-bottom,0px)) !important; 
   <button type="button" data-dock="crash" title="Foguete"><span class="di" aria-hidden="true">🚀</span><span>Foguete</span></button>
   <button type="button" data-dock="tiger" title="Fortune Tiger"><span class="di" aria-hidden="true">🐯</span><span>Tiger</span></button>
   <button type="button" data-dock="farm" title="Fazenda"><span class="di" aria-hidden="true">🌾</span><span>Farm</span></button>
-  <button type="button" data-dock="raid" id="dockRaid" title="Roubo"><span class="di" aria-hidden="true">🏴</span><span>Raid</span></button>
+  <button type="button" data-dock="raid" id="dockRaid" title="Roubo"><span class="di" aria-hidden="true">🏴‍☠️</span><span>Raid</span></button>
   <button type="button" data-dock="rank" id="dockRank" title="Ranking"><span class="di" aria-hidden="true">🏆</span><span>Rank</span></button>
 </nav>
 
@@ -2809,7 +2757,10 @@ window.geUrlsFor=urlsFor;
 function setGold(n,opts){
   S.golds=Math.floor(Number(n)||0);
   if(opts&&opts.defer){S.pendingGold=S.golds;return}
-  document.getElementById('goldBal').textContent=fmt(S.golds);
+  var gb=document.getElementById('goldBal');
+  if(gb) gb.textContent=fmt(S.golds);
+  var nb=document.getElementById('navGoldBal');
+  if(nb) nb.textContent=fmt(S.golds);
   S.pendingGold=null;
   const g=S.groups.find(x=>x.grupo===S.grupo);if(g)g.golds=S.golds;renderGroups();syncBetHints();
 }
@@ -4117,78 +4068,39 @@ async function bootSSO(){
 
 /* Dock navigation */
 (function bindDock(){
-  function handleDockKey(k){
-    if(!k) return;
-    var dock=document.getElementById('geDock');
-    if(dock){
-      dock.querySelectorAll('button').forEach(function(b){ b.classList.remove('on'); });
-      var db=dock.querySelector('[data-dock="'+k+'"]');
-      if(db) db.classList.add('on');
-    }
-    if(k==='home'){
-      document.querySelectorAll('.gv').forEach(function(g){ g.classList.remove('on'); });
-      var vh=document.getElementById('viewHome');
-      if(vh) vh.classList.remove('hide');
-      window.scrollTo({top:0,behavior:'smooth'});
-      return;
-    }
-    if(k==='transfer'){
-      document.querySelectorAll('.gv').forEach(function(g){ g.classList.remove('on'); });
-      var vh2=document.getElementById('viewHome');
-      if(vh2) vh2.classList.remove('hide');
-      if(typeof window.geGoPortal==='function') window.geGoPortal();
-      else{
-        var el=document.getElementById('portalOuro');
-        if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.classList.add('ge-pulse'); setTimeout(function(){ el.classList.remove('ge-pulse'); },2400); }
+  const dock=document.getElementById('geDock');
+  if(!dock)return;
+  dock.querySelectorAll('[data-dock]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      dock.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      const k=btn.getAttribute('data-dock');
+      if(k==='home'){
+        document.querySelectorAll('.gv').forEach(g=>g.classList.remove('on'));
+        const vh=document.getElementById('viewHome');
+        if(vh)vh.classList.remove('hide');
+        window.scrollTo({top:0,behavior:'smooth'});
+        return;
       }
-      return;
-    }
-    if(typeof openGame==='function') openGame(k==='rank' ? 'rank' : k);
-    else if(typeof window.openGame==='function') window.openGame(k==='rank' ? 'rank' : k);
-  }
-  window.__geDockGo = handleDockKey;
-
-  function wireDock(){
-    var dock=document.getElementById('geDock');
-    if(!dock || dock.__geDockWired) return;
-    dock.__geDockWired = true;
-    // Delegação: 1 listener no container — captura clique em qualquer botão (incluindo Raid/Rank)
-    var lastKey='', lastTs=0;
-    function fire(e){
-      var btn = e.target && e.target.closest ? e.target.closest('button[data-dock], [data-dock]') : null;
-      if(!btn || !dock.contains(btn)) return;
-      e.preventDefault();
-      e.stopPropagation();
-      var k = btn.getAttribute('data-dock');
-      if(!k) return;
-      var now = Date.now();
-      // evita double-fire (touch + click)
-      if(k===lastKey && (now-lastTs)<450) return;
-      lastKey=k; lastTs=now;
-      try{ if(navigator.vibrate) navigator.vibrate(8); }catch(_){}
-      handleDockKey(k);
-    }
-    dock.addEventListener('pointerup', fire, {passive:false});
-    dock.addEventListener('click', fire, {passive:false});
-    // fallback extra em cada botão (mobile Safari às vezes engole o bubble)
-    dock.querySelectorAll('[data-dock]').forEach(function(btn){
-      btn.style.touchAction = 'manipulation';
-      btn.style.webkitTapHighlightColor = 'transparent';
-      btn.addEventListener('touchend', function(e){
-        e.preventDefault();
-        var k=btn.getAttribute('data-dock');
-        if(!k) return;
-        var now=Date.now();
-        if(k===lastKey && (now-lastTs)<450) return;
-        lastKey=k; lastTs=now;
-        handleDockKey(k);
-      }, {passive:false});
+      if(k==='transfer'){
+        document.querySelectorAll('.gv').forEach(g=>g.classList.remove('on'));
+        const vh=document.getElementById('viewHome');
+        if(vh)vh.classList.remove('hide');
+        if(typeof window.geGoPortal==='function')window.geGoPortal();
+        else{
+          const el=document.getElementById('portalOuro');
+          if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('ge-pulse');setTimeout(()=>el.classList.remove('ge-pulse'),2400)}
+        }
+        return;
+      }
+      if(k==='rank'){
+        if(typeof openGame==='function')openGame('rank');
+        return;
+      }
+      if(typeof openGame==='function')openGame(k);
+      else window.scrollTo({top:0,behavior:'smooth'});
     });
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wireDock);
-  else wireDock();
-  setTimeout(wireDock, 400);
-  setTimeout(wireDock, 1500);
+  });
 })();
 
 /* Dicas rotativas + atalhos extras */
@@ -5676,6 +5588,39 @@ bootSSO();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
   else wire();
   setTimeout(wire, 400);
+})();
+</script>
+
+
+<script>
+/* Sync Golds no cabeçalho */
+(function(){
+  function sync(){
+    try{
+      var S=window.S||window.__GE;
+      var nb=document.getElementById('navGoldBal');
+      var gb=document.getElementById('goldBal');
+      if(!nb) return;
+      if(S && typeof S.golds==='number' && typeof window.fmt==='function') nb.textContent=window.fmt(S.golds);
+      else if(gb) nb.textContent=gb.textContent;
+      var chip=document.getElementById('navGoldChip');
+      if(chip) chip.style.display='inline-flex';
+    }catch(_){}
+  }
+  function wire(){
+    var chip=document.getElementById('navGoldChip');
+    if(chip && !chip.__goldWired){
+      chip.__goldWired=true;
+      chip.addEventListener('click',function(){
+        var bal=document.querySelector('.card.bal')||document.getElementById('goldBal');
+        if(bal) bal.scrollIntoView({behavior:'smooth',block:'center'});
+      });
+    }
+    sync();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wire);
+  else wire();
+  setInterval(sync,1500);
 })();
 </script>
 
