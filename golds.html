@@ -3,11 +3,17 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
-<title>Gold Empire · Império de Golds · Fabi Bot</title>
-<meta name="theme-color" content="#08090c"/>
+<title>Gold Empire · Fabi Bot | Economia, Jogos e Ranking</title>
+<meta name="theme-color" content="#0a0b0f"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta property="og:title" content="Gold Empire · Fabi Bot"/>
+<meta property="og:description" content="Economia, jogos e ranking — Golds 1:1 com o WhatsApp."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://fabibot.vercel.app/golds.html"/>
+<meta name="twitter:card" content="summary_large_image"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="mobile-web-app-capable" content="yes"/>
-<meta name="description" content="Gold Empire — economia, jogos e conquistas da Fabi Bot. Golds 1:1 com o WhatsApp."/>
+<meta name="description" content="Gold Empire — economia live, jogos, ranking e conquistas da Fabi Bot. Golds 1:1 com o WhatsApp. App premium mobile."/>
 <link rel="icon" href="/favicon-32x32.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -1608,6 +1614,328 @@ footer a:hover{color:var(--gold) !important}
   }
 }
 
+
+/* ============================================================
+   GOLD EMPIRE · APP SHELL v3
+   Mobile-first · fintech + arcade + imperial
+   ============================================================ */
+:root{
+  --bg:#07080c !important;
+  --bg2:#0c0e14 !important;
+  --panel:rgba(16,18,26,.92) !important;
+  --panel2:rgba(22,25,36,.96) !important;
+  --stroke:rgba(232,212,170,.11) !important;
+  --stroke2:rgba(232,212,170,.22) !important;
+  --text:#f4f0e8 !important;
+  --muted:#9b9488 !important;
+  --gold:#d4b36a !important;
+  --gold2:#f0dfb0 !important;
+  --gold3:#a8843a !important;
+  --mint:#4fd4a8 !important;
+  --sky:#7ec8d9 !important;
+  --danger:#e0566a !important;
+  --shadow:0 20px 56px rgba(0,0,0,.55) !important;
+  --dock-h:68px !important;
+  --app-pad:max(12px, env(safe-area-inset-left));
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+html{background:#07080c!important}
+body{
+  background:
+    radial-gradient(900px 380px at 50% -8%, rgba(212,179,106,.13), transparent 55%),
+    radial-gradient(600px 320px at 100% 10%, rgba(79,212,168,.05), transparent 50%),
+    #07080c !important;
+  padding-left:env(safe-area-inset-left);
+  padding-right:env(safe-area-inset-right);
+}
+
+/* APP BAR */
+.ge-app-bar.top-v2{
+  padding:8px 12px !important;
+  padding-top:max(8px, env(safe-area-inset-top)) !important;
+  min-height:56px;
+  gap:8px !important;
+  background:rgba(7,8,12,.88) !important;
+  backdrop-filter:blur(28px) saturate(1.5) !important;
+  -webkit-backdrop-filter:blur(28px) saturate(1.5);
+  border-bottom:1px solid rgba(255,255,255,.06) !important;
+  box-shadow:0 8px 32px rgba(0,0,0,.35);
+}
+.ge-app-bar .brand img{
+  width:36px!important;height:36px!important;border-radius:11px!important;
+  box-shadow:0 0 0 1px rgba(212,179,106,.4),0 4px 14px rgba(0,0,0,.4)!important;
+}
+.ge-app-bar .brand b{
+  font-size:15px!important;font-weight:800!important;letter-spacing:-.35px!important;
+  font-family:var(--font)!important;
+  background:linear-gradient(125deg,#fff 0%,#f0dfb0 45%,#d4b36a 100%)!important;
+  -webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important;
+}
+.ge-app-bar .brand small{font-size:8px!important;letter-spacing:1.4px!important;opacity:.75}
+
+.nav-ico-btn{
+  height:36px!important;padding:0 11px!important;border-radius:999px!important;
+  background:rgba(79,212,168,.08)!important;border:1px solid rgba(79,212,168,.28)!important;
+  font-size:12px!important;gap:6px!important;
+}
+.nav-ico-btn .dot{width:7px!important;height:7px!important}
+.nav-chip{
+  height:36px!important;padding:0 12px!important;border-radius:999px!important;
+  font-size:11px!important;font-weight:700!important;
+  background:rgba(126,200,217,.1)!important;border:1px solid rgba(126,200,217,.28)!important;
+  color:#d8f0f8!important;
+}
+.nav-chip-gold{
+  background:linear-gradient(160deg,#f0dfb0,#d4b36a 55%,#a8843a)!important;
+  border:0!important;color:#1a1200!important;
+  box-shadow:0 6px 20px rgba(212,179,106,.32)!important;
+}
+.nav-chip:active,.nav-ico-btn:active,.btn:active{transform:scale(.96)!important}
+
+/* SHELL */
+.shell{
+  max-width:720px!important;
+  margin:0 auto!important;
+  padding:14px 14px calc(var(--dock-h) + 28px + env(safe-area-inset-bottom))!important;
+}
+@media(min-width:900px){
+  .shell{max-width:980px!important;padding-left:20px!important;padding-right:20px!important}
+}
+
+/* LOGIN APP */
+.login-wrap{min-height:min(82vh,720px)!important;padding:24px 0!important}
+.login{
+  max-width:400px!important;padding:32px 22px!important;border-radius:24px!important;
+  background:linear-gradient(165deg,rgba(20,22,32,.98),rgba(10,12,18,.99))!important;
+  border:1px solid rgba(212,179,106,.2)!important;
+  box-shadow:0 28px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04) inset!important;
+}
+.login h1{
+  font-size:clamp(28px,7vw,36px)!important;
+  background:linear-gradient(135deg,#fff,#f0dfb0,#d4b36a)!important;
+  -webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important;
+  font-family:var(--font)!important;font-weight:800!important;
+}
+.fld input{
+  min-height:48px!important;border-radius:14px!important;
+  background:rgba(0,0,0,.45)!important;border:1px solid rgba(255,255,255,.08)!important;
+  font-size:16px!important; /* evita zoom iOS */
+}
+.fld input:focus{
+  border-color:rgba(212,179,106,.5)!important;
+  box-shadow:0 0 0 3px rgba(212,179,106,.15)!important;
+}
+.btn{min-height:48px!important;border-radius:14px!important;font-size:14px!important}
+.btn-gold{
+  background:linear-gradient(165deg,#f0dfb0 0%,#d4b36a 45%,#a8843a 100%)!important;
+  color:#1a1200!important;box-shadow:0 10px 28px rgba(212,179,106,.28)!important;
+}
+
+/* DASHBOARD HERO */
+.hero-strip{
+  display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-bottom:12px!important;
+}
+@media(min-width:720px){
+  .hero-strip{grid-template-columns:1.15fr 1fr!important}
+}
+.card.user,.card.bal{
+  border-radius:20px!important;padding:14px 16px!important;
+  background:linear-gradient(160deg,rgba(20,22,32,.95),rgba(10,12,18,.98))!important;
+  border:1px solid rgba(255,255,255,.07)!important;
+  box-shadow:0 12px 36px rgba(0,0,0,.35)!important;
+}
+.card.bal{
+  border-color:rgba(212,179,106,.28)!important;
+  background:
+    radial-gradient(280px 100px at 100% 0%,rgba(212,179,106,.16),transparent 55%),
+    linear-gradient(155deg,rgba(24,20,12,.98),rgba(10,12,18,.99))!important;
+}
+.user img{width:52px!important;height:52px!important;border-radius:16px!important}
+.user strong{font-size:15px!important;font-weight:800!important}
+.bal .v{
+  font-size:clamp(22px,6vw,28px)!important;font-weight:800!important;
+  font-family:var(--mono)!important;letter-spacing:-.5px!important;
+  color:var(--gold2)!important;
+}
+.bal .l{
+  font-size:9px!important;letter-spacing:1.5px!important;text-transform:uppercase!important;
+  color:rgba(240,223,176,.7)!important;font-weight:700!important;
+}
+.bolsa-cta{
+  margin-top:10px!important;width:100%!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;
+  min-height:44px!important;padding:10px 14px!important;border-radius:14px!important;
+  background:linear-gradient(135deg,rgba(126,200,217,.15),rgba(79,212,168,.08))!important;
+  border:1px solid rgba(126,200,217,.35)!important;color:#d8f4fa!important;
+  font-weight:800!important;font-size:13px!important;cursor:pointer!important;
+}
+.bolsa-cta:active{transform:scale(.98)}
+
+/* ZONES */
+.zone{
+  margin-bottom:12px!important;padding:16px!important;border-radius:20px!important;
+  background:linear-gradient(165deg,rgba(16,18,26,.96),rgba(8,10,14,.98))!important;
+  border:1px solid rgba(255,255,255,.06)!important;
+  box-shadow:0 10px 32px rgba(0,0,0,.28)!important;
+}
+.zone::before{
+  width:3px!important;top:14px!important;bottom:14px!important;border-radius:3px!important;
+  background:linear-gradient(180deg,#f0dfb0,#d4b36a,#4fd4a8)!important;
+}
+.zone-head{
+  margin-bottom:12px!important;padding-bottom:10px!important;
+  border-bottom:1px solid rgba(255,255,255,.05)!important;
+}
+.zone-head h2{
+  font-size:11px!important;font-weight:800!important;letter-spacing:.9px!important;
+  text-transform:uppercase!important;color:#c8c0b4!important;
+}
+.zone-head p{font-size:11px!important;line-height:1.45!important;color:var(--muted)!important}
+.zone-badge{
+  font-size:9px!important;padding:5px 10px!important;
+  background:rgba(212,179,106,.1)!important;border:1px solid rgba(212,179,106,.25)!important;
+  color:var(--gold2)!important;
+}
+
+/* QUICK / GAMES */
+.ge-quick,.ge-quick-xl,.games{
+  display:grid!important;gap:8px!important;
+}
+.ge-quick{grid-template-columns:repeat(4,1fr)!important}
+.ge-quick-xl{grid-template-columns:repeat(2,1fr)!important}
+.games{grid-template-columns:repeat(2,1fr)!important}
+@media(min-width:640px){
+  .games{grid-template-columns:repeat(3,1fr)!important}
+  .ge-quick-xl{grid-template-columns:repeat(4,1fr)!important}
+}
+.ge-qbtn,.gbtn{
+  border-radius:16px!important;
+  background:linear-gradient(160deg,rgba(18,20,30,.98),rgba(8,10,14,.99))!important;
+  border:1px solid rgba(255,255,255,.06)!important;
+  transition:transform .18s ease,border-color .18s,box-shadow .18s!important;
+  -webkit-tap-highlight-color:transparent;
+}
+.ge-qbtn{min-height:76px!important;padding:10px 6px!important}
+.gbtn{min-height:112px!important;padding:16px 10px!important}
+.ge-qbtn:active,.gbtn:active{transform:scale(.97)!important}
+.ge-qbtn:hover,.gbtn:hover{
+  border-color:rgba(212,179,106,.3)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.35)!important;
+}
+.gbtn .ico{font-size:26px!important;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35))}
+.gbtn strong{font-size:12px!important;font-weight:800!important}
+.gbtn span{font-size:10px!important;color:var(--muted)!important}
+
+/* GROUPS */
+.gcard{
+  border-radius:16px!important;padding:12px!important;
+  background:rgba(255,255,255,.03)!important;border:1px solid rgba(255,255,255,.06)!important;
+  transition:border-color .2s,background .2s,transform .18s!important;
+}
+.gcard.on{
+  border-color:rgba(212,179,106,.45)!important;
+  background:linear-gradient(135deg,rgba(212,179,106,.12),rgba(79,212,168,.04))!important;
+  box-shadow:0 0 0 1px rgba(212,179,106,.12),0 12px 28px rgba(0,0,0,.3)!important;
+}
+.gcard img{width:42px!important;height:42px!important;border-radius:12px!important}
+
+/* BOLSA / TRADER */
+.bolsa-card,.pf-pos,.pf-desk{
+  border-radius:16px!important;
+  background:linear-gradient(160deg,rgba(14,16,24,.98),rgba(8,10,14,.99))!important;
+  border:1px solid rgba(126,200,217,.12)!important;
+}
+.pf-desk{
+  border-color:rgba(212,179,106,.22)!important;
+  box-shadow:0 0 40px rgba(212,179,106,.06)!important;
+}
+.bolsa-card:active{transform:scale(.98)}
+
+/* DOCK APP */
+.ge-dock-app.ge-dock{
+  display:flex!important;justify-content:space-around!important;align-items:stretch!important;
+  gap:2px!important;
+  padding:6px 6px calc(6px + env(safe-area-inset-bottom))!important;
+  background:rgba(7,8,12,.94)!important;
+  border-top:1px solid rgba(255,255,255,.07)!important;
+  backdrop-filter:blur(24px)!important;-webkit-backdrop-filter:blur(24px);
+  box-shadow:0 -12px 40px rgba(0,0,0,.45)!important;
+}
+.ge-dock-app button{
+  flex:1!important;max-width:72px!important;
+  width:auto!important;height:auto!important;min-height:52px!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  gap:2px!important;padding:6px 2px!important;border-radius:14px!important;
+  background:transparent!important;border:0!important;color:var(--muted)!important;
+  font-family:inherit!important;cursor:pointer!important;
+}
+.ge-dock-app button .di{font-size:18px!important;line-height:1!important;display:block!important}
+.ge-dock-app button span:not(.di){
+  display:block!important;font-size:9px!important;font-weight:700!important;
+  letter-spacing:.2px!important;opacity:.85;
+}
+.ge-dock-app button.on{
+  color:var(--gold2)!important;
+  background:rgba(212,179,106,.12)!important;
+  box-shadow:inset 0 0 0 1px rgba(212,179,106,.2)!important;
+}
+.ge-dock-app button:active{transform:scale(.94)}
+
+/* MODALS / TRADE / INV */
+.trade-desk,.inv-sheet,.modal{
+  background:rgba(0,0,0,.62)!important;
+  backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px);
+}
+.trade-panel,.inv-sheet-panel{
+  border-radius:22px!important;
+  border:1px solid rgba(212,179,106,.18)!important;
+  background:linear-gradient(180deg,#12141c,#0a0c12)!important;
+  box-shadow:0 28px 80px rgba(0,0,0,.6)!important;
+}
+.inv-sheet-panel{border-radius:22px 22px 0 0!important}
+
+/* TOAST */
+.toast{
+  border-radius:14px!important;border:1px solid rgba(255,255,255,.1)!important;
+  backdrop-filter:blur(16px)!important;box-shadow:var(--shadow)!important;
+}
+
+/* BANNER / TIPS */
+.banner,.tip-strip{
+  border-radius:16px!important;
+  background:rgba(212,179,106,.06)!important;
+  border:1px solid rgba(212,179,106,.12)!important;
+}
+
+/* FOOTER */
+footer{
+  text-align:center;padding:24px 16px 12px;color:var(--muted);font-size:12px;
+  opacity:.85;
+}
+footer a{color:var(--gold2);text-decoration:none;font-weight:600}
+
+/* TOUCH TARGETS */
+button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
+@media(hover:none){
+  .gbtn:hover,.ge-qbtn:hover{transform:none!important}
+}
+
+/* Skeleton shimmer utility */
+@keyframes geShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.ge-skel{
+  background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.1),rgba(255,255,255,.04));
+  background-size:200% 100%;animation:geShimmer 1.2s ease infinite;border-radius:10px;
+}
+
+/* Online panel */
+.ge-online-panel{
+  width:min(300px,92vw)!important;border-radius:18px!important;
+  border:1px solid rgba(79,212,168,.2)!important;
+  box-shadow:0 20px 50px rgba(0,0,0,.5)!important;
+}
+
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -1672,17 +2000,17 @@ footer a:hover{color:var(--gold) !important}
 <body>
 <div class="bg-fx" aria-hidden="true"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="grid"></div></div>
 
-<div class="top top-v2">
-  <a class="brand" href="index.html">
+<div class="top top-v2 ge-app-bar" role="banner">
+  <a class="brand" href="index.html" aria-label="Gold Empire">
     <img src="/flogo.jpg" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'" alt="Fabi Bot"/>
     <div class="bn">
       <b>Gold<span>Empire</span></b>
-      <small>Fabi Bot · live</small>
+      <small>Fabi Bot</small>
     </div>
   </a>
-  <div class="nav nav-v2">
-    <button type="button" class="nav-ico-btn" id="geOnlinePill" title="Online agora" aria-haspopup="dialog">
-      <span class="dot"></span>
+  <div class="nav nav-v2" role="navigation" aria-label="Principal">
+    <button type="button" class="nav-ico-btn" id="geOnlinePill" title="Online agora" aria-haspopup="dialog" aria-label="Usuários online">
+      <span class="dot" aria-hidden="true"></span>
       <b id="geOnlineCount">0</b>
     </button>
     <div class="ge-online-panel" id="geOnlinePanel" role="dialog" aria-label="Quem está online" hidden>
@@ -1694,12 +2022,11 @@ footer a:hover{color:var(--gold) !important}
         <div class="ge-chat-empty" style="padding:12px;font-size:12px">Carregando…</div>
       </div>
     </div>
-    <a href="index.html" class="nav-link nav-link-home" title="Início">⌂</a>
-    <button type="button" class="nav-chip" id="navBolsaBtn" title="Trader Desk">
-      <span>📈</span><em>Trader</em>
+    <button type="button" class="nav-chip" id="navBolsaBtn" title="Trader Desk" aria-label="Abrir Trader">
+      <span aria-hidden="true">📈</span><em>Trader</em>
     </button>
-    <button type="button" class="nav-chip nav-chip-gold" id="navBuyGolds" title="Comprar Golds">
-      <span>✦</span><em>Buy</em>
+    <button type="button" class="nav-chip nav-chip-gold" id="navBuyGolds" title="Comprar Golds via PIX" aria-label="Comprar Golds">
+      <span aria-hidden="true">✦</span><em>Buy</em>
     </button>
     <a href="golds.html#conquistas" id="navCq" class="hide">Conquistas</a>
     <div class="nav-divider hide" id="navLoggedOnly"></div>
@@ -1744,7 +2071,7 @@ footer a:hover{color:var(--gold) !important}
     <div class="card bal">
       <img class="gimg" id="grpImg" referrerpolicy="no-referrer" src="https://fabibot.vercel.app/flogo.jpg" alt="" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'"/>
       <div class="col">
-        <div class="l">Saldo neste grupo</div>
+        <div class="l">Patrimônio no grupo</div>
         <div class="v">💰 <span id="goldBal">0</span></div>
         <div class="bal-prem" id="balPremLine"><span class="prem-badge" id="balPremBadge">…</span> <span class="bal-prem-txt" id="balPremTxt">status</span></div>
         <div class="row">
@@ -2170,14 +2497,14 @@ footer a:hover{color:var(--gold) !important}
   </div>
 </div>
 
-<nav class="ge-dock" id="geDock" aria-label="Navegação rápida">
-  <button type="button" data-dock="transfer" id="dockTransfer" title="Transferir"><span class="di">💱</span><span>Transfer</span></button>
-  <button type="button" data-dock="fish" id="dockFish" title="Pescar"><span class="di">🎣</span><span>Pescar</span></button>
-  <button type="button" data-dock="crash" title="Crash"><span class="di">🚀</span><span>Crash</span></button>
-  <button type="button" data-dock="tiger" title="Tiger"><span class="di">🐯</span><span>Tiger</span></button>
-  <button type="button" data-dock="farm" title="Farm"><span class="di">🌾</span><span>Farm</span></button>
-  <button type="button" data-dock="raid" id="dockRaid" title="Roubar"><span class="di">🏴‍☠️</span><span>Roubar</span></button>
-  <button type="button" data-dock="rank" id="dockRank" title="Rank"><span class="di">🏛️</span><span>Rank</span></button>
+<nav class="ge-dock ge-dock-app" id="geDock" aria-label="Arena e atalhos">
+  <button type="button" data-dock="transfer" id="dockTransfer" title="Portal de Ouro"><span class="di" aria-hidden="true">💱</span><span>Portal</span></button>
+  <button type="button" data-dock="fish" id="dockFish" title="Pescaria"><span class="di" aria-hidden="true">🎣</span><span>Pesca</span></button>
+  <button type="button" data-dock="crash" title="Foguete"><span class="di" aria-hidden="true">🚀</span><span>Foguete</span></button>
+  <button type="button" data-dock="tiger" title="Fortune Tiger"><span class="di" aria-hidden="true">🐯</span><span>Tiger</span></button>
+  <button type="button" data-dock="farm" title="Fazenda"><span class="di" aria-hidden="true">🌾</span><span>Farm</span></button>
+  <button type="button" data-dock="raid" id="dockRaid" title="Roubo"><span class="di" aria-hidden="true">🏴‍☠️</span><span>Raid</span></button>
+  <button type="button" data-dock="rank" id="dockRank" title="Ranking"><span class="di" aria-hidden="true">🏆</span><span>Rank</span></button>
 </nav>
 
 <footer>
