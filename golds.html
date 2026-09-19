@@ -867,6 +867,266 @@ button, [role="button"]{cursor:pointer}
 .inv-person .amt{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--gold2);text-align:right;flex-shrink:0}
 .inv-person .amt small{display:block;font-size:10px;color:var(--muted);font-weight:600;margin-top:2px}
 
+
+/* ========== GOLD EMPIRE · NEON LEDGER 2026 ========== */
+:root{
+  --bg:#05070c !important;
+  --bg2:#080b12 !important;
+  --panel:rgba(12,16,26,.92) !important;
+  --panel2:rgba(18,24,38,.96) !important;
+  --stroke:rgba(120,200,255,.10) !important;
+  --stroke2:rgba(120,200,255,.20) !important;
+  --text:#eef4ff !important;
+  --muted:#8b9bb8 !important;
+  --gold:#f0c14b !important;
+  --gold2:#ffe9a8 !important;
+  --gold3:#c49212 !important;
+  --mint:#3dffc4 !important;
+  --mint2:#12c996 !important;
+  --sky:#5cc8ff !important;
+  --violet:#9b8cff !important;
+  --rose:#ff6b9d !important;
+  --danger:#ff4d6d !important;
+  --shadow:0 24px 80px rgba(0,0,0,.55) !important;
+  --glow:0 0 40px rgba(92,200,255,.12);
+  --glow-gold:0 0 36px rgba(240,193,75,.18);
+}
+body{
+  background:
+    radial-gradient(900px 420px at 12% -8%, rgba(92,200,255,.14), transparent 55%),
+    radial-gradient(700px 380px at 92% 8%, rgba(240,193,75,.10), transparent 50%),
+    radial-gradient(600px 400px at 50% 100%, rgba(61,255,196,.06), transparent 45%),
+    #05070c !important;
+}
+.bg-fx .o1{background:radial-gradient(circle,#0a2a3a,transparent 70%)!important;opacity:.55!important}
+.bg-fx .o2{background:radial-gradient(circle,#2a2208,transparent 70%)!important;opacity:.45!important}
+.bg-fx .o3{background:radial-gradient(circle,#0f1a28,transparent 70%)!important}
+.bg-fx .grid{
+  opacity:.04!important;
+  background-size:48px 48px!important;
+  background-image:
+    linear-gradient(rgba(92,200,255,.5) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(92,200,255,.5) 1px,transparent 1px)!important;
+}
+
+.top{
+  background:rgba(5,7,12,.78)!important;
+  border-bottom:1px solid rgba(92,200,255,.12)!important;
+  backdrop-filter:blur(28px) saturate(1.5)!important;
+}
+.top::after{
+  background:linear-gradient(90deg,transparent,rgba(92,200,255,.5),rgba(240,193,75,.45),transparent)!important;
+}
+.brand b{
+  font-family:var(--font)!important;
+  font-weight:800!important;
+  letter-spacing:-.4px!important;
+  font-size:17px!important;
+  background:linear-gradient(135deg,#fff 20%,var(--gold2) 60%,var(--sky));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.brand img{
+  border-radius:12px!important;
+  box-shadow:0 0 0 1px rgba(92,200,255,.35),0 0 20px rgba(92,200,255,.15)!important;
+}
+.nav a.on,.nav-link.on{
+  color:#041018!important;
+  background:linear-gradient(135deg,var(--sky),#3aa0d8)!important;
+  box-shadow:0 6px 20px rgba(92,200,255,.25)!important;
+}
+.nav-pill-portal,.nav-pill-buy,.btn-gold{
+  background:linear-gradient(135deg,#ffe9a8,#f0c14b 40%,#c49212)!important;
+  color:#1a1200!important;
+  border:0!important;
+  box-shadow:0 8px 28px rgba(240,193,75,.28)!important;
+}
+.nav-pill-bolsa{
+  background:linear-gradient(135deg,rgba(92,200,255,.2),rgba(61,255,196,.1))!important;
+  border:1px solid rgba(92,200,255,.35)!important;
+  color:#d7f4fa!important;
+}
+.ge-online-pill{
+  background:rgba(61,255,196,.08)!important;
+  border-color:rgba(61,255,196,.3)!important;
+  color:var(--mint)!important;
+}
+
+.card,.zone,.login,.trade-panel,.inv-sheet-panel,.ge-online-panel{
+  background:linear-gradient(165deg,rgba(14,18,30,.96),rgba(8,11,18,.98))!important;
+  border:1px solid rgba(92,200,255,.12)!important;
+  box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.04)!important;
+}
+.zone{
+  border-radius:20px!important;
+  padding:20px!important;
+}
+.zone::before{
+  width:2px!important;
+  background:linear-gradient(180deg,var(--sky),var(--gold),var(--mint))!important;
+  box-shadow:0 0 12px rgba(92,200,255,.4)!important;
+}
+.zone-head h2{
+  font-size:14px!important;
+  font-weight:800!important;
+  letter-spacing:.3px!important;
+  text-transform:uppercase!important;
+}
+.zone-badge{
+  background:rgba(92,200,255,.1)!important;
+  border-color:rgba(92,200,255,.28)!important;
+  color:var(--sky)!important;
+}
+
+.bal{
+  border-color:rgba(240,193,75,.35)!important;
+  background:
+    radial-gradient(280px 100px at 100% 0%,rgba(240,193,75,.18),transparent 55%),
+    linear-gradient(145deg,rgba(22,18,8,.95),rgba(10,12,18,.98))!important;
+  box-shadow:var(--glow-gold)!important;
+}
+.bal .v{
+  background:linear-gradient(135deg,#fff,#ffe9a8,var(--gold))!important;
+  -webkit-background-clip:text!-webkit-text-fill-color:transparent;
+  -webkit-text-fill-color:transparent;
+}
+.user{
+  border-color:rgba(92,200,255,.2)!important;
+  background:
+    radial-gradient(260px 90px at 0% 0%,rgba(92,200,255,.12),transparent 55%),
+    linear-gradient(145deg,rgba(12,18,28,.98),rgba(8,10,16,.99))!important;
+}
+
+.gbtn,.ge-qbtn,.gcard,.bolsa-card,.pf-pos{
+  background:linear-gradient(165deg,rgba(16,22,36,.98),rgba(8,10,16,.99))!important;
+  border:1px solid rgba(92,200,255,.10)!important;
+  transition:transform .22s var(--ease),border-color .22s,box-shadow .22s!important;
+}
+.gbtn:hover,.ge-qbtn:hover,.gcard:hover,.bolsa-card:hover{
+  transform:translateY(-4px)!important;
+  border-color:rgba(92,200,255,.35)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.4),0 0 0 1px rgba(92,200,255,.12)!important;
+}
+.bolsa-card{
+  border-radius:18px!important;
+  padding:14px!important;
+}
+.chart-mini{
+  border-radius:12px!important;
+  background:rgba(0,0,0,.25)!important;
+  border:1px solid rgba(92,200,255,.08)!important;
+}
+
+.btn-g{background:linear-gradient(135deg,#5ff5c4,var(--mint2))!important;color:#003528!important}
+.btn-cyan{background:linear-gradient(135deg,var(--sky),#0891b2)!important;color:#041018!important}
+.btn-ghost{
+  background:rgba(255,255,255,.03)!important;
+  border:1px solid rgba(92,200,255,.15)!important;
+}
+.btn-ghost:hover{
+  background:rgba(92,200,255,.08)!important;
+  border-color:rgba(92,200,255,.35)!important;
+}
+
+.pf-desk{
+  background:
+    radial-gradient(400px 120px at 0% 0%,rgba(92,200,255,.12),transparent 55%),
+    linear-gradient(160deg,rgba(12,16,28,.98),rgba(6,8,14,.99))!important;
+  border:1px solid rgba(240,193,75,.22)!important;
+  box-shadow:var(--glow-gold)!important;
+  border-radius:20px!important;
+}
+.pf-desk-title{
+  font-size:12px!important;
+  letter-spacing:1px!important;
+  text-transform:uppercase!important;
+  color:var(--sky)!important;
+}
+
+.trade-desk{background:rgba(0,0,0,.65)!important;backdrop-filter:blur(10px)!important}
+.trade-panel{
+  border-radius:24px!important;
+  border:1px solid rgba(92,200,255,.2)!important;
+  box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(92,200,255,.08)!important;
+}
+.trade-chart-wrap{
+  background:rgba(0,0,0,.35)!important;
+  border-radius:14px!important;
+  border:1px solid rgba(92,200,255,.1)!important;
+}
+
+.inv-sheet{background:rgba(0,4,12,.7)!important;backdrop-filter:blur(12px)!important;z-index:200!important}
+.inv-sheet-panel{
+  border-radius:24px 24px 0 0!important;
+  border:1px solid rgba(92,200,255,.2)!important;
+  border-bottom:0!important;
+  background:linear-gradient(180deg,#0e1422,#080b12)!important;
+  box-shadow:0 -20px 60px rgba(0,0,0,.55)!important;
+}
+.inv-sheet-hd h3{
+  background:linear-gradient(135deg,#fff,var(--sky));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  font-weight:800!important;
+}
+#invSheetClose{
+  position:relative;z-index:5;
+  min-width:72px;
+  pointer-events:auto!important;
+  cursor:pointer!important;
+  background:rgba(255,255,255,.06)!important;
+  border:1px solid rgba(92,200,255,.25)!important;
+}
+.inv-person{
+  background:rgba(92,200,255,.04)!important;
+  border:1px solid rgba(92,200,255,.1)!important;
+}
+.inv-person:hover{
+  border-color:rgba(240,193,75,.3)!important;
+  background:rgba(240,193,75,.05)!important;
+}
+.inv-face{
+  border-color:#0a0e16!important;
+  box-shadow:0 0 0 1px rgba(92,200,255,.2)!important;
+}
+.inv-count{
+  background:rgba(92,200,255,.08)!important;
+  border-color:rgba(92,200,255,.25)!important;
+  color:var(--sky)!important;
+}
+
+.login{
+  border:1px solid rgba(240,193,75,.25)!important;
+  box-shadow:var(--shadow),0 0 80px rgba(240,193,75,.08)!important;
+}
+.login::before{
+  background:linear-gradient(90deg,transparent,var(--sky),var(--gold),transparent)!important;
+  height:2px!important;
+}
+.login h1{
+  font-family:var(--font)!important;
+  font-weight:800!important;
+  background:linear-gradient(135deg,#fff,var(--gold2),var(--sky))!important;
+  -webkit-background-clip:text!-webkit-text-fill-color:transparent;
+  -webkit-text-fill-color:transparent;
+}
+
+.ge-dock{
+  background:rgba(5,7,12,.88)!important;
+  border-top:1px solid rgba(92,200,255,.12)!important;
+  backdrop-filter:blur(24px)!important;
+}
+
+.bolsa-news .nitem,.tip-strip{
+  background:rgba(92,200,255,.05)!important;
+  border:1px solid rgba(92,200,255,.12)!important;
+  border-radius:14px!important;
+}
+
+/* scanline subtle tech */
+body::after{
+  content:'';pointer-events:none;position:fixed;inset:0;z-index:1;opacity:.03;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.4) 3px);
+}
+
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -3951,12 +4211,21 @@ bootSSO();
     }
     sheet.classList.add('open');
     sheet.setAttribute('aria-hidden','false');
+    // garante Fechar a cada abertura
+    var btnX = document.getElementById('invSheetClose');
+    if (btnX) {
+      btnX.onclick = function(e){ e.preventDefault(); e.stopPropagation(); closeInvSheet(); };
+    }
   }
   function closeInvSheet(){
     var sheet = document.getElementById('invSheet');
-    if (sheet){ sheet.classList.remove('open'); sheet.setAttribute('aria-hidden','true'); }
+    if (sheet){
+      sheet.classList.remove('open');
+      sheet.setAttribute('aria-hidden','true');
+    }
   }
   window.openInvSheet = openInvSheet;
+  window.closeInvSheet = closeInvSheet;
 
   function openTradeDesk(asset, isPrem){
     _tradeAsset = asset;
@@ -4035,6 +4304,13 @@ bootSSO();
   }
 
   function bindTradeDesk(){
+    var invClose = document.getElementById('invSheetClose');
+    if (invClose) invClose.onclick = function(e){ e.preventDefault(); e.stopPropagation(); closeInvSheet(); };
+    var invSheet = document.getElementById('invSheet');
+    if (invSheet && !invSheet.__wired) {
+      invSheet.__wired = true;
+      invSheet.addEventListener('click', function(e){ if (e.target === invSheet) closeInvSheet(); });
+    }
     var close = document.getElementById('tradeClose');
     if (close) close.onclick = closeTradeDesk;
     var desk = document.getElementById('tradeDesk');
@@ -4335,11 +4611,41 @@ bootSSO();
         <h3 id="invSheetTitle">Livro de ordens</h3>
         <p id="invSheetSub">Quem está posicionado neste ativo</p>
       </div>
-      <button type="button" class="btn btn-ghost btn-sm" id="invSheetClose" style="width:auto">Fechar</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="invSheetClose" style="width:auto;min-width:76px;z-index:6" onclick="try{window.closeInvSheet&&window.closeInvSheet()}catch(e){var s=document.getElementById('invSheet');if(s){s.classList.remove('open');s.setAttribute('aria-hidden','true')}}">✕ Fechar</button>
     </div>
     <div id="invSheetBody"></div>
   </div>
 </div>
+
+
+<script>
+/* invSheetClose-fallback */
+(function(){
+  function close(){
+    var sheet = document.getElementById('invSheet');
+    if (sheet){ sheet.classList.remove('open'); sheet.setAttribute('aria-hidden','true'); }
+    if (typeof window.closeInvSheet === 'function') try{ window.closeInvSheet(); }catch(_){}
+  }
+  function wire(){
+    var btn = document.getElementById('invSheetClose');
+    if (btn && !btn.__fb) {
+      btn.__fb = true;
+      btn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); close(); });
+    }
+    var sheet = document.getElementById('invSheet');
+    if (sheet && !sheet.__fb) {
+      sheet.__fb = true;
+      sheet.addEventListener('click', function(e){ if (e.target === sheet) close(); });
+    }
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') close();
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+  setTimeout(wire, 400);
+})();
+</script>
 
 </body>
 </html>
