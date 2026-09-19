@@ -818,6 +818,55 @@ footer a:hover{text-decoration:underline}
 }
 button, [role="button"]{cursor:pointer}
 
+
+/* ===== LIVRO DE ORDENS / INVESTIDORES ===== */
+.inv-book{display:flex;align-items:center;gap:8px;margin:8px 0 4px;flex-wrap:wrap}
+.inv-stack{display:flex;align-items:center}
+.inv-face{
+  display:inline-flex;width:28px;height:28px;border-radius:50%;overflow:hidden;
+  border:2px solid var(--panel);margin-left:-8px;cursor:pointer;
+  transition:transform .18s var(--ease),box-shadow .18s;position:relative;z-index:1;
+  background:var(--panel2);
+}
+.inv-face:first-child{margin-left:0}
+.inv-face:hover{transform:scale(1.18);z-index:5;box-shadow:0 4px 14px rgba(0,0,0,.45);border-color:var(--gold)}
+.inv-face img{width:100%;height:100%;object-fit:cover}
+.inv-count{
+  font-size:10px;font-weight:700;color:var(--muted);padding:4px 8px;border-radius:999px;
+  background:rgba(255,255,255,.04);border:1px solid var(--stroke);cursor:pointer;
+}
+.inv-count:hover{color:var(--gold2);border-color:rgba(212,179,106,.35)}
+.inv-empty{font-size:11px;color:var(--muted);font-style:italic}
+
+.inv-sheet{
+  position:fixed;inset:0;z-index:120;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .22s;
+}
+.inv-sheet.open{opacity:1;pointer-events:auto}
+.inv-sheet-panel{
+  width:min(420px,100%);max-height:78vh;overflow:auto;
+  background:var(--panel);border:1px solid var(--stroke2);border-radius:22px 22px 0 0;
+  padding:18px 16px 28px;box-shadow:0 -20px 60px rgba(0,0,0,.5);
+  transform:translateY(24px);transition:transform .28s var(--ease);
+}
+.inv-sheet.open .inv-sheet-panel{transform:none}
+.inv-sheet-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.inv-sheet-hd h3{font-size:15px;font-weight:700;margin:0}
+.inv-sheet-hd p{font-size:11px;color:var(--muted);margin:4px 0 0}
+.inv-person{
+  display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;
+  background:rgba(255,255,255,.03);border:1px solid var(--stroke);margin-bottom:8px;
+}
+.inv-person img{
+  width:48px;height:48px;border-radius:14px;object-fit:cover;flex-shrink:0;
+  border:1px solid rgba(212,179,106,.35);background:#1a1f30;
+}
+.inv-person .meta{flex:1;min-width:0}
+.inv-person .nm{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inv-person .sub{font-size:11px;color:var(--muted);margin-top:3px}
+.inv-person .amt{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--gold2);text-align:right;flex-shrink:0}
+.inv-person .amt small{display:block;font-size:10px;color:var(--muted);font-weight:600;margin-top:2px}
+
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -3660,15 +3709,19 @@ bootSSO();
           var btns = isPrem
             ? '<div class="acts"><button type="button" class="btn btn-gold" data-trade="'+a.id+'" style="flex:1">📈 Negociar</button></div>'
             : '<div class="sub" style="font-size:11px;margin-top:6px">Premium para negociar</div>';
-          var inv = a.investidores || [];
+                    var inv = a.investidores || [];
           var invHtml = '';
           if (inv.length) {
-            invHtml = '<div class="inv-row">'+inv.slice(0,5).map(function(u){
-              var av = u.foto || ('https://ui-avatars.com/api/?name='+encodeURIComponent(u.nome||'U')+'&background=0f766e&color=fff');
-              return '<span class="inv-face" title="'+esc(u.nome)+'"><img src="'+esc(av)+'" onerror="this.style.opacity=0.4"/></span>';
-            }).join('')+'<span class="inv-label">'+inv.length+' no livro</span></div>';
+            invHtml = '<div class="inv-book" data-inv-asset="'+a.id+'">'+
+              '<div class="inv-stack">'+inv.slice(0,6).map(function(u,i){
+                var av = u.foto || ('https://ui-avatars.com/api/?name='+encodeURIComponent(u.nome||'U')+'&background=0f766e&color=fff&size=72');
+                return '<span class="inv-face" data-inv-i="'+i+'" title="'+esc(u.nome||'')+'"><img src="'+esc(av)+'" alt="" loading="lazy" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/></span>';
+              }).join('')+'</div>'+
+              '<span class="inv-count" data-inv-open="'+a.id+'">'+inv.length+' investidor'+(inv.length>1?'es':'')+'</span>'+
+            '</div>';
           } else {
-            invHtml = '<div class="inv-row"><span class="inv-empty">Ninguém nesta posição</span></div>';
+            invHtml = '<div class="inv-book"><span class="inv-empty">Livro vazio · seja o primeiro</span></div>';
+          }
           }
           return '<div class="bolsa-card">'+
             '<div class="top"><span class="name">#'+a.id+' '+esc(a.nome||'')+'</span><span class="price">'+fmt(a.valor)+'</span></div>'+
@@ -3689,6 +3742,17 @@ bootSSO();
             if (asset) openTradeDesk(asset, isPrem);
           };
         });
+
+        merc.querySelectorAll('[data-inv-open], .inv-book[data-inv-asset] .inv-face').forEach(function(el){
+          el.onclick = function(e){
+            e.stopPropagation();
+            var card = el.closest('[data-inv-asset]') || el;
+            var id = Number(el.getAttribute('data-inv-open') || card.getAttribute('data-inv-asset'));
+            var asset = list.find(function(x){ return Number(x.id) === id; });
+            if (asset) openInvSheet(asset.nome || ('#'+asset.id), asset.investidores || []);
+          };
+        });
+
       }
     }
     var port = document.getElementById('bolsaPortList') || document.getElementById('bolsaPortfolio');
@@ -3855,6 +3919,46 @@ bootSSO();
     if (buy) buy.disabled = !_tradePrem || max < 1 || custo > goldsSaldo();
   }
 
+
+  function openInvSheet(titulo, investidores){
+    var sheet = document.getElementById('invSheet');
+    var body = document.getElementById('invSheetBody');
+    var title = document.getElementById('invSheetTitle');
+    var sub = document.getElementById('invSheetSub');
+    if (!sheet || !body) return;
+    var list = investidores || [];
+    if (title) title.textContent = titulo || 'Livro de ordens';
+    if (sub) sub.textContent = list.length
+      ? (list.length + ' investidor' + (list.length > 1 ? 'es' : '') + ' · ordenado por capital')
+      : 'Ninguém neste ativo ainda';
+    if (!list.length) {
+      body.innerHTML = '<div class="inv-empty" style="padding:20px;text-align:center">Nenhuma posição aberta neste ativo.</div>';
+    } else {
+      body.innerHTML = list.map(function(u){
+        var av = u.foto || ('https://ui-avatars.com/api/?name='+encodeURIComponent(u.nome||'U')+'&background=0f766e&color=fff&size=128');
+        var qtd = Number(u.quantidade)||0;
+        var inv$ = Number(u.investido)||0;
+        var media = Number(u.media)||0;
+        var amtMain = inv$ > 0 ? fmt(inv$) : (qtd + ' un.');
+        var amtSub = inv$ > 0
+          ? (qtd + ' un.' + (media ? ' · média ' + fmt(media) : ''))
+          : (media ? 'média ' + fmt(media) : '');
+        return '<div class="inv-person">'+
+          '<img src="'+esc(av)+'" alt="" loading="lazy" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/>'+
+          '<div class="meta"><div class="nm">'+esc(u.nome||'Investidor')+'</div>'+
+          '<div class="sub">Posição aberta no Trader Desk</div></div>'+
+          '<div class="amt">'+amtMain+'<small>'+esc(amtSub)+'</small></div></div>';
+      }).join('');
+    }
+    sheet.classList.add('open');
+    sheet.setAttribute('aria-hidden','false');
+  }
+  function closeInvSheet(){
+    var sheet = document.getElementById('invSheet');
+    if (sheet){ sheet.classList.remove('open'); sheet.setAttribute('aria-hidden','true'); }
+  }
+  window.openInvSheet = openInvSheet;
+
   function openTradeDesk(asset, isPrem){
     _tradeAsset = asset;
     _tradePrem = !!isPrem;
@@ -3876,11 +3980,19 @@ bootSSO();
     var box = document.getElementById('tradeInv');
     if (box) {
       var inv = asset.investidores || [];
-      if (!inv.length) box.innerHTML = '<span class="inv-empty">Seja o primeiro neste ativo</span>';
-      else box.innerHTML = inv.slice(0,6).map(function(u){
-        var av = u.foto || ('https://ui-avatars.com/api/?name='+encodeURIComponent(u.nome||'U')+'&background=0f766e&color=fff');
-        return '<span class="inv-face" title="'+esc(u.nome)+'"><img src="'+esc(av)+'" alt=""/></span>';
-      }).join('') + '<span class="inv-label">'+inv.length+' no livro</span>';
+      if (!inv.length) {
+        box.innerHTML = '<span class="inv-empty">Seja o primeiro neste ativo</span>';
+      } else {
+        box.innerHTML = '<div class="inv-book" style="justify-content:center">'+
+          '<div class="inv-stack">'+inv.slice(0,8).map(function(u,i){
+            var av = u.foto || ('https://ui-avatars.com/api/?name='+encodeURIComponent(u.nome||'U')+'&background=0f766e&color=fff&size=72');
+            return '<span class="inv-face" data-inv-open-desk="1" data-inv-i="'+i+'" title="'+esc(u.nome||'')+'"><img src="'+esc(av)+'" alt="" loading="lazy" onerror="this.src=\'https://ui-avatars.com/api/?name=U&background=0f766e&color=fff\'"/></span>';
+          }).join('')+'</div>'+
+          '<span class="inv-count" data-inv-open-desk="1">'+inv.length+' no livro · toque</span></div>';
+        box.querySelectorAll('[data-inv-open-desk]').forEach(function(el){
+          el.onclick = function(e){ e.stopPropagation(); openInvSheet(asset.nome || ('#'+asset.id), inv); };
+        });
+      }
     }
     var inp = document.getElementById('tradeQty');
     if (inp) { inp.value = '1'; inp.disabled = !!owned; }
@@ -4215,6 +4327,20 @@ bootSSO();
   setTimeout(boot, 600);
 })();
 </script>
+
+
+<div class="inv-sheet" id="invSheet" aria-hidden="true">
+  <div class="inv-sheet-panel" role="dialog" aria-modal="true">
+    <div class="inv-sheet-hd">
+      <div>
+        <h3 id="invSheetTitle">Livro de ordens</h3>
+        <p id="invSheetSub">Quem está posicionado neste ativo</p>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" id="invSheetClose" style="width:auto">Fechar</button>
+    </div>
+    <div id="invSheetBody"></div>
+  </div>
+</div>
 
 </body>
 </html>
