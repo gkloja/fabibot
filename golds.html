@@ -1127,6 +1127,288 @@ body::after{
   background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.4) 3px);
 }
 
+
+/* =========================================================
+   GOLD EMPIRE · SYSTEM UI v2  (fintech terminal)
+   ========================================================= */
+.top-v2{
+  padding:8px 14px !important;
+  gap:10px !important;
+  min-height:52px;
+  align-items:center !important;
+  background:rgba(4,6,10,.86) !important;
+  border-bottom:1px solid rgba(255,255,255,.06) !important;
+  backdrop-filter:blur(30px) saturate(1.6) !important;
+}
+.top-v2::after{
+  height:1px !important;
+  background:linear-gradient(90deg,transparent 0%,rgba(92,200,255,.35) 30%,rgba(240,193,75,.4) 70%,transparent 100%) !important;
+}
+.top-v2 .brand{gap:10px !important}
+.top-v2 .brand img{
+  width:34px !important;height:34px !important;border-radius:10px !important;
+  box-shadow:0 0 0 1px rgba(240,193,75,.35),0 4px 16px rgba(0,0,0,.4) !important;
+}
+.top-v2 .brand b{
+  font-size:15px !important;font-weight:800 !important;letter-spacing:-.3px !important;
+  font-family:var(--font) !important;
+  background:linear-gradient(120deg,#fff 10%,#ffe9a8 50%,#5cc8ff) !important;
+  -webkit-background-clip:text !important;-webkit-text-fill-color:transparent !important;
+}
+.top-v2 .brand b span{-webkit-text-fill-color:transparent !important;color:inherit !important}
+.top-v2 .brand small{
+  font-size:8px !important;letter-spacing:1.6px !important;opacity:.7;
+}
+
+.nav-v2{gap:6px !important;align-items:center !important}
+.nav-v2 .nav-link-home{
+  width:34px;height:34px;padding:0 !important;display:grid;place-items:center;
+  border-radius:10px;font-size:15px;color:var(--muted);
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+}
+.nav-v2 .nav-link-home:hover{color:#fff;border-color:rgba(92,200,255,.3);background:rgba(92,200,255,.08)}
+
+/* Online — compact chip */
+.nav-ico-btn{
+  appearance:none;border:1px solid rgba(61,255,196,.28);cursor:pointer;font-family:inherit;
+  display:inline-flex;align-items:center;gap:5px;
+  height:34px;padding:0 10px;border-radius:999px;
+  background:rgba(61,255,196,.07);color:var(--mint);
+  font-size:11px;font-weight:800;letter-spacing:.2px;
+  transition:.18s var(--ease);
+}
+.nav-ico-btn .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--mint);
+  box-shadow:0 0 8px var(--mint);animation:blink 1.8s ease infinite;flex-shrink:0;
+}
+.nav-ico-btn:hover{background:rgba(61,255,196,.14);transform:translateY(-1px)}
+.nav-ico-btn b{font-family:var(--mono);font-size:11px}
+
+/* Action chips */
+.nav-chip{
+  appearance:none;border:1px solid rgba(92,200,255,.22);cursor:pointer;font-family:inherit;
+  display:inline-flex;align-items:center;gap:6px;
+  height:34px;padding:0 12px;border-radius:999px;
+  background:rgba(92,200,255,.08);color:#d7f0ff;
+  font-size:11px;font-weight:700;transition:.18s var(--ease);
+}
+.nav-chip span{font-size:12px;line-height:1}
+.nav-chip em{font-style:normal;letter-spacing:.2px}
+.nav-chip:hover{transform:translateY(-1px);border-color:rgba(92,200,255,.45);box-shadow:0 6px 18px rgba(92,200,255,.15)}
+.nav-chip-gold{
+  background:linear-gradient(135deg,#ffe9a8,#e8b84a) !important;
+  border-color:transparent !important;color:#1a1200 !important;
+  box-shadow:0 6px 20px rgba(240,193,75,.28);
+}
+.nav-chip-gold:hover{filter:brightness(1.06)}
+
+/* Hide old fat pills if any remain */
+.nav-pill{display:none !important}
+.ge-online-pill:not(.nav-ico-btn){display:none !important}
+
+@media(max-width:520px){
+  .top-v2 .brand small{display:none}
+  .nav-chip em{display:none}
+  .nav-chip{padding:0 10px;width:34px;justify-content:center}
+  .nav-v2 .nav-link{display:none}
+}
+
+/* ===== LAYOUT ===== */
+.shell{max-width:1040px !important;padding:18px 14px calc(var(--dock-h) + 36px) !important}
+
+/* ===== HERO / HUD ===== */
+.hero-strip{gap:10px !important;margin-bottom:14px !important}
+.hero-strip .card{
+  border-radius:18px !important;padding:14px 16px !important;
+  border:1px solid rgba(255,255,255,.07) !important;
+}
+.user img{width:48px !important;height:48px !important;border-radius:14px !important}
+.user strong{font-size:15px !important;font-weight:800 !important}
+.bal .gimg{width:44px !important;height:44px !important;border-radius:12px !important}
+.bal .v{font-size:24px !important;letter-spacing:-.5px !important}
+.bal .l{font-size:9px !important;letter-spacing:1.4px !important}
+
+/* ===== ZONES ===== */
+.zone{
+  margin-bottom:12px !important;padding:18px !important;border-radius:18px !important;
+  background:linear-gradient(165deg,rgba(12,15,24,.94),rgba(7,9,14,.98)) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+}
+.zone::before{
+  width:2px !important;top:12px !important;bottom:12px !important;
+  background:linear-gradient(180deg,#5cc8ff,#f0c14b,#3dffc4) !important;
+}
+.zone-head{
+  margin-bottom:12px !important;padding-bottom:10px !important;
+  border-bottom:1px solid rgba(255,255,255,.05) !important;
+}
+.zone-head h2{
+  font-size:12px !important;font-weight:800 !important;
+  letter-spacing:.8px !important;text-transform:uppercase !important;
+  color:#c5d0e6 !important;
+}
+.zone-head p{font-size:11px !important;max-width:520px !important;line-height:1.45 !important}
+.zone-badge{
+  font-size:9px !important;padding:5px 10px !important;
+  background:rgba(92,200,255,.08) !important;border-color:rgba(92,200,255,.22) !important;
+  color:#9ed8ff !important;
+}
+
+/* ===== QUICK ACTIONS ===== */
+.ge-quick,.ge-quick-xl{gap:8px !important}
+.ge-qbtn{
+  min-height:78px !important;padding:12px 8px !important;border-radius:16px !important;
+  background:linear-gradient(160deg,rgba(16,20,32,.95),rgba(8,10,16,.98)) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+}
+.ge-qbtn:hover{
+  border-color:rgba(92,200,255,.3) !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.35),0 0 0 1px rgba(92,200,255,.1) !important;
+}
+.ge-qbtn .qi{font-size:20px !important}
+.ge-qbtn strong{font-size:10px !important;letter-spacing:.3px !important}
+.ge-qbtn span{font-size:8px !important}
+
+/* ===== GAMES ===== */
+.games{gap:10px !important}
+.gbtn{
+  min-height:118px !important;border-radius:18px !important;padding:18px 10px !important;
+  background:linear-gradient(165deg,rgba(14,18,30,.98),rgba(6,8,12,.99)) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+}
+.gbtn:hover{
+  transform:translateY(-5px) scale(1.015) !important;
+  border-color:rgba(240,193,75,.35) !important;
+  box-shadow:0 18px 40px rgba(0,0,0,.45) !important;
+}
+.gbtn .ico{font-size:28px !important;margin-bottom:8px !important}
+.gbtn strong{font-size:12px !important}
+.gbtn span{font-size:10px !important}
+
+/* ===== GROUPS ===== */
+.gcard{
+  border-radius:14px !important;padding:12px !important;
+  background:rgba(255,255,255,.025) !important;
+}
+.gcard.on{
+  border-color:rgba(240,193,75,.45) !important;
+  background:linear-gradient(135deg,rgba(240,193,75,.1),rgba(92,200,255,.04)) !important;
+}
+.gcard img{width:40px !important;height:40px !important;border-radius:12px !important}
+.gcard strong{font-size:12px !important}
+.gcard .gg{font-size:12px !important}
+
+/* ===== BOLSA / TRADER ===== */
+.bolsa-card{
+  border-radius:16px !important;padding:12px !important;
+  background:linear-gradient(165deg,rgba(12,16,28,.98),rgba(6,8,12,.99)) !important;
+  border:1px solid rgba(92,200,255,.08) !important;
+}
+.bolsa-card:hover{
+  border-color:rgba(92,200,255,.28) !important;
+  box-shadow:0 14px 32px rgba(0,0,0,.4) !important;
+}
+.bolsa-card .name{font-size:13px !important;font-weight:800 !important}
+.bolsa-card .price{font-family:var(--mono);font-size:14px !important;color:var(--gold2) !important}
+.chart-mini{border-radius:10px !important;margin:6px 0 !important;background:rgba(0,0,0,.3) !important}
+
+.pf-desk{border-radius:18px !important;padding:14px !important}
+.pf-pos{border-radius:14px !important;padding:10px 12px !important}
+.bolsa-stats{gap:8px !important}
+.bolsa-stat{
+  background:rgba(255,255,255,.03) !important;border:1px solid rgba(255,255,255,.05) !important;
+  border-radius:12px !important;padding:10px 12px !important;
+}
+.bolsa-stat .lbl{font-size:9px !important;letter-spacing:.8px !important;text-transform:uppercase;color:var(--muted)}
+.bolsa-stat .val{font-size:16px !important;font-family:var(--mono);font-weight:800;margin-top:2px}
+
+/* ===== DOCK ===== */
+.ge-dock{
+  padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px)) !important;
+  gap:4px !important;
+  background:rgba(4,6,10,.92) !important;
+  border-top:1px solid rgba(255,255,255,.06) !important;
+  backdrop-filter:blur(28px) !important;
+  box-shadow:0 -12px 40px rgba(0,0,0,.4) !important;
+}
+.ge-dock button{
+  width:46px !important;height:46px !important;border-radius:14px !important;
+  background:transparent !important;border:0 !important;
+}
+.ge-dock button .di{font-size:17px !important}
+.ge-dock button.on{
+  background:rgba(240,193,75,.14) !important;
+  box-shadow:inset 0 0 0 1px rgba(240,193,75,.25) !important;
+}
+
+/* ===== LOGIN ===== */
+.login{
+  max-width:400px !important;padding:36px 26px !important;border-radius:24px !important;
+  background:linear-gradient(165deg,rgba(14,18,28,.98),rgba(6,8,12,.99)) !important;
+}
+.login-crown{font-size:36px !important;margin-bottom:2px !important}
+.login-tag{letter-spacing:2px !important;font-size:9px !important}
+.login h1{
+  font-size:32px !important;font-family:var(--font) !important;font-weight:800 !important;
+  letter-spacing:-.6px !important;margin-bottom:6px !important;
+}
+.login p{font-size:12px !important}
+.fld input{
+  border-radius:12px !important;padding:12px 14px !important;
+  background:rgba(0,0,0,.4) !important;border:1px solid rgba(255,255,255,.08) !important;
+}
+.fld input:focus{
+  border-color:rgba(92,200,255,.4) !important;
+  box-shadow:0 0 0 3px rgba(92,200,255,.12) !important;
+}
+
+/* ===== BUTTONS ===== */
+.btn{border-radius:12px !important;font-weight:800 !important;letter-spacing:.2px !important}
+.btn-gold{
+  background:linear-gradient(135deg,#ffe9a8 0%,#f0c14b 45%,#c49212 100%) !important;
+  color:#1a1200 !important;box-shadow:0 8px 24px rgba(240,193,75,.25) !important;
+}
+.btn-sm{padding:8px 12px !important;font-size:11px !important}
+
+/* ===== TRADE DESK ===== */
+.trade-panel{max-width:440px;border-radius:22px !important;padding:16px !important}
+.trade-hd h3{font-size:15px !important;font-weight:800 !important}
+.trade-meta{gap:8px !important}
+.trade-meta .tm{
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;padding:8px 10px;flex:1;min-width:70px;
+}
+.trade-meta .l{font-size:9px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.trade-meta .v{font-size:13px;font-weight:800;font-family:var(--mono);margin-top:2px}
+
+/* ===== ONLINE PANEL ===== */
+.ge-online-panel{
+  width:min(280px,90vw) !important;border-radius:16px !important;
+  border:1px solid rgba(92,200,255,.15) !important;
+  box-shadow:0 20px 50px rgba(0,0,0,.5) !important;
+}
+.ge-online-panel-hd{padding:10px 12px !important}
+.ge-online-panel-hd strong{font-size:12px !important}
+.ge-online-row{padding:6px 8px !important;border-radius:10px !important}
+.ge-online-row img{width:30px !important;height:30px !important;border-radius:8px !important}
+.ge-online-row .nm{font-size:11px !important}
+.ge-online-row .tag{font-size:8px !important;padding:2px 6px !important}
+
+/* ===== TIP / NEWS ===== */
+.tip-strip{border-radius:12px !important;padding:10px 12px !important;font-size:11px !important}
+.bolsa-news .nitem,.nitem{
+  border-radius:12px !important;padding:10px 12px !important;font-size:12px !important;
+  background:rgba(92,200,255,.04) !important;border:1px solid rgba(92,200,255,.08) !important;
+}
+
+/* ===== MODALS ===== */
+.modal .modal-card, .trade-panel, .inv-sheet-panel{
+  box-shadow:0 28px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.05) !important;
+}
+
+/* subtle page rhythm */
+.shell > .zone:nth-child(odd){animation-delay:.04s}
+
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -1191,39 +1473,36 @@ body::after{
 <body>
 <div class="bg-fx" aria-hidden="true"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="grid"></div></div>
 
-<div class="top">
+<div class="top top-v2">
   <a class="brand" href="index.html">
     <img src="/flogo.jpg" onerror="this.src='https://fabibot.vercel.app/flogo.jpg'" alt="Fabi Bot"/>
     <div class="bn">
-      <b>Fabi<span>Bot</span></b>
-      <small>Gold Empire</small>
+      <b>Gold<span>Empire</span></b>
+      <small>Fabi Bot · live</small>
     </div>
   </a>
-  <div class="nav">
-    <button type="button" class="ge-online-pill" id="geOnlinePill" title="Ver quem está online" aria-haspopup="dialog">
+  <div class="nav nav-v2">
+    <button type="button" class="nav-ico-btn" id="geOnlinePill" title="Online agora" aria-haspopup="dialog">
       <span class="dot"></span>
-      <span><b id="geOnlineCount">0</b> online</span>
+      <b id="geOnlineCount">0</b>
     </button>
     <div class="ge-online-panel" id="geOnlinePanel" role="dialog" aria-label="Quem está online" hidden>
       <div class="ge-online-panel-hd">
-        <strong>👥 Online agora</strong>
+        <strong>Online agora</strong>
         <button type="button" class="ge-online-panel-x" id="geOnlinePanelClose" aria-label="Fechar">✕</button>
       </div>
       <div class="ge-online-panel-body" id="geOnlinePanelBody">
         <div class="ge-chat-empty" style="padding:12px;font-size:12px">Carregando…</div>
       </div>
     </div>
-    <a href="index.html" class="nav-link">Início</a>
-    <button type="button" class="nav-pill nav-pill-bolsa" id="navBolsaBtn" title="Trader Desk · Gold Empire">
-      <span class="np-ico">📊</span>
-      <span class="np-txt"><b>Trader</b><small>desk</small></span>
+    <a href="index.html" class="nav-link nav-link-home" title="Início">⌂</a>
+    <button type="button" class="nav-chip" id="navBolsaBtn" title="Trader Desk">
+      <span>📈</span><em>Trader</em>
     </button>
-    <button type="button" class="nav-pill nav-pill-buy" id="navBuyGolds" title="Comprar Golds via PIX">
-      <span class="np-ico">💰</span>
-      <span class="np-txt"><b>Buy</b><small>PIX</small></span>
+    <button type="button" class="nav-chip nav-chip-gold" id="navBuyGolds" title="Comprar Golds">
+      <span>✦</span><em>Buy</em>
     </button>
     <a href="golds.html#conquistas" id="navCq" class="hide">Conquistas</a>
-    <!-- tools movidos para o dock inferior -->
     <div class="nav-divider hide" id="navLoggedOnly"></div>
     <div class="nav-tools hide" id="navTools"></div>
   </div>
