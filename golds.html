@@ -427,8 +427,8 @@ button.ge-online-pill:hover{background:rgba(79,212,168,.14)}
   box-shadow:0 16px 40px rgba(0,0,0,.5);
 }
 .ge-dock button{
-  flex:0 0 auto;width:46px;height:46px;border:0;background:transparent;color:var(--muted);
-  font-family:inherit;font-size:0;font-weight:700;padding:0;border-radius:50%;
+  flex:1 1 0;min-width:0;width:auto;height:auto;min-height:56px;border:0;background:transparent;color:var(--muted);
+  font-family:inherit;font-size:0;font-weight:700;padding:4px 0;border-radius:12px;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
   transition:background .18s,color .18s,transform .18s;
 }
@@ -1353,7 +1353,7 @@ body::after{
   box-shadow:0 -12px 40px rgba(0,0,0,.4) !important;
 }
 .ge-dock button{
-  width:46px !important;height:46px !important;border-radius:14px !important;
+  width:auto !important;height:auto !important;min-height:56px !important;border-radius:12px !important;
   background:transparent !important;border:0 !important;
 }
 .ge-dock button .di{font-size:17px !important}
@@ -2063,6 +2063,68 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
 #navGoldChip{display:inline-flex !important}
 #navTools,#navLoggedOnly{display:none!important}
 
+
+/* === DOCK V3 TOUCH — última palavra === */
+nav#geDock.ge-dock,
+nav#geDock{
+  position:fixed !important;
+  left:0 !important; right:0 !important; bottom:0 !important;
+  transform:none !important; width:100% !important; max-width:100vw !important;
+  z-index:99999 !important;
+  display:flex !important; flex-direction:row !important;
+  align-items:stretch !important; justify-content:stretch !important;
+  gap:0 !important; margin:0 !important;
+  padding:0 0 env(safe-area-inset-bottom,0px) !important;
+  border-radius:0 !important;
+  background:rgba(6,7,11,.98) !important;
+  border-top:1px solid rgba(255,255,255,.12) !important;
+  box-shadow:0 -10px 36px rgba(0,0,0,.55) !important;
+  pointer-events:auto !important;
+  overflow:visible !important;
+}
+nav#geDock button[data-dock]{
+  flex:1 1 0% !important;
+  min-width:0 !important; max-width:none !important;
+  width:auto !important; height:64px !important; min-height:64px !important;
+  margin:0 !important; padding:0 !important;
+  border:0 !important; border-radius:0 !important;
+  background:transparent !important;
+  color:#b8b0a4 !important;
+  display:flex !important; flex-direction:column !important;
+  align-items:center !important; justify-content:center !important;
+  gap:3px !important;
+  touch-action:manipulation !important;
+  -webkit-tap-highlight-color:rgba(212,179,106,.3) !important;
+  pointer-events:auto !important;
+  position:relative !important;
+  z-index:2 !important;
+}
+nav#geDock button[data-dock] *{
+  pointer-events:none !important;
+}
+nav#geDock button[data-dock] .di{
+  font-size:20px !important; line-height:1 !important; display:block !important;
+}
+nav#geDock button[data-dock] span:not(.di){
+  display:block !important; font-size:9px !important; font-weight:700 !important;
+  line-height:1 !important; white-space:nowrap !important;
+}
+nav#geDock button[data-dock]:active,
+nav#geDock button[data-dock].on{
+  background:rgba(212,179,106,.2) !important;
+  color:#ead7a2 !important;
+}
+/* hit-area extra nas pontas (Raid / Rank) */
+nav#geDock button[data-dock="raid"]::after,
+nav#geDock button[data-dock="rank"]::after{
+  content:"" !important;
+  position:absolute !important;
+  top:-10px; bottom:-10px; left:-6px; right:-6px;
+  z-index:-1;
+}
+footer{ position:relative; z-index:1 !important; padding-bottom:calc(84px + env(safe-area-inset-bottom,0px)) !important; }
+.shell{ padding-bottom:calc(90px + env(safe-area-inset-bottom,0px)) !important; }
+
 </style>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -2634,7 +2696,7 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
   <button type="button" data-dock="crash" title="Foguete"><span class="di" aria-hidden="true">🚀</span><span>Foguete</span></button>
   <button type="button" data-dock="tiger" title="Fortune Tiger"><span class="di" aria-hidden="true">🐯</span><span>Tiger</span></button>
   <button type="button" data-dock="farm" title="Fazenda"><span class="di" aria-hidden="true">🌾</span><span>Farm</span></button>
-  <button type="button" data-dock="raid" id="dockRaid" title="Roubo"><span class="di" aria-hidden="true">🏴‍☠️</span><span>Raid</span></button>
+  <button type="button" data-dock="raid" id="dockRaid" title="Roubo"><span class="di" aria-hidden="true">⚔️</span><span>Raid</span></button>
   <button type="button" data-dock="rank" id="dockRank" title="Ranking"><span class="di" aria-hidden="true">🏆</span><span>Rank</span></button>
 </nav>
 
@@ -4068,39 +4130,90 @@ async function bootSSO(){
 
 /* Dock navigation */
 (function bindDock(){
-  const dock=document.getElementById('geDock');
-  if(!dock)return;
-  dock.querySelectorAll('[data-dock]').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      dock.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
-      btn.classList.add('on');
-      const k=btn.getAttribute('data-dock');
-      if(k==='home'){
-        document.querySelectorAll('.gv').forEach(g=>g.classList.remove('on'));
-        const vh=document.getElementById('viewHome');
-        if(vh)vh.classList.remove('hide');
-        window.scrollTo({top:0,behavior:'smooth'});
-        return;
+  function go(k){
+    if(!k) return;
+    try{
+      var dock=document.getElementById('geDock');
+      if(dock){
+        dock.querySelectorAll('button').forEach(function(b){ b.classList.remove('on'); });
+        var db=dock.querySelector('[data-dock="'+k+'"]');
+        if(db) db.classList.add('on');
       }
-      if(k==='transfer'){
-        document.querySelectorAll('.gv').forEach(g=>g.classList.remove('on'));
-        const vh=document.getElementById('viewHome');
-        if(vh)vh.classList.remove('hide');
-        if(typeof window.geGoPortal==='function')window.geGoPortal();
-        else{
-          const el=document.getElementById('portalOuro');
-          if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('ge-pulse');setTimeout(()=>el.classList.remove('ge-pulse'),2400)}
-        }
-        return;
+    }catch(_){}
+    if(k==='home'){
+      document.querySelectorAll('.gv').forEach(function(g){ g.classList.remove('on'); });
+      var vh=document.getElementById('viewHome');
+      if(vh) vh.classList.remove('hide');
+      try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(_){}
+      return;
+    }
+    if(k==='transfer'){
+      document.querySelectorAll('.gv').forEach(function(g){ g.classList.remove('on'); });
+      var vh2=document.getElementById('viewHome');
+      if(vh2) vh2.classList.remove('hide');
+      if(typeof window.geGoPortal==='function') window.geGoPortal();
+      else {
+        var el=document.getElementById('portalOuro');
+        if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); }
       }
-      if(k==='rank'){
-        if(typeof openGame==='function')openGame('rank');
-        return;
-      }
-      if(typeof openGame==='function')openGame(k);
-      else window.scrollTo({top:0,behavior:'smooth'});
+      return;
+    }
+    var fn = (typeof openGame==='function') ? openGame : window.openGame;
+    if(typeof fn==='function') fn(k);
+  }
+  window.__geDockGo = go;
+
+  var lastK='', lastT=0;
+  function onDockEvent(e){
+    var dock=document.getElementById('geDock');
+    if(!dock) return;
+    var btn = e.target && e.target.closest ? e.target.closest('[data-dock]') : null;
+    if(!btn || !dock.contains(btn)) return;
+    var k = btn.getAttribute('data-dock');
+    if(!k) return;
+    // prevent ghost click after touch
+    if(e.cancelable) e.preventDefault();
+    e.stopPropagation();
+    var now = Date.now();
+    if(k===lastK && (now-lastT)<500) return;
+    lastK=k; lastT=now;
+    go(k);
+  }
+
+  function wire(){
+    var dock=document.getElementById('geDock');
+    if(!dock) return;
+    if(dock.__dockV3) return;
+    dock.__dockV3 = true;
+    // capture phase — pegar antes de qualquer outro handler
+    dock.addEventListener('touchend', onDockEvent, {capture:true, passive:false});
+    dock.addEventListener('pointerup', onDockEvent, {capture:true, passive:false});
+    dock.addEventListener('click', onDockEvent, {capture:true, passive:false});
+    // também direto em cada botão
+    dock.querySelectorAll('[data-dock]').forEach(function(btn){
+      btn.setAttribute('type','button');
+      btn.style.touchAction = 'manipulation';
+      btn.style.webkitUserSelect = 'none';
+      btn.style.userSelect = 'none';
+      ['touchend','click'].forEach(function(ev){
+        btn.addEventListener(ev, function(e){
+          var k=btn.getAttribute('data-dock');
+          if(!k) return;
+          if(e.cancelable) e.preventDefault();
+          e.stopPropagation();
+          var now=Date.now();
+          if(k===lastK && (now-lastT)<500) return;
+          lastK=k; lastT=now;
+          go(k);
+        }, {passive:false});
+      });
     });
-  });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+  setTimeout(wire, 300);
+  setTimeout(wire, 1200);
+  setTimeout(wire, 3000);
 })();
 
 /* Dicas rotativas + atalhos extras */
