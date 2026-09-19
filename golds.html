@@ -2022,12 +2022,6 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
         <div class="ge-chat-empty" style="padding:12px;font-size:12px">Carregando…</div>
       </div>
     </div>
-    <button type="button" class="nav-chip" id="navBolsaBtn" title="Trader Desk" aria-label="Abrir Trader">
-      <span aria-hidden="true">📈</span><em>Trader</em>
-    </button>
-    <button type="button" class="nav-chip nav-chip-gold" id="navBuyGolds" title="Comprar Golds via PIX" aria-label="Comprar Golds">
-      <span aria-hidden="true">✦</span><em>Buy</em>
-    </button>
     <a href="golds.html#conquistas" id="navCq" class="hide">Conquistas</a>
     <div class="nav-divider hide" id="navLoggedOnly"></div>
     <div class="nav-tools hide" id="navTools"></div>
@@ -2505,6 +2499,8 @@ button,a.btn,.gcard,.ge-qbtn,.gbtn{touch-action:manipulation}
   <button type="button" data-dock="farm" title="Fazenda"><span class="di" aria-hidden="true">🌾</span><span>Farm</span></button>
   <button type="button" data-dock="raid" id="dockRaid" title="Roubo"><span class="di" aria-hidden="true">🏴‍☠️</span><span>Raid</span></button>
   <button type="button" data-dock="rank" id="dockRank" title="Ranking"><span class="di" aria-hidden="true">🏆</span><span>Rank</span></button>
+  <button type="button" id="navBolsaBtn" title="Trader Desk" aria-label="Trader Desk"><span class="di" aria-hidden="true">📈</span><span>Trader</span></button>
+  <button type="button" id="navBuyGolds" title="Comprar Golds" aria-label="Comprar Golds"><span class="di" aria-hidden="true">✦</span><span>Buy</span></button>
 </nav>
 
 <footer>
@@ -3604,18 +3600,28 @@ function showCqNotifications(list){
   if(!list||!list.length)return;
   const modal=document.getElementById('cqNotifModal');
   if(!modal)return;
-  // se já tem fila, acumula
+  var seen=[];
+  try{ seen=JSON.parse(localStorage.getItem('ge_cq_acked')||'[]'); }catch(_){ seen=[]; }
+  var seenSet=new Set(seen);
+  list=(list||[]).filter(function(x){ return x&&x.id&&!seenSet.has(x.id); });
+  if(!list.length){ if(typeof setCqDot==='function')setCqDot(false); return; }
   if(!window.__cqNotifQueue)window.__cqNotifQueue=list.slice();
   else {
-    const have=new Set(window.__cqNotifQueue.map(x=>x.id));
-    list.forEach(x=>{if(!have.has(x.id))window.__cqNotifQueue.push(x)});
+    const have=new Set(window.__cqNotifQueue.map(function(x){return x.id}));
+    list.forEach(function(x){ if(!have.has(x.id)&&!seenSet.has(x.id)) window.__cqNotifQueue.push(x); });
   }
+  window.__cqNotifQueue=(window.__cqNotifQueue||[]).filter(function(x){ return x&&x.id&&!seenSet.has(x.id); });
+  if(!window.__cqNotifQueue.length){ if(typeof setCqDot==='function')setCqDot(false); return; }
   paintCqNotifModal();
 }
 function paintCqNotifModal(){
   const modal=document.getElementById('cqNotifModal');
+  var seen=[];
+  try{ seen=JSON.parse(localStorage.getItem('ge_cq_acked')||'[]'); }catch(_){ seen=[]; }
+  var seenSet=new Set(seen);
+  window.__cqNotifQueue=(window.__cqNotifQueue||[]).filter(function(x){ return x&&x.id&&!seenSet.has(x.id); });
   const q=window.__cqNotifQueue||[];
-  if(!modal||!q.length){if(modal)modal.classList.remove('on');return}
+  if(!modal||!q.length){if(modal)modal.classList.remove('on');if(typeof setCqDot==='function')setCqDot(false);return}
   const first=q[0];
   document.getElementById('cqNotifEmoji').textContent=first.emoji||'🏆';
   document.getElementById('cqNotifTitle').textContent=q.length===1?(first.nome||'Conquista!'):(q.length+' conquistas novas!');
