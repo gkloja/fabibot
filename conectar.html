@@ -2797,6 +2797,7 @@ body {
                             <span class="fb-plan-time">90 dias</span>
                         </div>
                         <div class="fb-plan-price"><span class="fb-currency">R$</span>80<span class="fb-cents">,00</span></div>
+                        <p class="fb-plan-old" style="margin:0;text-decoration:line-through;opacity:.65;font-size:13px;">R$ 90,00</p>
                         <p class="fb-plan-tagline">~R$26,67/mês · economia</p>
                         <ul class="fb-plan-feats">
                             <li><i class="fas fa-mobile-alt"></i> 1 sessão WhatsApp</li>
@@ -2813,6 +2814,7 @@ body {
                             <span class="fb-plan-time">150 dias</span>
                         </div>
                         <div class="fb-plan-price"><span class="fb-currency">R$</span>125<span class="fb-cents">,00</span></div>
+                        <p class="fb-plan-old" style="margin:0;text-decoration:line-through;opacity:.65;font-size:13px;">R$ 150,00</p>
                         <p class="fb-plan-tagline">~R$25,00/mês</p>
                         <ul class="fb-plan-feats">
                             <li><i class="fas fa-mobile-alt"></i> 1 sessão WhatsApp</li>
@@ -2829,14 +2831,15 @@ body {
                             <span class="fb-plan-name">Anual</span>
                             <span class="fb-plan-time">365 dias</span>
                         </div>
-                        <div class="fb-plan-price"><span class="fb-currency">R$</span>180<span class="fb-cents">,00</span></div>
-                        <p class="fb-plan-tagline">~R$15,00/mês · melhor preço</p>
+                        <div class="fb-plan-price"><span class="fb-currency">R$</span>250<span class="fb-cents">,00</span></div>
+                        <p class="fb-plan-old" style="margin:0;text-decoration:line-through;opacity:.65;font-size:13px;">R$ 360,00</p>
+                        <p class="fb-plan-tagline">~R$20,83/mês · melhor preço · de R$360</p>
                         <ul class="fb-plan-feats">
                             <li><i class="fas fa-mobile-alt"></i> 1 sessão WhatsApp</li>
                             <li><i class="fas fa-infinity"></i> 1 ano de acesso</li>
                             <li><i class="fas fa-gem"></i> Suporte VIP</li>
                         </ul>
-                        <button type="button" class="fb-plan-cta fb-plan-cta-gold" onclick="selecionarPlano('1ano', 180)">Garantir ano</button>
+                        <button type="button" class="fb-plan-cta fb-plan-cta-gold" onclick="selecionarPlano('1ano', 250)">Garantir ano</button>
                     </article>
                 </div>
                 <p class="fb-plans-foot">
@@ -3720,7 +3723,7 @@ function selecionarPlano(tipo, valor) {
         'mensal': { nome: 'MENSAL', duracao: '30 dias', sessoes: 1, valor: 30 },
         '3meses': { nome: '3 MESES', duracao: '90 dias', sessoes: 1, valor: 80 },
         '5meses': { nome: '5 MESES', duracao: '150 dias', sessoes: 1, valor: 125 },
-        '1ano': { nome: '1 ANO', duracao: '365 dias', sessoes: 1, valor: 180 }
+        '1ano': { nome: '12 MESES', duracao: '365 dias', sessoes: 1, valor: 250 }
     };
     const plano = planos[tipo];
     $('#detalhesPlano').html(`
