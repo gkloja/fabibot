@@ -7934,6 +7934,52 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
     </button>
 </div>
 
+                <!-- ===== BOT ON/OFF + PALAVRAS PROIBIDAS ===== -->
+                <div class="fz-horario-card" id="fzBotoffCard" style="margin-top:18px;">
+                    <h3><i class="fas fa-power-off"></i> Ligar / Desligar a Robô</h3>
+                    <p class="fz-cfg-hint">Mesmo efeito do comando <b>/botoff</b> e <b>/boton</b>. Com a robô desligada, ela não responde comandos neste grupo.</p>
+                    <div class="fz-horario-toggle-row" style="margin:14px 0;">
+                        <label class="fz-horario-switch">
+                            <input type="checkbox" id="fzBotAtivo" checked onchange="fzToggleBotoff(this.checked)">
+                            <span class="fz-horario-slider"></span>
+                        </label>
+                        <span id="fzBotoffLabel">Robô <b style="color:#10b981">LIGADA</b> neste grupo</span>
+                    </div>
+                    <div class="fz-horario-status" id="fzBotoffStatusBox">
+                        <span class="fz-horario-dot" id="fzBotoffDot" style="background:#10b981;"></span>
+                        <span id="fzBotoffStatusTexto">Selecione um grupo para ver o status.</span>
+                    </div>
+                </div>
+
+                <div class="fz-horario-card" id="fzPalavrasCard" style="margin-top:18px;">
+                    <h3><i class="fas fa-ban"></i> Palavras Proibidas</h3>
+                    <p class="fz-cfg-hint">Mesmo sistema do <b>/addpalavra</b>, <b>/delpalavra</b> e <b>/listpalavras</b>. Quem enviar essas palavras pode ser banido automaticamente (se Anti-Notas estiver ativo).</p>
+
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin:12px 0;">
+                        <input type="text" id="fzPalavraInput" placeholder="Nova palavra (ex: VENDO)" style="flex:1; min-width:140px; padding:11px 14px; border-radius:10px; border:1px solid #333; background:#0e0e0e; color:#fff; font-size:14px;">
+                        <input type="text" id="fzPalavraMotivo" placeholder="Motivo (opcional)" style="flex:1; min-width:120px; padding:11px 14px; border-radius:10px; border:1px solid #333; background:#0e0e0e; color:#fff; font-size:14px;">
+                        <button type="button" class="fz-horario-save-btn" style="width:auto; padding:11px 18px;" onclick="fzAddPalavra()">
+                            <i class="fas fa-plus"></i> Adicionar
+                        </button>
+                    </div>
+
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; font-size:12px; color:var(--text2);">
+                        <span id="fzPalavrasStats">—</span>
+                        <button type="button" onclick="fzCarregarPalavras()" style="background:none;border:none;color:var(--primary);cursor:pointer;font-weight:600;font-size:12px;">
+                            <i class="fas fa-sync"></i> Atualizar
+                        </button>
+                    </div>
+
+                    <div id="fzPalavrasPersonalizadas" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; min-height:28px;"></div>
+
+                    <details style="margin-top:8px;">
+                        <summary style="cursor:pointer; font-size:13px; font-weight:600; color:var(--text2); user-select:none;">
+                            Ver lista padrão do sistema
+                        </summary>
+                        <div id="fzPalavrasPadrao" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;"></div>
+                    </details>
+                </div>
+
                 <!-- ===== G1: SELEÇÃO DE ESTADOS ===== -->
                 <div class="fz-g1-card" id="g1EstadosCard">
                     <h3><i class="fas fa-newspaper"></i> 📰 Notícias G1 por Estado</h3>
@@ -8883,7 +8929,9 @@ if (cfgIsAdmin) {
     setTimeout(() => {
         carregarPainelAtividade(grupoSelecionado);
         carregarHorarioGrupo(grupoSelecionado);
-        iniciarAtualizacaoStatus(); // 👈 ADICIONE ESTA LINHA
+        iniciarAtualizacaoStatus();
+        if (typeof fzCarregarBotoff === 'function') fzCarregarBotoff(grupoSelecionado);
+        if (typeof fzCarregarPalavras === 'function') fzCarregarPalavras(grupoSelecionado);
     }, 500);
 } else {
         console.log('❌ Usuário NÃO é admin do grupo selecionado');
@@ -9078,6 +9126,192 @@ async function salvarHorarioGrupo() {
     } finally {
         btn.disabled = false;
         btn.innerHTML = original;
+    }
+}
+
+// ==================== BOT OFF + PALAVRAS PROIBIDAS (site) ====================
+function fzAuthHeaders() {
+    const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
+    return {
+        'Content-Type': 'application/json',
+        'X-User-Numero': auth.contaNumero || auth.numero || '',
+        'X-User-Nome': auth.nome || auth.nomeConta || ''
+    };
+}
+function fzApi(path) {
+    if (typeof apiProxyUrl === 'function') return apiProxyUrl(path);
+    return (typeof API_URL !== 'undefined' ? API_URL : '') + path;
+}
+
+async function fzCarregarBotoff(grupoID) {
+    const gid = grupoID || cfgPainelObterGrupoSelecionado();
+    const label = document.getElementById('fzBotoffLabel');
+    const texto = document.getElementById('fzBotoffStatusTexto');
+    const dot = document.getElementById('fzBotoffDot');
+    const chk = document.getElementById('fzBotAtivo');
+    if (!gid) {
+        if (texto) texto.textContent = 'Selecione um grupo para ver o status.';
+        return;
+    }
+    try {
+        const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
+        const qs = new URLSearchParams({ grupoID: gid, numero: auth.contaNumero || '', nome: auth.nome || '' });
+        const resp = await fetch(fzApi('/api/grupo/botoff?' + qs.toString()), { headers: fzAuthHeaders() });
+        const data = await resp.json();
+        if (!data.success) {
+            if (texto) texto.textContent = data.message || 'Sem permissão ou erro.';
+            return;
+        }
+        const ativo = !!data.ativo;
+        if (chk) chk.checked = ativo;
+        if (label) label.innerHTML = ativo
+            ? 'Robô <b style="color:#10b981">LIGADA</b> neste grupo'
+            : 'Robô <b style="color:#ef4444">DESLIGADA</b> neste grupo';
+        if (dot) dot.style.background = ativo ? '#10b981' : '#ef4444';
+        if (texto) texto.textContent = ativo
+            ? 'A robô responde comandos normalmente.'
+            : 'A robô está muda neste grupo. Ative o interruptor ou use /boton.';
+    } catch (e) {
+        console.error('fzCarregarBotoff', e);
+        if (texto) texto.textContent = 'Falha ao carregar status da robô.';
+    }
+}
+
+async function fzToggleBotoff(ligado) {
+    const grupoID = cfgPainelObterGrupoSelecionado();
+    if (!grupoID) {
+        if (typeof Swal !== 'undefined') Swal.fire('Atenção', 'Selecione um grupo primeiro.', 'warning');
+        const chk = document.getElementById('fzBotAtivo');
+        if (chk) chk.checked = !ligado;
+        return;
+    }
+    try {
+        const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
+        // ligado=true → botoff=false
+        const resp = await fetch(fzApi('/api/grupo/botoff'), {
+            method: 'POST',
+            headers: fzAuthHeaders(),
+            body: JSON.stringify({ grupoID, botoff: !ligado, ...auth })
+        });
+        const data = await resp.json();
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 2200,
+                icon: data.success ? 'success' : 'error',
+                title: data.message || (data.success ? 'Atualizado' : 'Erro')
+            });
+        }
+        await fzCarregarBotoff(grupoID);
+    } catch (e) {
+        console.error('fzToggleBotoff', e);
+        if (typeof Swal !== 'undefined') Swal.fire('Erro', 'Falha ao alterar status da robô.', 'error');
+        await fzCarregarBotoff(grupoID);
+    }
+}
+
+function fzRenderChipPalavra(p, personalizada) {
+    const esc = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    if (!personalizada) {
+        return `<span style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);font-size:12px;color:#94a3b8;">${esc(p)}</span>`;
+    }
+    return `<span style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);font-size:12px;color:#fecaca;font-weight:600;">
+        ${esc(p)}
+        <button type="button" onclick="fzDelPalavra('${esc(p).replace(/'/g, "\\'")}')" title="Remover" style="background:none;border:none;color:#f87171;cursor:pointer;padding:0;line-height:1;font-size:14px;">×</button>
+    </span>`;
+}
+
+async function fzCarregarPalavras(grupoID) {
+    const gid = grupoID || cfgPainelObterGrupoSelecionado();
+    const boxP = document.getElementById('fzPalavrasPersonalizadas');
+    const boxD = document.getElementById('fzPalavrasPadrao');
+    const stats = document.getElementById('fzPalavrasStats');
+    if (!gid) {
+        if (boxP) boxP.innerHTML = '<span style="color:var(--text2);font-size:13px;">Selecione um grupo.</span>';
+        return;
+    }
+    try {
+        const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
+        const qs = new URLSearchParams({ grupoID: gid, numero: auth.contaNumero || '', nome: auth.nome || '' });
+        const resp = await fetch(fzApi('/api/grupo/palavras?' + qs.toString()), { headers: fzAuthHeaders() });
+        const data = await resp.json();
+        if (!data.success) {
+            if (boxP) boxP.innerHTML = `<span style="color:#f87171;font-size:13px;">${data.message || 'Erro'}</span>`;
+            return;
+        }
+        if (stats) stats.textContent = `📌 Padrão: ${data.padrao.length} · ✨ Personalizadas: ${data.personalizadas.length} · Total: ${data.total}`;
+        if (boxP) {
+            boxP.innerHTML = data.personalizadas.length
+                ? data.personalizadas.map(p => fzRenderChipPalavra(p, true)).join('')
+                : '<span style="color:var(--text2);font-size:13px;">Nenhuma palavra personalizada ainda. Adicione acima.</span>';
+        }
+        if (boxD) {
+            boxD.innerHTML = (data.padrao || []).map(p => fzRenderChipPalavra(p, false)).join('');
+        }
+    } catch (e) {
+        console.error('fzCarregarPalavras', e);
+        if (boxP) boxP.innerHTML = '<span style="color:#f87171;font-size:13px;">Falha ao carregar palavras.</span>';
+    }
+}
+
+async function fzAddPalavra() {
+    const grupoID = cfgPainelObterGrupoSelecionado();
+    const input = document.getElementById('fzPalavraInput');
+    const motivoEl = document.getElementById('fzPalavraMotivo');
+    const palavra = (input && input.value || '').trim();
+    const motivo = (motivoEl && motivoEl.value || '').trim();
+    if (!grupoID) {
+        if (typeof Swal !== 'undefined') Swal.fire('Atenção', 'Selecione um grupo primeiro.', 'warning');
+        return;
+    }
+    if (!palavra || palavra.length < 2) {
+        if (typeof Swal !== 'undefined') Swal.fire('Atenção', 'Digite uma palavra com pelo menos 2 caracteres.', 'warning');
+        return;
+    }
+    try {
+        const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
+        const resp = await fetch(fzApi('/api/grupo/palavras'), {
+            method: 'POST',
+            headers: fzAuthHeaders(),
+            body: JSON.stringify({ grupoID, palavra, motivo, ...auth })
+        });
+        const data = await resp.json();
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 2000,
+                icon: data.success ? 'success' : 'error',
+                title: data.message || (data.success ? 'Adicionada' : 'Erro')
+            });
+        }
+        if (data.success && input) input.value = '';
+        await fzCarregarPalavras(grupoID);
+    } catch (e) {
+        console.error('fzAddPalavra', e);
+        if (typeof Swal !== 'undefined') Swal.fire('Erro', 'Falha ao adicionar palavra.', 'error');
+    }
+}
+
+async function fzDelPalavra(palavra) {
+    const grupoID = cfgPainelObterGrupoSelecionado();
+    if (!grupoID || !palavra) return;
+    try {
+        const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
+        const resp = await fetch(fzApi('/api/grupo/palavras'), {
+            method: 'DELETE',
+            headers: fzAuthHeaders(),
+            body: JSON.stringify({ grupoID, palavra, ...auth })
+        });
+        const data = await resp.json();
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 1800,
+                icon: data.success ? 'success' : 'error',
+                title: data.message || (data.success ? 'Removida' : 'Erro')
+            });
+        }
+        await fzCarregarPalavras(grupoID);
+    } catch (e) {
+        console.error('fzDelPalavra', e);
+        if (typeof Swal !== 'undefined') Swal.fire('Erro', 'Falha ao remover palavra.', 'error');
     }
 }
 
