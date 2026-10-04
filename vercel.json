@@ -24,6 +24,13 @@
       ]
     },
     {
+      "source": "/.well-known/assetlinks.json",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
+    },
+    {
       "source": "/(flogo.jpg|flogo.webp|og-image.jpg|icon-192.png|icon-512.png|apple-touch-icon.png|favicon-16x16.png|favicon-32x32.png)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
