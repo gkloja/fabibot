@@ -1,9 +1,9 @@
 {
-  "id": "/",
+  "id": "https://www.fabibot.com.br/",
   "name": "Fabi Bot – Figurinhas, Downloads e Grupos WhatsApp",
   "short_name": "FabiBot",
   "description": "Crie figurinhas, baixe músicas e vídeos, jogue e proteja seu grupo de WhatsApp. O bot mais completo do Brasil.",
-  "start_url": "/",
+  "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
@@ -11,7 +11,11 @@
   "theme_color": "#16a34a",
   "lang": "pt-BR",
   "dir": "ltr",
-  "categories": ["utilities", "social", "productivity"],
+  "categories": [
+    "utilities",
+    "social",
+    "productivity"
+  ],
   "icons": [
     {
       "src": "/icon-192.png",
@@ -20,22 +24,60 @@
       "purpose": "any"
     },
     {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
       "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Conectar o bot",
+      "short_name": "Conectar",
+      "url": "/conectar?source=pwa",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Gold Empire",
+      "short_name": "Golds",
+      "url": "/golds?source=pwa",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Comandos",
+      "short_name": "Comandos",
+      "url": "/comandos?source=pwa",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
