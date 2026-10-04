@@ -1,10 +1,14 @@
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "br.com.fabibot.app",
-    "sha256_cert_fingerprints": [
-      "COLE_AQUI_O_SHA256_DEPOIS_DO_BUBBLEWRAP"
-    ]
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.fabibot",
+      "sha256_cert_fingerprints": [
+        "COLE_AQUI_O_SHA256_DO_PWABuilder_OU_PLAY_APP_SIGNING"
+      ]
+    }
   }
-}]
+]
