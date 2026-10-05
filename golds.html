@@ -3364,10 +3364,12 @@ document.getElementById('btnSpin').onclick=async()=>{
   document.getElementById('tBetIn').value=S.bet;
   if(S.golds<S.bet)return toast('Saldo insuficiente','bad');
   const btn=document.getElementById('btnSpin');
-  const anim=setInterval(()=>{const cells=document.querySelectorAll('#tigerGrid .cell');cells.forEach(c=>c.textContent=SYM[Math.floor(Math.random()*SYM.length)])},70);
+  // Cacheia as 9 células uma vez; evita querySelectorAll a cada frame da animação.
+  const cells=Array.from(document.querySelectorAll('#tigerGrid .cell'));
+  const anim=setInterval(()=>{for(const c of cells)c.textContent=SYM[Math.floor(Math.random()*SYM.length)]},80);
   const d=await play('/cliente06/game/tigrinho',{bet:S.bet},btn,{hist:'hist-tigrinho'});
   clearInterval(anim);if(!d)return;
-  if(d.reels){const cells=document.querySelectorAll('#tigerGrid .cell');let i=0;for(let r=0;r<3;r++)for(let c=0;c<3;c++)cells[i++].textContent=d.reels[r][c]}
+  if(d.reels){let i=0;for(let r=0;r<3;r++)for(let c=0;c<3;c++)cells[i++].textContent=d.reels[r][c]}
   const log=document.getElementById('tigLog');
   if(d.jackpot){log.textContent='🎉 JACKPOT +'+fmt(d.ganho);toast('🐯 JACKPOT','ok')}
   else if(d.ganho>0){log.textContent='+'+fmt(d.ganho);toast('🐯 +'+fmt(d.ganho),'ok')}
