@@ -1,118 +1,67 @@
 {
   "rewrites": [
-    {
-      "source": "/conectar",
-      "destination": "/conectar.html"
-    },
-    {
-      "source": "/login",
-      "destination": "/login.html"
-    },
-    {
-      "source": "/index",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/figurinhas",
-      "destination": "/figurinhas.html"
-    },
-    {
-      "source": "/downloads",
-      "destination": "/downloads.html"
-    },
-    {
-      "source": "/comandos",
-      "destination": "/comandos.html"
-    },
-    {
-      "source": "/golds",
-      "destination": "/golds.html"
-    },
-    {
-      "source": "/ZapAudioMod",
-      "destination": "/ZapAudioMod.html"
-    },
-    {
-      "source": "/privacidade",
-      "destination": "/privacidade.html"
-    },
-    {
-      "source": "/termos",
-      "destination": "/termos.html"
-    },
-    {
-      "source": "/sobre",
-      "destination": "/sobre.html"
-    },
-    {
-      "source": "/contato",
-      "destination": "/contato.html"
-    },
-    {
-      "source": "/conquistas",
-      "destination": "/conquistas.html"
-    }
+    { "source": "/conectar", "destination": "/conectar.html" },
+    { "source": "/conectar/", "destination": "/conectar.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/login/", "destination": "/login.html" },
+    { "source": "/index", "destination": "/index.html" },
+    { "source": "/figurinhas", "destination": "/figurinhas.html" },
+    { "source": "/figurinhas/", "destination": "/figurinhas.html" },
+    { "source": "/downloads", "destination": "/downloads.html" },
+    { "source": "/downloads/", "destination": "/downloads.html" },
+    { "source": "/comandos", "destination": "/comandos.html" },
+    { "source": "/comandos/", "destination": "/comandos.html" },
+    { "source": "/golds", "destination": "/golds.html" },
+    { "source": "/golds/", "destination": "/golds.html" },
+    { "source": "/ZapAudioMod", "destination": "/ZapAudioMod.html" },
+    { "source": "/ZapAudioMod/", "destination": "/ZapAudioMod.html" },
+    { "source": "/zapaudiomod", "destination": "/ZapAudioMod.html" },
+    { "source": "/melhor-bot-whatsapp", "destination": "/melhor-bot-whatsapp.html" },
+    { "source": "/melhor-bot-whatsapp/", "destination": "/melhor-bot-whatsapp.html" },
+    { "source": "/conquistas", "destination": "/conquistas.html" },
+    { "source": "/conquistas/", "destination": "/conquistas.html" },
+    { "source": "/sobre", "destination": "/sobre.html" },
+    { "source": "/sobre/", "destination": "/sobre.html" },
+    { "source": "/contato", "destination": "/contato.html" },
+    { "source": "/contato/", "destination": "/contato.html" },
+    { "source": "/privacidade", "destination": "/privacidade.html" },
+    { "source": "/privacidade/", "destination": "/privacidade.html" },
+    { "source": "/termos", "destination": "/termos.html" },
+    { "source": "/termos/", "destination": "/termos.html" }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        }
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
       ]
     },
     {
       "source": "/.well-known/assetlinks.json",
       "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/json"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
       ]
     },
     {
       "source": "/site.webmanifest",
       "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/manifest+json"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400"
-        }
+        { "key": "Content-Type", "value": "application/manifest+json" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]
     },
     {
-      "source": "/(flogo.jpg|flogo.webp|og-image.jpg|icon-192.png|icon-512.png|icon-192-maskable.png|icon-512-maskable.png|apple-touch-icon.png|favicon-16x16.png|favicon-32x32.png)",
+      "source": "/(flogo.jpg|flogo.webp|flogo.png|og-image.jpg|og-square.jpg|og-whatsapp.jpg|icon-192.png|icon-512.png|icon-192-maskable.png|icon-512-maskable.png|apple-touch-icon.png|favicon-16x16.png|favicon-32x32.png)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/(figurinhas.html|downloads.html|comandos.html|ZapAudioMod.html)",
+      "source": "/(figurinhas.html|downloads.html|comandos.html|ZapAudioMod.html|melhor-bot-whatsapp.html|golds.html|conectar.html)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600, must-revalidate"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
       ]
     }
   ]

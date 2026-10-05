@@ -3,5 +3,7 @@ Allow: /
 
 Disallow: /api/
 Disallow: /connect.js
+Disallow: /datab/
+Disallow: /public/database/
 
 Sitemap: https://www.fabibot.com.br/sitemap.xml
