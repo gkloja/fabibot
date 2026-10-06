@@ -7129,17 +7129,17 @@ body.light-mode .command-badge-mobile {
             </div>
         </div>
 <div class="menu" id="mainMenu">
-    <a href="#" data-section="feed" class="active">Feed</a>
-    <a href="#" data-section="comunidades">Comunidades</a>
-    <a href="#" data-section="configurar">Configurar</a>
-    <a href="#" data-section="chat">Chat</a>
-    <a href="#" data-section="radio">Música</a>
-    <a href="#" data-section="comandos" class="menu-relatos-badge">
+    <a href="?feed" data-section="feed" class="active">Feed</a>
+    <a href="?comunidades" data-section="comunidades">Comunidades</a>
+    <a href="?configurar" data-section="configurar">Configurar</a>
+    <a href="?chat" data-section="chat">Chat</a>
+    <a href="?radio" data-section="radio">Música</a>
+    <a href="?comandos" data-section="comandos" class="menu-relatos-badge">
         Comandos
         <span class="badge-count badge-relatos" id="menuRelatosBadge" style="display:none;">0</span>
     </a>
     <a href="golds.html" class="menu-golds-link" title="Gold Empire" style="color:#f6c445;font-weight:800;">👑 Golds</a>
-    <a href="#" data-section="perfil">Perfil</a>
+    <a href="?perfil" data-section="perfil">Perfil</a>
 </div>
         <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
 <div class="right-nav">
@@ -10367,6 +10367,107 @@ function resolverUrlFoto(url) {
     let currentUser = null;
     let posts = [], vagas = [], noticias = [], mensagensChat = [];
     let currentSection = 'feed';
+    // ==================== ROTEAMENTO DE ABAS / LINKS COMPARTILHÁVEIS ====================
+    // Ex.: https://fabibot.com.br/?comandos
+    const FABI_SECOES_COMPARTILHAVEIS = Object.freeze([
+        'feed','comunidades','configurar','comandos','chat',
+        'vendas','radio','perfil','empregos','noticias'
+    ]);
+
+    const FABI_TITULOS_SECAO = Object.freeze({
+        feed: 'Feed',
+        comunidades: 'Comunidades',
+        configurar: 'Configurar Grupo',
+        comandos: 'Comandos',
+        chat: 'Chat',
+        vendas: 'Vendas',
+        radio: 'Música',
+        perfil: 'Perfil',
+        empregos: 'Vagas',
+        noticias: 'Notícias'
+    });
+
+    function fabiSecaoValida(section) {
+        return FABI_SECOES_COMPARTILHAVEIS.includes(String(section || '').toLowerCase());
+    }
+
+    function fabiSecaoDaUrl() {
+        try {
+            const params = new URLSearchParams(window.location.search);
+
+            // Compatibilidade com fluxo antigo de configuração.
+            if (params.has('grupo')) return 'configurar';
+
+            // Compatibilidade com ?secao=radio e outros links antigos.
+            const legacy = String(params.get('secao') || '').toLowerCase();
+            if (fabiSecaoValida(legacy)) return legacy;
+
+            // Novo formato curto: ?comandos, ?chat, ?comunidades...
+            for (const secao of FABI_SECOES_COMPARTILHAVEIS) {
+                if (params.has(secao)) return secao;
+            }
+        } catch (_) {}
+        return null;
+    }
+
+    function fabiMontarUrlSecao(section) {
+        const secao = String(section || '').toLowerCase();
+        if (!fabiSecaoValida(secao)) return null;
+
+        try {
+            const atual = new URL(window.location.href);
+            const chavesDeRota = new Set([
+                ...FABI_SECOES_COMPARTILHAVEIS,
+                'secao','grupo','watch','post','n'
+            ]);
+
+            // Preserva utm/ref e outros parâmetros que não sejam rota.
+            const extras = [];
+            atual.searchParams.forEach((valor, chave) => {
+                if (!chavesDeRota.has(chave)) {
+                    extras.push(`${encodeURIComponent(chave)}=${encodeURIComponent(valor)}`);
+                }
+            });
+
+            // Sem "=" propositalmente: ?comandos
+            extras.push(encodeURIComponent(secao));
+            return `${atual.pathname}?${extras.join('&')}${atual.hash || ''}`;
+        } catch (_) {
+            return `?${encodeURIComponent(secao)}`;
+        }
+    }
+
+    function fabiAtualizarUrlSecao(section, { replace = false } = {}) {
+        const secao = String(section || '').toLowerCase();
+        const destino = fabiMontarUrlSecao(secao);
+        if (!destino) return;
+
+        const atual = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+        if (atual !== destino) {
+            const state = { ...(history.state || {}), fabiSection: secao };
+            if (replace) history.replaceState(state, '', destino);
+            else history.pushState(state, '', destino);
+        }
+
+        const titulo = FABI_TITULOS_SECAO[secao] || 'Fabi Bot';
+        document.title = `${titulo} | Fabi Bot`;
+    }
+
+    function fabiAplicarAriaNavegacao(section) {
+        document.querySelectorAll('[data-section]').forEach(el => {
+            if (el.dataset.section === section) el.setAttribute('aria-current', 'page');
+            else el.removeAttribute('aria-current');
+        });
+    }
+
+    window.addEventListener('popstate', () => {
+        const secao = fabiSecaoDaUrl() || 'feed';
+        if (typeof mudarSecao === 'function') {
+            mudarSecao(secao, { skipUrl: true, fromHistory: true });
+        }
+    });
+    // ==================== FIM ROTEAMENTO ====================
+
     let mediaType = null;
     let selectedVaga = null;
     let anonimoAtivo = false;
@@ -18843,7 +18944,7 @@ function toggleMaisMenu(force) {
     overlay.classList.toggle('show', mostrar);
 }
 
-function mudarSecao(section) {
+function mudarSecao(section, options = {}) {
     if (section === 'watch' || section === 'imagem') { section = 'feed'; }
 
     if (section === 'criar') {
@@ -18851,9 +18952,23 @@ function mudarSecao(section) {
         return;
     }
     
+    
+    if (!fabiSecaoValida(section)) section = 'feed';
+
+    if (!options.skipUrl) {
+        fabiAtualizarUrlSecao(section, { replace: !!options.replaceUrl });
+    } else {
+        const titulo = FABI_TITULOS_SECAO[section] || 'Fabi Bot';
+        document.title = `${titulo} | Fabi Bot`;
+    }
+
+    fabiAplicarAriaNavegacao(section);
     currentSection = section;
-    document.getElementById('comandosSearchInput')?.addEventListener('input', renderizarComandos);
-    document.getElementById('comandosPrefixoInput')?.addEventListener('input', renderizarComandos);
+    if (!window.__fabiComandosListenersBound) {
+        document.getElementById('comandosSearchInput')?.addEventListener('input', renderizarComandos);
+        document.getElementById('comandosPrefixoInput')?.addEventListener('input', renderizarComandos);
+        window.__fabiComandosListenersBound = true;
+    }
 
     // Atualizar classes ativas nos menus
     document.querySelectorAll('.menu a').forEach(a => a.classList.remove('active'));
@@ -19069,7 +19184,7 @@ async function gerarImagemIA() {
 
 // Compartilha um link que já abre o site direto na aba "Gerar Imagem"
 async function compartilharGerarImagem() {
-    const link = `${window.location.origin}${window.location.pathname}?secao=imagem`;
+    const link = `${window.location.origin}${window.location.pathname}?imagem`;
     const textoCompartilhar = 'Crie imagens com IA de graça na Fabi Bot! 🎨';
 
     if (navigator.share) {
@@ -19390,14 +19505,20 @@ setInterval(verificarNotificacoes, 30000);
         document.getElementById('mainMenu')?.classList.toggle('show');
     });
     
-    document.querySelectorAll('.menu a').forEach(link => {
+    document.querySelectorAll('.menu a[data-section]').forEach(link => {
         link.addEventListener('click', (e) => {
+            // Permite Ctrl/Cmd/Shift + clique para abrir a aba em outra guia.
+            if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0) return;
             e.preventDefault();
             mudarSecao(link.getAttribute('data-section'));
         });
     });
     
     document.querySelectorAll('.bottom-nav-item[data-section]').forEach(btn => {
+        const label = (btn.innerText || btn.dataset.section || '').trim();
+        if (label && !btn.getAttribute('aria-label')) btn.setAttribute('aria-label', label);
+        if (!btn.getAttribute('title')) btn.setAttribute('title', label || btn.dataset.section);
+
         btn.addEventListener('click', () => {
             mudarSecao(btn.getAttribute('data-section'));
         });
@@ -20229,11 +20350,11 @@ function initComunidades() {
 
 // Sobrescrever mudarSecao para incluir 'comunidades'
 const mudarSecaoOriginal = mudarSecao;
-mudarSecao = function(section) {
+mudarSecao = function(section, options = {}) {
     const container = document.getElementById('comunidadesContainer');
     if (container) container.style.display = section === 'comunidades' ? 'block' : 'none';
     if (section === 'comunidades' && gruposData.length === 0) carregarGrupos();
-    mudarSecaoOriginal(section);
+    return mudarSecaoOriginal(section, options);
 };
 
 
@@ -20296,16 +20417,22 @@ window.addEventListener('beforeunload', () => {
 // Adicionar evento para primeira interação do usuário
     document.addEventListener('DOMContentLoaded', inicializar);
     document.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('grupo')) {
-        mudarSecao('configurar'); // abre a aba de configuração de verdade
-        window.history.replaceState({}, '', window.location.pathname); // limpa a URL
-    }
-    if (params.get('secao') === 'radio') {
-        mudarSecao('radio');
-        window.history.replaceState({}, '', window.location.pathname);
-    }
-});
+        const params = new URLSearchParams(window.location.search);
+        const secaoInicial = fabiSecaoDaUrl();
+
+        if (secaoInicial) {
+            mudarSecao(secaoInicial, { skipUrl: true });
+
+            // Migra links antigos ?secao=... para o formato curto ?comandos, ?radio...
+            // Mantém ?grupo=... intacto por compatibilidade.
+            if (params.has('secao') && !params.has('grupo')) {
+                fabiAtualizarUrlSecao(secaoInicial, { replace: true });
+            }
+        } else {
+            currentSection = 'feed';
+            fabiAplicarAriaNavegacao('feed');
+        }
+    });
 </script>
 <audio id="radioAudioPlayer" preload="none"></audio>
 <!-- ============ PASSO 3: HTML (cole dentro do <body>) ============ -->
