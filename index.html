@@ -273,7 +273,7 @@
         },
         welcomeNotification: {
           title: "Fabi Bot",
-          message: "Notificações ativadas! Você será avisado sobre o feed e sua sessão."
+          message: "Notificações ativadas! Você será avisado sobre sua sessão, aluguel, validade do plano e feed."
         }
       });
       console.log("✅ OneSignal Fabi Bot inicializado");
@@ -284,7 +284,7 @@
           let raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
           if (raw) {
             const s = JSON.parse(raw);
-            const ext = String((s && (s.id || s.numero || s.email)) || '').trim();
+            const ext = String((s && (s.numero || s.id || s.email)) || '').trim();
             if (ext && OneSignal.login) await OneSignal.login(ext);
           }
         }
@@ -307,8 +307,8 @@
         s = JSON.parse(localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session') || 'null');
       } catch (_) {}
       const ext = String(
-        (u && (u.id || u.numero || u.email)) ||
-        (s && (s.id || s.numero || s.email)) ||
+        (u && (u.numero || u.id || u.email)) ||
+        (s && (s.numero || s.id || s.email)) ||
         ''
       ).trim();
       if (!ext) return;
@@ -7900,6 +7900,67 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
                 <p>Você precisa ser <strong>administrador</strong> deste grupo para ver e alterar essas configurações.</p>
             </div>
 
+
+            <!-- ===== CONTROLE EXCLUSIVO DA CONTA DONA DA SESSÃO ===== -->
+            <div class="fz-horario-card" id="fzSessaoOwnerCard" style="display:none;margin:16px 0 20px;border:1px solid rgba(37,211,102,.35);background:linear-gradient(145deg,rgba(37,211,102,.08),rgba(15,23,42,.55));">
+                <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+                    <div>
+                        <h3 style="margin-bottom:5px;"><i class="fas fa-key" style="color:#25d366"></i> Controle da sua Sessão</h3>
+                        <p class="fz-cfg-hint" style="margin-bottom:0;">Somente a conta que conectou esta sessão pode definir o aluguel ou ligar/desligar esta robô.</p>
+                    </div>
+                    <span id="fzOwnerBadge" style="padding:6px 10px;border-radius:999px;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.35);color:#86efac;font-size:11px;font-weight:700;">SESSÃO PRÓPRIA</span>
+                </div>
+
+                <div id="fzOwnerSessaoSelectWrap" style="margin-top:14px;display:none;">
+                    <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px;">Sua sessão neste grupo</label>
+                    <select id="fzOwnerSessaoSelect" onchange="fzTrocarSessaoControle(this.value)" style="width:100%;padding:10px 12px;border-radius:10px;background:#0c1118;color:#fff;border:1px solid #263241;"></select>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:14px;">
+                    <div style="padding:12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);">
+                        <div style="font-size:11px;color:var(--text2);">SESSÃO</div>
+                        <div id="fzOwnerSessaoNumero" style="font-weight:800;margin-top:4px;word-break:break-all;">—</div>
+                    </div>
+                    <div style="padding:12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);">
+                        <div style="font-size:11px;color:var(--text2);">ALUGUEL</div>
+                        <div id="fzAluguelStatus" style="font-weight:800;margin-top:4px;">—</div>
+                        <div id="fzAluguelRestante" style="font-size:12px;color:var(--text2);margin-top:3px;">—</div>
+                    </div>
+                </div>
+
+                <div style="margin-top:14px;padding:14px;border-radius:12px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.08);">
+                    <label style="font-size:12px;color:#cbd5e1;font-weight:700;display:block;margin-bottom:7px;"><i class="fas fa-calendar-clock"></i> Vencimento do aluguel — horário de Brasília</label>
+                    <input type="datetime-local" id="fzAluguelVenceEm" style="width:100%;padding:11px 12px;border-radius:10px;border:1px solid #263241;background:#090d13;color:#fff;color-scheme:dark;">
+                    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;">
+                        <button type="button" class="fz-horario-save-btn" style="width:auto;padding:8px 12px;" onclick="fzAluguelRapido(1)">+1 dia</button>
+                        <button type="button" class="fz-horario-save-btn" style="width:auto;padding:8px 12px;" onclick="fzAluguelRapido(7)">+7 dias</button>
+                        <button type="button" class="fz-horario-save-btn" style="width:auto;padding:8px 12px;" onclick="fzAluguelRapido(14)">+14 dias</button>
+                        <button type="button" class="fz-horario-save-btn" style="width:auto;padding:8px 12px;" onclick="fzAluguelRapido(30)">+30 dias</button>
+                        <button type="button" class="fz-horario-save-btn" style="width:auto;padding:8px 12px;" onclick="fzAluguelRapido(90)">+90 dias</button>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+                        <button type="button" class="fz-horario-save-btn" style="flex:1;min-width:150px;" onclick="fzSalvarAluguelCustom()"><i class="fas fa-floppy-disk"></i> Salvar aluguel</button>
+                        <button type="button" class="fz-horario-save-btn" style="width:auto;background:#1f2937;box-shadow:none;" onclick="fzRemoverAluguel()"><i class="fas fa-infinity"></i> Sem limite</button>
+                    </div>
+                </div>
+
+                <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);">
+                    <h3 style="font-size:15px;"><i class="fas fa-power-off"></i> Ligar / Desligar esta Sessão</h3>
+                    <p class="fz-cfg-hint">Este interruptor controla apenas a sessão conectada pela sua conta neste grupo.</p>
+                    <div class="fz-horario-toggle-row" style="margin:12px 0;">
+                        <label class="fz-horario-switch">
+                            <input type="checkbox" id="fzBotAtivo" checked onchange="fzToggleBotoff(this.checked)">
+                            <span class="fz-horario-slider"></span>
+                        </label>
+                        <span id="fzBotoffLabel">Robô <b style="color:#10b981">LIGADA</b> neste grupo</span>
+                    </div>
+                    <div class="fz-horario-status" id="fzBotoffStatusBox">
+                        <span class="fz-horario-dot" id="fzBotoffDot" style="background:#10b981;"></span>
+                        <span id="fzBotoffStatusTexto">Carregando...</span>
+                    </div>
+                </div>
+            </div>
+
             <div id="areaAdmin" style="display:none;">
             <form method="POST" action="#" id="configForm" onsubmit="event.preventDefault(); return false;">
                               <div class="fz-horario-toggle-row">
@@ -7934,23 +7995,7 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
     </button>
 </div>
 
-                <!-- ===== BOT ON/OFF + PALAVRAS PROIBIDAS ===== -->
-                <div class="fz-horario-card" id="fzBotoffCard" style="margin-top:18px;">
-                    <h3><i class="fas fa-power-off"></i> Ligar / Desligar a Robô</h3>
-                    <p class="fz-cfg-hint">Mesmo efeito do comando <b>/botoff</b> e <b>/boton</b>. Com a robô desligada, ela não responde comandos neste grupo.</p>
-                    <div class="fz-horario-toggle-row" style="margin:14px 0;">
-                        <label class="fz-horario-switch">
-                            <input type="checkbox" id="fzBotAtivo" checked onchange="fzToggleBotoff(this.checked)">
-                            <span class="fz-horario-slider"></span>
-                        </label>
-                        <span id="fzBotoffLabel">Robô <b style="color:#10b981">LIGADA</b> neste grupo</span>
-                    </div>
-                    <div class="fz-horario-status" id="fzBotoffStatusBox">
-                        <span class="fz-horario-dot" id="fzBotoffDot" style="background:#10b981;"></span>
-                        <span id="fzBotoffStatusTexto">Selecione um grupo para ver o status.</span>
-                    </div>
-                </div>
-
+                <!-- Bot ON/OFF foi movido para o Controle da Sessão, fora da área de admin. -->
                 <div class="fz-horario-card" id="fzPalavrasCard" style="margin-top:18px;">
                     <h3><i class="fas fa-ban"></i> Palavras Proibidas</h3>
                     <p class="fz-cfg-hint">Mesmo sistema do <b>/addpalavra</b>, <b>/delpalavra</b> e <b>/listpalavras</b>. Quem enviar essas palavras pode ser banido automaticamente (se Anti-Notas estiver ativo).</p>
@@ -8642,6 +8687,8 @@ function cfgPainelSelecionarGrupo(id, card) {
         avisoNaoAdmin.innerHTML = '<i class="fas fa-spinner fa-spin"></i><p>Verificando permissões e carregando configurações...</p>';
     }
     if (areaAdmin) areaAdmin.style.display = 'none';
+    const ownerCard = document.getElementById('fzSessaoOwnerCard');
+    if (ownerCard) ownerCard.style.display = 'none';
 
     if (typeof Swal !== 'undefined') {
         Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Carregando configurações do grupo...', showConfirmButton: false, timer: 1400 });
@@ -8863,6 +8910,12 @@ async function cfgVerificarAdmin() {
 
     try {
         const numUser = (typeof cfgObterNumeroUsuario === 'function' ? cfgObterNumeroUsuario() : '') || '';
+        // Controle de aluguel/ON-OFF é por DONO DA SESSÃO, não por admin do grupo.
+        if (numUser && typeof fzCarregarControleSessaoDona === 'function') {
+            fzCarregarControleSessaoDona(grupoSelecionado).catch(() => {});
+        } else if (typeof fzEsconderControleSessao === 'function') {
+            fzEsconderControleSessao('usuário não logado');
+        }
         const resp = await fetch(API_URL + "/grupos.json");
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
         const dados = await resp.json();
@@ -8930,7 +8983,6 @@ if (cfgIsAdmin) {
         carregarPainelAtividade(grupoSelecionado);
         carregarHorarioGrupo(grupoSelecionado);
         iniciarAtualizacaoStatus();
-        if (typeof fzCarregarBotoff === 'function') fzCarregarBotoff(grupoSelecionado);
         if (typeof fzCarregarPalavras === 'function') fzCarregarPalavras(grupoSelecionado);
     }, 500);
 } else {
@@ -9143,69 +9195,217 @@ function fzApi(path) {
     return (typeof API_URL !== 'undefined' ? API_URL : '') + path;
 }
 
-async function fzCarregarBotoff(grupoID) {
+let fzSessaoControleAtual = '';
+let fzSessoesControleGrupo = [];
+let fzAluguelCountdownTimer = null;
+let fzAluguelRestanteMs = null;
+
+function fzFormatarSessaoNumero(n) {
+    const s = String(n || '').replace(/\D/g, '');
+    if (!s) return '—';
+    return '+' + s;
+}
+
+function fzRenderCountdownAluguel() {
+    const el = document.getElementById('fzAluguelRestante');
+    if (!el || fzAluguelRestanteMs == null) return;
+    const ms = Math.max(0, Number(fzAluguelRestanteMs));
+    const d = Math.floor(ms / 86400000);
+    const h = Math.floor((ms % 86400000) / 3600000);
+    const m = Math.floor((ms % 3600000) / 60000);
+    el.textContent = ms <= 0 ? 'Expirado' : `Restam ${d}d ${h}h ${m}min`;
+}
+
+function fzIniciarCountdownAluguel(ms) {
+    if (fzAluguelCountdownTimer) clearInterval(fzAluguelCountdownTimer);
+    fzAluguelRestanteMs = ms == null ? null : Number(ms);
+    fzRenderCountdownAluguel();
+    if (fzAluguelRestanteMs != null && fzAluguelRestanteMs > 0) {
+        fzAluguelCountdownTimer = setInterval(() => {
+            fzAluguelRestanteMs = Math.max(0, fzAluguelRestanteMs - 60000);
+            fzRenderCountdownAluguel();
+        }, 60000);
+    }
+}
+
+function fzEsconderControleSessao(msg) {
+    const card = document.getElementById('fzSessaoOwnerCard');
+    if (card) card.style.display = 'none';
+    fzSessaoControleAtual = '';
+    fzSessoesControleGrupo = [];
+    if (fzAluguelCountdownTimer) clearInterval(fzAluguelCountdownTimer);
+    if (msg) console.log('[controle sessão]', msg);
+}
+
+async function fzCarregarControleSessaoDona(grupoID, sessaoPreferida = '') {
     const gid = grupoID || cfgPainelObterGrupoSelecionado();
+    if (!gid) return fzEsconderControleSessao('sem grupo');
+    try {
+        const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
+        const qs = new URLSearchParams({
+            grupoID: gid,
+            numero: auth.contaNumero || '',
+            nome: auth.nome || '',
+            ...(sessaoPreferida ? { sessao: sessaoPreferida } : {})
+        });
+        const resp = await fetch(fzApi('/api/grupo/aluguel?' + qs.toString()), { headers: fzAuthHeaders() });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok || !data.success || !data.canControl) {
+            return fzEsconderControleSessao(data.message || 'conta não é dona de sessão neste grupo');
+        }
+
+        fzSessaoControleAtual = String(data.sessao || '');
+        fzSessoesControleGrupo = Array.isArray(data.sessoes) ? data.sessoes : [];
+        const card = document.getElementById('fzSessaoOwnerCard');
+        if (card) card.style.display = 'block';
+
+        const numEl = document.getElementById('fzOwnerSessaoNumero');
+        if (numEl) numEl.textContent = fzFormatarSessaoNumero(fzSessaoControleAtual);
+
+        const wrapSel = document.getElementById('fzOwnerSessaoSelectWrap');
+        const sel = document.getElementById('fzOwnerSessaoSelect');
+        if (sel) {
+            sel.innerHTML = fzSessoesControleGrupo.map(s => `<option value="${String(s.sessao).replace(/"/g,'')}">${fzFormatarSessaoNumero(s.sessao)}${s.online ? ' · online' : ' · offline'}</option>`).join('');
+            sel.value = fzSessaoControleAtual;
+        }
+        if (wrapSel) wrapSel.style.display = fzSessoesControleGrupo.length > 1 ? 'block' : 'none';
+
+        const a = data.aluguel || {};
+        const status = document.getElementById('fzAluguelStatus');
+        const input = document.getElementById('fzAluguelVenceEm');
+        if (!a.configurado) {
+            if (status) { status.textContent = '♾️ Sem limite'; status.style.color = '#93c5fd'; }
+            if (input) input.value = '';
+            fzIniciarCountdownAluguel(null);
+            const rest = document.getElementById('fzAluguelRestante');
+            if (rest) rest.textContent = 'Nenhum vencimento configurado';
+        } else if (a.expirado) {
+            if (status) { status.textContent = '⛔ Expirado'; status.style.color = '#f87171'; }
+            if (input) input.value = a.venceEmLocalInput || '';
+            fzIniciarCountdownAluguel(0);
+            const rest = document.getElementById('fzAluguelRestante');
+            if (rest) rest.textContent = `Venceu em ${a.venceEmBrasilia || '—'} (Brasília)`;
+        } else {
+            if (status) { status.textContent = `✅ Até ${a.venceEmBrasilia || '—'}`; status.style.color = '#34d399'; }
+            if (input) input.value = a.venceEmLocalInput || '';
+            fzIniciarCountdownAluguel(a.restanteMs);
+        }
+
+        await fzCarregarBotoff(gid, fzSessaoControleAtual);
+    } catch (e) {
+        console.error('fzCarregarControleSessaoDona', e);
+        fzEsconderControleSessao('erro de rede');
+    }
+}
+
+function fzTrocarSessaoControle(sessao) {
+    fzSessaoControleAtual = String(sessao || '');
+    return fzCarregarControleSessaoDona(cfgPainelObterGrupoSelecionado(), fzSessaoControleAtual);
+}
+
+async function fzSalvarAluguelPayload(payload) {
+    const grupoID = cfgPainelObterGrupoSelecionado();
+    if (!grupoID || !fzSessaoControleAtual) return;
+    const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
+    const resp = await fetch(fzApi('/api/grupo/aluguel'), {
+        method: 'POST',
+        headers: fzAuthHeaders(),
+        body: JSON.stringify({ grupoID, sessao: fzSessaoControleAtual, ...payload, ...auth })
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({ toast:true, position:'top-end', showConfirmButton:false, timer:2600,
+            icon: data.success ? 'success' : 'error', title: data.message || (data.success ? 'Aluguel atualizado' : 'Erro') });
+    }
+    if (data.success) await fzCarregarControleSessaoDona(grupoID, fzSessaoControleAtual);
+    return data;
+}
+
+function fzAluguelRapido(dias) {
+    const d = Number(dias || 0);
+    if (!d) return;
+    return fzSalvarAluguelPayload({ duracaoMinutos: d * 24 * 60, acao: 'set' });
+}
+
+function fzSalvarAluguelCustom() {
+    const valor = document.getElementById('fzAluguelVenceEm')?.value || '';
+    if (!valor) {
+        if (typeof Swal !== 'undefined') Swal.fire('Atenção', 'Escolha a data e hora de vencimento (Brasília).', 'warning');
+        return;
+    }
+    return fzSalvarAluguelPayload({ venceEm: valor, acao: 'set' });
+}
+
+async function fzRemoverAluguel() {
+    let ok = true;
+    if (typeof Swal !== 'undefined') {
+        const r = await Swal.fire({
+            icon:'question', title:'Deixar sem limite?',
+            text:'O aluguel será removido e a sua sessão será reativada neste grupo.',
+            showCancelButton:true, confirmButtonText:'Sim, sem limite', cancelButtonText:'Cancelar'
+        });
+        ok = !!r.isConfirmed;
+    }
+    if (!ok) return;
+    return fzSalvarAluguelPayload({ acao: 'remover' });
+}
+
+async function fzCarregarBotoff(grupoID, sessaoForcada = '') {
+    const gid = grupoID || cfgPainelObterGrupoSelecionado();
+    const sessao = String(sessaoForcada || fzSessaoControleAtual || '');
     const label = document.getElementById('fzBotoffLabel');
     const texto = document.getElementById('fzBotoffStatusTexto');
     const dot = document.getElementById('fzBotoffDot');
     const chk = document.getElementById('fzBotAtivo');
-    if (!gid) {
-        if (texto) texto.textContent = 'Selecione um grupo para ver o status.';
-        return;
-    }
+    if (!gid || !sessao) return;
     try {
         const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
-        const qs = new URLSearchParams({ grupoID: gid, numero: auth.contaNumero || '', nome: auth.nome || '' });
+        const qs = new URLSearchParams({ grupoID: gid, sessao, numero: auth.contaNumero || '', nome: auth.nome || '' });
         const resp = await fetch(fzApi('/api/grupo/botoff?' + qs.toString()), { headers: fzAuthHeaders() });
-        const data = await resp.json();
+        const data = await resp.json().catch(() => ({}));
         if (!data.success) {
-            if (texto) texto.textContent = data.message || 'Sem permissão ou erro.';
+            if (texto) texto.textContent = data.message || 'Sem permissão.';
+            if (chk) chk.disabled = true;
             return;
         }
-        const ativo = !!data.ativo;
-        if (chk) chk.checked = ativo;
-        if (label) label.innerHTML = ativo
-            ? 'Robô <b style="color:#10b981">LIGADA</b> neste grupo'
-            : 'Robô <b style="color:#ef4444">DESLIGADA</b> neste grupo';
-        if (dot) dot.style.background = ativo ? '#10b981' : '#ef4444';
-        if (texto) texto.textContent = ativo
-            ? 'A robô responde comandos normalmente.'
-            : 'A robô está muda neste grupo. Ative o interruptor ou use /boton.';
+        if (chk) { chk.disabled = false; chk.checked = !!data.ativo; }
+        if (label) label.innerHTML = data.ativo
+            ? 'Sua sessão está <b style="color:#10b981">LIGADA</b> neste grupo'
+            : 'Sua sessão está <b style="color:#ef4444">DESLIGADA</b> neste grupo';
+        if (dot) dot.style.background = data.ativo ? '#10b981' : '#ef4444';
+        if (texto) texto.textContent = data.ativo
+            ? 'A sessão conectada pela sua conta responde normalmente.'
+            : (data.aluguel?.expirado ? 'Aluguel expirado. Renove acima para reativar.' : 'A sessão está muda neste grupo.');
     } catch (e) {
         console.error('fzCarregarBotoff', e);
-        if (texto) texto.textContent = 'Falha ao carregar status da robô.';
+        if (texto) texto.textContent = 'Falha ao carregar status da sessão.';
     }
 }
 
 async function fzToggleBotoff(ligado) {
     const grupoID = cfgPainelObterGrupoSelecionado();
-    if (!grupoID) {
-        if (typeof Swal !== 'undefined') Swal.fire('Atenção', 'Selecione um grupo primeiro.', 'warning');
-        const chk = document.getElementById('fzBotAtivo');
+    const sessao = fzSessaoControleAtual;
+    const chk = document.getElementById('fzBotAtivo');
+    if (!grupoID || !sessao) {
         if (chk) chk.checked = !ligado;
         return;
     }
     try {
         const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
-        // ligado=true → botoff=false
         const resp = await fetch(fzApi('/api/grupo/botoff'), {
-            method: 'POST',
-            headers: fzAuthHeaders(),
-            body: JSON.stringify({ grupoID, botoff: !ligado, ...auth })
+            method: 'POST', headers: fzAuthHeaders(),
+            body: JSON.stringify({ grupoID, sessao, botoff: !ligado, ...auth })
         });
-        const data = await resp.json();
+        const data = await resp.json().catch(() => ({}));
         if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                toast: true, position: 'top-end', showConfirmButton: false, timer: 2200,
-                icon: data.success ? 'success' : 'error',
-                title: data.message || (data.success ? 'Atualizado' : 'Erro')
-            });
+            Swal.fire({ toast:true, position:'top-end', showConfirmButton:false, timer:2400,
+                icon:data.success?'success':'error', title:data.message || (data.success?'Atualizado':'Erro') });
         }
-        await fzCarregarBotoff(grupoID);
+        await fzCarregarControleSessaoDona(grupoID, sessao);
     } catch (e) {
         console.error('fzToggleBotoff', e);
-        if (typeof Swal !== 'undefined') Swal.fire('Erro', 'Falha ao alterar status da robô.', 'error');
-        await fzCarregarBotoff(grupoID);
+        if (typeof Swal !== 'undefined') Swal.fire('Erro', 'Falha ao alterar esta sessão.', 'error');
+        await fzCarregarBotoff(grupoID, sessao);
     }
 }
 
