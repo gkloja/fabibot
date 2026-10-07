@@ -1,20 +1,20 @@
 {
   "id": "https://www.fabibot.com.br/",
-  "name": "Fabi Bot – Figurinhas, Downloads e Grupos WhatsApp",
-  "short_name": "FabiBot",
-  "description": "Crie figurinhas, baixe músicas e vídeos, jogue e proteja seu grupo de WhatsApp. O bot mais completo do Brasil.",
+  "name": "Fabi — Comunidades inteligentes",
+  "short_name": "Fabi",
+  "description": "Automação, proteção e inteligência para comunidades no WhatsApp.",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#0A0A0A",
-  "theme_color": "#16a34a",
+  "background_color": "#07100c",
+  "theme_color": "#07100c",
   "lang": "pt-BR",
   "dir": "ltr",
   "categories": [
-    "utilities",
     "social",
-    "productivity"
+    "productivity",
+    "utilities"
   ],
   "icons": [
     {
@@ -44,7 +44,7 @@
   ],
   "shortcuts": [
     {
-      "name": "Conectar o bot",
+      "name": "Conectar a Fabi",
       "short_name": "Conectar",
       "url": "/conectar?source=pwa",
       "icons": [
@@ -56,9 +56,9 @@
       ]
     },
     {
-      "name": "Gold Empire",
-      "short_name": "Golds",
-      "url": "/golds?source=pwa",
+      "name": "Comunidades",
+      "short_name": "Comunidades",
+      "url": "/?comunidades&source=pwa",
       "icons": [
         {
           "src": "/icon-192.png",

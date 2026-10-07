@@ -1,15 +1,16 @@
 
 <!DOCTYPE html>
+<a class="fabi-skip" href="#conteudo-principal">Pular para o conteúdo</a>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
 
 <!-- TÍTULO PRINCIPAL -->
-<title>Fabi Bot – Melhor Bot WhatsApp para Figurinhas, Proteção e Grupos | 2026</title>
+<title>FABI — Plataforma de comunidades inteligentes para WhatsApp</title>
 
 <!-- META TAGS ESSENCIAIS -->
-<meta name="description" content="O melhor bot de WhatsApp para figurinhas, anti-spam, downloads, jogos, Gold Empire e gerenciamento de grupos. +400 comandos. Conecte grátis em minutos.">
+<meta name="description" content="Automação, proteção, inteligência artificial e ferramentas para transformar seu grupo de WhatsApp em uma comunidade inteligente.">
 <meta name="keywords" content="Fabi Bot, bot figurinhas WhatsApp, bot stickers WhatsApp, baixar música WhatsApp, bot download WhatsApp, bot brincadeiras grupo, robô WhatsApp, anti spam WhatsApp, gerenciador de grupos WhatsApp, FabiBot">
 <meta name="application-name" content="Fabi Bot">
 <link rel="manifest" href="/site.webmanifest">
@@ -29,8 +30,8 @@
     <!-- GOOGLE ADSENSE (JÁ EXISTENTE) -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2351298778216089" crossorigin="anonymous"></script>
 <!-- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) -->
-<meta property="og:title" content="Fabi Bot – Melhor Bot WhatsApp para Figurinhas, Proteção e Grupos">
-<meta property="og:description" content="O melhor bot de WhatsApp para figurinhas, anti-spam, downloads, jogos e gerenciamento. +400 comandos. Conecte grátis.">
+<meta property="og:title" content="Fabi — Plataforma de comunidades inteligentes">
+<meta property="og:description" content="Automação, proteção, IA, Golds e ferramentas para comunidades no WhatsApp.">
 <meta property="og:image" content="https://www.fabibot.com.br/og-image.jpg">
 <meta property="og:image:secure_url" content="https://www.fabibot.com.br/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
@@ -44,8 +45,8 @@
 
 <!-- TWITTER CARD -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Fabi Bot – Melhor Bot WhatsApp para Figurinhas e Proteção">
-<meta name="twitter:description" content="Figurinhas, anti-spam, downloads, jogos e admin de grupos. Conecte grátis.">
+<meta name="twitter:title" content="Fabi — Comunidades inteligentes">
+<meta name="twitter:description" content="Automação, proteção, IA, Golds e ferramentas para comunidades no WhatsApp.">
 <meta name="twitter:image" content="https://www.fabibot.com.br/og-image.jpg">
 
 <!-- CANONICAL -->
@@ -124,9 +125,7 @@
     "Inteligência Artificial integrada para respostas e geração de conteúdo",
     "Proteção completa: anti-link, anti-spam, anti-fake e banimentos",
     "Administração de grupos: promover, rebaixar, abrir/fechar, boas-vindas automáticas",
-    "Mais de 400 comandos disponíveis",
-    "Funcionamento 24 horas por dia"
-  ],
+    ],
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -134,13 +133,7 @@
     "availability": "https://schema.org/InStock",
     "url": "https://www.fabibot.com.br/conectar"
   },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "ratingCount": "1280",
-    "bestRating": "5",
-    "worstRating": "1"
-  },
+
   "inLanguage": "pt-BR",
   "countriesSupported": "BR",
   "author": {
@@ -273,7 +266,7 @@
         },
         welcomeNotification: {
           title: "Fabi Bot",
-          message: "Notificações ativadas! Você será avisado sobre sua sessão, aluguel, validade do plano e feed."
+          message: "Notificações ativadas! Você será avisado sobre o feed e sua sessão."
         }
       });
       console.log("✅ OneSignal Fabi Bot inicializado");
@@ -284,7 +277,7 @@
           let raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
           if (raw) {
             const s = JSON.parse(raw);
-            const ext = String((s && (s.numero || s.id || s.email)) || '').trim();
+            const ext = String((s && (s.id || s.numero || s.email)) || '').trim();
             if (ext && OneSignal.login) await OneSignal.login(ext);
           }
         }
@@ -307,8 +300,8 @@
         s = JSON.parse(localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session') || 'null');
       } catch (_) {}
       const ext = String(
-        (u && (u.numero || u.id || u.email)) ||
-        (s && (s.numero || s.id || s.email)) ||
+        (u && (u.id || u.numero || u.email)) ||
+        (s && (s.id || s.numero || s.email)) ||
         ''
       ).trim();
       if (!ext) return;
@@ -7053,67 +7046,12 @@ body.light-mode .command-badge-mobile {
 /* hide-watch-imagem */
 #watchPageContainer, [data-section="watch"], #imagemContainer, #imagemPageContainer { display: none !important; }
 </style>
+  <link rel="stylesheet" href="/assets/fabi-platform.css?v=20261007">
+  <link rel="stylesheet" href="/assets/fabi-v2.css?v=20261007">
 </head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
-<body>
-<!-- SEO CONTENT - VISÍVEL APENAS PARA GOOGLEBOT -->
-<div class="seo-only">
-    <h1>Fabi Bot - +2000 Links de Grupos WhatsApp Ativos 2026</h1>
-    <p>Bem-vindo à Fabi Bot, a maior plataforma de descoberta de comunidades no WhatsApp do Brasil. Com mais de 2000 grupos ativos e verificados diariamente, você encontra a comunidade perfeita para seus interesses em todo o país. Links atualizados diariamente, entrada gratuita e moderação ativa.</p>
-    
-    <h2>Grupos por Categoria</h2>
-    <ul>
-        <li>Amizade e Relacionamentos - 423 grupos ativos</li>
-        <li>Tecnologia e Programação - 247 grupos ativos</li>
-        <li>Jogos e Gaming - 312 grupos ativos</li>
-        <li>Música e Bandas - 189 grupos ativos</li>
-        <li>Notícias e Atualidades - 156 grupos ativos</li>
-        <li>Esportes e Futebol - 178 grupos ativos</li>
-        <li>Negócios e Empreendedorismo - 134 grupos ativos</li>
-        <li>Educação e Cursos - 98 grupos ativos</li>
-    </ul>
-    
-    <h2>Grupos em Destaque - Ranking 2026</h2>
-    <ul>
-        <li>MAIS ATIVO: "Amigos e Diversão" - 2.847 interações nas últimas 24h</li>
-        <li>MAIS RICO: "Investidores Brasil" - Média de 1.250 golds por membro</li>
-        <li>MAIOR CRESCIMENTO: "Devs Brasil" - +342 membros na última semana</li>
-    </ul>
-    
-    <h2>Grupos por Estado</h2>
-    <ul>
-        <li>São Paulo (SP) - Grupos ativos de todas as categorias</li>
-        <li>Rio de Janeiro (RJ) - Grupos ativos de todas as categorias</li>
-        <li>Minas Gerais (MG) - Grupos ativos de todas as categorias</li>
-        <li>Bahia (BA) - Grupos ativos de todas as categorias</li>
-        <li>Ceará (CE) - Grupos ativos de todas as categorias</li>
-        <li>Pernambuco (PE) - Grupos ativos de todas as categorias</li>
-        <li>Rio Grande do Sul (RS) - Grupos ativos de todas as categorias</li>
-        <li>Paraná (PR) - Grupos ativos de todas as categorias</li>
-        <li>E todos os demais estados do Brasil</li>
-    </ul>
-    
-    <h2>Como Funciona a Fabi Bot?</h2>
-    <p>1. Faça login rápido, seguro e gratuito para acessar todos os recursos</p>
-    <p>2. Escolha sua categoria favorita - navegue por mais de 15 categorias</p>
-    <p>3. Clique no grupo e participe - redirecionado diretamente para o WhatsApp</p>
-    
-    <h2>Por que escolher a Fabi Bot?</h2>
-    <ul>
-        <li>Links verificados diariamente - grupos sempre ativos</li>
-        <li>100% gratuito - sem taxas ou assinaturas</li>
-        <li>Comunidade ativa - milhares de usuários online todos os dias</li>
-        <li>Chat integrado - converse com outros membros antes de entrar</li>
-        <li>Sistema de níveis e recompensas - quanto mais interage, mais benefícios</li>
-        <li>Moderação profissional - ambiente seguro e respeitoso</li>
-    </ul>
-    
-    <p>Fabi Bot - Conectando pessoas através de comunidades autênticas no WhatsApp em todo o Brasil. Atualizado em Junho de 2026.</p>
-</div>
-<button class="scroll-top" id="scrollTop"><i class="fas fa-arrow-up"></i></button>
-
-<button class="scroll-top" id="scrollTop"><i class="fas fa-arrow-up"></i></button>
-
+<body class="fabi-v2-page">
+<!-- Conteúdo SEO artificial removido. -->
 <nav class="navbar">
     <div class="container nav-content">
         <div class="logo" onclick="mudarSecao('feed')" style="flex-direction: column; align-items: flex-start; gap: 2px;">
@@ -7189,10 +7127,10 @@ body.light-mode .ge-cta .ge-txt span{color:#4b5563}
 <div class="ge-cta" id="goldEmpireCta">
   <div class="ge-ico">👑</div>
   <div class="ge-txt">
-    <strong>Gold Empire — mesmos Golds do WhatsApp</strong>
-    <span>Minere, pesque, foguete e Tigrinho. O saldo é o do seu grupo. Já logado no site? Entra direto.</span>
+    <strong>Perfil, ranking e conquistas</strong>
+    <span>Acompanhe seu perfil, evolução e posição usando os dados reais da sua conta.</span>
   </div>
-  <a class="ge-btn" href="golds.html">Jogar agora →</a>
+  <a class="ge-btn" href="golds.html">Ver perfil →</a>
 </div>
 <!-- ===== /GOLD EMPIRE CTA ===== -->
 <div class="bottom-nav show-on-mobile">
@@ -7262,14 +7200,23 @@ body.light-mode .ge-cta .ge-txt span{color:#4b5563}
 <!-- INTRO HERO — Fabi segura os CTAs (imagem/vídeo + hotspots) -->
 <!-- Arquivos: /fabi-cta.jpg (poster) e /fabi-mascote.mp4 (loop opcional) -->
 <!-- ============================================================ -->
+<div id="conteudo-principal" tabindex="-1"></div>
 <section class="fz-intro-section" id="introSection">
   <div class="container fz-intro-cta">
     <div class="fz-intro-cta-text">
-      <span class="fz-intro-badge"><i class="fas fa-bolt"></i> Conheça a Fabi Bot</span>
-      <h1 class="fz-intro-title">Conecte a <span>Fabi Bot</span><br>no seu grupo</h1>
-      <p class="fz-intro-subtitle">
-        Figurinhas, downloads, IA, <strong style="color:#f6c445">Gold Empire</strong> e proteção completa — direto no WhatsApp, 24h por dia.
-      </p>
+      <span class="fz-intro-badge"><i class="fas fa-sparkles"></i> FABI · Comunidades inteligentes</span>
+      <h1 class="fz-intro-title">O WhatsApp da sua comunidade,<br><span>em outro nível.</span></h1>
+      <p class="fz-intro-subtitle">Automação, proteção, inteligência artificial e ferramentas para transformar seu grupo em uma comunidade inteligente.</p>
+    </div>
+
+    
+    <div class="fabi-grid fabi-grid-3 fabi-v2-pillars" aria-label="Principais recursos da Fabi" style="margin:22px 0 6px">
+      <article class="fabi-card"><div class="fabi-card-icon"><i class="fas fa-wand-magic-sparkles"></i></div><h3>Automação</h3><p>Rotinas e comandos que reduzem trabalho manual na comunidade.</p></article>
+      <article class="fabi-card"><div class="fabi-card-icon"><i class="fas fa-shield-halved"></i></div><h3>Proteção</h3><p>Ferramentas de moderação, anti-link e controles para administradores.</p></article>
+      <article class="fabi-card"><div class="fabi-card-icon"><i class="fas fa-brain"></i></div><h3>Inteligência</h3><p>IA, mídia e utilidades reunidas em uma experiência única.</p></article>
+      <article class="fabi-card"><div class="fabi-card-icon"><i class="fas fa-users"></i></div><h3>Comunidades</h3><p>Descoberta, organização e gestão de grupos em um só lugar.</p></article>
+      <article class="fabi-card"><div class="fabi-card-icon"><i class="fas fa-ranking-star"></i></div><h3>Ranking</h3><p>Reconhecimento e participação usando somente dados reais do sistema.</p></article>
+      <article class="fabi-card"><div class="fabi-card-icon"><i class="fas fa-mobile-screen-button"></i></div><h3>Mobile-first</h3><p>Painel pensado para ser usado confortavelmente pelo celular.</p></article>
     </div>
 
     <!-- 1) Vídeo tutorial — SÓ visitante, aparece PRIMEIRO -->
@@ -20756,5 +20703,7 @@ window.addEventListener('beforeunload', () => {
 </div>
 
 
+  <script src="/assets/fabi-platform.js?v=20261007" defer></script>
+<script src="/assets/fabi-v2.js?v=20261007" defer></script>
 </body>
 </html>

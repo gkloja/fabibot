@@ -1,227 +1,45 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <title>Comandos da Fabi Bot – Figurinhas, Downloads, Jogos e Admin WhatsApp</title>
-  <meta name="description" content="Lista de comandos da Fabi Bot: figurinhas, downloads, jogos, IA, anti-spam e administração de grupos no WhatsApp. Guia completo e atualizado.">
-  <meta name="keywords" content="comandos Fabi Bot, comandos bot WhatsApp, !s figurinha, !play música, menu bot WhatsApp, anti-link WhatsApp">
-  <meta name="author" content="Fabi Bot">
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-  <meta name="theme-color" content="#16a34a">
-  <link rel="canonical" href="https://www.fabibot.com.br/comandos">
-  <meta property="og:title" content="Comandos da Fabi Bot – WhatsApp">
-  <meta property="og:description" content="Figurinhas, downloads, jogos, IA e admin. Todos os comandos principais da Fabi Bot.">
-  <meta property="og:image" content="https://www.fabibot.com.br/og-image.jpg">
-  <meta property="og:url" content="https://www.fabibot.com.br/comandos">
-  <meta property="og:type" content="website">
-  <meta property="og:locale" content="pt_BR">
-  <meta property="og:site_name" content="Fabi Bot">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Comandos da Fabi Bot">
-  <meta name="twitter:description" content="Lista completa de comandos: figurinhas, downloads, jogos e moderação.">
-  <meta name="twitter:image" content="https://www.fabibot.com.br/og-image.jpg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Comandos da Fabi Bot",
-    "url": "https://www.fabibot.com.br/comandos",
-    "description": "Lista de comandos do bot Fabi para WhatsApp: figurinhas, downloads, jogos e administração.",
-    "inLanguage": "pt-BR",
-    "isPartOf": { "@type": "WebSite", "name": "Fabi Bot", "url": "https://www.fabibot.com.br" }
-  }
-  </script>
-  <style>
-    :root { --primary:#16a34a; --primary-dark:#15803d; --primary-light:#22c55e; --bg:#0a0a0a; --card:#141414; --border:#262626; --text:#f5f5f5; --text-muted:#a3a3a3; }
-    *{margin:0;padding:0;box-sizing:border-box} html{scroll-behavior:smooth}
-    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
-    a{color:inherit;text-decoration:none}
-    header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 20px}
-    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
-    .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem}
-    .logo img{width:36px;height:36px;border-radius:10px;object-fit:cover}
-    .nav-links{display:flex;gap:8px;flex-wrap:wrap}
-    .nav-links a{padding:8px 14px;border-radius:999px;font-size:.9rem;font-weight:600;color:var(--text-muted);transition:.2s}
-    .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--card)}
-    .btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff!important;padding:10px 18px;border-radius:999px;font-weight:700;font-size:.95rem}
-    .btn-primary:hover{background:var(--primary-dark)}
-    .hero{max-width:1100px;margin:0 auto;padding:56px 20px 32px;text-align:center}
-    .hero h1{font-size:clamp(1.8rem,4.5vw,2.5rem);font-weight:800;margin-bottom:14px;letter-spacing:-.02em}
-    .hero h1 span{color:var(--primary-light)}
-    .hero p{color:var(--text-muted);max-width:560px;margin:0 auto 24px;font-size:1.05rem}
-    section{max-width:900px;margin:0 auto;padding:32px 20px}
-    .cat{margin-bottom:36px}
-    .cat h2{font-size:1.2rem;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-    .cat h2 i{color:var(--primary-light)}
-    .commands{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-    .cmd-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border)}
-    .cmd-row:last-child{border-bottom:none}
-    .cmd-tag{font-family:ui-monospace,monospace;background:rgba(22,163,74,.15);color:var(--primary-light);padding:4px 10px;border-radius:6px;font-size:.88rem;font-weight:600;white-space:nowrap}
-    .cmd-desc{color:var(--text-muted);font-size:.92rem}
-    .note{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.25);border-radius:12px;padding:16px 18px;font-size:.92rem;color:var(--text-muted);margin-bottom:28px}
-    .cta-box{background:linear-gradient(135deg,rgba(22,163,74,.2),rgba(22,163,74,.05));border:1px solid rgba(22,163,74,.35);border-radius:20px;padding:36px 24px;text-align:center;margin:40px 20px}
-    .cta-box h2{font-size:1.45rem;font-weight:800;margin-bottom:10px}
-    .cta-box p{color:var(--text-muted);margin-bottom:20px}
-    footer{border-top:1px solid var(--border);padding:28px 20px;text-align:center;color:var(--text-muted);font-size:.9rem}
-    footer a{color:var(--primary-light)}
-    @media(max-width:640px){.nav-links{display:none}}
-  </style>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Fabi Bot",
-  "alternateName": ["Fabibot", "FabiBot", "Bot Fabi WhatsApp"],
-  "applicationCategory": "UtilitiesApplication",
-  "applicationSubCategory": "MessagingApplication",
-  "operatingSystem": "WhatsApp, Android, iOS, Web",
-  "url": "https://www.fabibot.com.br",
-  "downloadUrl": "https://www.fabibot.com.br/conectar",
-  "installUrl": "https://www.fabibot.com.br/conectar",
-  "image": [
-    "https://www.fabibot.com.br/flogo.jpg",
-    "https://www.fabibot.com.br/og-image.jpg"
-  ],
-  "logo": "https://www.fabibot.com.br/flogo.jpg",
-  "screenshot": "https://www.fabibot.com.br/og-image.jpg",
-  "description": "Fabi Bot é o bot de WhatsApp mais completo do Brasil para criar figurinhas (stickers), baixar músicas e vídeos (YouTube, TikTok sem marca d'água), jogar, usar IA e gerenciar grupos com anti-spam, anti-link, boas-vindas e moderação automática.",
-  "featureList": [
-    "Criação de figurinhas estáticas e animadas a partir de fotos, vídeos e GIFs",
-    "Download de músicas e vídeos do YouTube, TikTok, Instagram e outras plataformas sem marca d'água",
-    "Jogos e brincadeiras para engajar o grupo (leilão, marcar todos e mais)",
-    "Inteligência Artificial integrada para respostas e geração de conteúdo",
-    "Proteção completa: anti-link, anti-spam, anti-fake e banimentos",
-    "Administração de grupos: promover, rebaixar, abrir/fechar, boas-vindas automáticas",
-    "Mais de 400 comandos disponíveis",
-    "Funcionamento 24 horas por dia"
-  ],
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "BRL",
-    "availability": "https://schema.org/InStock",
-    "url": "https://www.fabibot.com.br/conectar"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "ratingCount": "1280",
-    "bestRating": "5",
-    "worstRating": "1"
-  },
-  "inLanguage": "pt-BR",
-  "countriesSupported": "BR",
-  "author": {
-    "@type": "Organization",
-    "name": "Fabi Bot",
-    "url": "https://www.fabibot.com.br"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Fabi Bot",
-    "url": "https://www.fabibot.com.br",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://www.fabibot.com.br/flogo.jpg"
-    }
-  },
-  "softwareVersion": "2026",
-  "datePublished": "2025-01-01",
-  "dateModified": "2026-08-27"
-}
-</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Central de Comandos | Fabi</title>
+<meta name="description" content="Pesquise os principais comandos da Fabi para figurinhas, downloads, IA, proteção e administração.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#07100c">
+<link rel="canonical" href="https://www.fabibot.com.br/comandos">
+<meta property="og:title" content="Central de Comandos | Fabi">
+<meta property="og:description" content="Pesquise os principais comandos da Fabi para figurinhas, downloads, IA, proteção e administração.">
+<meta property="og:image" content="https://www.fabibot.com.br/og-image.jpg">
+<meta property="og:url" content="https://www.fabibot.com.br/comandos">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.fabibot.com.br/og-image.jpg">
+<link rel="icon" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="/assets/fabi-v2.css?v=20261007">
 </head>
-<body>
-  <header>
-    <div class="header-inner">
-      <a href="/" class="logo"><img src="/flogo.jpg" alt="Fabi Bot" width="36" height="36"/> Fabi Bot</a>
-      <nav class="nav-links">
-        <a href="/">Início</a>
-        <a href="/figurinhas.html">Figurinhas</a>
-        <a href="/downloads.html">Downloads</a>
-        <a href="/comandos.html" class="active">Comandos</a>
-        <a href="/conectar.html">Conectar</a>
-      </nav>
-      <a href="/conectar.html" class="btn-primary"><i class="fas fa-bolt"></i> Conectar</a>
-    </div>
-  </header>
-  <main>
-    <div class="hero">
-      <h1>Comandos da <span>Fabi Bot</span></h1>
-      <p>Figurinhas, downloads, jogos, IA e administração. Use no grupo após conectar o bot. O prefixo padrão costuma ser <strong>!</strong> (confirme com <code>!menu</code>).</p>
-    </div>
-    <section>
-      <div class="note">
-        <strong>Dica:</strong> Digite <code>!menu</code> no grupo para ver a lista completa e atualizada no seu bot. Alguns comandos são só para administradores.
-      </div>
-
-      <div class="cat">
-        <h2><i class="fas fa-sticky-note"></i> Figurinhas</h2>
-        <div class="commands">
-          <div class="cmd-row"><span class="cmd-tag">!s</span><span class="cmd-desc">Cria figurinha da imagem, vídeo ou GIF marcado</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!fig</span><span class="cmd-desc">Gera várias figurinhas de uma vez</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!sticker</span><span class="cmd-desc">Alternativa para criar sticker</span></div>
-        </div>
-      </div>
-
-      <div class="cat">
-        <h2><i class="fas fa-download"></i> Downloads e mídia</h2>
-        <div class="commands">
-          <div class="cmd-row"><span class="cmd-tag">!play</span><span class="cmd-desc">Baixa e envia música (nome ou link)</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!yt</span><span class="cmd-desc">Download YouTube (áudio/vídeo)</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!tiktok</span><span class="cmd-desc">Vídeo TikTok sem marca d'água</span></div>
-        </div>
-      </div>
-
-      <div class="cat">
-        <h2><i class="fas fa-gamepad"></i> Jogos e brincadeiras</h2>
-        <div class="commands">
-          <div class="cmd-row"><span class="cmd-tag">!marcar</span><span class="cmd-desc">Marca todos os membros do grupo</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!leilao</span><span class="cmd-desc">Inicia leilão no grupo</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!menu</span><span class="cmd-desc">Abre o menu completo (jogos e utilidades)</span></div>
-        </div>
-      </div>
-
-      <div class="cat">
-        <h2><i class="fas fa-robot"></i> Inteligência Artificial</h2>
-        <div class="commands">
-          <div class="cmd-row"><span class="cmd-tag">!gpt</span><span class="cmd-desc">Pergunta à IA (quando disponível)</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!imagine</span><span class="cmd-desc">Gera imagem com IA (quando disponível)</span></div>
-        </div>
-      </div>
-
-      <div class="cat">
-        <h2><i class="fas fa-shield-alt"></i> Proteção e admin</h2>
-        <div class="commands">
-          <div class="cmd-row"><span class="cmd-tag">!antilink</span><span class="cmd-desc">Ativa/desativa bloqueio de links</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!antifake</span><span class="cmd-desc">Proteção contra números suspeitos</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!ban</span><span class="cmd-desc">Remove membro (admin)</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!promover</span><span class="cmd-desc">Promove a administrador</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!rebaixar</span><span class="cmd-desc">Remove cargo de admin</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!grupo A / F</span><span class="cmd-desc">Abre ou fecha o grupo</span></div>
-          <div class="cmd-row"><span class="cmd-tag">!configurar</span><span class="cmd-desc">Painel de configurações do grupo</span></div>
-        </div>
-      </div>
-    </section>
-
-    <div class="cta-box">
-      <h2>Ainda não conectou?</h2>
-      <p>Ative a Fabi Bot no seu WhatsApp e use todos esses comandos no grupo.</p>
-      <a href="/conectar.html" class="btn-primary" style="padding:12px 22px"><i class="fas fa-qrcode"></i> Conectar agora</a>
-    </div>
-  </main>
-  <footer>
-    <p>© 2026 <a href="/">Fabi Bot</a><br>
-    <a href="/figurinhas.html">Figurinhas</a> · <a href="/downloads.html">Downloads</a> · <a href="/comandos.html">Comandos</a> · <a href="/conectar.html">Conectar</a></p>
-  </footer>
-</body>
-</html>
+<body class="fabi-v2-page">
+<a class="fabi-skip" href="#conteudo-principal">Pular para o conteúdo</a>
+<header class="fabi-topbar"><div class="fabi-shell fabi-topbar-in">
+<a class="fabi-brand" href="/"><img src="/flogo.jpg" alt="" width="36" height="36"><span>Fabi</span></a>
+<nav class="fabi-nav" aria-label="Principal"><a href="/">Início</a><a href="/conectar">Conectar</a><a href="/comandos">Comandos</a><a href="/figurinhas">Figurinhas</a><a href="/downloads">Downloads</a><a href="/sobre">Sobre</a></nav>
+<a class="fabi-btn fabi-btn-primary" href="/conectar">Começar</a>
+</div></header>
+<main id="conteudo-principal" tabindex="-1">
+<section class="fabi-section"><div class="fabi-shell">
+<div class="fabi-section-head"><span class="fabi-badge">Central de comandos</span><h1 class="fabi-title" style="font-size:clamp(2rem,7vw,3.7rem)">Encontre o comando certo <span>sem perder tempo.</span></h1><p>Pesquise por nome ou finalidade. Para a lista completa e atualizada da sua própria sessão, use <strong>!menu</strong> no WhatsApp.</p></div>
+<input class="fabi-search" data-command-search type="search" placeholder="Buscar por comando ou função…" aria-label="Buscar comandos">
+<section data-command-group style="padding:26px 0 0"><h2 style="font-size:1.05rem;margin:0 0 10px">Figurinhas</h2><div class="fabi-card" style="padding:0;overflow:hidden"><div class="fabi-command" data-command-item><code>!s</code><p>Cria figurinha da imagem, vídeo ou GIF marcado</p><button class="fabi-copy" type="button" data-copy-command="!s" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div><div class="fabi-command" data-command-item><code>!fig</code><p>Gera várias figurinhas de uma vez</p><button class="fabi-copy" type="button" data-copy-command="!fig" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div><div class="fabi-command" data-command-item><code>!sticker</code><p>Alternativa para criar sticker</p><button class="fabi-copy" type="button" data-copy-command="!sticker" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div></div></section><section data-command-group style="padding:26px 0 0"><h2 style="font-size:1.05rem;margin:0 0 10px">Downloads e mídia</h2><div class="fabi-card" style="padding:0;overflow:hidden"><div class="fabi-command" data-command-item><code>!play</code><p>Baixa e envia música por nome ou link</p><button class="fabi-copy" type="button" data-copy-command="!play" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div><div class="fabi-command" data-command-item><code>!yt</code><p>Download de conteúdo do YouTube</p><button class="fabi-copy" type="button" data-copy-command="!yt" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div><div class="fabi-command" data-command-item><code>!tiktok</code><p>Baixa mídia do TikTok</p><button class="fabi-copy" type="button" data-copy-command="!tiktok" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div></div></section><section data-command-group style="padding:26px 0 0"><h2 style="font-size:1.05rem;margin:0 0 10px">Inteligência artificial</h2><div class="fabi-card" style="padding:0;overflow:hidden"><div class="fabi-command" data-command-item><code>!gpt</code><p>Faz uma pergunta à IA, quando disponível</p><button class="fabi-copy" type="button" data-copy-command="!gpt" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div><div class="fabi-command" data-command-item><code>!imagine</code><p>Gera imagem com IA, quando disponível</p><button class="fabi-copy" type="button" data-copy-command="!imagine" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div></div></section><section data-command-group style="padding:26px 0 0"><h2 style="font-size:1.05rem;margin:0 0 10px">Proteção e administração</h2><div class="fabi-card" style="padding:0;overflow:hidden"><div class="fabi-command" data-command-item><code>!antilink</code><p>Ativa ou desativa a proteção contra links</p><button class="fabi-copy" type="button" data-copy-command="!antilink" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div><div class="fabi-command" data-command-item><code>!antifake</code><p>Proteção contra números suspeitos</p><button class="fabi-copy" type="button" data-copy-command="!antifake" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div><div class="fabi-command" data-command-item><code>!ban</code><p>Remove um membro; requer permissão</p><button class="fabi-copy" type="button" data-copy-command="!ban" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div><div class="fabi-command" data-command-item><code>!promover</code><p>Promove um membro a administrador</p><button class="fabi-copy" type="button" data-copy-command="!promover" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div><div class="fabi-command" data-command-item><code>!rebaixar</code><p>Remove o cargo de administrador</p><button class="fabi-copy" type="button" data-copy-command="!rebaixar" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div><div class="fabi-command" data-command-item><code>!grupo A / F</code><p>Abre ou fecha o grupo</p><button class="fabi-copy" type="button" data-copy-command="!grupo A / F" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div><div class="fabi-command" data-command-item><code>!configurar</code><p>Abre o painel de configurações do grupo</p><button class="fabi-copy" type="button" data-copy-command="!configurar" aria-label="Copiar comando"><i class="fa-regular fa-copy"></i></button></div></div></section><div class="fabi-card" style="margin-top:26px"><h3>Permissões</h3><p>Alguns recursos de moderação dependem de a Fabi e/ou o usuário terem permissão de administrador no grupo. A disponibilidade também pode variar conforme a configuração da sessão.</p></div>
+</div></section></main><footer class="fabi-footer"><div class="fabi-shell fabi-footer-row">
+<div>© 2026 Fabi · Comunidades inteligentes.</div>
+<div><a href="/contato">Contato</a> · <a href="/privacidade">Privacidade</a> · <a href="/termos">Termos</a></div>
+</div></footer>
+<script src="/assets/fabi-v2.js?v=20261007" defer></script>
+</body></html>
