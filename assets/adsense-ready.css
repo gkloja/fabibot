@@ -1,38 +1,365 @@
-/* AdSense readiness — conteúdo editorial público */
-.fabi-v2-page .editorial-wrap{max-width:900px}
-.fabi-v2-page .editorial-prose{color:var(--fabi-muted);font-size:1rem;line-height:1.82}
-.fabi-v2-page .editorial-prose p{margin:0 0 16px}
-.fabi-v2-page .editorial-prose h2{
-  color:var(--fabi-text);font-size:clamp(1.35rem,4vw,1.9rem);
-  letter-spacing:-.03em;margin:34px 0 12px
+/* ==========================================================
+   FABI BOT — ADSENSE EDITORIAL HOTFIX V2
+   Corrige a Home sem depender de .fabi-v2-page.
+   Tudo fica isolado em .fabi-adsense-editorial.
+   ========================================================== */
+
+.fabi-adsense-editorial{
+  --fae-bg:#070a0d;
+  --fae-card:#0d1216;
+  --fae-card-2:#10171c;
+  --fae-border:rgba(255,255,255,.085);
+  --fae-border-strong:rgba(34,197,94,.24);
+  --fae-text:#f2f7f4;
+  --fae-muted:#a5b2aa;
+  --fae-green:#22c55e;
+  --fae-green-soft:rgba(34,197,94,.10);
+  --fae-link:#86efac;
+  --fae-radius:18px;
+
+  position:relative;
+  width:100%;
+  margin:22px 0 10px;
+  padding:44px 16px 46px;
+  color:var(--fae-text);
+  background:
+    radial-gradient(720px 300px at 12% 0%,rgba(34,197,94,.065),transparent 64%),
+    linear-gradient(180deg,rgba(9,13,16,.98),rgba(5,8,10,.98));
+  border-top:1px solid rgba(255,255,255,.055);
+  border-bottom:1px solid rgba(255,255,255,.055);
+  overflow:hidden;
 }
-.fabi-v2-page .editorial-prose h3{color:var(--fabi-text);font-size:1.06rem;margin:22px 0 8px}
-.fabi-v2-page .editorial-prose ul,.fabi-v2-page .editorial-prose ol{padding-left:1.3rem;margin:0 0 18px}
-.fabi-v2-page .editorial-prose li{margin-bottom:8px}
-.fabi-v2-page .editorial-prose strong{color:#e9f8ee}
-.fabi-v2-page .editorial-note{
-  border:1px solid rgba(32,201,113,.2);background:rgba(32,201,113,.055);
-  border-radius:16px;padding:16px 18px;margin:20px 0;color:#c8ddd0
+
+.fabi-adsense-editorial *{
+  box-sizing:border-box;
 }
-.fabi-v2-page .editorial-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0}
-.fabi-v2-page .editorial-card{
-  border:1px solid var(--fabi-border);background:rgba(255,255,255,.025);
-  border-radius:16px;padding:18px
+
+.fabi-adsense-editorial .container,
+.fabi-adsense-editorial .editorial-wrap{
+  width:min(100%,1040px);
+  max-width:1040px;
+  margin-left:auto;
+  margin-right:auto;
 }
-.fabi-v2-page .editorial-card h3{margin:0 0 7px;color:var(--fabi-text)}
-.fabi-v2-page .editorial-card p{margin:0;color:var(--fabi-muted);line-height:1.65}
-.fabi-v2-page .editorial-links{
-  display:flex;flex-wrap:wrap;gap:9px;margin:22px 0
+
+.fabi-adsense-editorial .fabi-section-head{
+  max-width:760px;
+  margin:0 0 24px;
 }
-.fabi-v2-page .editorial-links a{
-  color:#c9f6da;text-decoration:none;border:1px solid var(--fabi-border);
-  background:rgba(255,255,255,.025);border-radius:12px;padding:9px 12px;font-size:.88rem;font-weight:700
+
+.fabi-adsense-editorial .fabi-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 11px;
+  margin-bottom:11px;
+  border-radius:999px;
+  color:#baf3ce;
+  background:var(--fae-green-soft);
+  border:1px solid var(--fae-border-strong);
+  font-size:.75rem;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:.015em;
 }
-.fabi-v2-page .editorial-links a:hover{background:rgba(255,255,255,.055)}
-.fabi-v2-page details.editorial-faq{
-  border:1px solid var(--fabi-border);border-radius:14px;padding:13px 15px;
-  background:rgba(255,255,255,.02);margin-bottom:10px
+
+.fabi-adsense-editorial .fabi-section-head h2{
+  margin:0 0 9px;
+  color:var(--fae-text);
+  font-size:clamp(1.55rem,4vw,2.15rem);
+  line-height:1.14;
+  letter-spacing:-.035em;
+  font-weight:800;
 }
-.fabi-v2-page details.editorial-faq summary{cursor:pointer;color:var(--fabi-text);font-weight:800}
-.fabi-v2-page details.editorial-faq p{margin:10px 0 0;color:var(--fabi-muted);line-height:1.7}
-@media(max-width:700px){.fabi-v2-page .editorial-grid{grid-template-columns:1fr}}
+
+.fabi-adsense-editorial .fabi-section-head > p{
+  margin:0;
+  max-width:720px;
+  color:var(--fae-muted);
+  font-size:.96rem;
+  line-height:1.72;
+}
+
+.fabi-adsense-editorial .editorial-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:13px;
+  margin:22px 0 34px;
+}
+
+.fabi-adsense-editorial .editorial-card{
+  position:relative;
+  min-height:145px;
+  padding:18px 18px 17px;
+  border:1px solid var(--fae-border);
+  border-radius:var(--fae-radius);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015)),
+    var(--fae-card);
+  box-shadow:0 10px 34px rgba(0,0,0,.16);
+}
+
+.fabi-adsense-editorial .editorial-card::before{
+  content:"";
+  display:block;
+  width:34px;
+  height:3px;
+  margin-bottom:13px;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--fae-green),rgba(34,197,94,.18));
+}
+
+.fabi-adsense-editorial .editorial-card h3{
+  margin:0 0 7px;
+  color:var(--fae-text);
+  font-size:1rem;
+  line-height:1.25;
+  font-weight:800;
+  letter-spacing:-.015em;
+}
+
+.fabi-adsense-editorial .editorial-card p{
+  margin:0;
+  color:var(--fae-muted);
+  font-size:.88rem;
+  line-height:1.62;
+}
+
+.fabi-adsense-editorial .editorial-prose{
+  max-width:860px;
+  color:var(--fae-muted);
+  font-size:.96rem;
+  line-height:1.78;
+}
+
+.fabi-adsense-editorial .editorial-prose > h2{
+  margin:31px 0 9px;
+  color:var(--fae-text);
+  font-size:clamp(1.2rem,3vw,1.55rem);
+  line-height:1.2;
+  letter-spacing:-.025em;
+  font-weight:800;
+}
+
+.fabi-adsense-editorial .editorial-prose > h2:first-child{
+  margin-top:0;
+}
+
+.fabi-adsense-editorial .editorial-prose > p{
+  margin:0 0 13px;
+  color:var(--fae-muted);
+}
+
+.fabi-adsense-editorial .editorial-prose strong{
+  color:#e9f8ee;
+}
+
+.fabi-adsense-editorial .editorial-prose a{
+  color:var(--fae-link);
+  text-decoration:none;
+  text-underline-offset:3px;
+}
+
+.fabi-adsense-editorial .editorial-prose a:hover{
+  text-decoration:underline;
+}
+
+.fabi-adsense-editorial details.editorial-faq{
+  margin:0 0 9px;
+  padding:13px 15px;
+  border:1px solid var(--fae-border);
+  border-radius:14px;
+  background:rgba(255,255,255,.022);
+}
+
+.fabi-adsense-editorial details.editorial-faq[open]{
+  border-color:rgba(34,197,94,.17);
+  background:rgba(34,197,94,.035);
+}
+
+.fabi-adsense-editorial details.editorial-faq summary{
+  position:relative;
+  cursor:pointer;
+  list-style:none;
+  padding-right:30px;
+  color:var(--fae-text);
+  font-size:.91rem;
+  line-height:1.45;
+  font-weight:750;
+}
+
+.fabi-adsense-editorial details.editorial-faq summary::-webkit-details-marker{
+  display:none;
+}
+
+.fabi-adsense-editorial details.editorial-faq summary::after{
+  content:"+";
+  position:absolute;
+  right:2px;
+  top:50%;
+  transform:translateY(-50%);
+  width:24px;
+  height:24px;
+  display:grid;
+  place-items:center;
+  border-radius:8px;
+  color:#c8f7d9;
+  background:rgba(34,197,94,.075);
+  font-size:1rem;
+  font-weight:700;
+}
+
+.fabi-adsense-editorial details.editorial-faq[open] summary::after{
+  content:"−";
+}
+
+.fabi-adsense-editorial details.editorial-faq p{
+  margin:10px 0 0;
+  padding-right:18px;
+  color:var(--fae-muted);
+  font-size:.88rem;
+  line-height:1.65;
+}
+
+.fabi-adsense-editorial .editorial-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:24px 0 0;
+}
+
+.fabi-adsense-editorial .editorial-links a{
+  display:inline-flex;
+  align-items:center;
+  min-height:39px;
+  padding:8px 11px;
+  border-radius:11px;
+  border:1px solid var(--fae-border);
+  color:#d8e8de;
+  background:rgba(255,255,255,.025);
+  text-decoration:none;
+  font-size:.79rem;
+  line-height:1.2;
+  font-weight:700;
+  transition:background .15s ease,border-color .15s ease,transform .15s ease;
+}
+
+.fabi-adsense-editorial .editorial-links a:hover{
+  transform:translateY(-1px);
+  color:#ebfff2;
+  border-color:rgba(34,197,94,.20);
+  background:rgba(34,197,94,.055);
+  text-decoration:none;
+}
+
+/* Evita que CSS antigo da Home estoure títulos/parágrafos desta seção */
+.fabi-adsense-editorial h2,
+.fabi-adsense-editorial h3,
+.fabi-adsense-editorial p,
+.fabi-adsense-editorial a,
+.fabi-adsense-editorial summary{
+  max-width:none;
+  text-shadow:none;
+}
+
+/* Light mode da Fabi */
+body.light-mode .fabi-adsense-editorial{
+  --fae-bg:#f6f8f7;
+  --fae-card:#ffffff;
+  --fae-card-2:#f7faf8;
+  --fae-border:rgba(15,23,42,.09);
+  --fae-border-strong:rgba(22,163,74,.22);
+  --fae-text:#111827;
+  --fae-muted:#5d6b62;
+  --fae-green:#16a34a;
+  --fae-green-soft:rgba(22,163,74,.075);
+  --fae-link:#15803d;
+
+  background:
+    radial-gradient(720px 300px at 12% 0%,rgba(22,163,74,.055),transparent 64%),
+    linear-gradient(180deg,#fbfdfc,#f3f7f5);
+  border-color:rgba(15,23,42,.07);
+}
+
+body.light-mode .fabi-adsense-editorial .editorial-card{
+  box-shadow:0 10px 30px rgba(15,23,42,.045);
+}
+
+body.light-mode .fabi-adsense-editorial .editorial-prose strong{
+  color:#16251c;
+}
+
+/* Mobile — mantém conteúdo elegante e compacto */
+@media(max-width:700px){
+  .fabi-adsense-editorial{
+    margin-top:14px;
+    padding:30px 14px 34px;
+  }
+
+  .fabi-adsense-editorial .container,
+  .fabi-adsense-editorial .editorial-wrap{
+    width:100%;
+  }
+
+  .fabi-adsense-editorial .fabi-section-head{
+    margin-bottom:18px;
+  }
+
+  .fabi-adsense-editorial .fabi-section-head h2{
+    font-size:1.45rem;
+  }
+
+  .fabi-adsense-editorial .fabi-section-head > p{
+    font-size:.9rem;
+    line-height:1.62;
+  }
+
+  .fabi-adsense-editorial .editorial-grid{
+    grid-template-columns:1fr;
+    gap:10px;
+    margin:17px 0 26px;
+  }
+
+  .fabi-adsense-editorial .editorial-card{
+    min-height:0;
+    padding:15px;
+    border-radius:15px;
+  }
+
+  .fabi-adsense-editorial .editorial-card::before{
+    margin-bottom:10px;
+  }
+
+  .fabi-adsense-editorial .editorial-prose{
+    font-size:.9rem;
+    line-height:1.68;
+  }
+
+  .fabi-adsense-editorial .editorial-prose > h2{
+    margin-top:25px;
+    font-size:1.18rem;
+  }
+
+  .fabi-adsense-editorial details.editorial-faq{
+    padding:12px 13px;
+  }
+
+  .fabi-adsense-editorial .editorial-links{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:7px;
+  }
+
+  .fabi-adsense-editorial .editorial-links a{
+    width:100%;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .fabi-adsense-editorial *,
+  .fabi-adsense-editorial *::before,
+  .fabi-adsense-editorial *::after{
+    transition:none !important;
+    animation:none !important;
+  }
+}
