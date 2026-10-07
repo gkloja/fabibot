@@ -1,229 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Política de Privacidade | Fabi Bot</title>
-  <meta name="description" content="Política de Privacidade da Fabi Bot: dados coletados, cookies, Google AdSense, LGPD e seus direitos.">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://fabibot.vercel.app/privacidade.html">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <meta property="og:title" content="Política de Privacidade | Fabi Bot">
-  <meta property="og:description" content="Política de Privacidade da Fabi Bot: dados coletados, cookies, Google AdSense, LGPD e seus direitos.">
-  <meta property="og:image" content="https://fabibot.vercel.app/og-image.jpg">
-  <meta property="og:url" content="https://fabibot.vercel.app/privacidade.html">
-  <meta property="og:type" content="website">
-  <meta property="og:locale" content="pt_BR">
-  <meta property="og:site_name" content="Fabi Bot">
-  <meta name="theme-color" content="#16a34a">
-  <style>
-    :root {
-      --bg: #060608;
-      --card: #111214;
-      --border: #232323;
-      --text: #E5E7EB;
-      --muted: #9CA3AF;
-      --primary: #22c55e;
-      --primary2: #16a34a;
-      --link: #93c5fd;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: radial-gradient(ellipse 80% 50% at 20% -10%, rgba(34,197,94,.12), transparent 50%),
-                  radial-gradient(ellipse 60% 40% at 90% 10%, rgba(37,99,235,.08), transparent 45%),
-                  var(--bg);
-      color: var(--text);
-      line-height: 1.65;
-      min-height: 100vh;
-    }
-    a { color: var(--link); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .nav {
-      position: sticky; top: 0; z-index: 50;
-      background: rgba(8,12,22,.9);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 16px;
-    }
-    .nav-inner {
-      max-width: 880px; margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    }
-    .brand {
-      display: flex; align-items: center; gap: 10px;
-      font-weight: 800; color: #fff; text-decoration: none;
-    }
-    .brand img { width: 32px; height: 32px; border-radius: 8px; }
-    .brand span span { color: var(--primary); }
-    .nav-links { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 13px; }
-    .nav-links a { color: var(--muted); text-decoration: none; }
-    .nav-links a:hover { color: #fff; }
-    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 16px 60px; }
-    .card {
-      background: linear-gradient(165deg, rgba(17,20,28,.95), rgba(10,12,18,.98));
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 28px 22px;
-      box-shadow: 0 16px 40px rgba(0,0,0,.35);
-    }
-    h1 {
-      font-size: clamp(1.45rem, 3vw, 1.9rem);
-      font-weight: 800; letter-spacing: -.02em;
-      margin-bottom: 8px; color: #fff;
-    }
-    .meta { color: var(--muted); font-size: 13px; margin-bottom: 22px; }
-    h2 {
-      font-size: 1.1rem; color: #fff; margin: 26px 0 10px;
-      padding-top: 8px; border-top: 1px solid var(--border);
-    }
-    h2:first-of-type { border-top: none; padding-top: 0; }
-    p, li { color: var(--text); font-size: 15px; margin-bottom: 10px; }
-    ul, ol { padding-left: 1.25rem; margin-bottom: 14px; }
-    li { margin-bottom: 6px; }
-    .note {
-      background: rgba(34,197,94,.08);
-      border: 1px solid rgba(34,197,94,.25);
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 14px;
-      color: #bbf7d0;
-      margin: 16px 0;
-    }
-    .warn {
-      background: rgba(245,158,11,.1);
-      border: 1px solid rgba(245,158,11,.3);
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 14px;
-      color: #fde68a;
-      margin: 16px 0;
-    }
-    .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: linear-gradient(135deg, var(--primary), var(--primary2));
-      color: #fff !important; text-decoration: none !important;
-      font-weight: 700; font-size: 14px;
-      padding: 11px 18px; border-radius: 999px;
-      box-shadow: 0 8px 20px rgba(34,197,94,.25);
-    }
-    .btn:hover { filter: brightness(1.05); }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text) !important;
-      box-shadow: none;
-    }
-    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
-    .footer {
-      max-width: 880px; margin: 0 auto; padding: 0 16px 40px;
-      color: var(--muted); font-size: 12px;
-      display: flex; flex-wrap: wrap; gap: 10px 16px;
-      border-top: 1px solid var(--border); padding-top: 20px;
-    }
-    .footer a { color: var(--muted); }
-    .footer a:hover { color: #fff; }
-    strong { color: #fff; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Política de Privacidade | Fabi Bot</title>
+<meta name="description" content="Política de Privacidade da Fabi Bot: dados, cookies, Google AdSense, serviços de terceiros e direitos relacionados à LGPD.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://www.fabibot.com.br/privacidade">
+<meta property="og:title" content="Política de Privacidade | Fabi Bot">
+<meta property="og:description" content="Como a Fabi Bot trata dados, cookies, publicidade e solicitações de privacidade.">
+<meta property="og:image" content="https://www.fabibot.com.br/og-image.jpg">
+<meta property="og:url" content="https://www.fabibot.com.br/privacidade">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#07100c">
+<link rel="icon" href="/favicon-32x32.png">
+<link rel="stylesheet" href="/assets/fabi-v2.css?v=20261007">
+<link rel="stylesheet" href="/assets/adsense-ready.css?v=20261007">
 </head>
-<body>
-  <nav class="nav">
-    <div class="nav-inner">
-      <a class="brand" href="/">
-        <img src="/flogo.jpg" alt="Fabi Bot" width="32" height="32">
-        <span>Fabi<span>Bot</span></span>
-      </a>
-      <div class="nav-links">
-        <a href="/">Início</a>
-        <a href="/conectar.html">Conectar</a>
-        <a href="/sobre.html">Sobre</a>
-        <a href="/contato.html">Contato</a>
-        <a href="/privacidade.html">Privacidade</a>
-        <a href="/termos.html">Termos</a>
-      </div>
+<body class="fabi-v2-page">
+<header class="fabi-topbar"><div class="fabi-shell fabi-topbar-in"><a class="fabi-brand" href="/"><img src="/flogo.jpg" alt="" width="36" height="36"><span>Fabi Bot</span></a><nav class="fabi-nav"><a href="/">Início</a><a href="/sobre">Sobre</a><a href="/contato">Contato</a><a href="/termos">Termos</a></nav></div></header>
+<main id="conteudo-principal" class="fabi-section"><article class="fabi-shell editorial-wrap editorial-prose">
+<span class="fabi-badge">Privacidade</span>
+<h1 class="fabi-title" style="font-size:clamp(2rem,6vw,3.3rem);margin:14px 0 8px">Política de <span>Privacidade</span></h1>
+<p><strong>Última atualização: 7 de outubro de 2026.</strong></p>
+
+<p>Esta Política explica como a Fabi Bot pode tratar dados pessoais no site e nos serviços relacionados. A plataforma é um projeto independente de automação e gerenciamento para grupos no WhatsApp.</p>
+
+<h2>1. Dados que podem ser tratados</h2>
+<ul>
+<li><strong>Dados de conta e sessão:</strong> nome ou identificador, número associado à sessão, preferências e configurações necessárias ao funcionamento do serviço.</li>
+<li><strong>Dados técnicos:</strong> endereço IP, navegador, dispositivo, data e hora de acesso, páginas visitadas e registros de segurança.</li>
+<li><strong>Comunicações:</strong> informações enviadas voluntariamente ao suporte.</li>
+<li><strong>Transações:</strong> informações de status de pagamento e referência do provedor quando houver contratação de serviços. Dados completos de cartão não são armazenados pela Fabi quando o pagamento é processado por terceiros.</li>
+<li><strong>Cookies e armazenamento local:</strong> usados para sessão, preferências, segurança, medição e, quando habilitado, publicidade.</li>
+</ul>
+
+<h2>2. Finalidades</h2>
+<ul>
+<li>fornecer o painel, conexão de sessões e recursos solicitados;</li>
+<li>autenticar usuários e proteger a plataforma contra abuso e fraude;</li>
+<li>manter preferências e configurações;</li>
+<li>prestar suporte e responder solicitações;</li>
+<li>medir desempenho e melhorar o serviço;</li>
+<li>cumprir obrigações legais;</li>
+<li>quando aplicável, exibir e medir publicidade.</li>
+</ul>
+
+<h2>3. Google AdSense, cookies e publicidade</h2>
+<p>O site pode utilizar o Google AdSense. Terceiros, incluindo o Google, podem usar cookies para veicular anúncios com base em visitas anteriores do usuário a este site ou a outros sites.</p>
+<p>Com o uso de cookies de publicidade, o Google e parceiros podem veicular anúncios com base nas visitas feitas a este e/ou a outros sites na internet. O usuário pode gerenciar a personalização de anúncios nas configurações de anúncios do Google.</p>
+<p>Saiba mais sobre como o Google utiliza informações em sites e aplicativos parceiros em <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">Como o Google usa informações de sites ou apps que utilizam nossos serviços</a>.</p>
+<p>Em regiões onde a legislação e as políticas do Google exigem consentimento específico para publicidade ou armazenamento local, o site deve utilizar mecanismos de consentimento compatíveis antes do uso de tecnologias não essenciais.</p>
+
+<h2>4. Serviços de terceiros</h2>
+<p>A Fabi pode depender de provedores de hospedagem, CDN, proxy, notificações, pagamento, análise, mídia e outras integrações. Esses fornecedores podem tratar dados necessários para prestar seus próprios serviços, de acordo com as políticas e obrigações deles.</p>
+
+<h2>5. Conteúdo de terceiros e comunidades</h2>
+<p>Partes do site podem apresentar conteúdo fornecido por usuários, administradores de grupos ou fontes externas. A Fabi pode moderar, remover ou limitar conteúdo que viole regras, direitos de terceiros ou a legislação aplicável.</p>
+
+<h2>6. Compartilhamento</h2>
+<p>Não vendemos dados pessoais. Informações podem ser compartilhadas quando necessário com prestadores de serviço, processadores de pagamento, provedores técnicos ou autoridades quando houver obrigação legal.</p>
+
+<h2>7. Segurança e retenção</h2>
+<p>São adotadas medidas técnicas e organizacionais razoáveis para reduzir riscos de acesso indevido. Nenhum sistema é totalmente livre de risco. Os dados são mantidos pelo período necessário às finalidades descritas ou a obrigações legais.</p>
+
+<h2>8. Direitos relacionados a dados pessoais</h2>
+<p>Quando aplicável, você pode solicitar confirmação de tratamento, acesso, correção, informação sobre compartilhamentos, eliminação ou outras medidas previstas na legislação. Solicitações podem ser enviadas para <a href="mailto:contato@fabibot.com.br">contato@fabibot.com.br</a>.</p>
+
+<h2>9. Crianças e adolescentes</h2>
+<p>A plataforma não deve ser utilizada para coletar deliberadamente dados de crianças sem base legal, autorização ou supervisão adequada. Caso um responsável identifique tratamento indevido de dados de menor, pode solicitar análise pelo canal de contato.</p>
+
+<h2>10. Alterações</h2>
+<p>Esta Política pode ser atualizada para refletir mudanças no serviço, na legislação ou em fornecedores. A data no topo identifica a versão vigente.</p>
+
+<div class="editorial-links"><a href="/contato">Contato</a><a href="/termos">Termos de Uso</a><a href="/">Voltar ao início</a></div>
+</article></main>
+<footer class="fabi-footer">
+  <div class="fabi-shell fabi-footer-row">
+    <div>© 2026 Fabi Bot · Projeto independente.</div>
+    <div>
+      <a href="/sobre">Sobre</a> ·
+      <a href="/contato">Contato</a> ·
+      <a href="/privacidade">Privacidade</a> ·
+      <a href="/termos">Termos</a>
     </div>
-  </nav>
-  <main class="wrap">
-    <article class="card">
-
-      <h1>Política de Privacidade</h1>
-      <p class="meta">Última atualização: 22 de agosto de 2026 · Fabi Bot · <a href="https://fabibot.vercel.app">fabibot.vercel.app</a></p>
-
-      <div class="note">
-        Esta política descreve como a <strong>Fabi Bot</strong> trata dados pessoais no site e nos serviços relacionados, em conformidade com a LGPD (Lei nº 13.709/2018) e boas práticas de transparência.
-      </div>
-
-      <h2>1. Quem somos</h2>
-      <p>A Fabi Bot oferece ferramentas de automação e gerenciamento para grupos de WhatsApp, incluindo conexão de sessões, recursos de moderação, mídia e painel web em <strong>https://fabibot.vercel.app</strong>.</p>
-      <p>Contato para assuntos de privacidade: <a href="mailto:contato@fabibot.com.br">contato@fabibot.com.br</a> ou WhatsApp <a href="https://wa.me/5521989047220" target="_blank" rel="noopener">+55 21 98904-7220</a>.</p>
-
-      <h2>2. Quais dados podemos coletar</h2>
-      <ul>
-        <li><strong>Dados de conta / sessão:</strong> nome ou identificador, número de telefone associado à sessão WhatsApp, preferências do painel.</li>
-        <li><strong>Dados técnicos:</strong> endereço IP, tipo de navegador, dispositivo, páginas visitadas, data/hora de acesso (logs de segurança e desempenho).</li>
-        <li><strong>Cookies e tecnologias similares:</strong> necessários ao funcionamento do site, preferências e, quando aplicável, medição e publicidade.</li>
-        <li><strong>Comunicações:</strong> mensagens enviadas ao suporte (WhatsApp/e-mail).</li>
-        <li><strong>Pagamentos:</strong> quando houver compra de planos/créditos, dados de transação tratados pelo provedor de pagamento (não armazenamos dados completos de cartão).</li>
-      </ul>
-
-      <h2>3. Finalidades do tratamento</h2>
-      <ul>
-        <li>Prestar e melhorar o serviço (conexão, painel, suporte).</li>
-        <li>Autenticação, segurança e prevenção a abuso/fraude.</li>
-        <li>Cumprir obrigações legais e responder a autoridades quando exigido.</li>
-        <li>Comunicar atualizações relevantes do serviço.</li>
-        <li>Exibir anúncios e medir desempenho publicitário (ex.: Google AdSense), quando ativo.</li>
-      </ul>
-
-      <h2>4. Cookies e Google AdSense</h2>
-      <p>Utilizamos cookies próprios e de terceiros. O site pode exibir anúncios do <strong>Google AdSense</strong>. O Google pode usar cookies para veicular anúncios com base em visitas anteriores a este ou a outros sites.</p>
-      <ul>
-        <li>Os usuários podem optar por não receber anúncios personalizados em: <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener">google.com/settings/ads</a>.</li>
-        <li>Mais informações: <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">Políticas de anúncios do Google</a>.</li>
-        <li>Parceiros podem usar cookies para veicular anúncios com base em visitas anteriores do usuário a este site.</li>
-      </ul>
-      <p>Cookies essenciais podem ser necessários para login e funcionamento do painel; desativá-los no navegador pode limitar recursos.</p>
-
-      <h2>5. Base legal (LGPD)</h2>
-      <p>Tratamos dados com base em: execução de contrato/serviço solicitado; legítimo interesse (segurança, melhoria); consentimento (quando aplicável, ex. cookies não essenciais); e cumprimento de obrigação legal.</p>
-
-      <h2>6. Compartilhamento</h2>
-      <p>Não vendemos dados pessoais. Podemos compartilhar com:</p>
-      <ul>
-        <li>Provedores de infraestrutura (hospedagem, CDN, proxy) sob contrato;</li>
-        <li>Google (AdSense/Analytics, se habilitados);</li>
-        <li>Processadores de pagamento;</li>
-        <li>Autoridades, quando houver obrigação legal.</li>
-      </ul>
-
-      <h2>7. Retenção e segurança</h2>
-      <p>Mantemos dados apenas pelo tempo necessário às finalidades acima ou exigências legais. Adotamos medidas técnicas e organizacionais razoáveis; nenhum sistema é 100% isento de risco.</p>
-
-      <h2>8. Seus direitos (LGPD)</h2>
-      <p>Você pode solicitar: confirmação de tratamento, acesso, correção, anonimização, portabilidade, eliminação (quando cabível), informação sobre compartilhamentos e revogação de consentimento. Para exercer: <a href="mailto:contato@fabibot.com.br">contato@fabibot.com.br</a>.</p>
-
-      <h2>9. Menores</h2>
-      <p>O serviço não é direcionado a menores de 18 anos. Contas e uso devem ser feitos por maiores ou sob responsabilidade legal adequada.</p>
-
-      <h2>10. Alterações</h2>
-      <p>Podemos atualizar esta política. A data no topo indica a versão vigente. O uso continuado após alterações significa ciência dos novos termos, quando permitido pela lei.</p>
-
-      <div class="actions">
-        <a class="btn" href="/contato.html">Falar com o suporte</a>
-        <a class="btn btn-outline" href="/termos.html">Ver Termos de Uso</a>
-      </div>
-
-    </article>
-  </main>
-  <footer class="footer">
-    <a href="/">Início</a>
-    <a href="/conectar.html">Conectar</a>
-    <a href="/sobre.html">Sobre</a>
-    <a href="/contato.html">Contato</a>
-    <a href="/privacidade.html">Privacidade</a>
-    <a href="/termos.html">Termos</a>
-    <span>© 2026 Fabi Bot</span>
-  </footer>
+  </div>
+</footer>
+<script src="/assets/fabi-v2.js?v=20261007" defer></script>
 </body>
 </html>

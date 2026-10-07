@@ -1,0 +1,123 @@
+{
+  "como-proteger-grupo-whatsapp.html": {
+    "doctype": true,
+    "title": true,
+    "description": true,
+    "canonical": true,
+    "h1": 0,
+    "script_balance": false,
+    "old_vercel_canonical": false,
+    "aggregate_rating": false
+  },
+  "como-conectar-bot-whatsapp.html": {
+    "doctype": true,
+    "title": true,
+    "description": true,
+    "canonical": true,
+    "h1": 0,
+    "script_balance": false,
+    "old_vercel_canonical": false,
+    "aggregate_rating": false
+  },
+  "privacidade.html": {
+    "doctype": true,
+    "title": true,
+    "description": true,
+    "canonical": true,
+    "h1": 0,
+    "script_balance": false,
+    "old_vercel_canonical": false,
+    "aggregate_rating": false
+  },
+  "comandos.html": {
+    "doctype": true,
+    "title": true,
+    "description": true,
+    "canonical": true,
+    "h1": 0,
+    "script_balance": false,
+    "old_vercel_canonical": false,
+    "aggregate_rating": false
+  },
+  "melhor-bot-whatsapp.html": {
+    "doctype": true,
+    "title": true,
+    "description": true,
+    "canonical": true,
+    "h1": 0,
+    "script_balance": false,
+    "old_vercel_canonical": false,
+    "aggregate_rating": false
+  },
+  "figurinhas.html": {
+    "doctype": true,
+    "title": true,
+    "description": true,
+    "canonical": true,
+    "h1": 0,
+    "script_balance": false,
+    "old_vercel_canonical": false,
+    "aggregate_rating": false
+  },
+  "termos.html": {
+    "doctype": true,
+    "title": true,
+    "description": true,
+    "canonical": true,
+    "h1": 0,
+    "script_balance": false,
+    "old_vercel_canonical": false,
+    "aggregate_rating": false
+  },
+  "contato.html": {
+    "doctype": true,
+    "title": true,
+    "description": true,
+    "canonical": true,
+    "h1": 0,
+    "script_balance": false,
+    "old_vercel_canonical": false,
+    "aggregate_rating": false
+  },
+  "sobre.html": {
+    "doctype": true,
+    "title": true,
+    "description": true,
+    "canonical": true,
+    "h1": 0,
+    "script_balance": false,
+    "old_vercel_canonical": false,
+    "aggregate_rating": false
+  },
+  "index.html": {
+    "doctype": true,
+    "title": true,
+    "description": true,
+    "canonical": true,
+    "h1": 0,
+    "script_balance": false,
+    "old_vercel_canonical": false,
+    "aggregate_rating": false
+  },
+  "downloads.html": {
+    "doctype": true,
+    "title": true,
+    "description": true,
+    "canonical": true,
+    "h1": 0,
+    "script_balance": false,
+    "old_vercel_canonical": false,
+    "aggregate_rating": false
+  },
+  "index_preservation": {
+    "video_present": true,
+    "intro_present": true,
+    "mudarSecao_present": true,
+    "adsense_meta_present": true,
+    "adsense_script_present": true,
+    "editorial_after_video": true,
+    "tigrinho_home_promo_removed": true
+  },
+  "ads_txt": true,
+  "sitemap_urls": 12
+}

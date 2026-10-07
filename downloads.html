@@ -3,17 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Downloads de mídia | Fabi</title>
-<meta name="description" content="Use a Fabi para baixar e enviar mídia compatível diretamente no WhatsApp.">
+<title>Ferramentas de mídia no WhatsApp | Fabi Bot</title>
+<meta name="description" content="Entenda como funcionam as ferramentas de mídia da Fabi Bot, AutoDL, comandos de áudio e vídeo e boas práticas para uso responsável.">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="theme-color" content="#07100c">
 <link rel="canonical" href="https://www.fabibot.com.br/downloads">
-<meta property="og:title" content="Downloads de mídia | Fabi">
-<meta property="og:description" content="Use a Fabi para baixar e enviar mídia compatível diretamente no WhatsApp.">
+<meta property="og:title" content="Ferramentas de mídia no WhatsApp | Fabi Bot">
+<meta property="og:description" content="Entenda como funcionam as ferramentas de mídia da Fabi Bot, AutoDL, comandos de áudio e vídeo e boas práticas para uso responsável.">
 <meta property="og:image" content="https://www.fabibot.com.br/og-image.jpg">
 <meta property="og:url" content="https://www.fabibot.com.br/downloads">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Fabi Bot">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.fabibot.com.br/og-image.jpg">
 <link rel="icon" href="/favicon-32x32.png">
@@ -24,26 +25,73 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="/assets/fabi-v2.css?v=20261007">
+<link rel="stylesheet" href="/assets/adsense-ready.css?v=20261007">
 </head>
 <body class="fabi-v2-page">
 <a class="fabi-skip" href="#conteudo-principal">Pular para o conteúdo</a>
-<header class="fabi-topbar"><div class="fabi-shell fabi-topbar-in">
-<a class="fabi-brand" href="/"><img src="/flogo.jpg" alt="" width="36" height="36"><span>Fabi</span></a>
-<nav class="fabi-nav" aria-label="Principal"><a href="/">Início</a><a href="/conectar">Conectar</a><a href="/comandos">Comandos</a><a href="/figurinhas">Figurinhas</a><a href="/downloads">Downloads</a><a href="/sobre">Sobre</a></nav>
-<a class="fabi-btn fabi-btn-primary" href="/conectar">Começar</a>
-</div></header>
+<header class="fabi-topbar">
+  <div class="fabi-shell fabi-topbar-in">
+    <a class="fabi-brand" href="/"><img src="/flogo.jpg" alt="" width="36" height="36"><span>Fabi Bot</span></a>
+    <nav class="fabi-nav" aria-label="Principal">
+      <a href="/">Início</a>
+      <a href="/conectar">Conectar</a>
+      <a href="/comandos">Comandos</a>
+      <a href="/figurinhas">Figurinhas</a>
+      <a href="/downloads">Downloads</a>
+      <a href="/sobre">Sobre</a>
+    </nav>
+    <a class="fabi-btn fabi-btn-primary" href="/conectar">Conectar</a>
+  </div>
+</header>
+
 <main id="conteudo-principal" tabindex="-1">
-<section class="fabi-section"><div class="fabi-shell">
-<div class="fabi-section-head"><span class="fabi-badge">Downloads</span><h1 class="fabi-title">Mídia no grupo, <span>sem complicação.</span></h1><p>A Fabi reúne comandos de mídia para links e pesquisas. A disponibilidade depende das fontes ativas no bot.</p></div>
-<div class="fabi-grid fabi-grid-3">
-<article class="fabi-card"><div class="fabi-card-icon"><i class="fa-solid fa-music"></i></div><h3>Áudio</h3><p>Use <strong>!play</strong> com um nome ou link quando o recurso estiver disponível.</p></article>
-<article class="fabi-card"><div class="fabi-card-icon"><i class="fa-solid fa-video"></i></div><h3>Vídeo</h3><p>Comandos de vídeo usam as fontes configuradas pela Fabi para retornar mídia compatível.</p></article>
-<article class="fabi-card"><div class="fabi-card-icon"><i class="fa-solid fa-link"></i></div><h3>Links</h3><p>Alguns grupos podem usar AutoDL para processar links automaticamente, conforme a configuração.</p></article>
+<section class="fabi-section"><div class="fabi-shell editorial-wrap">
+<div class="fabi-section-head">
+  <span class="fabi-badge">Ferramentas de mídia</span>
+  <h1 class="fabi-title">Links e mídia, <span>sem complicação.</span></h1>
+  <p>A Fabi pode processar determinados links e pesquisas para devolver mídia compatível no WhatsApp. A disponibilidade depende das fontes ativas no momento.</p>
 </div>
-<div class="fabi-card" style="margin-top:18px"><h3>Importante</h3><p>Use apenas conteúdo que você tenha direito de acessar e compartilhar. Sites externos podem mudar e afetar temporariamente determinados downloads.</p></div>
-</div></section></main><footer class="fabi-footer"><div class="fabi-shell fabi-footer-row">
-<div>© 2026 Fabi · Comunidades inteligentes.</div>
-<div><a href="/contato">Contato</a> · <a href="/privacidade">Privacidade</a> · <a href="/termos">Termos</a></div>
-</div></footer>
+
+<div class="editorial-prose">
+<h2>Como os recursos de mídia funcionam</h2>
+<p>Quando um comando ou AutoDL é acionado, a Fabi identifica o link ou a pesquisa, consulta uma fonte compatível e tenta obter um arquivo que o WhatsApp consiga enviar. Em alguns casos há mais de uma fonte disponível e o sistema pode alternar entre elas quando uma falha.</p>
+<p>Como sites externos mudam com frequência, um recurso de mídia pode ficar temporariamente indisponível mesmo quando o restante da Fabi continua funcionando normalmente.</p>
+
+<div class="editorial-grid">
+  <div class="editorial-card"><h3>Áudio</h3><p>Comandos de música ou áudio podem pesquisar e retornar arquivos compatíveis quando a fonte estiver disponível.</p></div>
+  <div class="editorial-card"><h3>Vídeo</h3><p>O bot tenta priorizar formatos que funcionem bem no WhatsApp e pode rejeitar arquivos corrompidos ou incompatíveis.</p></div>
+  <div class="editorial-card"><h3>AutoDL</h3><p>Quando habilitado pelo administrador, determinados links podem ser reconhecidos automaticamente sem exigir um comando separado.</p></div>
+  <div class="editorial-card"><h3>Fallbacks</h3><p>Se uma fonte estiver fora do ar ou devolver um arquivo inválido, outra pode ser tentada de acordo com a configuração do bot.</p></div>
+</div>
+
+<h2>Por que um download pode falhar?</h2>
+<p>Os motivos mais comuns são mudanças no site de origem, indisponibilidade temporária, link privado, arquivo removido, limitação da fonte ou formato incompatível. Isso não significa necessariamente que a sessão inteira esteja com problema.</p>
+
+<h2>Uso responsável</h2>
+<p>Use as ferramentas apenas para conteúdo que você tenha direito de acessar, salvar e compartilhar. A Fabi não transfere ao usuário direitos sobre obras de terceiros. O responsável pelo uso deve respeitar direitos autorais, termos do serviço de origem e regras do grupo.</p>
+
+<h2>Privacidade</h2>
+<p>Evite enviar links privados, temporários ou que revelem informações pessoais. Para detalhes sobre dados e serviços de terceiros, consulte a <a href="/privacidade">Política de Privacidade</a>.</p>
+
+<div class="editorial-links">
+  <a href="/comandos">Ver comandos</a>
+  <a href="/figurinhas">Criar figurinhas</a>
+  <a href="/contato">Suporte</a>
+</div>
+</div>
+</div></section>
+</main>
+<footer class="fabi-footer">
+  <div class="fabi-shell fabi-footer-row">
+    <div>© 2026 Fabi Bot · Projeto independente.</div>
+    <div>
+      <a href="/sobre">Sobre</a> ·
+      <a href="/contato">Contato</a> ·
+      <a href="/privacidade">Privacidade</a> ·
+      <a href="/termos">Termos</a>
+    </div>
+  </div>
+</footer>
 <script src="/assets/fabi-v2.js?v=20261007" defer></script>
-</body></html>
+</body>
+</html>
