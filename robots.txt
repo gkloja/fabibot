@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-# Áreas privadas / técnicas (não indexar)
+# Áreas privadas e técnicas
 Disallow: /api/
 Disallow: /login
 Disallow: /login.html
@@ -9,8 +9,5 @@ Disallow: /connect.js
 Disallow: /datab/
 Disallow: /public/database/
 Disallow: /tmp_video_fix/
-
-# Preferir domínio principal
-Host: www.fabibot.com.br
 
 Sitemap: https://www.fabibot.com.br/sitemap.xml

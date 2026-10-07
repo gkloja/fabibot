@@ -1,14 +1,14 @@
 {
   "id": "https://www.fabibot.com.br/",
-  "name": "Fabi — Comunidades inteligentes",
+  "name": "Fabi Bot",
   "short_name": "Fabi",
-  "description": "Automação, proteção e inteligência para comunidades no WhatsApp.",
+  "description": "Automação, proteção, figurinhas, inteligência artificial e ferramentas para grupos no WhatsApp.",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#07100c",
-  "theme_color": "#07100c",
+  "background_color": "#060913",
+  "theme_color": "#080d18",
   "lang": "pt-BR",
   "dir": "ltr",
   "categories": [
@@ -44,21 +44,9 @@
   ],
   "shortcuts": [
     {
-      "name": "Conectar a Fabi",
+      "name": "Conectar a Fabi Bot",
       "short_name": "Conectar",
       "url": "/conectar?source=pwa",
-      "icons": [
-        {
-          "src": "/icon-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Comunidades",
-      "short_name": "Comunidades",
-      "url": "/?comunidades&source=pwa",
       "icons": [
         {
           "src": "/icon-192.png",
@@ -71,6 +59,18 @@
       "name": "Comandos",
       "short_name": "Comandos",
       "url": "/comandos?source=pwa",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Figurinhas",
+      "short_name": "Figurinhas",
+      "url": "/figurinhas?source=pwa",
       "icons": [
         {
           "src": "/icon-192.png",

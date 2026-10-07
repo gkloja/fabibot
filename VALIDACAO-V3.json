@@ -1,0 +1,47 @@
+{
+  "index": {
+    "seo_only_removed": true,
+    "hidden_googlebot_comment_removed": true,
+    "scrollTop_occurrences": 1,
+    "aggregateRating_occurrences": 0,
+    "searchAction_occurrences": 0,
+    "h1_count": 1,
+    "video_before_secondary_cta": true,
+    "intro_preserved": true,
+    "mudarSecao_preserved": true,
+    "removed_ids": [],
+    "removed_functions": [],
+    "doctype": true,
+    "html_close": true,
+    "body_close": true,
+    "script_open": 13,
+    "script_close": 13,
+    "script_balance": true
+  },
+  "conectar": {
+    "aggregateRating_occurrences": 0,
+    "hero_preserved": true,
+    "session_manager_preserved": true,
+    "new_session_modal_preserved": true,
+    "removed_ids": [],
+    "removed_functions": [],
+    "contracts": {
+      "window.PROXY_HOST": true,
+      "window.API_BACKEND": true,
+      "/api/": true,
+      "fabi_session": true,
+      "neconecta_user_session": true,
+      "authQuery": true,
+      "authBodyFields": true,
+      "apiUrl": true
+    },
+    "doctype": true,
+    "html_close": true,
+    "body_close": true,
+    "script_open": 11,
+    "script_close": 11,
+    "script_balance": true
+  },
+  "manifest_json_valid": true,
+  "sitemap_urls": 11
+}

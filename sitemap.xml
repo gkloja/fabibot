@@ -3,79 +3,45 @@
   <url>
     <loc>https://www.fabibot.com.br/</loc>
     <lastmod>2026-10-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.fabibot.com.br/melhor-bot-whatsapp</loc>
     <lastmod>2026-10-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.98</priority>
-  </url>
-  <url>
-    <loc>https://www.fabibot.com.br/golds</loc>
-    <lastmod>2026-10-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.95</priority>
   </url>
   <url>
     <loc>https://www.fabibot.com.br/figurinhas</loc>
     <lastmod>2026-10-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
   </url>
   <url>
     <loc>https://www.fabibot.com.br/downloads</loc>
     <lastmod>2026-10-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
   </url>
   <url>
     <loc>https://www.fabibot.com.br/conectar</loc>
     <lastmod>2026-10-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
   </url>
   <url>
     <loc>https://www.fabibot.com.br/comandos</loc>
     <lastmod>2026-10-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://www.fabibot.com.br/ZapAudioMod</loc>
-    <lastmod>2026-10-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://www.fabibot.com.br/conquistas</loc>
-    <lastmod>2026-10-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://www.fabibot.com.br/sobre</loc>
     <lastmod>2026-10-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.fabibot.com.br/contato</loc>
     <lastmod>2026-10-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.fabibot.com.br/privacidade</loc>
     <lastmod>2026-10-07</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
   </url>
   <url>
     <loc>https://www.fabibot.com.br/termos</loc>
     <lastmod>2026-10-07</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.fabibot.com.br/ZapAudioMod</loc>
+    <lastmod>2026-10-07</lastmod>
   </url>
 </urlset>
