@@ -7018,6 +7018,7 @@ body.light-mode .command-badge-mobile {
 </style>
   <link rel="stylesheet" href="/assets/index-v3.css?v=20261007">
 <link rel="stylesheet" href="/assets/adsense-ready.css?v=20261007b">
+<link rel="stylesheet" href="/assets/fabi-home-v4.css?v=20261007">
 </head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
 <body>
@@ -7040,10 +7041,10 @@ body.light-mode .command-badge-mobile {
             </div>
         </div>
 <div class="menu" id="mainMenu">
-    <a href="?feed" data-section="feed" class="active">Feed</a>
+    <a href="?feed" data-section="feed" class="active">Home</a>
     <a href="?comunidades" data-section="comunidades">Comunidades</a>
     <a href="?configurar" data-section="configurar">Configurar</a>
-    <a href="?chat" data-section="chat">Chat</a>
+    
     <a href="?radio" data-section="radio">Música</a>
     <a href="?comandos" data-section="comandos" class="menu-relatos-badge">
         Comandos
@@ -7088,7 +7089,7 @@ body.light-mode .command-badge-mobile {
 <div class="bottom-nav show-on-mobile">
     <div class="bottom-nav-items">
         <button class="bottom-nav-item active" data-section="feed">
-            <i class="fas fa-home"></i><span>Feed</span>
+            <i class="fas fa-home"></i><span>Home</span>
         </button>
 <button class="bottom-nav-item" data-section="comunidades">
     <i class="fas fa-users"></i>
@@ -7104,9 +7105,6 @@ body.light-mode .command-badge-mobile {
     <span class="badge-count badge-relatos" id="bottomRelatosBadge" style="display:none;">0</span>
     <span>Comandos</span>
 </button>
-        <button class="bottom-nav-item" data-section="chat">
-            <i class="fas fa-comments"></i><span>Chat</span>
-        </button>
         <button class="bottom-nav-item" data-section="vendas" style="position: relative;">
             <i class="fas fa-tag"></i>
             <span class="badge-count" id="bottomVendasBadge">0</span>
@@ -7283,12 +7281,39 @@ body.light-mode .command-badge-mobile {
       </details>
       <details class="editorial-faq">
         <summary>Onde vejo os comandos?</summary>
-        <p>A página <a href="/comandos">Central de Comandos</a> apresenta exemplos e o próprio bot pode oferecer uma lista atualizada dentro do WhatsApp.</p>
+        <p>Use a <a href="?comandos" onclick="event.preventDefault(); mudarSecao(\'comandos\');">Central de Comandos</a> do próprio site. Ela abre a área interna de comandos sem sair da plataforma.</p>
+      </details>
+
+
+      <details class="editorial-faq">
+        <summary>Como conecto a Fabi ao meu WhatsApp?</summary>
+        <p>Abra <strong>Conectar Robô</strong>, crie ou selecione sua sessão e siga o pareamento mostrado no painel. Depois da conexão, a sessão aparece na sua conta.</p>
+      </details>
+      <details class="editorial-faq">
+        <summary>Como ativo anti-link, anti-spam e outras proteções?</summary>
+        <p>Entre em <strong>Configurar</strong>, escolha o grupo e ative somente as proteções que fazem sentido para aquela comunidade. Algumas ações exigem que a Fabi seja administradora.</p>
+      </details>
+      <details class="editorial-faq">
+        <summary>O que é o AutoDL?</summary>
+        <p>Quando o administrador habilita esse recurso, links compatíveis podem ser reconhecidos automaticamente e a Fabi tenta devolver a mídia no grupo sem exigir um comando separado.</p>
+      </details>
+      <details class="editorial-faq">
+        <summary>Por que um comando pode não funcionar?</summary>
+        <p>Ele pode estar desligado naquele grupo, depender de permissão administrativa, exigir registro ou depender temporariamente de um serviço externo. A área <strong>Comandos</strong> ajuda a conferir o recurso correto.</p>
+      </details>
+      <details class="editorial-faq">
+        <summary>Como funciona o aluguel da Fabi em um grupo?</summary>
+        <p>Quando o aluguel é usado, ele fica associado à sessão e ao grupo definidos pelo responsável. O painel informa a validade e o responsável pode renovar quando necessário.</p>
+      </details>
+      <details class="editorial-faq">
+        <summary>A Fabi é oficial do WhatsApp?</summary>
+        <p>Não. A Fabi Bot é um projeto independente e não possui afiliação com WhatsApp ou Meta. Alguns recursos dependem de serviços e regras de terceiros.</p>
       </details>
 
       <div class="editorial-links" aria-label="Conteúdo útil">
         <a href="/como-conectar-bot-whatsapp">Como conectar um bot ao WhatsApp</a>
         <a href="/como-proteger-grupo-whatsapp">Como proteger um grupo</a>
+        <a href="?comandos" onclick="event.preventDefault(); mudarSecao('comandos');">Central de Comandos</a>
         <a href="/figurinhas">Figurinhas</a>
         <a href="/downloads">Ferramentas de mídia</a>
         <a href="/sobre">Conheça a Fabi</a>
@@ -7296,6 +7321,29 @@ body.light-mode .command-badge-mobile {
     </div>
   </div>
 </section>
+
+<section class="fabi-home-testimonials" id="fabiDepoimentosHome" aria-labelledby="fabiDepoimentosTitle">
+  <div class="container fabi-testimonials-shell">
+    <div class="fabi-testimonials-head">
+      <div>
+        <span class="fabi-testimonials-kicker"><i class="fas fa-heart"></i> Experiências com a Fabi</span>
+        <h2 id="fabiDepoimentosTitle">Quem usa, conta como é.</h2>
+        <p>Imagens, vídeos e relatos aprovados pela equipe da Fabi Bot.</p>
+      </div>
+      <div class="fabi-testimonials-trust"><i class="fas fa-check-circle"></i> Conteúdo revisado</div>
+    </div>
+    <div class="fabi-testimonials-grid" id="fabiDepoimentosGrid">
+      <div class="fabi-testimonials-loading">
+        <span class="fabi-testimonials-spinner"></span>
+        <span>Carregando experiências...</span>
+      </div>
+    </div>
+    <div class="fabi-testimonials-footer">
+      <span>Os relatos exibidos aqui passam por aprovação antes de aparecer na Home.</span>
+    </div>
+  </div>
+</section>
+
 
 
 
@@ -10532,16 +10580,15 @@ function resolverUrlFoto(url) {
     // ==================== ROTEAMENTO DE ABAS / LINKS COMPARTILHÁVEIS ====================
     // Ex.: https://fabibot.com.br/?comandos
     const FABI_SECOES_COMPARTILHAVEIS = Object.freeze([
-        'feed','comunidades','configurar','comandos','chat',
+        'feed','comunidades','configurar','comandos',
         'vendas','radio','perfil','empregos','noticias'
     ]);
 
     const FABI_TITULOS_SECAO = Object.freeze({
-        feed: 'Feed',
+        feed: 'Home',
         comunidades: 'Comunidades',
         configurar: 'Configurar Grupo',
         comandos: 'Comandos',
-        chat: 'Chat',
         vendas: 'Vendas',
         radio: 'Música',
         perfil: 'Perfil',
@@ -10560,8 +10607,12 @@ function resolverUrlFoto(url) {
             // Compatibilidade com fluxo antigo de configuração.
             if (params.has('grupo')) return 'configurar';
 
-            // Compatibilidade com ?secao=radio e outros links antigos.
+            // Compatibilidade com links antigos.
             const legacy = String(params.get('secao') || '').toLowerCase();
+            if (legacy === 'chat' || params.has('chat')) {
+                try { sessionStorage.setItem('fabi_open_ai_once', '1'); } catch (_) {}
+                return 'feed';
+            }
             if (fabiSecaoValida(legacy)) return legacy;
 
             // Novo formato curto: ?comandos, ?chat, ?comunidades...
@@ -14471,10 +14522,7 @@ async function mostrarUsuariosOnline() {
 
         salvarSessao();
         atualizarPerfilUI();
-        // Carrega o feed diretamente (não via carregarFeedCompleto/currentSection,
-        // que pode já ter mudado para 'watch' se a URL tiver ?watch=..., fazendo
-        // o feed nunca carregar - veja verificarSalaWatchNaUrl)
-        await carregarPosts();
+        // Home V4: feed social antigo não é mais carregado automaticamente.
         atualizarOnlineCount();
 
         console.log('✅ Usuário logado:', currentUser.nome);
@@ -14487,8 +14535,7 @@ async function mostrarUsuariosOnline() {
         atualizarOnlineCount();
 
         atualizarPerfilUI();
-        // Idem: carrega o feed diretamente, sem depender de currentSection
-        await carregarPosts();
+        // Home V4: feed social antigo não é mais carregado automaticamente.
 
         console.log('👋 Nenhum usuário logado');
     }
@@ -14496,7 +14543,7 @@ async function mostrarUsuariosOnline() {
 
 async function carregarFeedCompleto() {
     switch (currentSection) {
-        case 'feed': await carregarPosts(); break;
+        case 'feed': break;
         case 'empregos': await carregarVagas(); break;
         case 'comunidades':
             {
@@ -14504,11 +14551,10 @@ async function carregarFeedCompleto() {
                 if (c) { c.style.display = 'block'; try { initComunidades(); } catch(e) {} }
             }
             break;
-        case 'chat': await carregarChat(); break;
         case 'watch': carregarWatchRooms(); break;
         case 'radio': carregarRadioPage(); break;
         case 'perfil': renderizarPerfil(); break;
-        default: await carregarPosts();
+        default: break;
     }
 }
 
@@ -19107,6 +19153,16 @@ function toggleMaisMenu(force) {
 }
 
 function mudarSecao(section, options = {}) {
+    if (section === 'chat') {
+        try {
+            if (window.FabiAjuda && typeof window.FabiAjuda.open === 'function') {
+                window.FabiAjuda.open();
+            } else {
+                sessionStorage.setItem('fabi_open_ai_once', '1');
+            }
+        } catch (_) {}
+        section = 'feed';
+    }
     if (section === 'watch' || section === 'imagem') { section = 'feed'; }
 
     if (section === 'criar') {
@@ -19126,6 +19182,7 @@ function mudarSecao(section, options = {}) {
 
     fabiAplicarAriaNavegacao(section);
     currentSection = section;
+    try { document.body.dataset.fabiSection = section; } catch (_) {}
     if (!window.__fabiComandosListenersBound) {
         document.getElementById('comandosSearchInput')?.addEventListener('input', renderizarComandos);
         document.getElementById('comandosPrefixoInput')?.addEventListener('input', renderizarComandos);
@@ -19187,8 +19244,10 @@ function mudarSecao(section, options = {}) {
     
     // Mostrar seção selecionada
     switch(section) {
-        case 'feed': 
-            if (feedCentral) feedCentral.style.display = 'block'; 
+        case 'feed':
+            // Home V4: o feed social antigo saiu da navegação.
+            // O conteúdo público da Home é intro + informações + depoimentos aprovados.
+            if (feedCentral) feedCentral.style.display = 'none';
             break;
         case 'configurar':
             if (configurarContainer) {
@@ -19231,11 +19290,7 @@ function mudarSecao(section, options = {}) {
                 try { initComunidades(); } catch (e) { console.warn(e); }
             }
             break;
-        case 'chat': 
-            if (chatLayout) chatLayout.style.display = 'flex'; 
-            carregarChat();
-            break;
-        case 'watch': 
+case 'watch': 
             if (watchContainer) watchContainer.style.display = 'block'; 
             // 🔧 EM MANUTENÇÃO: carregamento de salas/busca desativado por tempo indeterminado.
             // carregarWatchRooms();
@@ -20718,5 +20773,6 @@ window.addEventListener('beforeunload', () => {
 </div>
 
 
+<script src="/assets/fabi-home-v4.js?v=20261007" defer></script>
 </body>
 </html>

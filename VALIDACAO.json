@@ -1,75 +1,20 @@
 {
-  "index.html": {
-    "doctype": true,
-    "head": true,
-    "body": true,
-    "shared_css": true,
-    "shared_js": true
+  "connect_js": {
+    "ok": true,
+    "stderr": ""
   },
-  "conectar.html": {
-    "doctype": true,
-    "head": true,
-    "body": true,
-    "shared_css": true,
-    "shared_js": true
+  "fabi_home_v4_js": {
+    "ok": true,
+    "stderr": ""
   },
-  "login.html": {
-    "doctype": true,
-    "head": true,
-    "body": true,
-    "shared_css": true,
-    "shared_js": true
-  },
-  "comandos.html": {
-    "doctype": true,
-    "head": true,
-    "body": true,
-    "shared_css": true,
-    "shared_js": true
-  },
-  "figurinhas.html": {
-    "doctype": true,
-    "head": true,
-    "body": true,
-    "shared_css": true,
-    "shared_js": true
-  },
-  "downloads.html": {
-    "doctype": true,
-    "head": true,
-    "body": true,
-    "shared_css": true,
-    "shared_js": true
-  },
-  "sobre.html": {
-    "doctype": true,
-    "head": true,
-    "body": true,
-    "shared_css": true,
-    "shared_js": true
-  },
-  "contato.html": {
-    "doctype": true,
-    "head": true,
-    "body": true,
-    "shared_css": true,
-    "shared_js": true
-  },
-  "login_contract": {
-    "api_login": true,
-    "fabi_session": true,
-    "neconecta_session": true,
-    "proxy_preserved": true
-  },
-  "conectar_contract": {
-    "api_tokens_present": true,
-    "localstorage_preserved": true,
-    "progress_added": true
-  },
-  "index_contract": {
-    "onesignal_preserved": true,
-    "mudarSecao_preserved": true,
-    "shared_assets": true,
-    "new_positioning": true
-  }
+  "index_script_balance": true,
+  "publisher_script_balance": true,
+  "home_only_editorial": true,
+  "feed_not_auto_loaded": true,
+  "chat_removed_from_top_nav": true,
+  "home_label_present": true,
+  "internal_commands_link": true,
+  "testimonials_home": true,
+  "ai_route": true,
+  "testimonial_routes": true
 }
