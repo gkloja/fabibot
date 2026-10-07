@@ -1,0 +1,8 @@
+{
+  "standalone_scope": true,
+  "no_fabi_v2_dependency": true,
+  "mobile_rules": true,
+  "light_mode": true,
+  "faq_styled": true,
+  "cards_styled": true
+}
