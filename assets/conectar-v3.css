@@ -1,0 +1,404 @@
+/* ==========================================================
+   FABI BOT — CONECTAR V3
+   Camada visual não destrutiva.
+   Mantém Bootstrap, IDs, modais, APIs e JavaScript existentes.
+   ========================================================== */
+
+:root{
+  --c3-bg:#060913;
+  --c3-bg-2:#090f1c;
+  --c3-card:#0d1422;
+  --c3-card-2:#111a2b;
+  --c3-line:rgba(148,163,184,.14);
+  --c3-line-strong:rgba(96,165,250,.30);
+  --c3-text:#f8fafc;
+  --c3-muted:#93a4b8;
+  --c3-blue:#3b82f6;
+  --c3-blue-2:#2563eb;
+  --c3-green:#25d366;
+  --c3-gold:#f5c451;
+  --c3-danger:#fb7185;
+  --c3-radius:20px;
+  --c3-shadow:0 22px 70px rgba(0,0,0,.28);
+}
+
+html{background:var(--c3-bg)}
+body{
+  background:
+    radial-gradient(950px 520px at 12% -10%,rgba(37,99,235,.18),transparent 60%),
+    radial-gradient(760px 430px at 100% 5%,rgba(37,211,102,.07),transparent 58%),
+    linear-gradient(180deg,var(--c3-bg-2),var(--c3-bg)) !important;
+  color:var(--c3-text) !important;
+  font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif !important;
+  min-height:100vh;
+}
+
+::selection{background:rgba(59,130,246,.35);color:#fff}
+a,button{touch-action:manipulation}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:3px solid rgba(96,165,250,.6) !important;
+  outline-offset:3px;
+}
+
+/* NAV */
+.navbar-whatsapp{
+  min-height:66px;
+  padding:8px 0 !important;
+  background:rgba(6,9,19,.84) !important;
+  border-bottom:1px solid var(--c3-line) !important;
+  backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:0 8px 28px rgba(0,0,0,.16) !important;
+}
+.navbar-brand{
+  font-family:'Space Grotesk','Inter',sans-serif;
+  letter-spacing:-.02em !important;
+  font-size:1.02rem !important;
+}
+.navbar-brand img{
+  width:38px !important;height:38px !important;
+  border-radius:12px !important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 8px 22px rgba(37,99,235,.18) !important;
+}
+.btn-nav-home,.btn-nav-login{
+  min-height:38px;
+  border-radius:12px !important;
+  font-weight:700 !important;
+  padding-inline:13px !important;
+}
+.btn-nav-login{
+  background:linear-gradient(135deg,#3b82f6,#2563eb) !important;
+  box-shadow:0 8px 22px rgba(37,99,235,.22) !important;
+}
+
+/* LAYOUT */
+.main-container{
+  max-width:1180px !important;
+  padding:22px 18px 48px !important;
+}
+.fb-page-hero{
+  max-width:none !important;
+  text-align:left !important;
+  padding:28px 30px !important;
+  margin:4px 0 18px !important;
+  border:1px solid var(--c3-line) !important;
+  border-radius:26px !important;
+  background:
+    radial-gradient(520px 220px at 85% 0,rgba(59,130,246,.13),transparent 65%),
+    linear-gradient(135deg,rgba(17,26,43,.95),rgba(9,15,28,.95)) !important;
+  box-shadow:var(--c3-shadow);
+  overflow:hidden;
+}
+.fb-page-hero::after{
+  content:"";
+  position:absolute;
+  width:180px;height:180px;
+  right:-55px;bottom:-90px;
+  border-radius:50%;
+  background:rgba(37,211,102,.05);
+  border:1px solid rgba(37,211,102,.08);
+  pointer-events:none;
+}
+.fb-eyebrow{
+  color:#b7cdfd !important;
+  background:rgba(59,130,246,.11) !important;
+  border-color:rgba(96,165,250,.25) !important;
+  margin-bottom:11px !important;
+}
+.fb-page-hero h1{
+  max-width:760px;
+  margin:0 0 8px !important;
+  font-family:'Space Grotesk','Inter',sans-serif;
+  font-size:clamp(1.65rem,4vw,2.6rem) !important;
+  line-height:1.06 !important;
+  letter-spacing:-.045em !important;
+  color:#fff !important;
+}
+.fb-page-hero h1 span{
+  background:linear-gradient(90deg,#60a5fa,#93c5fd);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent !important;
+}
+.fb-page-hero p{
+  max-width:680px;
+  margin:0 !important;
+  color:var(--c3-muted) !important;
+  font-size:.98rem !important;
+  line-height:1.65 !important;
+}
+
+/* UPDATE / AVISOS */
+.fb-update-banner{
+  padding:16px 18px !important;
+  margin-bottom:18px !important;
+  border-radius:18px !important;
+  border:1px solid rgba(245,196,81,.20) !important;
+  background:linear-gradient(135deg,rgba(245,196,81,.075),rgba(59,130,246,.05)) !important;
+  box-shadow:none !important;
+}
+.fb-update-banner h3,.fb-update-banner h4,.fb-update-banner h5{
+  color:#f8fafc !important;
+}
+.fb-update-banner p{color:#aab7c7 !important}
+.fb-update-badge{
+  background:rgba(245,196,81,.12) !important;
+  color:#f9d77d !important;
+  border-color:rgba(245,196,81,.20) !important;
+}
+
+/* CARDS */
+.card-whatsapp{
+  margin-bottom:18px !important;
+  border:1px solid var(--c3-line) !important;
+  border-radius:var(--c3-radius) !important;
+  background:linear-gradient(180deg,rgba(17,26,43,.96),rgba(11,17,30,.98)) !important;
+  box-shadow:0 14px 45px rgba(0,0,0,.18) !important;
+  overflow:hidden;
+}
+.card-header-whatsapp{
+  padding:16px 18px !important;
+  background:linear-gradient(180deg,rgba(22,33,53,.98),rgba(15,24,40,.98)) !important;
+  border-bottom:1px solid var(--c3-line) !important;
+  color:#fff !important;
+}
+.card-header-whatsapp h4,
+.card-header-whatsapp h5{
+  font-family:'Space Grotesk','Inter',sans-serif;
+  font-size:1.02rem !important;
+  font-weight:700 !important;
+  letter-spacing:-.018em;
+}
+.card-header-whatsapp p{
+  font-size:.82rem !important;
+  color:#91a2b7 !important;
+  margin-top:3px !important;
+}
+.card-whatsapp .card-body{
+  padding:18px !important;
+  color:var(--c3-text) !important;
+}
+
+/* Estatísticas */
+.stats-box{
+  min-height:104px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  padding:15px 16px !important;
+  background:rgba(255,255,255,.025) !important;
+  border:1px solid var(--c3-line) !important;
+  border-radius:16px !important;
+  box-shadow:none !important;
+  text-align:left !important;
+}
+.stats-number{
+  margin:0 0 4px !important;
+  font-family:'Space Grotesk','Inter',sans-serif;
+  font-size:clamp(1.45rem,4vw,2rem) !important;
+  color:#fff !important;
+  letter-spacing:-.04em;
+}
+.stats-label{
+  color:#8394aa !important;
+  font-size:.68rem !important;
+  line-height:1.35;
+  letter-spacing:.08em !important;
+}
+
+/* Sessões */
+.session-item{
+  margin-bottom:12px !important;
+  padding:15px !important;
+  border:1px solid var(--c3-line) !important;
+  border-left:3px solid var(--c3-blue) !important;
+  border-radius:16px !important;
+  background:rgba(255,255,255,.025) !important;
+  box-shadow:none !important;
+  transition:border-color .18s ease,background .18s ease,transform .18s ease !important;
+}
+.session-item:hover{
+  transform:translateY(-1px) !important;
+  border-color:rgba(96,165,250,.30) !important;
+  background:rgba(59,130,246,.045) !important;
+  box-shadow:0 12px 30px rgba(0,0,0,.16) !important;
+}
+.session-item .text-muted{color:#8999ad !important}
+
+/* Status mais legíveis */
+.status-badge{
+  border:1px solid transparent;
+  font-weight:700 !important;
+  letter-spacing:.01em;
+}
+.status-connected{
+  background:rgba(37,211,102,.11) !important;
+  color:#80efa8 !important;
+  border-color:rgba(37,211,102,.20) !important;
+}
+.status-pending,.status-code_ready,.status-pairing{
+  background:rgba(96,165,250,.11) !important;
+  color:#a9c9ff !important;
+  border-color:rgba(96,165,250,.20) !important;
+}
+.status-error{
+  background:rgba(251,113,133,.10) !important;
+  color:#ffb1be !important;
+  border-color:rgba(251,113,133,.20) !important;
+}
+
+/* Botões */
+.btn-whatsapp,.btn-primary{
+  border-radius:12px !important;
+  min-height:42px;
+  background:linear-gradient(135deg,#3b82f6,#2563eb) !important;
+  box-shadow:none !important;
+  font-weight:700 !important;
+}
+.btn-whatsapp:hover,.btn-primary:hover{
+  transform:translateY(-1px);
+  box-shadow:0 10px 24px rgba(37,99,235,.22) !important;
+}
+.card-header-whatsapp .btn-light{
+  border-radius:12px !important;
+  min-height:40px;
+  padding:8px 14px !important;
+  font-weight:800;
+  color:#08111f !important;
+  border:none !important;
+  box-shadow:0 8px 20px rgba(255,255,255,.08);
+}
+.btn-outline-primary,.btn-outline-light,.btn-outline-secondary{
+  border-radius:11px !important;
+}
+
+/* Pareamento */
+.code-display{
+  margin:14px 0 !important;
+  padding:22px 18px 28px !important;
+  border-radius:16px !important;
+  border:1px solid rgba(96,165,250,.22) !important;
+  background:
+    radial-gradient(420px 180px at 50% -20%,rgba(147,197,253,.15),transparent 70%),
+    linear-gradient(135deg,#132443,#172554) !important;
+  box-shadow:0 16px 35px rgba(0,0,0,.20) !important;
+  font-family:'JetBrains Mono',monospace !important;
+}
+
+/* Inputs */
+.form-control,.form-select{
+  min-height:44px;
+  border-radius:12px !important;
+  background:#080e19 !important;
+  border:1px solid var(--c3-line) !important;
+  color:#eef4fb !important;
+}
+.form-control:focus,.form-select:focus{
+  border-color:rgba(96,165,250,.55) !important;
+  box-shadow:0 0 0 .22rem rgba(59,130,246,.10) !important;
+}
+.form-control::placeholder{color:#596a80 !important}
+
+/* Carteira / transações / preços */
+.transacao-item,.pricing-card{
+  background:rgba(255,255,255,.025) !important;
+  border:1px solid var(--c3-line) !important;
+  border-radius:15px !important;
+  box-shadow:none !important;
+}
+.pricing-card:hover{
+  transform:translateY(-2px) !important;
+  border-color:rgba(96,165,250,.28) !important;
+}
+
+/* Modais */
+.modal-backdrop.show{opacity:.72 !important}
+.modal-content{
+  border:1px solid var(--c3-line) !important;
+  border-radius:22px !important;
+  background:#0c1320 !important;
+  color:#f8fafc !important;
+  box-shadow:0 28px 90px rgba(0,0,0,.50) !important;
+}
+.modal-header{
+  border-bottom:1px solid var(--c3-line) !important;
+  border-radius:22px 22px 0 0 !important;
+  background:linear-gradient(180deg,#121d30,#0e1726) !important;
+}
+.modal-footer{border-top:1px solid var(--c3-line) !important}
+.btn-close{filter:invert(1) grayscale(1);opacity:.75}
+
+/* Resultados/terminal */
+.resultado-container{
+  border:1px solid var(--c3-line) !important;
+  background:#060b13 !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.012);
+}
+.resultado-item,.info-card{
+  border-color:rgba(96,165,250,.16) !important;
+  background:rgba(255,255,255,.025) !important;
+}
+
+/* Footer */
+.footer{
+  margin-top:34px !important;
+  background:
+    radial-gradient(ellipse 80% 70% at 50% -35%,rgba(59,130,246,.10),transparent 58%),
+    #050812 !important;
+  border-top:1px solid rgba(148,163,184,.09) !important;
+}
+
+/* Botão privado menos agressivo */
+.float-private-btn{
+  width:54px !important;height:54px !important;
+  right:18px !important;bottom:20px !important;
+  background:linear-gradient(135deg,#4f46e5,#3730a3) !important;
+  box-shadow:0 14px 32px rgba(55,48,163,.28) !important;
+}
+
+/* Acessibilidade / motion */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    scroll-behavior:auto !important;
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+}
+
+/* MOBILE */
+@media(max-width:767px){
+  .navbar-whatsapp{min-height:60px}
+  .navbar-brand img{width:34px !important;height:34px !important}
+  .main-container{padding:14px 10px 34px !important}
+  .fb-page-hero{
+    padding:20px 18px !important;
+    border-radius:20px !important;
+    margin-bottom:13px !important;
+  }
+  .fb-page-hero h1{font-size:1.7rem !important}
+  .fb-page-hero p{font-size:.91rem !important}
+  .fb-update-banner{
+    padding:14px !important;
+    border-radius:16px !important;
+  }
+  .card-whatsapp{border-radius:17px !important;margin-bottom:14px !important}
+  .card-header-whatsapp{padding:14px !important}
+  .card-header-whatsapp .d-flex.justify-content-between{
+    align-items:flex-start !important;
+    gap:10px;
+  }
+  .card-header-whatsapp .btn-light{
+    white-space:nowrap;
+    padding:7px 10px !important;
+    font-size:.78rem;
+  }
+  .card-whatsapp .card-body{padding:14px !important}
+  .stats-box{min-height:88px;padding:12px !important;margin-bottom:10px !important}
+  .stats-number{font-size:1.4rem !important}
+  .stats-label{font-size:.62rem !important}
+  .session-item{padding:13px !important;border-radius:14px !important}
+  .code-display{font-size:1.45rem !important;letter-spacing:2px !important}
+  .modal-dialog{margin:10px !important}
+  .modal-content{border-radius:18px !important}
+}
