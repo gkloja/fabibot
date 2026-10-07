@@ -1,0 +1,232 @@
+
+/* ============================================================
+   FABI BOT — HOME V4
+   Home sem feed público + Depoimentos + Assistente IA privado
+   ============================================================ */
+
+/* O conteúdo editorial e depoimentos são exclusivos da Home. */
+body:not([data-fabi-section="feed"]) .fabi-adsense-editorial,
+body:not([data-fabi-section="feed"]) .fabi-home-testimonials{
+  display:none !important;
+}
+
+/* Feed/chat antigos continuam no HTML por compatibilidade, mas saem da UX. */
+#feedCentral,
+#chatLayout,
+[data-section="chat"]{
+  display:none !important;
+}
+
+/* Home */
+.fabi-home-testimonials{
+  --fh-green:#22c55e;
+  --fh-green2:#16a34a;
+  --fh-text:#f5f7f6;
+  --fh-muted:#9aa8a0;
+  --fh-card:#0d1210;
+  --fh-border:rgba(255,255,255,.09);
+  padding:42px 16px 54px;
+  background:
+    radial-gradient(700px 280px at 90% 0,rgba(34,197,94,.07),transparent 65%),
+    #070a08;
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+.fabi-testimonials-shell{max-width:1040px;margin:0 auto}
+.fabi-testimonials-head{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+  margin-bottom:20px
+}
+.fabi-testimonials-kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 11px;border:1px solid rgba(34,197,94,.22);
+  background:rgba(34,197,94,.08);border-radius:999px;
+  color:#b8f4cd;font-size:.75rem;font-weight:800;margin-bottom:10px
+}
+.fabi-testimonials-head h2{
+  margin:0 0 7px;color:var(--fh-text);
+  font-size:clamp(1.55rem,4vw,2.15rem);letter-spacing:-.04em
+}
+.fabi-testimonials-head p{margin:0;color:var(--fh-muted);font-size:.93rem;line-height:1.6}
+.fabi-testimonials-trust{
+  display:flex;align-items:center;gap:7px;white-space:nowrap;
+  color:#9fc9ad;font-size:.76rem;font-weight:700
+}
+.fabi-testimonials-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px
+}
+.fabi-testimonial-card{
+  min-width:0;overflow:hidden;border:1px solid var(--fh-border);
+  border-radius:18px;background:linear-gradient(180deg,#101613,#0b100d);
+  box-shadow:0 14px 34px rgba(0,0,0,.18)
+}
+.fabi-testimonial-media{
+  position:relative;aspect-ratio:4/3;background:#030504;overflow:hidden
+}
+.fabi-testimonial-media img,
+.fabi-testimonial-media video{
+  width:100%;height:100%;display:block;object-fit:cover
+}
+.fabi-testimonial-media video{background:#000}
+.fabi-testimonial-media-badge{
+  position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:6px;
+  padding:5px 8px;border-radius:999px;background:rgba(5,9,6,.82);
+  backdrop-filter:blur(10px);color:#dff7e7;font-size:.68rem;font-weight:800
+}
+.fabi-testimonial-body{padding:15px}
+.fabi-testimonial-quote{
+  margin:0 0 14px;color:#d8e2dc;font-size:.88rem;line-height:1.62;
+  display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden
+}
+.fabi-testimonial-author{display:flex;align-items:center;gap:10px}
+.fabi-testimonial-avatar{
+  width:36px;height:36px;border-radius:11px;display:grid;place-items:center;
+  background:rgba(34,197,94,.09);border:1px solid rgba(34,197,94,.16);
+  color:#8ce8ad;font-weight:900
+}
+.fabi-testimonial-author strong{display:block;color:#f4f8f5;font-size:.83rem}
+.fabi-testimonial-author small{display:block;color:#829088;font-size:.72rem;margin-top:2px}
+.fabi-testimonials-loading,
+.fabi-testimonials-empty{
+  grid-column:1/-1;min-height:150px;border:1px dashed rgba(255,255,255,.11);
+  border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;color:#87948c;font-size:.84rem;text-align:center;padding:24px
+}
+.fabi-testimonials-spinner{
+  width:25px;height:25px;border:3px solid rgba(255,255,255,.08);
+  border-top-color:#22c55e;border-radius:50%;animation:fabi-spin .8s linear infinite
+}
+@keyframes fabi-spin{to{transform:rotate(360deg)}}
+.fabi-testimonials-footer{
+  margin-top:14px;color:#66746b;font-size:.72rem;text-align:right
+}
+
+/* ---------- Assistente IA flutuante ---------- */
+.fabi-ai-launcher{
+  position:fixed;right:18px;bottom:88px;z-index:10020;
+  display:flex;align-items:center;gap:10px;
+  min-height:50px;padding:7px 14px 7px 7px;border:1px solid rgba(34,197,94,.28);
+  border-radius:999px;background:linear-gradient(135deg,#111915,#0b120e);
+  color:#f5f7f6;box-shadow:0 18px 45px rgba(0,0,0,.38);
+  cursor:pointer;font:inherit;transition:transform .18s ease,border-color .18s ease
+}
+.fabi-ai-launcher:hover{transform:translateY(-2px);border-color:rgba(34,197,94,.48)}
+.fabi-ai-launcher img{
+  width:38px;height:38px;border-radius:50%;object-fit:cover;
+  box-shadow:0 0 0 2px rgba(34,197,94,.25)
+}
+.fabi-ai-launcher-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15}
+.fabi-ai-launcher-text strong{font-size:.78rem}
+.fabi-ai-launcher-text small{font-size:.65rem;color:#8fab97;margin-top:3px}
+.fabi-ai-online{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 10px #22c55e}
+
+.fabi-ai-panel{
+  position:fixed;right:18px;bottom:150px;z-index:10021;
+  width:min(390px,calc(100vw - 24px));height:min(610px,calc(100dvh - 190px));
+  display:none;flex-direction:column;overflow:hidden;
+  border:1px solid rgba(255,255,255,.11);border-radius:22px;
+  background:linear-gradient(180deg,#0d1310,#080d0a);
+  box-shadow:0 28px 80px rgba(0,0,0,.55)
+}
+.fabi-ai-panel.open{display:flex;animation:fabi-ai-in .18s ease both}
+@keyframes fabi-ai-in{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+.fabi-ai-head{
+  display:flex;align-items:center;gap:10px;padding:13px 14px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg,#121a15,#0d1410)
+}
+.fabi-ai-head img{width:39px;height:39px;border-radius:12px;object-fit:cover}
+.fabi-ai-head-copy{flex:1;min-width:0}
+.fabi-ai-head-copy strong{display:block;font-size:.88rem;color:#f4f8f5}
+.fabi-ai-head-copy small{display:flex;align-items:center;gap:6px;color:#85a690;font-size:.69rem;margin-top:3px}
+.fabi-ai-head-actions{display:flex;gap:5px}
+.fabi-ai-icon-btn{
+  width:35px;height:35px;border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;background:rgba(255,255,255,.03);color:#9eaaa2;cursor:pointer
+}
+.fabi-ai-icon-btn:hover{background:rgba(255,255,255,.07);color:#fff}
+.fabi-ai-messages{
+  flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;
+  overscroll-behavior:contain
+}
+.fabi-ai-message{display:flex;gap:8px;max-width:92%}
+.fabi-ai-message.user{align-self:flex-end;flex-direction:row-reverse}
+.fabi-ai-bubble{
+  padding:10px 12px;border-radius:15px;color:#dce5df;font-size:.82rem;line-height:1.55;
+  background:#141b17;border:1px solid rgba(255,255,255,.07);white-space:pre-wrap
+}
+.fabi-ai-message.user .fabi-ai-bubble{
+  background:linear-gradient(135deg,#1e7e44,#166534);border-color:rgba(34,197,94,.2);color:#fff;
+  border-bottom-right-radius:5px
+}
+.fabi-ai-message.assistant .fabi-ai-bubble{border-bottom-left-radius:5px}
+.fabi-ai-bubble a{color:#98f0b8}
+.fabi-ai-welcome{
+  border:1px solid rgba(34,197,94,.13);border-radius:16px;
+  background:rgba(34,197,94,.035);padding:13px;color:#b8c7bd;
+  font-size:.79rem;line-height:1.55
+}
+.fabi-ai-quick{display:flex;gap:6px;overflow-x:auto;padding:0 14px 10px;scrollbar-width:none}
+.fabi-ai-quick::-webkit-scrollbar{display:none}
+.fabi-ai-chip{
+  flex:0 0 auto;border:1px solid rgba(255,255,255,.08);border-radius:999px;
+  background:rgba(255,255,255,.025);color:#aebbb2;padding:7px 10px;
+  font:inherit;font-size:.7rem;font-weight:700;cursor:pointer
+}
+.fabi-ai-chip:hover{border-color:rgba(34,197,94,.22);color:#d8f5e2}
+.fabi-ai-input-wrap{
+  display:flex;align-items:flex-end;gap:8px;padding:10px;
+  border-top:1px solid rgba(255,255,255,.07);background:#0a100c
+}
+.fabi-ai-input{
+  flex:1;min-height:42px;max-height:110px;resize:none;
+  border:1px solid rgba(255,255,255,.09);border-radius:13px;
+  background:#080d0a;color:#edf4ef;padding:10px 11px;font:inherit;font-size:.82rem;outline:none
+}
+.fabi-ai-input:focus{border-color:rgba(34,197,94,.35);box-shadow:0 0 0 3px rgba(34,197,94,.07)}
+.fabi-ai-send{
+  width:42px;height:42px;border:0;border-radius:12px;
+  background:#22c55e;color:#05220f;cursor:pointer;font-size:1rem
+}
+.fabi-ai-send:disabled{opacity:.45;cursor:not-allowed}
+.fabi-ai-typing{display:inline-flex;gap:4px;align-items:center}
+.fabi-ai-typing i{display:block;width:5px;height:5px;border-radius:50%;background:#789181;animation:fabi-dot 1s infinite}
+.fabi-ai-typing i:nth-child(2){animation-delay:.15s}.fabi-ai-typing i:nth-child(3){animation-delay:.3s}
+@keyframes fabi-dot{0%,70%,100%{opacity:.3;transform:translateY(0)}35%{opacity:1;transform:translateY(-3px)}}
+
+/* Light mode */
+body.light-mode .fabi-home-testimonials{
+  --fh-text:#111827;--fh-muted:#5f6c64;--fh-card:#fff;--fh-border:rgba(15,23,42,.09);
+  background:linear-gradient(180deg,#f7faf8,#f2f6f3)
+}
+body.light-mode .fabi-testimonial-card{background:#fff;box-shadow:0 10px 26px rgba(15,23,42,.05)}
+body.light-mode .fabi-testimonial-author strong{color:#172019}
+body.light-mode .fabi-testimonial-quote{color:#526058}
+body.light-mode .fabi-ai-panel{background:#fff;border-color:rgba(15,23,42,.12)}
+body.light-mode .fabi-ai-head{background:#f7faf8}
+body.light-mode .fabi-ai-head-copy strong{color:#111827}
+body.light-mode .fabi-ai-messages{background:#fbfdfb}
+body.light-mode .fabi-ai-bubble{background:#f1f5f2;color:#26342a;border-color:rgba(15,23,42,.08)}
+body.light-mode .fabi-ai-input-wrap{background:#f6f9f7}
+body.light-mode .fabi-ai-input{background:#fff;color:#111827;border-color:rgba(15,23,42,.12)}
+
+/* Mobile */
+@media(max-width:760px){
+  .fabi-testimonials-grid{grid-template-columns:1fr}
+  .fabi-testimonials-head{align-items:flex-start;flex-direction:column;gap:9px}
+  .fabi-testimonials-trust{display:none}
+  .fabi-home-testimonials{padding:32px 13px 42px}
+  .fabi-testimonials-footer{text-align:left}
+  .fabi-ai-launcher{
+    right:12px;bottom:83px;padding-right:11px
+  }
+  .fabi-ai-launcher-text small{display:none}
+  .fabi-ai-panel{
+    right:7px;left:7px;bottom:78px;width:auto;
+    height:min(640px,calc(100dvh - 105px));border-radius:20px
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .fabi-ai-panel.open{animation:none}
+  .fabi-testimonials-spinner,.fabi-ai-typing i{animation:none}
+}
