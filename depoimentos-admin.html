@@ -18,7 +18,7 @@
 h1{font-size:clamp(1.8rem,6vw,2.7rem);letter-spacing:-.045em;margin:12px 0 8px}p{color:var(--muted);line-height:1.65}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:7px;margin-top:13px}.field.full{grid-column:1/-1}
 label{font-size:12px;font-weight:800;color:#dce7df}.input,.textarea,.file{width:100%;border:1px solid var(--line);border-radius:13px;background:#070d09;color:#fff;padding:12px 13px;font:inherit}.textarea{min-height:130px;resize:vertical}.input:focus,.textarea:focus{outline:none;border-color:rgba(34,197,94,.42);box-shadow:0 0 0 3px rgba(34,197,94,.07)}
-.preview{margin-top:16px;border:1px dashed var(--line);border-radius:16px;padding:14px;display:none}.preview img,.preview video{width:100%;max-height:360px;object-fit:contain;border-radius:12px;background:#000}
+.preview{margin-top:16px;border:1px dashed var(--line);border-radius:16px;padding:14px;display:none}.preview img,.preview video{width:100%;max-height:360px;object-fit:contain;border-radius:12px;background:#000}.preview audio{width:100%;margin-top:8px}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.btn{border:0;border-radius:13px;padding:12px 16px;font:inherit;font-weight:800;cursor:pointer}.btn-primary{background:var(--green);color:#06200f}.btn-secondary{background:rgba(255,255,255,.05);color:#dce7df;border:1px solid var(--line)}
 .status{display:none;margin-top:15px;padding:12px 13px;border-radius:13px;font-size:13px;line-height:1.5}.status.ok{display:block;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.22);color:#baf1cc}.status.err{display:block;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#ffc0c0}
 .note{margin-top:16px;font-size:12px;color:#6f7f75}
@@ -30,7 +30,7 @@ label{font-size:12px;font-weight:800;color:#dce7df}.input,.textarea,.file{width:
 <a class="brand" href="/"><img src="/flogo.jpg" alt=""><span>Fabi Bot</span></a>
 <section class="card">
 <span class="badge">Painel de experiências</span>
-<h1>Enviar foto, vídeo ou relato</h1>
+<h1>Enviar depoimento em texto, foto, vídeo ou áudio</h1>
 <p>O material entra como <strong>pendente</strong> e só aparece na Home depois que você aprovar no seu painel de publicações.</p>
 
 <form id="form">
@@ -38,8 +38,8 @@ label{font-size:12px;font-weight:800;color:#dce7df}.input,.textarea,.file{width:
   <div class="field"><label for="key">Código administrativo</label><input class="input" id="key" type="password" autocomplete="current-password" required placeholder="Código do painel"></div>
   <div class="field"><label for="name">Nome exibido</label><input class="input" id="name" maxlength="60" required placeholder="Ex.: Gabriel"></div>
   <div class="field"><label for="role">Descrição curta</label><input class="input" id="role" maxlength="80" placeholder="Ex.: Administrador de comunidade"></div>
-  <div class="field"><label for="media">Foto ou vídeo (opcional)</label><input class="file" id="media" type="file" accept="image/*,video/mp4,video/webm,video/quicktime"></div>
-  <div class="field full"><label for="text">Relato / legenda</label><textarea class="textarea" id="text" maxlength="1500" required placeholder="Escreva o que a pessoa falou sobre a Fabi ou uma legenda para o vídeo..."></textarea></div>
+  <div class="field"><label for="media">Foto, vídeo ou áudio (opcional)</label><input class="file" id="media" type="file" accept="image/*,video/*,audio/*"></div>
+  <div class="field full"><label for="text">Relato / legenda</label><textarea class="textarea" id="text" maxlength="1500" placeholder="Escreva o depoimento ou uma legenda para a foto, vídeo ou áudio..."></textarea></div>
 </div>
 <div class="preview" id="preview"></div>
 <div id="status" class="status" role="status"></div>
@@ -59,7 +59,7 @@ function resetPreview(){preview.style.display='none';preview.innerHTML='';}
 media.addEventListener('change',()=>{
   resetPreview();const f=media.files[0];if(!f)return;
   const u=URL.createObjectURL(f);preview.style.display='block';
-  preview.innerHTML=f.type.startsWith('video/')?`<video controls src="${u}"></video>`:`<img src="${u}" alt="Prévia">`;
+  preview.innerHTML=f.type.startsWith('video/')?`<video controls src="${u}"></video>`:f.type.startsWith('audio/')?`<audio controls src="${u}"></audio>`:`<img src="${u}" alt="Prévia">`;
 });
 document.getElementById('clear').onclick=()=>{form.reset();resetPreview();status.className='status';};
 form.addEventListener('submit',async e=>{
@@ -67,11 +67,11 @@ form.addEventListener('submit',async e=>{
   const nome=document.getElementById('name').value.trim();
   const cargo=document.getElementById('role').value.trim();
   const texto=document.getElementById('text').value.trim();
-  if(!chave||!nome||texto.length<3){show('Preencha o código, o nome e o relato.',false);return;}
+  const f=media.files[0];
+  if(!chave||!nome||(!texto&& !f)){show('Preencha o código e o nome; envie um relato ou uma mídia.',false);return;}
   submit.disabled=true;submit.textContent='Enviando...';status.className='status';
   try{
     let midia='',mediaType='';
-    const f=media.files[0];
     if(f){
       const fd=new FormData();fd.append('midia',f);fd.append('chave',chave);
       const ur=await fetch(API+'/cliente06/depoimentos/midia',{method:'POST',body:fd,mode:'cors'});

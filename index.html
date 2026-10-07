@@ -7018,7 +7018,7 @@ body.light-mode .command-badge-mobile {
 </style>
   <link rel="stylesheet" href="/assets/index-v3.css?v=20261007">
 <link rel="stylesheet" href="/assets/adsense-ready.css?v=20261007b">
-<link rel="stylesheet" href="/assets/fabi-home-v4.css?v=20261007">
+<link rel="stylesheet" href="/assets/fabi-home-v5.css?v=20261007">
 </head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
 <body>
@@ -7105,10 +7105,9 @@ body.light-mode .command-badge-mobile {
     <span class="badge-count badge-relatos" id="bottomRelatosBadge" style="display:none;">0</span>
     <span>Comandos</span>
 </button>
-        <button class="bottom-nav-item" data-section="vendas" style="position: relative;">
-            <i class="fas fa-tag"></i>
-            <span class="badge-count" id="bottomVendasBadge">0</span>
-            <span>Vendas</span>
+        <button class="bottom-nav-item" data-section="depoimentos" style="position: relative;">
+            <i class="fas fa-quote-left"></i>
+            <span>Depoimentos</span>
         </button>
         <a href="golds.html" class="bottom-nav-item" style="text-decoration:none;color:#f6c445;">
             <i class="fas fa-coins"></i><span>Golds</span>
@@ -7328,9 +7327,14 @@ body.light-mode .command-badge-mobile {
       <div>
         <span class="fabi-testimonials-kicker"><i class="fas fa-heart"></i> Experiências com a Fabi</span>
         <h2 id="fabiDepoimentosTitle">Quem usa, conta como é.</h2>
-        <p>Imagens, vídeos e relatos aprovados pela equipe da Fabi Bot.</p>
+        <p>Textos, fotos, vídeos e áudios enviados pela comunidade e aprovados antes de aparecer no site.</p>
       </div>
-      <div class="fabi-testimonials-trust"><i class="fas fa-check-circle"></i> Conteúdo revisado</div>
+      <div class="fabi-testimonials-actions">
+        <div class="fabi-testimonials-trust"><i class="fas fa-check-circle"></i> Conteúdo revisado</div>
+        <button class="fabi-testimonial-send-btn" id="fabiOpenTestimonial" type="button">
+          <i class="fas fa-plus"></i> Enviar depoimento
+        </button>
+      </div>
     </div>
     <div class="fabi-testimonials-grid" id="fabiDepoimentosGrid">
       <div class="fabi-testimonials-loading">
@@ -7891,7 +7895,7 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
 
 <div class="vagas-container" id="vagasContainer" style="display: none;"></div>
 
-<div class="vendas-container" id="vendasContainer" style="display: none; max-width: 640px; margin: 0 auto; padding: 16px;"></div>
+<div class="vendas-container" id="vendasContainer" style="display:none!important;" aria-hidden="true"></div>
 <div class="perfil-container" id="perfilContainer" style="display: none;"></div>
 
 <!-- ============================================================ -->
@@ -20773,6 +20777,6 @@ window.addEventListener('beforeunload', () => {
 </div>
 
 
-<script src="/assets/fabi-home-v4.js?v=20261007" defer></script>
+<script src="/assets/fabi-home-v5.js?v=20261007" defer></script>
 </body>
 </html>

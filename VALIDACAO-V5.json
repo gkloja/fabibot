@@ -1,0 +1,78 @@
+{
+  "syntax": {
+    "connect.js": {
+      "ok": true,
+      "stderr": ""
+    },
+    "fabi-ai-engine.js": {
+      "ok": true,
+      "stderr": ""
+    },
+    "assets/fabi-home-v5.js": {
+      "ok": true,
+      "stderr": ""
+    }
+  },
+  "html": {
+    "index_script_balance": true,
+    "admin_script_balance": true
+  },
+  "ai": {
+    "vibe_exact_filter": true,
+    "vibe_account_filter": true,
+    "invalid_response_filter": true,
+    "provider_groq": true,
+    "provider_deepseek": true,
+    "provider_gemini": true,
+    "provider_bronxy": true,
+    "provider_mistral": true,
+    "provider_blackbox": true,
+    "extra_systemzone": true,
+    "extra_nexfuture": true,
+    "extra_zenzxz": true,
+    "assistant_route": true,
+    "assistant_revalidates_response": true
+  },
+  "audio_chat": {
+    "mode_text_audio_ui": true,
+    "francisca_tts": true,
+    "tts_route": true,
+    "link_forces_text": true,
+    "at_sign_forces_text": true,
+    "long_answer_forces_text": true,
+    "audio_fallback_to_text": true
+  },
+  "testimonials": {
+    "sales_visible_button_removed": true,
+    "testimonials_button": true,
+    "public_modal": true,
+    "public_submit_route": true,
+    "public_upload_route": true,
+    "approval_pending": true,
+    "approved_only_public": true,
+    "image_video_audio": true,
+    "browser_audio_recording": true,
+    "admin_audio_accept": true,
+    "admin_audio_preview": true
+  },
+  "preservation": {
+    "internal_commands": true,
+    "home_video_present": true,
+    "old_sales_container_hidden_not_deleted": true,
+    "v5_css_loaded": true,
+    "v5_js_loaded": true
+  },
+  "unit_test_vibe_to_next_provider": {
+    "ok": true,
+    "stdout": "OK",
+    "stderr": ""
+  },
+  "sha256": {
+    "assets/fabi-home-v5.css": "b07964c6a623435bf0463f8fd98afc939fa49cf944c0ada440bf8e84f8913ee5",
+    "assets/fabi-home-v5.js": "30d055aa7f8be1fea730ddaaf93c76a20d20664f03524a575a97784791df394a",
+    "connect.js": "3b187ecd6f1157458b076f433637131353b1c98bdcd6047a5d36852d07cff240",
+    "depoimentos-admin.html": "7b99a9f6a5201b2aeacf37a09e333b240986e39fdf8ba4d7b4d0e564f8976727",
+    "fabi-ai-engine.js": "bfb7e6c94d5f463722de0bd70aafe2b9f26a6e0a374c8b45ab1d2b750b2e4f3e",
+    "index.html": "69962717be1346e17bb6b2af101647c155341cf877b5810eee78e43fc8615cdc"
+  }
+}
