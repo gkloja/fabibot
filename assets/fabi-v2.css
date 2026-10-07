@@ -1,0 +1,218 @@
+/* FABI PLATFORM V2 — shared design system
+   Progressive enhancement: scoped to .fabi-v2-page to avoid breaking legacy UI. */
+:root{
+  --fabi-bg:#07100c;
+  --fabi-bg-2:#0b1510;
+  --fabi-surface:#101a14;
+  --fabi-surface-2:#15211a;
+  --fabi-border:rgba(255,255,255,.09);
+  --fabi-text:#f4fbf7;
+  --fabi-muted:#9aaca1;
+  --fabi-primary:#20c971;
+  --fabi-primary-strong:#16a34a;
+  --fabi-primary-soft:rgba(32,201,113,.12);
+  --fabi-blue:#5b8cff;
+  --fabi-warning:#f5b942;
+  --fabi-danger:#ef6363;
+  --fabi-radius-sm:12px;
+  --fabi-radius:18px;
+  --fabi-radius-lg:28px;
+  --fabi-shadow:0 18px 50px rgba(0,0,0,.28);
+  --fabi-max:1180px;
+  --fabi-font:'Plus Jakarta Sans',Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+.fabi-v2-page{
+  color:var(--fabi-text);
+  font-family:var(--fabi-font);
+  background:
+    radial-gradient(900px 460px at 8% -10%,rgba(32,201,113,.14),transparent 60%),
+    radial-gradient(760px 420px at 100% 0,rgba(91,140,255,.08),transparent 58%),
+    var(--fabi-bg);
+}
+.fabi-v2-page *{box-sizing:border-box}
+.fabi-v2-page :focus-visible{outline:3px solid rgba(91,140,255,.75);outline-offset:3px}
+.fabi-v2-page a,.fabi-v2-page button{touch-action:manipulation}
+.fabi-v2-page img{max-width:100%}
+.fabi-v2-page .fabi-skip{
+  position:fixed;left:12px;top:-80px;z-index:99999;
+  background:#fff;color:#07100c;padding:10px 14px;border-radius:12px;font-weight:800;
+  transition:top .18s ease
+}
+.fabi-v2-page .fabi-skip:focus{top:12px}
+.fabi-v2-page .fabi-shell{width:min(calc(100% - 28px),var(--fabi-max));margin-inline:auto}
+.fabi-v2-page .fabi-glass{
+  background:linear-gradient(180deg,rgba(18,31,24,.88),rgba(11,20,15,.94));
+  border:1px solid var(--fabi-border);
+  box-shadow:var(--fabi-shadow);
+  backdrop-filter:blur(16px);
+}
+.fabi-v2-page .fabi-badge{
+  display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;
+  background:var(--fabi-primary-soft);border:1px solid rgba(32,201,113,.25);
+  color:#c7f9dc;font-size:.78rem;font-weight:800;letter-spacing:.02em
+}
+.fabi-v2-page .fabi-btn{
+  min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  border:1px solid transparent;border-radius:14px;padding:11px 16px;font-weight:800;
+  text-decoration:none;cursor:pointer;transition:transform .16s ease,background .16s ease,border-color .16s ease
+}
+.fabi-v2-page .fabi-btn:hover{transform:translateY(-1px)}
+.fabi-v2-page .fabi-btn-primary{background:var(--fabi-primary);color:#04170d}
+.fabi-v2-page .fabi-btn-primary:hover{background:#35d980}
+.fabi-v2-page .fabi-btn-secondary{background:rgba(255,255,255,.045);border-color:var(--fabi-border);color:var(--fabi-text)}
+.fabi-v2-page .fabi-btn-secondary:hover{background:rgba(255,255,255,.08)}
+.fabi-v2-page .fabi-title{
+  font-size:clamp(2rem,7vw,4.4rem);line-height:1.03;letter-spacing:-.055em;
+  margin:0;color:var(--fabi-text);font-weight:850
+}
+.fabi-v2-page .fabi-title span{color:var(--fabi-primary)}
+.fabi-v2-page .fabi-lead{color:var(--fabi-muted);font-size:clamp(1rem,2vw,1.13rem);line-height:1.7}
+.fabi-v2-page .fabi-section{padding:clamp(44px,7vw,88px) 0}
+.fabi-v2-page .fabi-section-head{max-width:760px;margin-bottom:28px}
+.fabi-v2-page .fabi-section-head h2{
+  font-size:clamp(1.55rem,4vw,2.35rem);letter-spacing:-.035em;margin:10px 0 8px
+}
+.fabi-v2-page .fabi-section-head p{color:var(--fabi-muted);line-height:1.7}
+.fabi-v2-page .fabi-grid{display:grid;gap:14px}
+.fabi-v2-page .fabi-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.fabi-v2-page .fabi-grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.fabi-v2-page .fabi-card{
+  border:1px solid var(--fabi-border);border-radius:var(--fabi-radius);
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  padding:20px
+}
+.fabi-v2-page .fabi-card h3{margin:0 0 8px;font-size:1rem}
+.fabi-v2-page .fabi-card p{margin:0;color:var(--fabi-muted);line-height:1.62;font-size:.92rem}
+.fabi-v2-page .fabi-card-icon{
+  width:42px;height:42px;display:grid;place-items:center;border-radius:13px;
+  background:var(--fabi-primary-soft);color:var(--fabi-primary);margin-bottom:14px;font-size:1.05rem
+}
+.fabi-v2-page .fabi-empty{
+  padding:30px;border:1px dashed rgba(255,255,255,.13);border-radius:var(--fabi-radius);
+  text-align:center;background:rgba(255,255,255,.018)
+}
+.fabi-v2-page .fabi-empty strong{display:block;margin-bottom:6px}
+.fabi-v2-page .fabi-empty p{color:var(--fabi-muted);margin:0}
+.fabi-v2-page .fabi-progress{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:18px 0 24px
+}
+.fabi-v2-page .fabi-progress-step{
+  min-height:70px;padding:12px;border:1px solid var(--fabi-border);border-radius:14px;
+  background:rgba(255,255,255,.025);display:flex;align-items:flex-start;gap:10px
+}
+.fabi-v2-page .fabi-progress-num{
+  width:28px;height:28px;border-radius:9px;display:grid;place-items:center;
+  background:var(--fabi-primary-soft);color:var(--fabi-primary);font-weight:900;flex:0 0 auto
+}
+.fabi-v2-page .fabi-progress-step b{display:block;font-size:.84rem;margin-bottom:3px}
+.fabi-v2-page .fabi-progress-step small{display:block;color:var(--fabi-muted);line-height:1.35}
+
+/* Existing Fabi home — polish without changing JS contracts */
+.fabi-v2-page .navbar{
+  border-bottom:1px solid var(--fabi-border)!important;
+  background:rgba(7,16,12,.82)!important;
+  backdrop-filter:blur(18px)!important
+}
+.fabi-v2-page .navbar .menu a{border-radius:10px}
+.fabi-v2-page .fz-intro-section{padding-top:28px}
+.fabi-v2-page .fz-intro-cta{
+  border:1px solid var(--fabi-border)!important;
+  border-radius:var(--fabi-radius-lg)!important;
+  overflow:hidden;
+  background:
+    radial-gradient(700px 320px at 20% 0,rgba(32,201,113,.12),transparent 64%),
+    linear-gradient(160deg,rgba(15,28,20,.94),rgba(7,13,10,.96))!important;
+  box-shadow:var(--fabi-shadow)!important
+}
+.fabi-v2-page .fz-intro-title{
+  font-size:clamp(2rem,7vw,4.2rem)!important;line-height:1.03!important;letter-spacing:-.055em!important
+}
+.fabi-v2-page .fz-intro-subtitle{font-size:clamp(.98rem,2vw,1.12rem)!important;line-height:1.7!important}
+.fabi-v2-page .ge-cta{
+  border-radius:var(--fabi-radius)!important;
+  background:linear-gradient(135deg,rgba(32,201,113,.08),rgba(255,255,255,.025))!important;
+  border-color:var(--fabi-border)!important;
+  box-shadow:none!important
+}
+.fabi-v2-page .bottom-nav{
+  background:rgba(7,16,12,.94)!important;
+  backdrop-filter:blur(18px)!important;
+  border-top:1px solid var(--fabi-border)!important
+}
+.fabi-v2-page [data-fabi-zero-state="true"]{display:none!important}
+
+/* Connection page */
+.fabi-v2-page .main-container{max-width:1120px!important}
+.fabi-v2-page .fb-page-hero{
+  border:1px solid var(--fabi-border);border-radius:24px;padding:24px!important;
+  background:linear-gradient(150deg,rgba(32,201,113,.09),rgba(255,255,255,.02));
+  margin-bottom:16px
+}
+.fabi-v2-page .fb-page-hero h1{letter-spacing:-.035em}
+.fabi-v2-page .card,.fabi-v2-page .session-card,.fabi-v2-page .fb-update-banner{
+  border-color:var(--fabi-border)!important
+}
+
+/* Standalone pages */
+.fabi-v2-page .fabi-topbar{
+  position:sticky;top:0;z-index:50;border-bottom:1px solid var(--fabi-border);
+  background:rgba(7,16,12,.86);backdrop-filter:blur(18px)
+}
+.fabi-v2-page .fabi-topbar-in{
+  min-height:66px;display:flex;align-items:center;gap:16px;justify-content:space-between
+}
+.fabi-v2-page .fabi-brand{display:flex;align-items:center;gap:10px;color:var(--fabi-text);text-decoration:none;font-weight:900}
+.fabi-v2-page .fabi-brand img{width:36px;height:36px;border-radius:11px;object-fit:cover}
+.fabi-v2-page .fabi-nav{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.fabi-v2-page .fabi-nav a{
+  color:var(--fabi-muted);text-decoration:none;font-weight:700;font-size:.88rem;padding:9px 11px;border-radius:10px
+}
+.fabi-v2-page .fabi-nav a:hover,.fabi-v2-page .fabi-nav a[aria-current="page"]{color:var(--fabi-text);background:rgba(255,255,255,.055)}
+.fabi-v2-page .fabi-form-card{max-width:460px;margin:48px auto;padding:26px;border-radius:24px}
+.fabi-v2-page .fabi-field{display:grid;gap:7px;margin-top:14px}
+.fabi-v2-page .fabi-field label{font-size:.84rem;font-weight:800;color:#d6e3da}
+.fabi-v2-page .fabi-field input{
+  width:100%;min-height:48px;border:1px solid var(--fabi-border);border-radius:13px;
+  background:#09110d;color:var(--fabi-text);padding:0 13px;font:inherit
+}
+.fabi-v2-page .fabi-field input:focus{border-color:rgba(32,201,113,.6);box-shadow:0 0 0 4px rgba(32,201,113,.10);outline:none}
+.fabi-v2-page .fabi-status{margin-top:14px;padding:11px 13px;border-radius:12px;font-size:.87rem;display:none}
+.fabi-v2-page .fabi-status.error{display:block;background:rgba(239,99,99,.10);border:1px solid rgba(239,99,99,.28);color:#ffc3c3}
+.fabi-v2-page .fabi-status.ok{display:block;background:rgba(32,201,113,.10);border:1px solid rgba(32,201,113,.28);color:#c8f8dc}
+.fabi-v2-page .fabi-search{
+  width:100%;min-height:48px;border:1px solid var(--fabi-border);border-radius:14px;background:#09110d;
+  color:var(--fabi-text);padding:0 14px;font:inherit
+}
+.fabi-v2-page .fabi-command{
+  display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-bottom:1px solid var(--fabi-border)
+}
+.fabi-v2-page .fabi-command:last-child{border-bottom:0}
+.fabi-v2-page .fabi-command code{
+  padding:5px 9px;border-radius:8px;background:var(--fabi-primary-soft);color:#adf3ca;font-weight:800;white-space:nowrap
+}
+.fabi-v2-page .fabi-command p{margin:2px 0 0;color:var(--fabi-muted);font-size:.9rem}
+.fabi-v2-page .fabi-copy{
+  margin-left:auto;border:1px solid var(--fabi-border);background:rgba(255,255,255,.035);color:var(--fabi-muted);
+  border-radius:9px;min-width:36px;height:36px;cursor:pointer
+}
+.fabi-v2-page .fabi-copy:hover{color:var(--fabi-text);background:rgba(255,255,255,.07)}
+.fabi-v2-page .fabi-footer{padding:32px 0 48px;border-top:1px solid var(--fabi-border);color:var(--fabi-muted);font-size:.86rem}
+.fabi-v2-page .fabi-footer a{color:#c7d7cc;text-decoration:none}
+.fabi-v2-page .fabi-footer-row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media(max-width:820px){
+  .fabi-v2-page .fabi-grid-3,.fabi-v2-page .fabi-grid-2{grid-template-columns:1fr}
+  .fabi-v2-page .fabi-progress{grid-template-columns:1fr 1fr}
+  .fabi-v2-page .fabi-nav{display:none}
+}
+@media(max-width:520px){
+  .fabi-v2-page .fabi-shell{width:min(calc(100% - 20px),var(--fabi-max))}
+  .fabi-v2-page .fabi-section{padding:38px 0}
+  .fabi-v2-page .fabi-progress{grid-template-columns:1fr}
+  .fabi-v2-page .fabi-form-card{margin:24px auto;padding:20px}
+  .fabi-v2-page .fabi-command{flex-wrap:wrap}
+  .fabi-v2-page .fabi-copy{margin-left:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .fabi-v2-page *{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
