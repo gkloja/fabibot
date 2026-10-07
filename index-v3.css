@@ -1,0 +1,65 @@
+/* Fabi Bot Index V3 — polimento conservador.
+   Não altera lógica, seções, IDs nem integrações. */
+.logo .nav-brand-name{
+  font-size:18px;
+  line-height:1.2;
+  font-weight:800;
+  color:var(--text);
+  white-space:nowrap;
+}
+.logo .nav-brand-name span{color:var(--primary)}
+body.light-mode .logo .nav-brand-name{color:#111827}
+
+/* O conteúdo principal chega ao vídeo mais rápido. */
+.fz-intro-section{
+  padding-top:24px !important;
+}
+.fz-intro-cta-text{
+  margin-bottom:10px !important;
+}
+.fz-intro-badge{
+  margin-bottom:10px !important;
+}
+.fz-intro-title{
+  margin-bottom:8px !important;
+}
+.fz-intro-subtitle{
+  margin-bottom:8px !important;
+}
+.fz-intro-video-wrap{
+  margin-top:10px !important;
+}
+
+/* CTA secundário vem depois da apresentação e não compete com o vídeo. */
+#goldEmpireCta{
+  max-width:1100px;
+  margin:18px auto 10px;
+}
+
+/* Melhor foco de teclado sem mudar o visual normal. */
+.navbar a:focus-visible,
+.navbar button:focus-visible,
+.fz-btn:focus-visible,
+.bottom-nav button:focus-visible,
+.bottom-nav a:focus-visible{
+  outline:3px solid rgba(96,165,250,.72);
+  outline-offset:3px;
+}
+
+@media(max-width:768px){
+  .fz-intro-section{padding-top:12px !important}
+  .fz-intro-cta{padding-top:10px !important}
+  .fz-intro-title{font-size:clamp(1.72rem,8vw,2.5rem) !important}
+  .fz-intro-subtitle{font-size:.94rem !important;line-height:1.55 !important}
+  .fz-intro-video-wrap{border-radius:14px !important;margin-top:8px !important}
+  #goldEmpireCta{margin:12px 10px 8px}
+}
+@media(prefers-reduced-motion:reduce){
+  .fz-intro-section *,
+  .navbar *,
+  .bottom-nav *{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+}
