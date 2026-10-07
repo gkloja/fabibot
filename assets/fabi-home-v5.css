@@ -1,0 +1,281 @@
+
+/* ============================================================
+   FABI BOT — HOME V4
+   Home sem feed público + Depoimentos + Assistente IA privado
+   ============================================================ */
+
+/* O conteúdo editorial e depoimentos são exclusivos da Home. */
+body:not([data-fabi-section="feed"]) .fabi-adsense-editorial{
+  display:none !important;
+}
+body:not([data-fabi-section="feed"]):not([data-fabi-section="depoimentos"]) .fabi-home-testimonials{
+  display:none !important;
+}
+body[data-fabi-section="depoimentos"] #introSection{
+  display:none !important;
+}
+
+/* Feed/chat antigos continuam no HTML por compatibilidade, mas saem da UX. */
+#feedCentral,
+#chatLayout,
+#vendasContainer,
+[data-section="chat"]{
+  display:none !important;
+}
+
+/* Home */
+.fabi-home-testimonials{
+  --fh-green:#22c55e;
+  --fh-green2:#16a34a;
+  --fh-text:#f5f7f6;
+  --fh-muted:#9aa8a0;
+  --fh-card:#0d1210;
+  --fh-border:rgba(255,255,255,.09);
+  padding:42px 16px 54px;
+  background:
+    radial-gradient(700px 280px at 90% 0,rgba(34,197,94,.07),transparent 65%),
+    #070a08;
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+.fabi-testimonials-shell{max-width:1040px;margin:0 auto}
+.fabi-testimonials-head{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+  margin-bottom:20px
+}
+.fabi-testimonials-kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 11px;border:1px solid rgba(34,197,94,.22);
+  background:rgba(34,197,94,.08);border-radius:999px;
+  color:#b8f4cd;font-size:.75rem;font-weight:800;margin-bottom:10px
+}
+.fabi-testimonials-head h2{
+  margin:0 0 7px;color:var(--fh-text);
+  font-size:clamp(1.55rem,4vw,2.15rem);letter-spacing:-.04em
+}
+.fabi-testimonials-head p{margin:0;color:var(--fh-muted);font-size:.93rem;line-height:1.6}
+.fabi-testimonials-trust{
+  display:flex;align-items:center;gap:7px;white-space:nowrap;
+  color:#9fc9ad;font-size:.76rem;font-weight:700
+}
+.fabi-testimonials-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px
+}
+.fabi-testimonial-card{
+  min-width:0;overflow:hidden;border:1px solid var(--fh-border);
+  border-radius:18px;background:linear-gradient(180deg,#101613,#0b100d);
+  box-shadow:0 14px 34px rgba(0,0,0,.18)
+}
+.fabi-testimonial-media{
+  position:relative;aspect-ratio:4/3;background:#030504;overflow:hidden
+}
+.fabi-testimonial-media img,
+.fabi-testimonial-media video{
+  width:100%;height:100%;display:block;object-fit:cover
+}
+.fabi-testimonial-media video{background:#000}
+.fabi-testimonial-media-badge{
+  position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:6px;
+  padding:5px 8px;border-radius:999px;background:rgba(5,9,6,.82);
+  backdrop-filter:blur(10px);color:#dff7e7;font-size:.68rem;font-weight:800
+}
+.fabi-testimonial-body{padding:15px}
+.fabi-testimonial-quote{
+  margin:0 0 14px;color:#d8e2dc;font-size:.88rem;line-height:1.62;
+  display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden
+}
+.fabi-testimonial-author{display:flex;align-items:center;gap:10px}
+.fabi-testimonial-avatar{
+  width:36px;height:36px;border-radius:11px;display:grid;place-items:center;
+  background:rgba(34,197,94,.09);border:1px solid rgba(34,197,94,.16);
+  color:#8ce8ad;font-weight:900
+}
+.fabi-testimonial-author strong{display:block;color:#f4f8f5;font-size:.83rem}
+.fabi-testimonial-author small{display:block;color:#829088;font-size:.72rem;margin-top:2px}
+.fabi-testimonials-loading,
+.fabi-testimonials-empty{
+  grid-column:1/-1;min-height:150px;border:1px dashed rgba(255,255,255,.11);
+  border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;color:#87948c;font-size:.84rem;text-align:center;padding:24px
+}
+.fabi-testimonials-spinner{
+  width:25px;height:25px;border:3px solid rgba(255,255,255,.08);
+  border-top-color:#22c55e;border-radius:50%;animation:fabi-spin .8s linear infinite
+}
+@keyframes fabi-spin{to{transform:rotate(360deg)}}
+.fabi-testimonials-footer{
+  margin-top:14px;color:#66746b;font-size:.72rem;text-align:right
+}
+
+/* ---------- Assistente IA flutuante ---------- */
+.fabi-ai-launcher{
+  position:fixed;right:18px;bottom:88px;z-index:10020;
+  display:flex;align-items:center;gap:10px;
+  min-height:50px;padding:7px 14px 7px 7px;border:1px solid rgba(34,197,94,.28);
+  border-radius:999px;background:linear-gradient(135deg,#111915,#0b120e);
+  color:#f5f7f6;box-shadow:0 18px 45px rgba(0,0,0,.38);
+  cursor:pointer;font:inherit;transition:transform .18s ease,border-color .18s ease
+}
+.fabi-ai-launcher:hover{transform:translateY(-2px);border-color:rgba(34,197,94,.48)}
+.fabi-ai-launcher img{
+  width:38px;height:38px;border-radius:50%;object-fit:cover;
+  box-shadow:0 0 0 2px rgba(34,197,94,.25)
+}
+.fabi-ai-launcher-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15}
+.fabi-ai-launcher-text strong{font-size:.78rem}
+.fabi-ai-launcher-text small{font-size:.65rem;color:#8fab97;margin-top:3px}
+.fabi-ai-online{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 10px #22c55e}
+
+.fabi-ai-panel{
+  position:fixed;right:18px;bottom:150px;z-index:10021;
+  width:min(390px,calc(100vw - 24px));height:min(610px,calc(100dvh - 190px));
+  display:none;flex-direction:column;overflow:hidden;
+  border:1px solid rgba(255,255,255,.11);border-radius:22px;
+  background:linear-gradient(180deg,#0d1310,#080d0a);
+  box-shadow:0 28px 80px rgba(0,0,0,.55)
+}
+.fabi-ai-panel.open{display:flex;animation:fabi-ai-in .18s ease both}
+@keyframes fabi-ai-in{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+.fabi-ai-head{
+  display:flex;align-items:center;gap:10px;padding:13px 14px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg,#121a15,#0d1410)
+}
+.fabi-ai-head img{width:39px;height:39px;border-radius:12px;object-fit:cover}
+.fabi-ai-head-copy{flex:1;min-width:0}
+.fabi-ai-head-copy strong{display:block;font-size:.88rem;color:#f4f8f5}
+.fabi-ai-head-copy small{display:flex;align-items:center;gap:6px;color:#85a690;font-size:.69rem;margin-top:3px}
+.fabi-ai-head-actions{display:flex;gap:5px}
+.fabi-ai-icon-btn{
+  width:35px;height:35px;border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;background:rgba(255,255,255,.03);color:#9eaaa2;cursor:pointer
+}
+.fabi-ai-icon-btn:hover{background:rgba(255,255,255,.07);color:#fff}
+.fabi-ai-messages{
+  flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;
+  overscroll-behavior:contain
+}
+.fabi-ai-message{display:flex;gap:8px;max-width:92%}
+.fabi-ai-message.user{align-self:flex-end;flex-direction:row-reverse}
+.fabi-ai-bubble{
+  padding:10px 12px;border-radius:15px;color:#dce5df;font-size:.82rem;line-height:1.55;
+  background:#141b17;border:1px solid rgba(255,255,255,.07);white-space:pre-wrap
+}
+.fabi-ai-message.user .fabi-ai-bubble{
+  background:linear-gradient(135deg,#1e7e44,#166534);border-color:rgba(34,197,94,.2);color:#fff;
+  border-bottom-right-radius:5px
+}
+.fabi-ai-message.assistant .fabi-ai-bubble{border-bottom-left-radius:5px}
+.fabi-ai-bubble a{color:#98f0b8}
+.fabi-ai-welcome{
+  border:1px solid rgba(34,197,94,.13);border-radius:16px;
+  background:rgba(34,197,94,.035);padding:13px;color:#b8c7bd;
+  font-size:.79rem;line-height:1.55
+}
+.fabi-ai-quick{display:flex;gap:6px;overflow-x:auto;padding:0 14px 10px;scrollbar-width:none}
+.fabi-ai-quick::-webkit-scrollbar{display:none}
+.fabi-ai-chip{
+  flex:0 0 auto;border:1px solid rgba(255,255,255,.08);border-radius:999px;
+  background:rgba(255,255,255,.025);color:#aebbb2;padding:7px 10px;
+  font:inherit;font-size:.7rem;font-weight:700;cursor:pointer
+}
+.fabi-ai-chip:hover{border-color:rgba(34,197,94,.22);color:#d8f5e2}
+.fabi-ai-input-wrap{
+  display:flex;align-items:flex-end;gap:8px;padding:10px;
+  border-top:1px solid rgba(255,255,255,.07);background:#0a100c
+}
+.fabi-ai-input{
+  flex:1;min-height:42px;max-height:110px;resize:none;
+  border:1px solid rgba(255,255,255,.09);border-radius:13px;
+  background:#080d0a;color:#edf4ef;padding:10px 11px;font:inherit;font-size:.82rem;outline:none
+}
+.fabi-ai-input:focus{border-color:rgba(34,197,94,.35);box-shadow:0 0 0 3px rgba(34,197,94,.07)}
+.fabi-ai-send{
+  width:42px;height:42px;border:0;border-radius:12px;
+  background:#22c55e;color:#05220f;cursor:pointer;font-size:1rem
+}
+.fabi-ai-send:disabled{opacity:.45;cursor:not-allowed}
+.fabi-ai-typing{display:inline-flex;gap:4px;align-items:center}
+.fabi-ai-typing i{display:block;width:5px;height:5px;border-radius:50%;background:#789181;animation:fabi-dot 1s infinite}
+.fabi-ai-typing i:nth-child(2){animation-delay:.15s}.fabi-ai-typing i:nth-child(3){animation-delay:.3s}
+@keyframes fabi-dot{0%,70%,100%{opacity:.3;transform:translateY(0)}35%{opacity:1;transform:translateY(-3px)}}
+
+/* Light mode */
+body.light-mode .fabi-home-testimonials{
+  --fh-text:#111827;--fh-muted:#5f6c64;--fh-card:#fff;--fh-border:rgba(15,23,42,.09);
+  background:linear-gradient(180deg,#f7faf8,#f2f6f3)
+}
+body.light-mode .fabi-testimonial-card{background:#fff;box-shadow:0 10px 26px rgba(15,23,42,.05)}
+body.light-mode .fabi-testimonial-author strong{color:#172019}
+body.light-mode .fabi-testimonial-quote{color:#526058}
+body.light-mode .fabi-ai-panel{background:#fff;border-color:rgba(15,23,42,.12)}
+body.light-mode .fabi-ai-head{background:#f7faf8}
+body.light-mode .fabi-ai-head-copy strong{color:#111827}
+body.light-mode .fabi-ai-messages{background:#fbfdfb}
+body.light-mode .fabi-ai-bubble{background:#f1f5f2;color:#26342a;border-color:rgba(15,23,42,.08)}
+body.light-mode .fabi-ai-input-wrap{background:#f6f9f7}
+body.light-mode .fabi-ai-input{background:#fff;color:#111827;border-color:rgba(15,23,42,.12)}
+
+/* Mobile */
+@media(max-width:760px){
+  .fabi-testimonials-grid{grid-template-columns:1fr}
+  .fabi-testimonials-head{align-items:flex-start;flex-direction:column;gap:9px}
+  .fabi-testimonials-trust{display:none}
+  .fabi-home-testimonials{padding:32px 13px 42px}
+  .fabi-testimonials-footer{text-align:left}
+  .fabi-ai-launcher{
+    right:12px;bottom:83px;padding-right:11px
+  }
+  .fabi-ai-launcher-text small{display:none}
+  .fabi-ai-panel{
+    right:7px;left:7px;bottom:78px;width:auto;
+    height:min(640px,calc(100dvh - 105px));border-radius:20px
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .fabi-ai-panel.open{animation:none}
+  .fabi-testimonials-spinner,.fabi-ai-typing i{animation:none}
+}
+
+
+/* ==================== V5 — Depoimentos públicos + voz da Fabi ==================== */
+.fabi-testimonials-actions{display:flex;align-items:flex-end;gap:10px;flex-direction:column}
+.fabi-testimonial-send-btn{min-height:40px;padding:9px 13px;border:1px solid rgba(34,197,94,.24);border-radius:12px;background:linear-gradient(135deg,#1f8f4d,#166534);color:#fff;font:inherit;font-size:.78rem;font-weight:800;cursor:pointer;box-shadow:0 8px 22px rgba(22,101,52,.18)}
+.fabi-testimonial-send-btn:hover{transform:translateY(-1px);border-color:rgba(34,197,94,.45)}
+.fabi-testimonial-audio{min-height:145px;aspect-ratio:auto!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:22px;background:radial-gradient(circle at 50% 0,rgba(34,197,94,.12),transparent 65%),#08100b}
+.fabi-testimonial-audio-icon{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.18);color:#70e99b}
+.fabi-testimonial-audio strong{font-size:.82rem;color:#dce8df}.fabi-testimonial-audio audio{width:100%;max-width:260px;height:38px}
+
+.fabi-ai-modebar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.065);background:#0a100c;color:#82968a;font-size:.67rem;font-weight:700}
+.fabi-ai-mode-switch{display:flex;padding:3px;border-radius:10px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}
+.fabi-ai-mode-switch button{border:0;border-radius:7px;background:transparent;color:#84958b;padding:6px 9px;font:inherit;font-size:.67rem;font-weight:800;cursor:pointer}
+.fabi-ai-mode-switch button.active{background:rgba(34,197,94,.12);color:#b8f4cd;box-shadow:inset 0 0 0 1px rgba(34,197,94,.13)}
+.fabi-ai-note{display:block;margin-top:8px;padding-top:7px;border-top:1px solid rgba(255,255,255,.07);color:#7f9487;font-size:.65rem;line-height:1.4}
+.fabi-ai-audio-bubble{min-width:min(270px,75vw)}
+.fabi-ai-audio-title{display:flex;align-items:center;gap:8px;margin-bottom:8px;color:#a8d9b7;font-size:.7rem;font-weight:800}
+.fabi-ai-audio-bubble audio{display:block;width:100%;height:38px}
+.fabi-ai-transcript{margin-top:9px;font-size:.7rem;color:#879a8e}.fabi-ai-transcript summary{cursor:pointer;font-weight:800;color:#9db6a5}.fabi-ai-transcript div{padding-top:8px;line-height:1.55}
+
+body.fabi-modal-open{overflow:hidden}
+.fabi-dep-modal{display:none;position:fixed;inset:0;z-index:12000}.fabi-dep-modal.open{display:block}
+.fabi-dep-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(5px)}
+.fabi-dep-dialog{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(570px,calc(100vw - 22px));max-height:min(780px,calc(100dvh - 28px));overflow:auto;border:1px solid rgba(255,255,255,.11);border-radius:22px;background:linear-gradient(180deg,#101713,#080d0a);box-shadow:0 30px 100px rgba(0,0,0,.62)}
+.fabi-dep-head{display:flex;justify-content:space-between;gap:18px;padding:19px 20px 15px;border-bottom:1px solid rgba(255,255,255,.07)}
+.fabi-dep-head h2{margin:4px 0 5px;color:#f5f8f6;font-size:1.28rem;letter-spacing:-.03em}.fabi-dep-head p{margin:0;color:#87968d;font-size:.76rem;line-height:1.5}
+.fabi-dep-kicker{color:#77e9a0;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
+.fabi-dep-close{flex:0 0 36px;width:36px;height:36px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.025);color:#94a199;cursor:pointer}
+.fabi-dep-form{display:grid;gap:13px;padding:17px 20px 20px}.fabi-dep-form>label{display:grid;gap:6px;color:#c9d4cd;font-size:.73rem;font-weight:800}.fabi-dep-form>label span{color:#718078;font-weight:600}
+.fabi-dep-form input:not([type=checkbox]),.fabi-dep-form textarea{width:100%;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:#070c09;color:#eff5f1;padding:11px 12px;font:inherit;font-size:.82rem;outline:none}.fabi-dep-form textarea{resize:vertical;min-height:100px}.fabi-dep-form input:focus,.fabi-dep-form textarea:focus{border-color:rgba(34,197,94,.36);box-shadow:0 0 0 3px rgba(34,197,94,.06)}
+.fabi-dep-media-box{border:1px solid rgba(255,255,255,.075);border-radius:15px;background:rgba(255,255,255,.018);padding:12px}.fabi-dep-media-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.fabi-dep-media-title strong{color:#dce7e0;font-size:.76rem}.fabi-dep-media-title small{color:#66766c;font-size:.62rem}
+.fabi-dep-media-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.fabi-dep-file-btn,.fabi-dep-record-btn{min-height:40px;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid rgba(255,255,255,.085);border-radius:11px;background:#0b120e;color:#afbeb4;font:inherit;font-size:.71rem;font-weight:800;cursor:pointer}.fabi-dep-record-btn.recording{border-color:rgba(239,68,68,.34);color:#ffb4b4;background:rgba(239,68,68,.07)}
+.fabi-dep-recording{display:flex;align-items:center;gap:7px;margin-top:10px;color:#f0b1b1;font-size:.7rem}.fabi-dep-rec-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;box-shadow:0 0 12px rgba(239,68,68,.8);animation:fabi-rec 1s infinite}@keyframes fabi-rec{50%{opacity:.35}}
+.fabi-dep-preview{margin-top:10px;border-top:1px solid rgba(255,255,255,.06);padding-top:10px}.fabi-dep-preview-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;color:#829188;font-size:.66rem}.fabi-dep-preview-top span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fabi-dep-preview-top button{border:0;background:transparent;color:#dd7777;cursor:pointer}.fabi-dep-preview img,.fabi-dep-preview video{display:block;width:100%;max-height:220px;object-fit:contain;border-radius:10px;background:#030403}.fabi-dep-preview audio{display:block;width:100%}
+.fabi-dep-consent{display:flex!important;grid-template-columns:none!important;align-items:flex-start;gap:9px!important;color:#85958b!important;font-weight:600!important;line-height:1.45}.fabi-dep-consent input{margin-top:2px;accent-color:#22c55e}
+.fabi-dep-status{min-height:18px;color:#829188;font-size:.7rem;line-height:1.4}.fabi-dep-status.error{color:#ff9e9e}.fabi-dep-status.success{color:#85e6a8}
+.fabi-dep-submit{min-height:44px;border:0;border-radius:12px;background:linear-gradient(135deg,#22c55e,#15803d);color:#05230f;font:inherit;font-size:.78rem;font-weight:900;cursor:pointer}.fabi-dep-submit:disabled{opacity:.55;cursor:wait}
+.fabi-dep-honeypot{position:absolute!important;left:-9999px!important;opacity:0!important;pointer-events:none!important}
+
+body.light-mode .fabi-ai-modebar{background:#f5f8f6;border-color:rgba(15,23,42,.07)}body.light-mode .fabi-ai-mode-switch{border-color:rgba(15,23,42,.08);background:#eef4ef}body.light-mode .fabi-ai-mode-switch button.active{color:#166534;background:#dff5e6}
+body.light-mode .fabi-dep-dialog{background:#fff;border-color:rgba(15,23,42,.12)}body.light-mode .fabi-dep-head h2{color:#111827}body.light-mode .fabi-dep-head p{color:#647168}body.light-mode .fabi-dep-form>label{color:#344139}body.light-mode .fabi-dep-form input:not([type=checkbox]),body.light-mode .fabi-dep-form textarea{background:#fff;color:#111827;border-color:rgba(15,23,42,.12)}body.light-mode .fabi-dep-media-box{border-color:rgba(15,23,42,.09);background:#f8faf8}
+
+@media(max-width:760px){.fabi-testimonials-actions{width:100%;align-items:stretch}.fabi-testimonial-send-btn{width:100%}.fabi-dep-dialog{top:auto;bottom:0;transform:translateX(-50%);width:100%;max-height:92dvh;border-radius:22px 22px 0 0}.fabi-dep-head{padding:16px 15px 13px}.fabi-dep-form{padding:14px 15px 18px}.fabi-dep-media-actions{grid-template-columns:1fr}}
