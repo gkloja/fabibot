@@ -10,8 +10,8 @@ const API_URL=PROXY_HOST+'/'+BACKEND_HOST+'/proxy?url=';
 function proxyUrl(target){
   return API_URL+encodeURIComponent(String(target||''));
 }
-const CATALOG_TARGET=BACKEND+'/pokemon/data/pokemons.json';
-const CATALOG_URL=proxyUrl(CATALOG_TARGET);
+const CATALOG_URL='/assets/pokemons.json';
+let LOCAL_CATALOG=null;
 const APP_ID='6ba779b7-14c6-4a31-b955-0c8567a9039b';
 const state={profile:null,ranking:[],tab:'world',biome:'random',busy:false,query:'',rarity:'all',timer:null};
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
@@ -22,6 +22,22 @@ const pct=n=>`${Math.round(Number(n||0)*100)}%`;
 const R_LABEL={common:'Comum',uncommon:'Incomum',rare:'Raro',epic:'Épico',legendary:'Lendário',mythical:'Mítico'};
 const R_EMOJI={common:'⚪',uncommon:'🔵',rare:'🟣',epic:'🟠',legendary:'🟡',mythical:'🔴'};
 const TYPE_PT={normal:'Normal',fire:'Fogo',water:'Água',electric:'Elétrico',grass:'Planta',ice:'Gelo',fighting:'Lutador',poison:'Veneno',ground:'Terra',flying:'Voador',psychic:'Psíquico',bug:'Inseto',rock:'Pedra',ghost:'Fantasma',dark:'Sombrio',dragon:'Dragão',steel:'Aço',fairy:'Fada'};
+
+async function loadLocalCatalog(){
+  if(LOCAL_CATALOG)return LOCAL_CATALOG;
+  const res=await fetch(CATALOG_URL,{cache:'no-store'});
+  if(!res.ok)throw new Error(`Catálogo local HTTP ${res.status}`);
+  const data=await res.json();
+  if(!data||typeof data!=='object')throw new Error('Catálogo local inválido.');
+  LOCAL_CATALOG=data;
+  return data;
+}
+function localSpecies(id){
+  if(!LOCAL_CATALOG)return null;
+  if(Array.isArray(LOCAL_CATALOG))return LOCAL_CATALOG.find(x=>Number(x?.id)===Number(id))||null;
+  return LOCAL_CATALOG[String(id)]||LOCAL_CATALOG[Number(id)]||null;
+}
+
 
 function session(){
   let s={};
@@ -96,7 +112,11 @@ function imageUrl(sp){
   const id=Number(sp?.id||sp?.speciesId||0);
   return id?proxyUrl(`${BACKEND}/pokemon/images/artwork_${id}.png`):'/flogo.jpg';
 }
-function fallback(sp){return sp?.artworkFallback||sp?.artwork||'/flogo.jpg'}
+function fallback(sp){
+  const id=Number(sp?.id||sp?.speciesId||0);
+  const local=id?localSpecies(id):null;
+  return sp?.artworkFallback||sp?.artwork||local?.artwork||local?.sprite||'/flogo.jpg';
+}
 function timeLeft(iso){const ms=Date.parse(iso||0)-Date.now();if(ms<=0)return'PRONTO';const h=Math.floor(ms/3600000),m=Math.ceil((ms%3600000)/60000);return h?`${h}h ${m}min`:`${Math.max(1,m)}min`}
 function xpNeed(l){return 100+(Math.max(1,Number(l))-1)*45}
 function toast(msg,type='ok'){const w=$('#pkToastWrap');if(!w)return;const t=document.createElement('div');t.className='pk-toast'+(type==='err'?' err':'');t.textContent=msg;w.appendChild(t);setTimeout(()=>t.remove(),4200)}
@@ -131,17 +151,29 @@ async function requestNotifications(){
 function syncNotifButton(on){const b=$('#pkNotifBtn');if(!b)return;b.classList.toggle('active',!!on);const s=b.querySelector('span');if(s)s.textContent=on?'Avisos ativos':'Avisos'}
 
 async function boot(){
-  const u=session();const user=$('#pkUser');if(user)user.innerHTML=u.numero?`<span class="pk-dot"></span><strong>${esc(u.nome)}</strong><span>· conta ${esc(u.numero.slice(-4).padStart(4,'•'))}</span>`:'<span class="pk-dot"></span><strong>Visitante</strong>';
-  if(!u.numero){renderLogin();return}
-  initOneSignal();
+  const u=session();
+  const user=$('#pkUser');
+  if(user)user.innerHTML=u.numero
+    ?`<span class="pk-dot"></span><strong>${esc(u.nome)}</strong><span>· conta ${esc(u.numero.slice(-4).padStart(4,'•'))}</span>`
+    :'<span class="pk-dot"></span><strong>Visitante</strong>';
+
+  // O catálogo é 100% estático e vem da própria Vercel.
   try{
-    const health=await api('/api/pokemon-adventure/health');
-    if(!health.embedded)console.warn('Adventure API antiga detectada');
+    await loadLocalCatalog();
   }catch(e){
-    e.message='API Pokémon: '+(e.message||'falha de conexão');
+    e.message='Catálogo Pokémon: '+(e.message||'não foi possível carregar /assets/pokemons.json');
     renderError(e);
     return;
   }
+
+  if(!u.numero){renderLogin();return}
+  initOneSignal();
+
+  // Health é somente diagnóstico: nunca mais bloqueia a abertura do jogo.
+  api('/api/pokemon-adventure/health')
+    .then(h=>console.log('[Pokémon Adventure][health]',h))
+    .catch(e=>console.warn('[Pokémon Adventure][health]',e.message));
+
   try{
     const d=await api('/api/pokemon-adventure/profile');
     state.profile=d.profile;
@@ -153,7 +185,7 @@ async function boot(){
   }
 }
 function renderLogin(){const a=$('#pkApp');a.innerHTML=`<section class="pk-hero"><div class="pk-eyebrow">🔐 Conta Fabi necessária</div><h1 class="pk-title">Sua jornada fica salva na <span>sua conta.</span></h1><p class="pk-subtitle">Entre primeiro no site principal. Depois volte aqui para iniciar sua coleção, missões e Arena.</p><div class="pk-actions"><a class="pk-primary" href="/login.html?redirect=/pokemon.html">Entrar na Fabi</a><a class="pk-ghost" href="/">Voltar ao início</a></div></section>`}
-function renderError(e){const a=$('#pkApp');a.innerHTML=`<div class="pk-card pk-error"><div class="pk-card-head"><div><h3>Não foi possível abrir o Pokémon Adventure</h3><p>${esc(e.message||'Falha de conexão')}</p></div><div class="pk-icon">⚠️</div></div><p style="color:var(--muted);font-size:.76rem;line-height:1.6;margin:0">Se você acabou de atualizar o backend, confirme se o <b>connect.js</b> foi reiniciado. O catálogo público esperado é <code>http://br2.bronxyshost.com:4009/pokemon/data/pokemons.json</code> — sem <code>/public</code> na URL.</p><div class="pk-actions"><button class="pk-primary" data-action="reload">Tentar novamente</button><button class="pk-ghost" data-action="health">Testar API</button><button class="pk-ghost" data-action="catalog">Testar catálogo</button></div></div>`}
+function renderError(e){const a=$('#pkApp');a.innerHTML=`<div class="pk-card pk-error"><div class="pk-card-head"><div><h3>Não foi possível abrir o Pokémon Adventure</h3><p>${esc(e.message||'Falha de conexão')}</p></div><div class="pk-icon">⚠️</div></div><p style="color:var(--muted);font-size:.76rem;line-height:1.6;margin:0">O catálogo agora é estático em <code>/assets/pokemons.json</code>. Se esta tela apareceu depois do catálogo carregar, o problema está na API de perfil do backend/Proxy, não no JSON.</p><div class="pk-actions"><button class="pk-primary" data-action="reload">Tentar novamente</button><button class="pk-ghost" data-action="health">Testar API</button><button class="pk-ghost" data-action="catalog">Testar catálogo</button></div></div>`}
 function render(){const p=state.profile;if(!p)return;const a=$('#pkApp');if(!p.collection?.length){a.innerHTML=starterHTML(p);bindFallbacks();return}const need=xpNeed(p.trainer.level),xpPct=Math.min(100,(p.trainer.xp/need)*100);a.innerHTML=`${heroHTML(p,xpPct)}${resourcesHTML(p)}${tabsHTML()}<div class="pk-panel ${state.tab==='world'?'active':''}">${worldHTML(p)}</div><div class="pk-panel ${state.tab==='collection'?'active':''}">${collectionHTML(p)}</div><div class="pk-panel ${state.tab==='missions'?'active':''}">${missionsHTML(p)}</div><div class="pk-panel ${state.tab==='arena'?'active':''}">${arenaHTML(p)}</div><div class="pk-panel ${state.tab==='ranking'?'active':''}">${rankingHTML()}</div><div class="pk-panel ${state.tab==='achievements'?'active':''}">${achievementsHTML(p)}</div>`;bindFallbacks();if(state.tab==='ranking'&&!state.ranking.length)loadRanking(true)}
 function starterHTML(p){const starters=[{id:1,name:'Bulbasaur',type:'Planta / Veneno'},{id:4,name:'Charmander',type:'Fogo'},{id:7,name:'Squirtle',type:'Água'},{id:25,name:'Pikachu',type:'Elétrico'}];return `<section class="pk-hero"><div class="pk-eyebrow">◉ POKÉMON ADVENTURE</div><h1 class="pk-title">Escolha quem vai iniciar <span>sua história.</span></h1><p class="pk-subtitle">Seu primeiro parceiro começa no nível 5. A partir daqui, sua coleção cresce com exploração, treino, missões, baús gratuitos e Arena.</p><div class="pk-starters">${starters.map(x=>`<button class="pk-starter" data-action="starter" data-id="${x.id}"><img src="${imageUrl(x)}" data-fallback="/flogo.jpg" alt="${x.name}"><strong>${x.name}</strong><span>${x.type}</span></button>`).join('')}</div><div class="pk-card" style="margin-top:14px"><div class="pk-card-head"><div><h3>Sem Golds, sem compra de caixas</h3><p>Este sistema usa apenas energia e recompensas ganhas jogando. As probabilidades dos baús são mostradas na interface.</p></div><div class="pk-icon">🧭</div></div></div></section>`}
 function heroHTML(p,xpPct){const c=p.champion;return `<section class="pk-hero"><div class="pk-hero-grid"><div><div class="pk-eyebrow">◉ FABI POKÉMON ADVENTURE</div><h1 class="pk-title">Explore. Capture. <span>Evolua.</span></h1><p class="pk-subtitle">Cada região consome uma quantidade diferente de energia. Regiões avançadas dão bônus de raridade. Seu Radar melhora depois de várias expedições.</p><div class="pk-profile-line"><span class="pk-pill">Nível ${p.trainer.level} · ${esc(p.trainer.title)}</span><span class="pk-pill">🏆 Arena ${fmt(p.trainer.arenaRating)}</span><span class="pk-pill">📚 ${fmt(p.stats.uniquePokemon)} espécies</span><span class="pk-pill">⭐ Score ${fmt(p.stats.score)}</span><span class="pk-pill">🔥 ${fmt(p.trainer.streak)}d</span></div><div class="pk-xp"><span style="width:${xpPct}%"></span></div></div>${c?championHTML(c):'<div class="pk-champion"><div class="pk-champion-copy"><small>Parceiro principal</small><h3>Nenhum selecionado</h3><p>Abra sua coleção e escolha um Pokémon.</p></div></div>'}</div></section>`}
@@ -195,7 +227,7 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el)return
   if(act==='biome'){state.biome=el.dataset.biome;render();return}
   if(act==='reload'){location.reload();return}
   if(act==='health'){try{const d=await api('/api/pokemon-adventure/health');toast(`API online · ${d.catalog} espécies · V${d.version}`)}catch(err){toast(err.message,'err')}return}
-  if(act==='catalog'){try{const r=await fetch(CATALOG_URL,{mode:'cors'});if(!r.ok)throw new Error(`HTTP ${r.status}`);const raw=await r.text();let d;try{d=JSON.parse(raw)}catch(_){throw new Error('resposta não é JSON')};const total=Array.isArray(d)?d.length:Object.keys(d||{}).length;toast(`Catálogo online · ${fmt(total)} espécies`)}catch(err){toast(`Catálogo via Proxy falhou: ${err.message}`,'err')}return}
+  if(act==='catalog'){try{const d=await loadLocalCatalog();const total=Array.isArray(d)?d.length:Object.keys(d||{}).length;toast(`Catálogo local online · ${fmt(total)} espécies`)}catch(err){toast(`Catálogo local falhou: ${err.message}`,'err')}return}
   if(act==='notif'){requestNotifications();return}
   if(act==='close'){closeModal();return}
   if(act==='closecine'){closeCine();return}
