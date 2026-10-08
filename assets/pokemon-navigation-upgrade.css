@@ -118,3 +118,12 @@
 @media (min-width: 821px){
   .pk-dock{ display: none !important; }
 }
+/* Incursão acessível em qualquer aba, acima do dock do celular. */
+.pk-boss-beacon{position:fixed;right:20px;bottom:24px;z-index:109;display:flex;align-items:center;gap:12px;max-width:calc(100vw - 32px);padding:14px 18px;border:1px solid #ffbd69;border-radius:18px;background:linear-gradient(120deg,#402017,#17130e);color:#fff3dc;box-shadow:0 8px 32px #0008;cursor:pointer;text-align:left;animation:pk-beacon-glow 2.5s ease-in-out infinite}
+.pk-boss-beacon[hidden]{display:none}
+.pk-beacon-icon{font-size:1.8rem}.pk-boss-beacon small,.pk-boss-beacon strong,.pk-boss-beacon em{display:block}.pk-boss-beacon small{font-size:.6rem;letter-spacing:.12em;color:#ffd090}.pk-boss-beacon strong{font-size:.95rem;margin:4px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px}.pk-boss-beacon em{font-size:.7rem;font-style:normal;color:#e5c8a1}
+@keyframes pk-beacon-glow{50%{box-shadow:0 8px 32px #0008,0 0 18px #fca43d35}}
+.pk-h-tab:focus-visible,.pk-more-item:focus-visible,.pk-nav-btn:focus-visible,.pk-boss-beacon:focus-visible,.pk-dock-btn:focus-visible{outline:2px solid #ffcf83;outline-offset:3px}
+@media(min-width:821px){.pk-nav-inner{width:min(calc(100% - 24px),1440px);flex-wrap:wrap;padding:8px 0}.pk-header-tabs{overflow:visible;flex-wrap:wrap}.pk-h-tab{min-height:44px}}
+@media(max-width:820px){.pk-nav-inner{flex-wrap:wrap;padding:8px 0;gap:6px}.pk-nav-actions{margin-left:auto}.pk-brand div span{display:none}.pk-header-tabs{display:flex;order:3;flex:0 0 100%;overflow:visible;justify-content:center}.pk-header-tabs .pk-h-label{display:inline}.pk-header-tabs .pk-h-tab{display:none}.pk-header-tabs .pk-h-tab[data-pk-nav="world"],.pk-header-tabs .pk-h-tab[data-pk-nav="collection"],.pk-header-tabs .pk-h-tab[data-pk-nav="hall"]{display:inline-flex;flex:1;padding:0 6px;min-height:44px;font-size:.72rem}.pk-boss-beacon{bottom:calc(88px + env(safe-area-inset-bottom));right:12px;padding:10px 14px}.pk-more-menu{max-height:60vh;overflow-y:auto}.pk-nav-btn,.pk-more-btn{min-height:44px}.pk-toast-wrap{bottom:calc(185px + env(safe-area-inset-bottom))!important}}
+@media(prefers-reduced-motion:reduce){.pk-boss-beacon{animation:none}.pk-h-tab{transition:none}}

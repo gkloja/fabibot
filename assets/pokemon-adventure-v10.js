@@ -21,6 +21,31 @@ const fmt=n=>Number(n||0).toLocaleString('pt-BR');
 const pct=n=>`${Math.round(Number(n||0)*100)}%`;
 const R_LABEL={common:'Comum',uncommon:'Incomum',rare:'Raro',epic:'Épico',legendary:'Lendário',mythical:'Mítico'};
 const R_EMOJI={common:'⚪',uncommon:'🔵',rare:'🟣',epic:'🟠',legendary:'🟡',mythical:'🔴'};
+// Sons sintetizados: sem downloads, ativados somente pelo treinador.
+let soundOn=false,audioContext=null,lastSound=0,bossLoading=false;
+try{soundOn=localStorage.getItem('pk_sound')==='1'}catch(_){}
+function syncSound(){const b=$('#pkSoundBtn');if(b){b.textContent=soundOn?'♫':'♪';b.title=soundOn?'Silenciar efeitos sonoros':'Ativar efeitos sonoros';b.setAttribute('aria-label',b.title);b.setAttribute('aria-pressed',String(soundOn))}}
+function sound(kind='click'){
+  if(!soundOn||document.hidden)return;
+  const now=Date.now();if(kind==='click'&&now-lastSound<90)return;lastSound=now;
+  try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+    audioContext=audioContext||new C();if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
+    const notes={click:[640],attack:[180,100],win:[523,659,784,1047],loss:[330,247,165],miss:[220,180]}[kind]||[640];
+    notes.forEach((hz,i)=>{const o=audioContext.createOscillator(),g=audioContext.createGain(),t=audioContext.currentTime+i*.09;
+      o.type=kind==='attack'?'triangle':'sine';o.frequency.setValueAtTime(hz,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.055,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+.12);o.connect(g);g.connect(audioContext.destination);o.start(t);o.stop(t+.13)});
+  }catch(_){}
+}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled||!e.isTrusted)return;
+  if(b.id==='pkSoundBtn'){soundOn=!soundOn;try{localStorage.setItem('pk_sound',soundOn?'1':'0')}catch(_){}syncSound();sound();return}
+  if(!['boss-attack','battle-move'].includes(b.dataset.action))sound();
+},true);
+function syncBossBeacon(){
+  let b=$('#pkBossBeacon');if(!b){b=document.createElement('button');b.id='pkBossBeacon';b.type='button';b.className='pk-boss-beacon';b.dataset.action='tab';b.dataset.tab='boss';document.body.appendChild(b)}
+  const boss=state.boss?.active;
+  b.hidden=!(boss?.status==='active'&&Number(boss.currentHp)>0&&Number(boss.remainingMs)>0&&state.tab!=='boss');
+  if(!b.hidden){b.innerHTML=`<span class="pk-beacon-icon" aria-hidden="true">👹</span><span><small>INCURSÃO AO VIVO</small><strong>${esc(boss.name)}</strong><em>${fmt(boss.currentHp)} HP · Entrar na batalha →</em></span>`;b.setAttribute('aria-label',`Boss ativo: ${boss.name}. Entrar na batalha`)}
+  syncSound();
+}
 const TYPE_PT={normal:'Normal',fire:'Fogo',water:'Água',electric:'Elétrico',grass:'Planta',ice:'Gelo',fighting:'Lutador',poison:'Veneno',ground:'Terra',flying:'Voador',psychic:'Psíquico',bug:'Inseto',rock:'Pedra',ghost:'Fantasma',dark:'Sombrio',dragon:'Dragão',steel:'Aço',fairy:'Fada'};
 
 async function loadLocalCatalog(){
@@ -149,7 +174,7 @@ async function requestNotifications(){
     }catch(e){toast(e.message,'err')}
   });
 }
-function syncNotifButton(on){
+function syncNotifButton(on=$('#pkNotifBtn')?.classList.contains('push-enabled')){
   const b=$('#pkNotifBtn');if(!b)return;
   b.classList.toggle('active',!!on);
   b.classList.toggle('push-enabled',!!on);
@@ -200,6 +225,7 @@ function scrollActivePanel(){
 }
 async function switchTab(tab,scroll=true){
   state.tab=tab;
+  syncBossBeacon();
   if(tab==='market'&&!state.market)await loadMarket(true);
   if(tab==='boss')await loadBoss(true);
   if(tab==='hall')await loadHall(true);
@@ -257,6 +283,7 @@ async function boot(){
     startBossLive(state.tab==='boss');
     startHallLive(state.tab==='hall');
     await loadNotifications(true);
+    await loadBoss(true);
     clearInterval(state.notifTimer);state.notifTimer=setInterval(()=>loadNotifications(true),30000);
     if(tradeSlug||auctionId||tab)setTimeout(scrollActivePanel,120);
   }catch(e){
@@ -469,14 +496,15 @@ function hallHTML(){
   </section>`
 }
 async function loadBoss(silent=false){
+  if(bossLoading)return null;bossLoading=true;
   try{
     const d=await api('/api/pokemon-adventure/boss');state.boss=d;if(d.profile)state.profile=d.profile;
-    if(state.tab==='boss')render();return d;
-  }catch(e){if(!silent)toast(e.message,'err');return null}
+    syncBossBeacon();if(state.tab==='boss')render();return d;
+  }catch(e){if(!silent)toast(e.message,'err');const b=$('#pkBossBeacon');if(b)b.hidden=true;return null}finally{bossLoading=false}
 }
 function startBossLive(on=true){
   clearInterval(state.bossTimer);state.bossTimer=null;
-  if(on)state.bossTimer=setInterval(()=>loadBoss(true),5000);
+  state.bossTimer=setInterval(()=>{if(!document.hidden)loadBoss(true)},on?5000:15000);
 }
 function startHallLive(on=true){
   clearInterval(state.hallTimer);state.hallTimer=null;
@@ -572,11 +600,13 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el)return
     if(!uid){toast('Escolha um Pokémon disponível.','err');return}
     try{
       const d=await action('/api/pokemon-adventure/boss/attack',{pokemon:uid,moveIndex:Number(el.dataset.move||0)},()=>{});
+      if(!d)return;
+      sound(d.boss?.status==='defeated'?'win':d.knockedOut?'loss':d.miss?'miss':'attack');
       state.profile=d.profile||state.profile;state.boss=await api('/api/pokemon-adventure/boss');
       const parts=[d.miss?'Seu ataque errou.':`${d.move.name}: ${fmt(d.damage)} de dano${d.critical?' · CRÍTICO!':''}`];
       if(d.knockedOut)parts.push('Seu Pokémon caiu e entrou em recuperação.');
       if(d.boss?.status==='defeated')parts.push('WORLD BOSS DERROTADO!');
-      toast(parts.join(' '),d.knockedOut?'err':'ok');render();
+      toast(parts.join(' '),d.knockedOut?'err':'ok');syncBossBeacon();render();
     }catch(e){toast(e.message,'err')}
     return
   }
@@ -606,7 +636,9 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el)return
   if(act==='notif-read-all'){try{const d=await api('/api/pokemon-adventure/notifications/read',{method:'POST',body:{all:true}});state.notifications=d.rows||[];state.unread=Number(d.unread||0);syncNotifButton(d.pushEnabled!==false);openModal(notificationsHTML())}catch(e){toast(e.message,'err')}return}
   if(act==='notif-open'){
     const id=el.dataset.id,url=el.dataset.url||'';
-    try{await api('/api/pokemon-adventure/notifications/read',{method:'POST',body:{ids:[id]}});await loadNotifications(true)}catch(_){}
+    const row=state.notifications.find(n=>String(n.id)===String(id)),wasUnread=row&&!row.read;
+    if(wasUnread){row.read=true;state.unread=Math.max(0,state.unread-1);el.classList.remove('unread');syncNotifButton()}
+    try{await api('/api/pokemon-adventure/notifications/read',{method:'POST',body:{ids:[id]}})}catch(_){if(wasUnread){row.read=false;state.unread++;syncNotifButton()}toast('Não foi possível salvar a leitura. Tente novamente.','err');return}
     closeModal();
     if(url){
       try{
@@ -647,7 +679,7 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el)return
   if(act==='claim'){await action('/api/pokemon-adventure/missions/'+encodeURIComponent(el.dataset.id)+'/claim',{},d=>{toast(d.rewardText||'Recompensa coletada!');render()});return}
   if(act==='battle-start'){try{const d=await action('/api/pokemon-adventure/battle/start',{pokemon:state.profile.championUid},()=>{});state.profile=d.profile;state.tab='arena';render()}catch(_){}return}
   if(act==='wild-battle'){try{const d=await action('/api/pokemon-adventure/battle/wild/start',{pokemon:state.profile.championUid},()=>{});state.profile=d.profile;state.tab='arena';render();toast('Batalha selvagem iniciada!')}catch(_){}return}
-  if(act==='battle-move'){try{const d=await action('/api/pokemon-adventure/battle/action',{moveIndex:Number(el.dataset.move||0)},()=>{});state.profile=d.profile||state.profile;if(d.battle?.status==='finished'){openModal(battleResultHTML(d));bindFallbacks()}else render()}catch(_){}return}
+  if(act==='battle-move'){try{const d=await action('/api/pokemon-adventure/battle/action',{moveIndex:Number(el.dataset.move||0)},()=>{});if(!d)return;state.profile=d.profile||state.profile;sound(d.battle?.status==='finished'?((d.result||d.battle.result)?.win===true?'win':'loss'):'attack');if(d.battle?.status==='finished'){openModal(battleResultHTML(d));bindFallbacks()}else render()}catch(_){}return}
   if(act==='battle-done'){const mode=el.dataset.mode||'arena';closeModal();state.tab=mode==='wild'?'world':'arena';render();return}
   if(act==='recover'){try{const d=await action('/api/pokemon-adventure/recover',{pokemon:el.dataset.uid||state.profile.championUid},()=>{});state.profile=d.profile||state.profile;toast(d.alreadyReady?'Pokémon já estava recuperado.':`Recuperação concluída por ${fmt(d.cost)}✨.`);closeModal();render()}catch(_){}return}
   if(act==='season-claim'){try{const d=await action('/api/pokemon-adventure/season/claim',{tier:Number(el.dataset.tier),track:el.dataset.track||'free'},()=>{});state.profile=d.profile||state.profile;toast(`Passe: ${d.label}`);render()}catch(_){}return}

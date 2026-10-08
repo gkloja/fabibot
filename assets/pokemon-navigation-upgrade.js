@@ -7,14 +7,14 @@
     { id: 'missions', label: 'Missões', icon: 'fa-list-check' },
     { id: 'arena', label: 'Arena', icon: 'fa-hand-fist' },
     { id: 'market', label: 'Mercado', icon: 'fa-right-left' },
-    { id: 'shop', label: 'Loja', icon: 'fa-cart-shopping' }
+    { id: 'hall', label: 'Hall da Fama', icon: 'fa-landmark' }
   ];
   const SECONDARY = [
     { id: 'farm', label: 'Fazenda', icon: 'fa-seedling' },
     { id: 'boss', label: 'Boss', icon: 'fa-dragon' },
     { id: 'season', label: 'Temporada', icon: 'fa-ticket' },
     { id: 'ranking', label: 'Ranking', icon: 'fa-trophy' },
-    { id: 'hall', label: 'Hall', icon: 'fa-landmark' },
+    { id: 'shop', label: 'Loja', icon: 'fa-cart-shopping' },
     { id: 'achievements', label: 'Conquistas', icon: 'fa-medal' }
   ];
   const DOCK = [
@@ -58,12 +58,15 @@
     const actions = $('.pk-nav-actions');
     const inner = $('.pk-nav-inner');
     if (!inner) return;
+    if (actions && !$('#pkSoundBtn')) {
+      const b=document.createElement('button');b.id='pkSoundBtn';b.className='pk-nav-btn';b.type='button';b.textContent='♪';b.title='Ativar efeitos sonoros';b.setAttribute('aria-label',b.title);b.setAttribute('aria-pressed','false');actions.appendChild(b);
+    }
     if (!$('.pk-header-tabs')) {
       const tabs = document.createElement('nav');
       tabs.className = 'pk-header-tabs';
       tabs.setAttribute('aria-label', 'Atalhos principais');
       tabs.innerHTML = PRIMARY.map(t =>
-        `<button type="button" class="pk-h-tab" data-pk-nav="${t.id}"><i class="fa-solid ${t.icon}" aria-hidden="true"></i><span class="pk-h-label">${t.label}</span></button>`
+        `<button type="button" class="pk-h-tab" title="${t.label}" aria-label="${t.label}" data-pk-nav="${t.id}"><i class="fa-solid ${t.icon}" aria-hidden="true"></i><span class="pk-h-label">${t.label}</span></button>`
       ).join('');
       if (actions) inner.insertBefore(tabs, actions);
       else inner.appendChild(tabs);
