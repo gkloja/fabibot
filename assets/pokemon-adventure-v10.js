@@ -31,7 +31,7 @@ try{soundOn=localStorage.getItem('pk_sound')!=='0'}catch(_){}
 function syncSound(){
   const b=$('#pkSoundBtn');if(!b)return;
   b.innerHTML=`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4 6 8H3v8h3l5 4Z"/>${soundOn?'<path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>':'<path d="m16 9 6 6m0-6-6 6"/>'}</svg>`;
-  b.title=soundOn?'Som ligado · clique para silenciar':'Som desligado · clique para ativar';
+  b.title=soundOn?'Efeitos ligados · clique para silenciar':'Efeitos desligados · clique para ativar';
   b.setAttribute('aria-label',b.title);b.setAttribute('aria-pressed',String(soundOn));
 }
 function unlockAudio(){
@@ -39,7 +39,7 @@ function unlockAudio(){
   try{
     const C=window.AudioContext||window.webkitAudioContext;if(!C)return Promise.resolve(false);
     if(!audioContext||audioContext.state==='closed'){
-      audioContext=new C();audioMaster=audioContext.createGain();audioMaster.gain.value=.5;audioMaster.connect(audioContext.destination);
+      audioContext=new C();audioMaster=audioContext.createGain();audioMaster.gain.value=.9;audioMaster.connect(audioContext.destination);
     }
     if(audioContext.state==='running')return Promise.resolve(true);
     if(!audioReady)audioReady=audioContext.resume().then(()=>audioContext.state==='running').catch(()=>false).finally(()=>{audioReady=null});
@@ -61,18 +61,57 @@ async function sound(kind='click'){
       const o=audioContext.createOscillator(),g=audioContext.createGain(),t=audioContext.currentTime+.005+i*step;
       o.type=['attack','hit','throw'].includes(kind)?'triangle':'sine';o.frequency.setValueAtTime(hz,t);
       if(kind==='attack'||kind==='throw')o.frequency.exponentialRampToValueAtTime(hz*.55,t+duration);
-      g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(kind==='click'?.17:.25,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+duration);
+      g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(kind==='click'?.24:.25,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+duration);
       o.connect(g);g.connect(audioMaster);activeSoundNodes.add(o);
       o.onended=()=>{activeSoundNodes.delete(o);o.disconnect();g.disconnect()};o.start(t);o.stop(t+duration+.02);
     });
   }catch(_){}
 }
-function primeAudio(e){if(e.isTrusted&&soundOn)void unlockAudio()}
+// Uma única faixa para toda a jornada; trocar de aba não reinicia a música.
+let musicOn=true,musicAudio=null,musicPending=null,musicStarted=false,musicUnavailable=false;
+try{musicOn=localStorage.getItem('pk_music')!=='0'}catch(_){}
+function syncMusic(){
+  const b=$('#pkMusicBtn');if(!b)return;
+  const playing=musicAudio&&!musicAudio.paused&&!musicUnavailable;
+  b.innerHTML=`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13M9 9l12-2"/><ellipse cx="6" cy="18" rx="3" ry="3"/><ellipse cx="18" cy="16" rx="3" ry="3"/>${musicOn?'':'<path d="m3 3 18 18"/>'}</svg>`;
+  b.setAttribute('aria-pressed',String(musicOn));b.dataset.playing=String(!!playing);
+  b.title=musicUnavailable?'Música indisponível · clique para tentar novamente':musicOn?(playing?'Música tocando · clique para pausar':'Música ligada · inicia ao tocar na página'):'Música pausada · clique para ativar';
+  b.setAttribute('aria-label',b.title);
+}
+function getMusic(){
+  if(!musicAudio){
+    musicAudio=new Audio('/pocket-adventure-loop.mp3');musicAudio.id='pkBackgroundMusic';musicAudio.loop=true;musicAudio.preload='none';musicAudio.volume=.2;
+    musicAudio.addEventListener('playing',()=>{musicStarted=true;musicUnavailable=false;syncMusic()});
+    musicAudio.addEventListener('pause',syncMusic);
+    musicAudio.addEventListener('error',()=>{musicUnavailable=true;syncMusic()});
+  }
+  return musicAudio;
+}
+function playMusic(explicit=false){
+  if(!musicOn||document.hidden||(musicUnavailable&&!explicit))return;
+  const audio=getMusic();if(!audio.paused||musicPending)return;
+  if(musicUnavailable&&explicit){musicUnavailable=false;audio.load()}
+  try{
+    musicPending=Promise.resolve(audio.play()).then(()=>{if(!musicOn||document.hidden)audio.pause()}).catch(e=>{
+      if(e.name!=='NotAllowedError'&&e.name!=='AbortError')musicUnavailable=true;
+      if(explicit&&e.name!=='AbortError')toast(musicUnavailable?'Não foi possível carregar a música. Tente novamente mais tarde.':'Toque novamente para iniciar a música.','err');
+    }).finally(()=>{musicPending=null;syncMusic()});
+  }catch(_){musicUnavailable=true;syncMusic()}
+}
+function toggleMusic(){
+  if(musicUnavailable){musicOn=true;playMusic(true)}
+  else{musicOn=!musicOn;if(musicOn)playMusic(true);else musicAudio?.pause()}
+  try{localStorage.setItem('pk_music',musicOn?'1':'0')}catch(_){}syncMusic();
+}
+function primeAudio(e){if(!e.isTrusted)return;if(soundOn)void unlockAudio();if(!e.target.closest('#pkMusicBtn'))playMusic()}
 document.addEventListener('pointerdown',primeAudio,{capture:true,passive:true});
 document.addEventListener('keydown',e=>{if(['Enter',' '].includes(e.key))primeAudio(e)},true);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stopSounds()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stopSounds();musicAudio?.pause()}else if(musicStarted)playMusic()});
+window.addEventListener('pagehide',()=>musicAudio?.pause());
+window.addEventListener('pageshow',()=>{if(musicStarted)playMusic()});
 document.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||b.disabled||!e.isTrusted)return;
+  if(b.id==='pkMusicBtn'){toggleMusic();sound('click');return}
   if(b.id==='pkSoundBtn'){
     soundOn=!soundOn;try{localStorage.setItem('pk_sound',soundOn?'1':'0')}catch(_){}syncSound();
     if(soundOn){void unlockAudio().then(ready=>{if(ready)sound('click');else toast('O navegador não liberou o áudio. Toque novamente no controle de som.','err')})}else stopSounds();
@@ -304,7 +343,7 @@ async function switchTab(tab,scroll=true){
   if(tab==='ranking')await loadRanking(false);
 }
 document.addEventListener('pk:navigate',e=>{switchTab(e.detail?.tab,true).catch(e=>toast(e.message||'Não foi possível abrir esta área.','err'))});
-document.addEventListener('pk:ready',()=>{syncSound();document.dispatchEvent(new CustomEvent('pk:tabchange',{detail:{tab:state.tab}}))});
+document.addEventListener('pk:ready',()=>{syncSound();syncMusic();document.dispatchEvent(new CustomEvent('pk:tabchange',{detail:{tab:state.tab}}))});
 async function shareAuction(a){
   const url=a?.shareUrl||`https://fabibot.com.br/pokemon-auction.html?a=${encodeURIComponent(a?.id||'')}`;
   const poke=a?.pokemon?.name||a?.species?.name||'Pokémon';

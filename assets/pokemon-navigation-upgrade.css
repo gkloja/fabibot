@@ -35,3 +35,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 #pkSoundBtn[aria-pressed="true"]{border-color:#4c9968;color:#b7ffce}
 #pkSoundBtn[aria-pressed="false"]{color:#9aa99f;background:#18231d}
 .pk-cine-stage{max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain;padding:12px 0}
+
+/* V6: Mais ocupa a quarta posição da navegação principal. */
+.pk-header-tabs>.pk-more-wrap{min-width:0;align-self:stretch;display:flex;align-items:center}
+.pk-header-tabs #pkMoreBtn{position:relative;width:100%;height:auto;min-height:44px;background:transparent;border-color:transparent}
+.pk-header-tabs #pkMoreBtn.active,.pk-header-tabs #pkMoreBtn[aria-expanded="true"]{background:#204a36;border-color:#387e56;color:#d9ffe8}
+.pk-menu-count{position:absolute;top:-5px;right:0;min-width:19px;height:19px;padding:0 4px;display:grid;place-items:center;border-radius:999px;background:#b0f0be;color:#10351e;font-size:.62rem;line-height:1;border:2px solid #10251b}
+.pk-header-tabs .pk-more-menu{right:0}
+#pkMusicBtn[data-playing="true"]{border-color:#75619d;color:#ddc3ff;background:#30253f}
+#pkMusicBtn[aria-pressed="false"]{color:#9aa99f}
+@media(max-width:1100px){.pk-header-tabs>.pk-more-wrap{display:block}.pk-header-tabs #pkMoreBtn{height:100%}}
+@media(max-width:640px){.pk-header-tabs #pkMoreBtn{min-height:54px;padding:5px 2px;gap:3px}.pk-menu-count{top:0;right:6px}.pk-header-tabs .pk-more-menu{left:12px;right:12px}.pk-nav-actions{gap:4px}}
