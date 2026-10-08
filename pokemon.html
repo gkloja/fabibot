@@ -6,6 +6,7 @@
 <title>Pokémon Adventure | Fabi Bot</title>
 <meta name="description" content="Explore regiões, capture Pokémon, abra baús grátis, treine sua equipe, cumpra missões e dispute a Arena no Pokémon Adventure da Fabi Bot.">
 <meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://www.fabibot.com.br/pokemon">
 <meta name="theme-color" content="#07100c">
 <link rel="icon" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -15,6 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="/assets/pokemon-adventure-v10.css?v=20261008v10">
+<link rel="stylesheet" href="/assets/pokemon-navigation-upgrade.css?v=20261008nav2">
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 </head>
 <body>
@@ -22,12 +24,17 @@
 <header class="pk-topnav">
   <div class="pk-nav-inner">
     <a class="pk-brand" href="/">
-      <img src="/flogo.jpg" alt="" width="42" height="42">
+      <img src="/flogo.jpg" alt="Fabi Bot" width="42" height="42">
       <div><b>Fabi</b><span>Pokémon Adventure</span></div>
     </a>
+    <!-- Atalhos principais injetados por pokemon-navigation-upgrade.js -->
     <div class="pk-nav-actions">
-      <button type="button" class="pk-nav-btn" id="pkNotifBtn"><i class="fa-regular fa-bell"></i><span>Notificações</span><b id="pkNotifBadge" class="pk-notif-badge" hidden></b></button>
-      <a class="pk-nav-btn" href="/"><i class="fa-solid fa-house"></i><span>Fabi Bot</span></a>
+      <button type="button" class="pk-nav-btn" id="pkNotifBtn" title="Notificações">
+        <i class="fa-regular fa-bell"></i><span>Alertas</span>
+        <b id="pkNotifBadge" class="pk-notif-badge" hidden></b>
+      </button>
+      <a class="pk-nav-btn" href="/golds" title="Gold Empire"><i class="fa-solid fa-coins"></i><span>Golds</span></a>
+      <a class="pk-nav-btn" href="/" title="Site Fabi Bot"><i class="fa-solid fa-house"></i><span>Início</span></a>
     </div>
   </div>
 </header>
@@ -54,5 +61,6 @@
 </div>
 
 <script src="/assets/pokemon-adventure-v10.js?v=20261008v10" defer></script>
+<script src="/assets/pokemon-navigation-upgrade.js?v=20261008nav2" defer></script>
 </body>
 </html>
