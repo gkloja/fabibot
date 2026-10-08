@@ -1,161 +1,38 @@
-/*! Pokémon Adventure · Navigation Upgrade */
-(function () {
+/*! Fabi Pokémon · Navegação única V4 */
+(()=>{
   'use strict';
-  const PRIMARY = [
-    { id: 'world', label: 'Mundo', icon: 'fa-compass' },
-    { id: 'collection', label: 'Pokédex', icon: 'fa-book' },
-    { id: 'missions', label: 'Missões', icon: 'fa-list-check' },
-    { id: 'arena', label: 'Arena', icon: 'fa-hand-fist' },
-    { id: 'market', label: 'Mercado', icon: 'fa-right-left' },
-    { id: 'hall', label: 'Hall da Fama', icon: 'fa-landmark' }
-  ];
-  const SECONDARY = [
-    { id: 'farm', label: 'Fazenda', icon: 'fa-seedling' },
-    { id: 'boss', label: 'Boss', icon: 'fa-dragon' },
-    { id: 'season', label: 'Temporada', icon: 'fa-ticket' },
-    { id: 'ranking', label: 'Ranking', icon: 'fa-trophy' },
-    { id: 'shop', label: 'Loja', icon: 'fa-cart-shopping' },
-    { id: 'achievements', label: 'Conquistas', icon: 'fa-medal' }
-  ];
-  const DOCK = [
-    { id: 'world', label: 'Mundo', icon: 'fa-compass' },
-    { id: 'collection', label: 'Pokédex', icon: 'fa-book' },
-    { id: 'missions', label: 'Missões', icon: 'fa-list-check' },
-    { id: 'arena', label: 'Arena', icon: 'fa-hand-fist' },
-    { id: 'more', label: 'Mais', icon: 'fa-ellipsis' }
-  ];
-  function $(sel, root) { return (root || document).querySelector(sel); }
-  function $$(sel, root) { return Array.from((root || document).querySelectorAll(sel)); }
-  function currentTab() {
-    const active = $('.pk-tab.active[data-tab]');
-    if (active) return active.getAttribute('data-tab');
-    try {
-      const u = new URL(location.href);
-      return u.searchParams.get('tab') || sessionStorage.getItem('pk_last_tab') || 'world';
-    } catch (_) { return 'world'; }
+  const primary=[['world','Mundo','🧭'],['collection','Pokédex','◉'],['arena','Arena','⚔'],['hall','Hall da Fama','♜']];
+  const groups=[['Sua jornada',[['missions','Missões','☷','Objetivos e recompensas'],['farm','Fazenda','❀','Plante e colha berries'],['season','Temporada','⚑','Seu passe e progresso'],['achievements','Conquistas','✦','Marcos da sua história']]],['Competir e negociar',[['boss','World Boss','♜','Batalha da comunidade'],['ranking','Ranking','♛','Os melhores treinadores'],['market','Mercado','⇄','Trocas e leilões'],['shop','Loja','◇','Itens para sua jornada']]]];
+  const $=s=>document.querySelector(s);
+  function iconForTab(id){
+    const paths={world:'<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5Z"/>',collection:'<path d="M12 5v15M3 4l9 2 9-2v15l-9 2-9-2Z"/>',arena:'<path d="m4 3 3 1 13 13-3 3L4 7Zm16 0-3 1-5 5M4 20l5-5M2 17l5 5m10-20-3 5"/>',hall:'<path d="m3 9 9-6 9 6ZM5 11v8m7-8v8m7-8v8M3 21h18"/>'};
+    return `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[id]||paths.world}</svg>`;
   }
-  function go(tab) {
-    if (!tab) return;
-    try { sessionStorage.setItem('pk_last_tab', tab); } catch (_) {}
-    const btn = $(`.pk-tab[data-tab="${tab}"]`);
-    if (btn) { btn.click(); setTimeout(sync, 30); return; }
-    try {
-      const u = new URL(location.href);
-      u.searchParams.set('tab', tab);
-      history.replaceState(null, '', u.toString());
-    } catch (_) {}
-    const fake = document.createElement('button');
-    fake.className = 'pk-tab';
-    fake.setAttribute('data-action', 'tab');
-    fake.setAttribute('data-tab', tab);
-    fake.style.display = 'none';
-    document.body.appendChild(fake);
-    fake.click();
-    setTimeout(() => fake.remove(), 0);
-    setTimeout(sync, 80);
-  }
-  function ensureHeaderScaffold() {
-    const actions = $('.pk-nav-actions');
-    const inner = $('.pk-nav-inner');
-    if (!inner) return;
-    if (actions && !$('#pkSoundBtn')) {
-      const b=document.createElement('button');b.id='pkSoundBtn';b.className='pk-nav-btn';b.type='button';b.textContent='♪';b.title='Ativar efeitos sonoros';b.setAttribute('aria-label',b.title);b.setAttribute('aria-pressed','false');actions.appendChild(b);
-    }
-    if (!$('.pk-header-tabs')) {
-      const tabs = document.createElement('nav');
-      tabs.className = 'pk-header-tabs';
-      tabs.setAttribute('aria-label', 'Atalhos principais');
-      tabs.innerHTML = PRIMARY.map(t =>
-        `<button type="button" class="pk-h-tab" title="${t.label}" aria-label="${t.label}" data-pk-nav="${t.id}"><i class="fa-solid ${t.icon}" aria-hidden="true"></i><span class="pk-h-label">${t.label}</span></button>`
-      ).join('');
-      if (actions) inner.insertBefore(tabs, actions);
-      else inner.appendChild(tabs);
-    }
-    if (!$('.pk-more-wrap') && actions) {
-      const wrap = document.createElement('div');
-      wrap.className = 'pk-more-wrap';
-      wrap.innerHTML =
-        `<button type="button" class="pk-more-btn" id="pkMoreBtn" aria-expanded="false" aria-haspopup="true"><i class="fa-solid fa-layer-group" aria-hidden="true"></i><span>Mais</span></button>` +
-        `<div class="pk-more-menu" id="pkMoreMenu" role="menu"></div>`;
-      actions.insertBefore(wrap, actions.firstChild);
-      $('#pkMoreMenu', wrap).innerHTML = SECONDARY.map(t =>
-        `<button type="button" class="pk-more-item" role="menuitem" data-pk-nav="${t.id}"><i class="fa-solid ${t.icon}" aria-hidden="true"></i><span>${t.label}</span></button>`
-      ).join('');
-    }
-  }
-  function ensureDock() {
-    if ($('.pk-dock')) return;
-    const dock = document.createElement('nav');
-    dock.className = 'pk-dock';
-    dock.setAttribute('aria-label', 'Navegação rápida');
-    dock.innerHTML = DOCK.map(t =>
-      `<button type="button" class="pk-dock-btn" data-pk-dock="${t.id}"><i class="fa-solid ${t.icon}" aria-hidden="true"></i><span>${t.label}</span></button>`
-    ).join('');
-    document.body.appendChild(dock);
-    document.body.classList.add('pk-has-dock');
-  }
-  function sync() {
-    const tab = currentTab();
-    $$('.pk-h-tab').forEach(el => el.classList.toggle('active', el.getAttribute('data-pk-nav') === tab));
-    $$('.pk-more-item').forEach(el => el.classList.toggle('active', el.getAttribute('data-pk-nav') === tab));
-    $$('.pk-dock-btn').forEach(el => {
-      const id = el.getAttribute('data-pk-dock');
-      el.classList.toggle('active', id === tab || (id === 'more' && SECONDARY.some(s => s.id === tab)));
+  function boot(){
+    const inner=$('.pk-nav-inner'),actions=$('.pk-nav-actions');if(!inner||!actions)return;
+    const nav=document.createElement('nav');nav.className='pk-header-tabs';nav.setAttribute('aria-label','Áreas principais');
+    nav.innerHTML=primary.map(([id,label,icon])=>`<button type="button" class="pk-h-tab" data-pk-nav="${id}" aria-controls="pkActivePanel"><span class="pk-nav-icon" aria-hidden="true">${iconForTab(id)}</span><span>${label}</span></button>`).join('');inner.insertBefore(nav,actions);
+    const more=document.createElement('div');more.className='pk-more-wrap';more.innerHTML=`<button type="button" class="pk-more-btn" id="pkMoreBtn" aria-expanded="false" aria-controls="pkMoreMenu"><span aria-hidden="true">▦</span><span>Mais</span></button><nav id="pkMoreMenu" class="pk-more-menu" aria-label="Outras áreas" hidden>${groups.map(([label,items])=>`<section><h2>${label}</h2>${items.map(([id,name,icon,desc])=>`<button type="button" class="pk-more-item" data-pk-nav="${id}"><span aria-hidden="true">${icon}</span><span><b>${name}</b><small>${desc}</small></span></button>`).join('')}</section>`).join('')}</nav>`;actions.prepend(more);
+    const sound=document.createElement('button');sound.type='button';sound.id='pkSoundBtn';sound.className='pk-nav-btn';sound.textContent='♪';sound.setAttribute('aria-label','Ativar efeitos sonoros');sound.setAttribute('aria-pressed','false');actions.append(sound);
+    const alerts=$('#pkNotifBtn');alerts?.setAttribute('aria-label','Abrir notificações');
+    const home=actions.querySelector('a[href="/"]');home?.setAttribute('aria-label','Voltar ao site Fabi Bot');
+    function close(focus=false){$('#pkMoreMenu').hidden=true;$('#pkMoreBtn').setAttribute('aria-expanded','false');if(focus)$('#pkMoreBtn').focus()}
+    document.addEventListener('click',e=>{
+      const item=e.target.closest('[data-pk-nav]');
+      if(item){const tab=item.dataset.pkNav;close();document.dispatchEvent(new CustomEvent('pk:navigate',{detail:{tab}}));return}
+      if(e.target.closest('#pkMoreBtn')){const menu=$('#pkMoreMenu'),opening=menu.hidden;menu.hidden=!opening;$('#pkMoreBtn').setAttribute('aria-expanded',String(opening));if(opening)menu.querySelector('button')?.focus();return}
+      if(!e.target.closest('.pk-more-wrap'))close();
     });
-    $$('.pk-tab[data-tab]').forEach(el => el.classList.toggle('active', el.getAttribute('data-tab') === tab));
-  }
-  function closeMore() {
-    const btn = $('#pkMoreBtn'), menu = $('#pkMoreMenu');
-    if (btn) btn.setAttribute('aria-expanded', 'false');
-    if (menu) menu.classList.remove('open');
-  }
-  function toggleMore() {
-    const btn = $('#pkMoreBtn'), menu = $('#pkMoreMenu');
-    if (!btn || !menu) return;
-    const open = menu.classList.contains('open');
-    if (open) closeMore();
-    else { menu.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
-  }
-  function bind() {
-    document.addEventListener('click', (e) => {
-      const nav = e.target.closest('[data-pk-nav]');
-      if (nav) { e.preventDefault(); go(nav.getAttribute('data-pk-nav')); closeMore(); return; }
-      const dock = e.target.closest('[data-pk-dock]');
-      if (dock) {
-        e.preventDefault();
-        const id = dock.getAttribute('data-pk-dock');
-        if (id === 'more') { toggleMore(); return; }
-        go(id); closeMore(); return;
-      }
-      if (e.target.closest('#pkMoreBtn')) { e.preventDefault(); toggleMore(); return; }
-      if (!e.target.closest('.pk-more-wrap')) closeMore();
-      if (e.target.closest('.pk-tab[data-tab]')) setTimeout(sync, 30);
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#pkMoreMenu').hidden){e.preventDefault();close(true)}});
+    document.addEventListener('focusin',e=>{if(!e.target.closest('.pk-more-wrap'))close()});
+    document.addEventListener('pk:tabchange',e=>{
+      const tab=e.detail.tab;
+      document.querySelectorAll('[data-pk-nav]').forEach(b=>{const active=b.dataset.pkNav===tab;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+      $('#pkMoreBtn').classList.toggle('active',!primary.some(([id])=>id===tab));
     });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMore(); });
-    const app = $('#pkApp');
-    if (app) {
-      new MutationObserver(() => { ensureHeaderScaffold(); sync(); })
-        .observe(app, { childList: true, subtree: true });
-    }
+    const measure=()=>document.documentElement.style.setProperty('--pk-header-height',`${Math.ceil(inner.getBoundingClientRect().height)}px`);
+    if(window.ResizeObserver)new ResizeObserver(measure).observe(inner);measure();
+    document.dispatchEvent(new CustomEvent('pk:ready'));
   }
-  function boot() {
-    ensureHeaderScaffold();
-    ensureDock();
-    bind();
-    sync();
-    const params = new URLSearchParams(location.search);
-    if (!params.has('tab') && !params.has('trade') && !params.has('auction')) {
-      let last = null;
-      try { last = sessionStorage.getItem('pk_last_tab'); } catch (_) {}
-      if (last && last !== 'world') {
-        let attempts = 0;
-        const timer = setInterval(() => {
-          if ($('.pk-tab[data-tab]')) { clearInterval(timer); go(last); }
-          else if (++attempts > 40) clearInterval(timer);
-        }, 250);
-      }
-    }
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
-  else boot();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();

@@ -14,6 +14,9 @@ const CATALOG_URL='/assets/pokemons.json';
 let LOCAL_CATALOG=null;
 const APP_ID='6ba779b7-14c6-4a31-b955-0c8567a9039b';
 const state={profile:null,ranking:[],market:null,tradeTarget:null,notifications:[],boss:null,hall:null,unread:0,tab:'world',biome:'random',busy:false,query:'',rarity:'all',timer:null,rankTimer:null,notifTimer:null,bossTimer:null,hallTimer:null,rankMode:'global',pixWatch:null,focusAuction:null,bossPokemonUid:null};
+const TAB_IDS=['world','collection','farm','missions','arena','boss','season','ranking','hall','market','shop','achievements'];
+let modalVersion=0,modalReturnFocus=null,hallRequest=null;
+const pendingReads=new Set();
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -101,17 +104,18 @@ async function api(path,opts={}){
     requestOptions.body=body?JSON.stringify(body):undefined;
   }
 
-  let res;
+  let res,raw;const controller=new AbortController();requestOptions.signal=controller.signal;
+  const timeout=setTimeout(()=>controller.abort(),20000);
   try{
     res=await fetch(method==='GET'?withAuth(path):endpoint(path),requestOptions);
+    raw=await res.text();
   }catch(fetchErr){
-    const e=new Error('Falha ao acessar o Proxy da Fabi.');
+    const e=new Error(fetchErr.name==='AbortError'?'A conexão demorou demais. Tente novamente.':'Falha ao acessar o Proxy da Fabi.');
     e.cause=fetchErr;
     e.stage='proxy';
     throw e;
-  }
+  }finally{clearTimeout(timeout)}
 
-  const raw=await res.text();
   let data;
   try{
     data=raw?JSON.parse(raw):{};
@@ -146,7 +150,12 @@ function timeLeft(iso){const ms=Date.parse(iso||0)-Date.now();if(ms<=0)return'PR
 function xpNeed(l){return 100+(Math.max(1,Number(l))-1)*45}
 function seasonTimeLeft(iso){const ms=Math.max(0,Date.parse(iso||0)-Date.now());const d=Math.ceil(ms/86400000);if(d>=2)return `${d}d`;const h=Math.ceil(ms/3600000);return h?`${h}h`:'encerrando';}
 function toast(msg,type='ok'){const w=$('#pkToastWrap');if(!w)return;const t=document.createElement('div');t.className='pk-toast'+(type==='err'?' err':'');t.textContent=msg;w.appendChild(t);setTimeout(()=>t.remove(),4200)}
-function setBusy(v){state.busy=v;$$('[data-action]').forEach(b=>{if(b.tagName==='BUTTON')b.disabled=v})}
+const busyButtons=new Set();
+function setBusy(v){
+  state.busy=v;
+  if(v){$$('[data-action]').forEach(b=>{if(b.tagName==='BUTTON'&&!b.disabled&&!['tab','close','closecine','notif-open','notif-enable','notif-read-all','hall-refresh'].includes(b.dataset.action)){b.disabled=true;busyButtons.add(b)}})}
+  else{busyButtons.forEach(b=>{if(b.isConnected)b.disabled=false});busyButtons.clear()}
+}
 function rarityLabel(r){return R_LABEL[r]||r}
 function typesLabel(arr){return (arr||[]).map(t=>TYPE_PT[t]||t).join(' / ')}
 
@@ -209,31 +218,40 @@ function notificationsHTML(){
 async function loadNotifications(silent=true){
   try{
     const d=await api('/api/pokemon-adventure/notifications/inbox?limit=60');
-    state.notifications=d.rows||[];state.unread=Number(d.unread||0);syncNotifButton(d.pushEnabled!==false);
+    const rows=d.rows||[];state.unread=Math.max(0,Number(d.unread||0)-rows.filter(n=>pendingReads.has(String(n.id))&&!n.read).length);
+    state.notifications=rows.map(n=>pendingReads.has(String(n.id))?{...n,read:true}:n);syncNotifButton(d.pushEnabled!==false);
     return d;
   }catch(e){if(!silent)toast(e.message,'err');return null}
 }
 async function openNotifications(){
-  await loadNotifications(true);
   openModal(notificationsHTML());
+  const revision=modalVersion;
+  const data=await loadNotifications(true);
+  if(revision!==modalVersion||!$('#pkModal').classList.contains('open'))return;
+  if(data)updateModal(notificationsHTML());
+  else toast('Não foi possível atualizar as notificações.','err');
 }
 function scrollActivePanel(){
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    const panel=document.querySelector('.pk-panel.active');
-    panel?.scrollIntoView({behavior:'smooth',block:'start'});
-  }));
+  requestAnimationFrame(()=>{
+    const panel=$('.pk-panel.active');
+    panel?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+  });
 }
 async function switchTab(tab,scroll=true){
+  if(!TAB_IDS.includes(tab))return;
   state.tab=tab;
-  syncBossBeacon();
-  if(tab==='market'&&!state.market)await loadMarket(true);
-  if(tab==='boss')await loadBoss(true);
-  if(tab==='hall')await loadHall(true);
-  startBossLive(tab==='boss');
-  startHallLive(tab==='hall');
+  closeModal();
+  try{sessionStorage.setItem('pk_last_tab',tab);const u=new URL(location.href);u.searchParams.set('tab',tab);u.searchParams.delete('trade');u.searchParams.delete('auction');history.replaceState(null,'',u)}catch(_){}
+  startBossLive(tab==='boss');startHallLive(tab==='hall');
   render();
   if(scroll)scrollActivePanel();
+  if(tab==='market'&&!state.market)await loadMarket(false);
+  if(tab==='boss')await loadBoss(false);
+  if(tab==='hall')await loadHall(false);
+  if(tab==='ranking')await loadRanking(false);
 }
+document.addEventListener('pk:navigate',e=>{switchTab(e.detail?.tab,true).catch(e=>toast(e.message||'Não foi possível abrir esta área.','err'))});
+document.addEventListener('pk:ready',()=>{syncSound();document.dispatchEvent(new CustomEvent('pk:tabchange',{detail:{tab:state.tab}}))});
 async function shareAuction(a){
   const url=a?.shareUrl||`https://fabibot.com.br/pokemon-auction.html?a=${encodeURIComponent(a?.id||'')}`;
   const poke=a?.pokemon?.name||a?.species?.name||'Pokémon';
@@ -272,9 +290,11 @@ async function boot(){
     state.profile=d.profile;
     const qs=new URLSearchParams(location.search),tradeSlug=qs.get('trade'),auctionId=qs.get('auction'),tab=qs.get('tab');
     if(tab&&['world','collection','farm','missions','arena','boss','season','ranking','hall','market','shop','achievements'].includes(tab))state.tab=tab;
+    if(!tab&&!tradeSlug&&!auctionId){try{const last=sessionStorage.getItem('pk_last_tab');if(TAB_IDS.includes(last))state.tab=last}catch(_){}}
     if(state.tab==='market'&&!tradeSlug&&!auctionId)await loadMarket(true);
     if(state.tab==='boss')await loadBoss(true);
     if(state.tab==='hall')await loadHall(true);
+    if(state.tab==='ranking')await loadRanking(true);
     if(tradeSlug){state.tab='market';await loadMarket(true);await loadTradeTargetBySlug(tradeSlug);}
     if(auctionId){state.tab='market';state.focusAuction=auctionId;await loadMarket(true);}
     render();
@@ -294,46 +314,21 @@ async function boot(){
 function render(){
   const p=state.profile;if(!p)return;
   const a=$('#pkApp');
+  document.dispatchEvent(new CustomEvent('pk:tabchange',{detail:{tab:state.tab}}));
+  syncBossBeacon();
   if(!p.collection?.length){a.innerHTML=starterHTML(p);bindFallbacks();return}
   const need=xpNeed(p.trainer.level),xpPct=Math.min(100,(p.trainer.xp/need)*100);
-  a.innerHTML=`${heroHTML(p,xpPct)}${resourcesHTML(p)}${quickHTML(p)}${tabsHTML()}
-  <div class="pk-panel ${state.tab==='world'?'active':''}">${worldHTML(p)}</div>
-  <div class="pk-panel ${state.tab==='collection'?'active':''}">${collectionHTML(p)}</div>
-  <div class="pk-panel ${state.tab==='farm'?'active':''}">${farmHTML(p)}</div>
-  <div class="pk-panel ${state.tab==='missions'?'active':''}">${missionsHTML(p)}</div>
-  <div class="pk-panel ${state.tab==='arena'?'active':''}">${arenaHTML(p)}</div>
-  <div class="pk-panel ${state.tab==='boss'?'active':''}">${bossHTML(p)}</div>
-  <div class="pk-panel ${state.tab==='season'?'active':''}">${seasonHTML(p)}</div>
-  <div class="pk-panel ${state.tab==='ranking'?'active':''}">${rankingHTML()}</div>
-  <div class="pk-panel ${state.tab==='hall'?'active':''}">${hallHTML()}</div>
-  <div class="pk-panel ${state.tab==='market'?'active':''}">${marketHTML(p)}</div>
-  <div class="pk-panel ${state.tab==='shop'?'active':''}">${shopHTML(p)}</div>
-  <div class="pk-panel ${state.tab==='achievements'?'active':''}">${achievementsHTML(p)}</div>`;
+  const panels={world:worldHTML,collection:collectionHTML,farm:farmHTML,missions:missionsHTML,arena:arenaHTML,boss:bossHTML,season:seasonHTML,ranking:rankingHTML,hall:hallHTML,market:marketHTML,shop:shopHTML,achievements:achievementsHTML};
+  const content=(panels[state.tab]||worldHTML)(p);
+  a.innerHTML=`${state.tab==='world'?heroHTML(p,xpPct):''}${resourcesHTML(p)}${state.tab==='world'?quickHTML(p):''}<div class="pk-panel active" id="pkActivePanel" data-panel="${state.tab}">${content}</div>`;
   bindFallbacks();
-  if(state.tab==='ranking'&&!state.ranking.length)loadRanking(true);
-  if(state.tab==='market'&&!state.market)loadMarket(true);
-  if(state.tab==='boss'&&!state.boss)loadBoss(true);
-  if(state.tab==='hall'&&!state.hall)loadHall(true);
+  if(state.busy)setBusy(true);
 }
 function starterHTML(p){const starters=[{id:1,name:'Bulbasaur',type:'Planta / Veneno'},{id:4,name:'Charmander',type:'Fogo'},{id:7,name:'Squirtle',type:'Água'},{id:25,name:'Pikachu',type:'Elétrico'}];return `<section class="pk-hero"><div class="pk-eyebrow">◉ POKÉMON ADVENTURE</div><h1 class="pk-title">Escolha quem vai iniciar <span>sua história.</span></h1><p class="pk-subtitle">Seu primeiro parceiro começa no nível 5. A partir daqui, sua coleção cresce com exploração, treino, missões, baús gratuitos e Arena.</p><div class="pk-starters">${starters.map(x=>`<button class="pk-starter" data-action="starter" data-id="${x.id}"><img src="${imageUrl(x)}" data-fallback="/flogo.jpg" alt="${x.name}"><strong>${x.name}</strong><span>${x.type}</span></button>`).join('')}</div><div class="pk-card" style="margin-top:14px"><div class="pk-card-head"><div><h3>Progressão separada dos Golds</h3><p>Baús aleatórios continuam gratuitos/ganhos jogando. A Loja PIX vende somente cosméticos fixos e não altera chances, CP ou ranking.</p></div><div class="pk-icon">🧭</div></div></div></section>`}
-function heroHTML(p,xpPct){const c=p.champion;return `<section class="pk-hero"><div class="pk-hero-grid"><div><div class="pk-eyebrow">◉ FABI POKÉMON ADVENTURE</div><h1 class="pk-title">Explore. Capture. <span>Evolua.</span></h1><p class="pk-subtitle">Cada região consome energia, os grupos podem receber Pokémon Drops e seu perfil público mostra as maiores conquistas da jornada.</p><div class="pk-profile-line"><span class="pk-pill">Nível ${p.trainer.level} · ${esc(p.trainer.title)}</span><span class="pk-pill">${p.league?.icon||'🏆'} ${esc(p.league?.label||'Liga')} · ${fmt(p.trainer.arenaRating)}</span><span class="pk-pill">🏁 ${esc(p.season?.id||'Temporada')} · ${fmt(p.season?.points||0)} pts</span><span class="pk-pill">📚 ${fmt(p.stats.uniquePokemon)} espécies</span><span class="pk-pill">⭐ Score ${fmt(p.stats.score)}</span><span class="pk-pill">🔥 ${fmt(p.trainer.streak)}d</span></div><div class="pk-actions" style="margin-top:12px"><a class="pk-ghost pk-link-btn" href="${esc(p.social?.profileUrl||'#')}" target="_blank" rel="noopener">👤 Perfil público</a><button class="pk-ghost" data-action="tab" data-tab="market">🔄 Trocas e Leilões</button></div><div class="pk-xp"><span style="width:${xpPct}%"></span></div></div>${c?championHTML(c):'<div class="pk-champion"><div class="pk-champion-copy"><small>Parceiro principal</small><h3>Nenhum selecionado</h3><p>Abra sua coleção e escolha um Pokémon.</p></div></div>'}</div></section>`}
+function heroHTML(p,xpPct){const c=p.champion;return `<section class="pk-hero"><div class="pk-hero-grid"><div><div class="pk-eyebrow">◉ FABI POKÉMON ADVENTURE</div><h1 class="pk-title">Explore. Capture. <span>Evolua.</span></h1><p class="pk-subtitle">Cada região consome energia, os grupos podem receber Pokémon Drops e seu perfil público mostra as maiores conquistas da jornada.</p><div class="pk-profile-line"><span class="pk-pill">Nível ${p.trainer.level} · ${esc(p.trainer.title)}</span><span class="pk-pill">${p.league?.icon||'🏆'} ${esc(p.league?.label||'Liga')} · ${fmt(p.trainer.arenaRating)}</span><span class="pk-pill">🏁 ${esc(p.season?.id||'Temporada')} · ${fmt(p.season?.points||0)} pts</span><span class="pk-pill">📚 ${fmt(p.stats.uniquePokemon)} espécies</span><span class="pk-pill">⭐ Score ${fmt(p.stats.score)}</span><span class="pk-pill">🔥 ${fmt(p.trainer.streak)}d</span></div><div class="pk-actions" style="margin-top:12px"><a class="pk-ghost pk-link-btn" href="${esc(p.social?.profileUrl||'#')}" target="_blank" rel="noopener">👤 Perfil público</a></div><div class="pk-xp"><span style="width:${xpPct}%"></span></div></div>${c?championHTML(c):'<div class="pk-champion"><div class="pk-champion-copy"><small>Parceiro principal</small><h3>Nenhum selecionado</h3><p>Abra sua coleção e escolha um Pokémon.</p></div></div>'}</div></section>`}
 function championHTML(c){return `<div class="pk-champion"><img src="${imageUrl(c.species)}" data-fallback="${esc(fallback(c.species))}" alt="${esc(c.name)}"><div class="pk-champion-copy"><small>⭐ Parceiro principal</small><h3>${c.shiny?'✨ ':''}${esc(c.name)}</h3><p>Lv.${c.level} · CP ${fmt(c.cp)}<br>${esc(rarityLabel(c.rarity))} · ${esc(typesLabel(c.types))}</p><div class="pk-actions"><button class="pk-ghost" data-action="openmon" data-uid="${esc(c.uid)}">Detalhes</button></div></div></div>`}
 function resourcesHTML(p){const r=p.resources;return `<section class="pk-resources"><div class="pk-resource pk-energy"><small>⚡ Energia</small><strong>${r.energy}/${r.maxEnergy}</strong></div><div class="pk-resource"><small>🔴 Poké Ball</small><strong>${fmt(r.pokeballs)}</strong></div><div class="pk-resource"><small>🔵 Great Ball</small><strong>${fmt(r.greatballs)}</strong></div><div class="pk-resource"><small>🟡 Ultra Ball</small><strong>${fmt(r.ultraballs)}</strong></div><button class="pk-resource pk-resource-btn" data-action="tab" data-tab="shop"><small>✨ Pó Estelar</small><strong>${fmt(r.stardust)}</strong><em>usar</em></button><div class="pk-resource"><small>🎟️ Tickets</small><strong>${fmt(r.trainingTickets)}</strong></div></section>`}
-function tabsHTML(){
-  const t=[['world','🧭 Mundo'],['collection','📚 Pokédex'],['farm','🌱 Fazenda'],['missions','📋 Missões'],['arena','⚔️ Arena'],['boss','👹 Boss'],['season','🎫 Temporada'],['ranking','🏆 Ranking'],['hall','🏛️ Hall'],['market','🔄 Mercado'],['shop','🛒 Loja'],['achievements','🏅 Conquistas']];
-  return `<nav class="pk-tabs" aria-label="Pokémon Adventure">${t.map(([id,l])=>`<button class="pk-tab ${state.tab===id?'active':''}" data-action="tab" data-tab="${id}">${l}</button>`).join('')}</nav>`
-}
-function quickHTML(p){
-  const sp=p.seasonPass||{};
-  const remaining=sp.endAt?seasonTimeLeft(sp.endAt):'28d';
-  return `<section class="pk-quick">
-    <button data-action="quick-hunt">🧭<span><b>Aventura rápida</b><small>Trilha Livre · ⚡1</small></span></button>
-    <button data-action="tab" data-tab="farm">🌱<span><b>Fazenda</b><small>${Object.values(p.farm?.pantry||{}).reduce((a,b)=>a+Number(b||0),0)} berries</small></span></button>
-    <button data-action="openmon" data-uid="${esc(p.championUid||'')}">🏋️<span><b>Treinar parceiro</b><small>${esc(p.champion?.name||'Escolha um')}</small></span></button>
-    <button data-action="tab" data-tab="boss">👹<span><b>World Boss</b><small>08h · 14h · 20h</small></span></button>
-    <button data-action="tab" data-tab="season">🎫<span><b>${esc(sp.id||'Temporada 01')}</b><small>Nível ${fmt(sp.unlockedTier||1)} · ${esc(remaining)}</small></span></button>
-  </section>`
-}
+function quickHTML(p){return `<section class="pk-quick" aria-label="Ações rápidas"><button data-action="quick-hunt"><span aria-hidden="true">🧭</span><span><b>Nova aventura</b><small>Explore a Trilha Livre · ⚡1</small></span><span aria-hidden="true">↗</span></button>${p.champion?`<button data-action="openmon" data-uid="${esc(p.championUid||'')}"><span aria-hidden="true">🏋️</span><span><b>Cuidar do parceiro</b><small>Treine e fortaleça ${esc(p.champion.name)}</small></span><span aria-hidden="true">↗</span></button>`:''}</section>`}
 function worldHTML(p){return `<div class="pk-grid"><section class="pk-card pk-col-8"><div class="pk-card-head"><div><h3>🗺️ Mapa de Exploração</h3><p>Escolha uma região. Quanto maior o custo, maior o bônus potencial de raridade.</p></div><div class="pk-icon">🧭</div></div>${worldEventHTML(p)}${radarHTML(p)}${p.activeEncounter?encounterHTML(p.activeEncounter):biomesHTML(p)}</section><aside class="pk-card pk-col-4"><div class="pk-card-head"><div><h3>🎁 Central de Baús</h3><p>Todos são gratuitos e recarregam com o tempo.</p></div><div class="pk-icon">📦</div></div><div class="pk-chests">${chestHTML(p,'supply','📦','Baú de Suprimentos',p.boxCooldowns.supplyReadyAt,'4h','Itens garantidos · 12% Pokémon')}${chestHTML(p,'expedition','🧭','Baú de Expedição',p.boxCooldowns.expeditionReadyAt,'8h','Pokémon garantido · até Épico')}${chestHTML(p,'daily','🎁','Baú Diário',p.boxCooldowns.dailyReadyAt,'24h','Pokémon garantido · pode vir Lendário/Mítico')}</div><div class="pk-actions"><button class="pk-ghost" data-action="notif">🔔 Avisar quando ficar pronto</button></div></aside></div>`}
 function worldEventHTML(p){const e=p.worldEvent||{};return `<div class="pk-world-event"><i class="fa-solid fa-bolt"></i><div><b>${esc(e.title||'Evento do mundo')}</b><span>${esc(e.description||'Um evento especial está acontecendo hoje.')}</span></div></div>`}
 function radarHTML(p){const r=p.radar||{charge:0,max:5};const pc=Math.min(100,(r.charge/r.max)*100);return `<div class="pk-radar"><div class="pk-radar-top"><b>📡 Radar de Exploração</b><span>${r.charge}/${r.max}</span></div><div class="pk-radar-bar"><span style="width:${pc}%"></span></div><div style="color:var(--muted);font-size:.66rem;margin-top:7px">Ao completar o Radar, a próxima aventura recebe promoção de raridade e chance Shiny melhorada.</div></div>`}
@@ -490,6 +485,7 @@ function hallValue(cat,row){
 }
 function hallHTML(){
   const h=state.hall?.categories;
+  if(!h&&state.hallError)return `<section class="pk-card pk-load-error"><span aria-hidden="true">🏛️</span><h3>O Hall ainda não carregou</h3><p>Não foi possível buscar os recordes. Você pode tentar novamente.</p><button class="pk-primary" data-action="hall-refresh">Tentar novamente</button></section>`;
   if(!h)return `<section class="pk-card"><div class="pk-card-head"><div><h3>🏛️ Hall da Fama</h3><p>Carregando os maiores recordes do Pokémon Adventure…</p></div><div class="pk-icon">🏛️</div></div></section>`;
   return `<section class="pk-card pk-hall-shell"><div class="pk-card-head"><div><div class="pk-live">● RECORDES AO VIVO</div><h3>🏛️ Hall da Fama</h3><p>Não existe um único jeito de ser lendário. Cada categoria celebra uma parte diferente da jornada.</p></div><button class="pk-ghost" data-action="hall-refresh">Atualizar</button></div>
     <div class="pk-hall-grid">${Object.entries(h).map(([key,cat])=>`<article class="pk-hall-card"><header><span>${cat.icon}</span><div><b>${esc(cat.title)}</b><small>${esc(cat.description)}</small></div></header><div>${(cat.rows||[]).slice(0,5).map(r=>`<a href="${r.slug?`/pokemon-profile.html?p=${encodeURIComponent(r.slug)}`:'#'}" class="pk-hall-row"><span>${r.position===1?'🥇':r.position===2?'🥈':r.position===3?'🥉':r.position+'.'}</span><b>${esc(r.userName)}</b><strong>${hallValue(key,r)}</strong></a>`).join('')}</div></article>`).join('')}</div>
@@ -508,12 +504,18 @@ function startBossLive(on=true){
 }
 function startHallLive(on=true){
   clearInterval(state.hallTimer);state.hallTimer=null;
-  if(on)state.hallTimer=setInterval(()=>loadHall(true),30000);
+  if(on)state.hallTimer=setInterval(()=>{if(!document.hidden&&!$('#pkModal').classList.contains('open'))loadHall(true)},30000);
 }
 async function loadHall(silent=false){
-  try{
-    const d=await api('/api/pokemon-adventure/hall-of-fame?limit=10');state.hall=d.hall;if(state.tab==='hall')render();return d;
-  }catch(e){if(!silent)toast(e.message,'err');return null}
+  if(hallRequest)return hallRequest;
+  state.hallError=false;
+  hallRequest=(async()=>{try{
+    const d=await api('/api/pokemon-adventure/hall-of-fame?limit=10');
+    if(!d.hall?.categories)throw new Error('O Hall retornou dados incompletos.');
+    state.hall=d.hall;return d;
+  }catch(e){state.hallError=true;if(!silent)toast(e.message,'err');return null}
+  finally{if(state.tab==='hall')render()}})();
+  try{return await hallRequest}finally{hallRequest=null}
 }
 function achievementsHTML(p){return `<section class="pk-card"><div class="pk-card-head"><div><h3>🏅 Conquistas</h3><p>Marcos permanentes da sua jornada.</p></div><div class="pk-icon">🏅</div></div><div class="pk-ach-grid">${(p.achievements||[]).map(a=>`<div class="pk-ach ${a.unlocked?'unlocked':''}"><b>${a.unlocked?'🏆':'🔒'} ${esc(a.title)}</b><p>${esc(a.desc)}</p><small>${esc(a.rewardText||'')}</small></div>`).join('')}</div></section>`}
 function detailHTML(x,p){
@@ -573,8 +575,31 @@ function seasonHTML(p){
   </section>`
 }
 function bindFallbacks(){$$('img[data-fallback]').forEach(img=>{img.onerror=()=>{const fb=img.dataset.fallback;if(fb&&img.src!==fb){img.onerror=null;img.src=fb}else img.src='/flogo.jpg'}})}
-function openModal(html){const m=$('#pkModal'),c=$('#pkModalCard');c.innerHTML=html;m.classList.add('open');m.setAttribute('aria-hidden','false');bindFallbacks()}
-function closeModal(){const m=$('#pkModal');m.classList.remove('open');m.setAttribute('aria-hidden','true')}
+function updateModal(html){
+  const c=$('#pkModalCard');const focus=document.activeElement;
+  const action=focus?.dataset?.action,id=focus?.dataset?.id;
+  c.innerHTML=html;c.querySelectorAll('.pk-modal-close').forEach(b=>{b.type='button';b.setAttribute('aria-label','Fechar janela')});bindFallbacks();
+  const same=action&&Array.from(c.querySelectorAll('[data-action]')).find(b=>b.dataset.action===action&&b.dataset.id===id);
+  (same||c.querySelector('.pk-modal-close')||c).focus({preventScroll:true});
+}
+function openModal(html){
+  const m=$('#pkModal');if(!m.classList.contains('open'))modalReturnFocus=document.activeElement;
+  modalVersion++;m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.classList.add('pk-modal-open');
+  $('.pk-topnav').inert=true;$('#pkPage').inert=true;const beacon=$('#pkBossBeacon');if(beacon)beacon.inert=true;
+  updateModal(html);
+}
+function closeModal(){
+  const m=$('#pkModal');modalVersion++;if(!m?.classList.contains('open'))return;
+  m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.classList.remove('pk-modal-open');
+  $('.pk-topnav').inert=false;$('#pkPage').inert=false;const beacon=$('#pkBossBeacon');if(beacon)beacon.inert=false;
+  if(modalReturnFocus?.isConnected)modalReturnFocus.focus({preventScroll:true});modalReturnFocus=null;
+}
+document.addEventListener('click',e=>{if(e.target.closest('[data-action="close"]')||e.target===$('#pkModal')){e.preventDefault();e.stopImmediatePropagation();closeModal()}},true);
+document.addEventListener('keydown',e=>{
+  const m=$('#pkModal');if(!m?.classList.contains('open'))return;
+  if(e.key==='Escape'){e.preventDefault();closeModal();return}
+  if(e.key==='Tab'){const items=Array.from(m.querySelectorAll('button:not(:disabled),a[href],input,select,textarea,[tabindex="0"]')).filter(el=>el.getClientRects().length);const first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}}
+});
 
 async function refresh(silent=false){try{const d=await api('/api/pokemon-adventure/profile');state.profile=d.profile;render()}catch(e){if(!silent)toast(e.message,'err')}}
 async function action(path,body,success){if(state.busy)return;setBusy(true);try{const d=await api(path,{method:'POST',body});state.profile=d.profile||state.profile;if(success)await success(d);else render();return d}catch(e){toast(e.message,'err');throw e}finally{setBusy(false)}}
@@ -589,7 +614,8 @@ function closeCine(){const c=$('#pkCinematic');c.classList.remove('open');c.setA
 
 async function openPix(productId){try{const d=await action('/api/pokemon-adventure/shop/pix/create',{productId},()=>{});const tx=d.transactionId;openModal(`<div class="pk-modal-top"><div><div class="pk-eyebrow">💚 COMPRA FIXA · PIX</div><h2>${esc(d.product.label)}</h2></div><button class="pk-modal-close" data-action="close">✕</button></div><div class="pk-pix-modal">${d.qrCode?`<img src="${esc(d.qrCode)}" alt="QR Code PIX">`:''}<p>R$ ${Number(d.product.price).toFixed(2).replace('.',',')} · expira em 30 min</p><textarea readonly id="pkPixCode">${esc(d.copyPaste||'')}</textarea><div class="pk-actions"><button class="pk-primary" data-action="copy-pix">Copiar PIX</button><button class="pk-ghost" data-action="pix-status" data-tx="${esc(tx)}">Já paguei</button></div><div id="pkPixState" class="pk-safe-note">Aguardando pagamento. O backend também verifica automaticamente a cada 30 segundos.</div></div>`);startPixWatch(tx);}catch(_){} }
 function startPixWatch(tx){clearInterval(state.pixWatch);let n=0;state.pixWatch=setInterval(async()=>{if(++n>120){clearInterval(state.pixWatch);return}try{const d=await api('/api/pokemon-adventure/shop/pix/'+encodeURIComponent(tx));const box=$('#pkPixState');if(box)box.textContent=d.transaction.status==='approved'?'✅ Pagamento aprovado e item liberado.':`Status: ${d.transaction.status}`;if(d.transaction.status==='approved'){clearInterval(state.pixWatch);state.profile=d.profile||state.profile;toast('Compra aprovada!');setTimeout(()=>{closeModal();render()},900)}}catch(_){}},5000)}
-async function click(e){const el=e.target.closest('[data-action]');if(!el)return;const act=el.dataset.action;
+async function click(e){const el=e.target.closest('[data-action]');if(!el||el.disabled)return;const act=el.dataset.action;
+  if(state.busy&&!['tab','close','closecine','notif-open','notif-enable','notif-read-all','hall-refresh'].includes(act))return;
   if(act==='tab'){await switchTab(el.dataset.tab,true);return}
   if(act==='biome'){state.biome=el.dataset.biome;render();return}
   if(act==='quick-hunt'){try{const d=await action('/api/pokemon-adventure/hunt',{biome:'random'},()=>{});await huntCinematic(d)}catch(_){}return}
@@ -632,23 +658,26 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el)return
   if(act==='copy-auction-link'){
     try{await navigator.clipboard.writeText(el.dataset.url||'');toast('Link do leilão copiado!')}catch(_){toast('Não foi possível copiar.','err')}return
   }
-  if(act==='notif-enable'){await requestNotifications();await loadNotifications(true);openModal(notificationsHTML());return}
-  if(act==='notif-read-all'){try{const d=await api('/api/pokemon-adventure/notifications/read',{method:'POST',body:{all:true}});state.notifications=d.rows||[];state.unread=Number(d.unread||0);syncNotifButton(d.pushEnabled!==false);openModal(notificationsHTML())}catch(e){toast(e.message,'err')}return}
+  if(act==='notif-enable'){const revision=modalVersion;await requestNotifications();await loadNotifications(true);if(revision===modalVersion&&$('#pkModal').classList.contains('open'))updateModal(notificationsHTML());return}
+  if(act==='notif-read-all'){const revision=modalVersion;try{const d=await api('/api/pokemon-adventure/notifications/read',{method:'POST',body:{all:true}});state.notifications=d.rows||[];state.unread=Number(d.unread||0);syncNotifButton(d.pushEnabled!==false);if(revision===modalVersion&&$('#pkModal').classList.contains('open'))updateModal(notificationsHTML())}catch(e){toast(e.message,'err')}return}
   if(act==='notif-open'){
     const id=el.dataset.id,url=el.dataset.url||'';
+    if(pendingReads.has(String(id)))return;pendingReads.add(String(id));const revision=modalVersion;
     const row=state.notifications.find(n=>String(n.id)===String(id)),wasUnread=row&&!row.read;
     if(wasUnread){row.read=true;state.unread=Math.max(0,state.unread-1);el.classList.remove('unread');syncNotifButton()}
-    try{await api('/api/pokemon-adventure/notifications/read',{method:'POST',body:{ids:[id]}})}catch(_){if(wasUnread){row.read=false;state.unread++;syncNotifButton()}toast('Não foi possível salvar a leitura. Tente novamente.','err');return}
+    try{await api('/api/pokemon-adventure/notifications/read',{method:'POST',body:{ids:[id]}})}catch(_){if(wasUnread){const current=state.notifications.find(n=>String(n.id)===String(id));if(current)current.read=false;state.unread++;syncNotifButton()}toast('Não foi possível salvar a leitura. Tente novamente.','err');if(revision===modalVersion)updateModal(notificationsHTML());return}finally{pendingReads.delete(String(id))}
+    if(revision!==modalVersion)return;
     closeModal();
     if(url){
       try{
         const u=new URL(url,location.origin);
-        if(u.origin===location.origin&&u.pathname.endsWith('/pokemon.html')){
+        if(!['https:','http:'].includes(u.protocol))return;
+        if(u.origin===location.origin&&['/pokemon','/pokemon.html'].includes(u.pathname)){
           const q=u.searchParams;const tab=q.get('tab');const auction=q.get('auction');
           if(auction){state.focusAuction=auction;await switchTab('market',true);setTimeout(()=>document.querySelector(`[data-auction-card="${CSS.escape(auction)}"]`)?.scrollIntoView({behavior:'smooth',block:'center'}),180);return}
           if(tab){await switchTab(tab,true);return}
         }
-      }catch(_){}
+      }catch(_){return}
       location.href=url;
     }
     return
@@ -697,7 +726,7 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el)return
   if(act==='pix-status'){try{const d=await api('/api/pokemon-adventure/shop/pix/'+encodeURIComponent(el.dataset.tx));const box=$('#pkPixState');if(box)box.textContent=d.transaction.status==='approved'?'✅ Pagamento aprovado e item liberado.':`Status: ${d.transaction.status}`;if(d.transaction.status==='approved'){state.profile=d.profile||state.profile;render()}}catch(e){toast(e.message,'err')}return}
 }
 function input(e){const el=e.target;if(el.dataset.field==='query'){state.query=el.value;render()}if(el.dataset.field==='rarity'){state.rarity=el.value;render()}if(el.dataset.field==='bossPokemon'){state.bossPokemonUid=el.value;render()}}
-function startClock(){clearInterval(state.timer);state.timer=setInterval(()=>{$$('[data-ready-at]').forEach(el=>{const ready=Date.parse(el.dataset.readyAt)<=Date.now();el.textContent=ready?'PRONTO':timeLeft(el.dataset.readyAt);if(ready){const card=el.closest('.pk-chest');card?.classList.add('ready');const b=card?.querySelector('[data-action="box"]');if(b){b.disabled=false;b.className='pk-primary';b.textContent='Abrir agora'}}});},15000)}
+function startClock(){clearInterval(state.timer);state.timer=setInterval(()=>{if(state.busy)return;$$('[data-ready-at]').forEach(el=>{const ready=Date.parse(el.dataset.readyAt)<=Date.now();el.textContent=ready?'PRONTO':timeLeft(el.dataset.readyAt);if(ready){const card=el.closest('.pk-chest');card?.classList.add('ready');const b=card?.querySelector('[data-action="box"]');if(b){b.disabled=false;b.className='pk-primary';b.textContent='Abrir agora'}}});},15000)}
 
 document.addEventListener('click',click);document.addEventListener('input',input);document.addEventListener('change',input);$('#pkNotifBtn')?.addEventListener('click',openNotifications);boot();
 })();
