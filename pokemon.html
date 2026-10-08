@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pokémon Adventure | Fabi Bot</title>
+<meta name="description" content="Explore regiões, capture Pokémon, abra baús grátis, treine sua equipe, cumpra missões e dispute a Arena no Pokémon Adventure da Fabi Bot.">
+<meta name="robots" content="noindex,follow">
+<meta name="theme-color" content="#07100c">
+<link rel="icon" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="/assets/pokemon-adventure-v2.css?v=20261008b">
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+</head>
+<body>
+<div class="pk-bg"></div>
+<header class="pk-topnav">
+  <div class="pk-nav-inner">
+    <a class="pk-brand" href="/">
+      <img src="/flogo.jpg" alt="" width="42" height="42">
+      <div><b>Fabi</b><span>Pokémon Adventure</span></div>
+    </a>
+    <div class="pk-nav-actions">
+      <button type="button" class="pk-nav-btn" id="pkNotifBtn"><i class="fa-regular fa-bell"></i><span>Avisos</span></button>
+      <a class="pk-nav-btn" href="/"><i class="fa-solid fa-house"></i><span>Fabi Bot</span></a>
+    </div>
+  </div>
+</header>
+
+<main class="pk-page" id="pkPage">
+  <section class="pk-statusbar">
+    <div class="pk-user" id="pkUser"><span class="pk-dot"></span><strong>Carregando treinador…</strong></div>
+    <div class="pk-live"><span class="pk-live-dot"></span> mundo online</div>
+  </section>
+
+  <section class="pk-shell" id="pkApp">
+    <div class="pk-loading-card">
+      <div class="pk-loader-orb"></div>
+      <div><strong>Preparando sua jornada…</strong><span>Sincronizando coleção, energia e missões.</span></div>
+    </div>
+  </section>
+</main>
+
+<div class="pk-toast-wrap" id="pkToastWrap" aria-live="polite"></div>
+<div class="pk-modal" id="pkModal" aria-hidden="true"><div class="pk-modal-card" id="pkModalCard"></div></div>
+<div class="pk-cinematic" id="pkCinematic" aria-hidden="true">
+  <div class="pk-cine-backdrop"></div>
+  <div class="pk-cine-stage" id="pkCineStage"></div>
+</div>
+
+<script src="/assets/pokemon-adventure-v2.js?v=20261008b" defer></script>
+</body>
+</html>

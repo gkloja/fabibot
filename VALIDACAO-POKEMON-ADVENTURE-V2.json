@@ -1,0 +1,42 @@
+{
+  "connect.js": {
+    "ok": true,
+    "stderr": ""
+  },
+  "index.js": {
+    "ok": true,
+    "stderr": ""
+  },
+  "assets/pokemon-adventure-v2.js": {
+    "ok": true,
+    "stderr": ""
+  },
+  "index.html": {
+    "script_open": 14,
+    "script_close": 14,
+    "balanced": true
+  },
+  "pokemon.html": {
+    "script_open": 2,
+    "script_close": 2,
+    "balanced": true
+  },
+  "catalog": {
+    "count": 1025,
+    "first": "Bulbasaur",
+    "last": "Pecharunt"
+  },
+  "architecture": {
+    "no_external_backend_module": true,
+    "embedded_routes": true,
+    "three_chests": true,
+    "notification_monitor": true,
+    "targeted_push": true,
+    "proxy_images": true,
+    "energy_cost": true,
+    "radar": true,
+    "world_event": true,
+    "chest_animation": true,
+    "capture_animation": true
+  }
+}
