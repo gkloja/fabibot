@@ -1,10 +1,9 @@
 (()=>{
 'use strict';
 const PROXY_HOST='https://orange-hill-2e61.gbscabral15.workers.dev';
-const BACKEND_HTTP='http://br2.bronxyshost.com:4009';
-const BACKEND_HOST_PATH='br2.bronxyshost.com:4009';
-const CATALOG_HTTP=BACKEND_HTTP+'/pokemon/data/pokemons.json';
-function proxyUrl(target){return `${PROXY_HOST}/${BACKEND_HOST_PATH}/proxy?url=${encodeURIComponent(target)}`;}
+const BACKEND='http://br2.bronxyshost.com:4009';
+const API_URL=PROXY_HOST+'/br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009';
+const CATALOG_URL=API_URL+'/pokemon/data/pokemons.json';
 const APP_ID='6ba779b7-14c6-4a31-b955-0c8567a9039b';
 const state={profile:null,ranking:[],tab:'world',biome:'random',busy:false,query:'',rarity:'all',timer:null};
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
@@ -23,7 +22,7 @@ function session(){
   }
   return {numero:String(s.numero||s.telefone||s.phone||'').replace(/\D/g,''),nome:String(s.nome||s.username||s.name||'Treinador').slice(0,80),avatar:s.avatar||s.foto||s.fotoPerfil||'/flogo.jpg'};
 }
-function endpoint(path){return proxyUrl(BACKEND_HTTP+path)}
+function endpoint(path){return API_URL+path}
 function withAuth(path){const u=session();const sep=path.includes('?')?'&':'?';return endpoint(path)+(u.numero?`${sep}numero=${encodeURIComponent(u.numero)}&nome=${encodeURIComponent(u.nome)}`:'')}
 async function api(path,opts={}){
   const method=(opts.method||'GET').toUpperCase();const u=session();
@@ -34,7 +33,7 @@ async function api(path,opts={}){
   if(!res.ok||data.success===false){const e=new Error(data.error||data.message||'Não foi possível concluir a ação.');e.status=res.status;e.remainingMs=data.remainingMs;e.energyCost=data.energyCost;throw e}
   return data;
 }
-function imageUrl(sp){const id=Number(sp?.id||sp?.speciesId||0);return id?proxyUrl(`${BACKEND_HTTP}/pokemon/images/artwork_${id}.png`):'/flogo.jpg'}
+function imageUrl(sp){const id=Number(sp?.id||sp?.speciesId||0);return id?`${API_URL}/pokemon/images/artwork_${id}.png`:'/flogo.jpg'}
 function fallback(sp){return sp?.artworkFallback||sp?.artwork||'/flogo.jpg'}
 function timeLeft(iso){const ms=Date.parse(iso||0)-Date.now();if(ms<=0)return'PRONTO';const h=Math.floor(ms/3600000),m=Math.ceil((ms%3600000)/60000);return h?`${h}h ${m}min`:`${Math.max(1,m)}min`}
 function xpNeed(l){return 100+(Math.max(1,Number(l))-1)*45}
@@ -118,7 +117,7 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el)return
   if(act==='biome'){state.biome=el.dataset.biome;render();return}
   if(act==='reload'){location.reload();return}
   if(act==='health'){try{const d=await api('/api/pokemon-adventure/health');toast(`API online · ${d.catalog} espécies · V${d.version}`)}catch(err){toast(err.message,'err')}return}
-  if(act==='catalog'){try{const r=await fetch(proxyUrl(CATALOG_HTTP),{mode:'cors'});if(!r.ok)throw new Error(`Catálogo HTTP ${r.status}`);const d=await r.json();const total=Array.isArray(d)?d.length:Object.keys(d||{}).length;toast(`Catálogo online · ${fmt(total)} espécies`)}catch(err){toast(`Catálogo indisponível: ${err.message}`,'err')}return}
+  if(act==='catalog'){try{const r=await fetch(CATALOG_URL,{mode:'cors'});if(!r.ok)throw new Error(`Catálogo HTTP ${r.status}`);const d=await r.json();const total=Array.isArray(d)?d.length:Object.keys(d||{}).length;toast(`Catálogo online · ${fmt(total)} espécies`)}catch(err){toast(`Catálogo indisponível: ${err.message}`,'err')}return}
   if(act==='notif'){requestNotifications();return}
   if(act==='close'){closeModal();return}
   if(act==='closecine'){closeCine();return}
