@@ -7019,6 +7019,7 @@ body.light-mode .command-badge-mobile {
   <link rel="stylesheet" href="/assets/index-v3.css?v=20261007">
 <link rel="stylesheet" href="/assets/adsense-ready.css?v=20261007b">
 <link rel="stylesheet" href="/assets/fabi-home-v5.css?v=20261007">
+<link rel="stylesheet" href="/assets/pokemon-adventure.css?v=20261008">
 </head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
 <body>
@@ -7050,7 +7051,7 @@ body.light-mode .command-badge-mobile {
         Comandos
         <span class="badge-count badge-relatos" id="menuRelatosBadge" style="display:none;">0</span>
     </a>
-    <a href="golds.html" class="menu-golds-link" title="Gold Empire" style="color:#f6c445;font-weight:800;">👑 Golds</a>
+    <a href="?pokemon" data-section="pokemon" title="Pokémon Adventure" style="color:#7ee7b4;font-weight:800;">◉ Pokémon</a>
     <a href="?perfil" data-section="perfil">Perfil</a>
 </div>
         <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
@@ -7073,8 +7074,8 @@ body.light-mode .command-badge-mobile {
             </div>
             <div class="user-info-box">
                 <h2 id="modalUserNome">—</h2>
-                <p class="golds" id="modalUserGolds">💰 0 Golds</p>
-            <a href="golds.html" id="btnGoldEmpireModal" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;border-radius:999px;background:linear-gradient(135deg,#f6c445,#d4a017);color:#1a1200;font-weight:800;font-size:12px;text-decoration:none;">👑 Jogar Gold Empire</a>
+                <p class="golds" id="modalUserGolds" style="display:none;">💰 0 Golds</p>
+            <a href="golds.html" id="btnGoldEmpireModal" style="display:none;" data-legacy-golds="1" data-old-style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;border-radius:999px;background:linear-gradient(135deg,#f6c445,#d4a017);color:#1a1200;font-weight:800;font-size:12px;text-decoration:none;">👑 Jogar Gold Empire</a>
             </div>
             <button class="change-photo-btn">
                 <i class="fas fa-camera"></i> Alterar Foto
@@ -7109,9 +7110,9 @@ body.light-mode .command-badge-mobile {
             <i class="fas fa-quote-left"></i>
             <span>Depoimentos</span>
         </button>
-        <a href="golds.html" class="bottom-nav-item" style="text-decoration:none;color:#f6c445;">
-            <i class="fas fa-coins"></i><span>Golds</span>
-        </a>
+        <button class="bottom-nav-item" data-section="pokemon" style="position:relative;">
+            <i class="fas fa-compass"></i><span>Pokémon</span>
+        </button>
         <button class="bottom-nav-item" id="maisNavBtn" onclick="toggleMaisMenu()">
             <i class="fas fa-ellipsis-h"></i><span>Mais</span>
         </button>
@@ -7121,8 +7122,8 @@ body.light-mode .command-badge-mobile {
 <!-- Menu "Mais" (Perfil, Assistir, Música, e futuros atalhos) -->
 <div class="bottom-nav-mais-overlay" id="bottomNavMaisOverlay" onclick="toggleMaisMenu(false)"></div>
 <div class="bottom-nav-mais-menu" id="bottomNavMaisMenu">
-    <a class="bottom-nav-mais-item" href="golds.html" style="text-decoration:none;color:inherit;">
-        <i class="fas fa-coins" style="color:#f6c445;"></i><span>👑 Gold Empire</span>
+    <a class="bottom-nav-mais-item" href="golds.html" style="text-decoration:none;color:inherit;opacity:.72;">
+        <i class="fas fa-coins"></i><span>Golds (legado)</span>
     </a>
     <button class="bottom-nav-mais-item" data-section="perfil" onclick="mudarSecao('perfil'); toggleMaisMenu(false);">
         <i class="fas fa-user"></i><span>Perfil</span>
@@ -7222,6 +7223,27 @@ body.light-mode .command-badge-mobile {
       </button>
     </div>
     <div id="introActionsVisitante" style="display:none;"></div>
+  </div>
+</section>
+
+
+<section class="pk-home-promo" id="pokemonHomePromo" aria-label="Pokémon Adventure">
+  <div class="pk-home-promo-inner">
+    <div class="pk-home-copy">
+      <span class="pk-home-kicker">◉ NOVA EXPERIÊNCIA</span>
+      <h2>Pokémon Adventure chegou à Fabi</h2>
+      <p>Caçadas, caixas grátis, coleção, treino, evolução, missões, conquistas, Arena e ranking global. Tudo integrado à sua conta.</p>
+      <div class="pk-home-actions">
+        <button type="button" onclick="mudarSecao('pokemon')">Começar jornada</button>
+        <button type="button" class="outline" onclick="mudarSecao('pokemon'); setTimeout(()=>window.FabiPokemon&&window.FabiPokemon.refresh(),300)">Ver coleção</button>
+      </div>
+      <div class="pk-home-meta"><span>1.025 espécies no catálogo</span><span>Sem Golds nas caixas</span><span>Progressão compartilhada com o bot</span></div>
+    </div>
+    <div class="pk-home-art" aria-hidden="true">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png" alt="">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png" alt="">
+    </div>
   </div>
 </section>
 
@@ -10491,6 +10513,12 @@ function fzRenderAdminRank(infoGrupo, registro) {
 </div>
 </div>
 
+
+<!-- ============================================================ -->
+<!-- POKÉMON ADVENTURE — sistema principal de progressão -->
+<!-- ============================================================ -->
+<section id="pokemonContainer" aria-label="Pokémon Adventure"></section>
+
 <footer class="footer" id="siteFooter">
     <div class="footer-glow-line"></div>
     <div class="footer-inner">
@@ -10585,7 +10613,7 @@ function resolverUrlFoto(url) {
     // Ex.: https://fabibot.com.br/?comandos
     const FABI_SECOES_COMPARTILHAVEIS = Object.freeze([
         'feed','comunidades','configurar','comandos',
-        'vendas','radio','perfil','empregos','noticias'
+        'vendas','radio','perfil','empregos','noticias','pokemon'
     ]);
 
     const FABI_TITULOS_SECAO = Object.freeze({
@@ -10597,7 +10625,8 @@ function resolverUrlFoto(url) {
         radio: 'Música',
         perfil: 'Perfil',
         empregos: 'Vagas',
-        noticias: 'Notícias'
+        noticias: 'Notícias',
+        pokemon: 'Pokémon Adventure'
     });
 
     function fabiSecaoValida(section) {
@@ -19222,6 +19251,7 @@ function mudarSecao(section, options = {}) {
     const configurarContainer = document.getElementById('configurarContainer');
     const introSection = document.getElementById('introSection');
     const comandosContainer = document.getElementById('comandosContainer');
+    const pokemonContainer = document.getElementById('pokemonContainer');
     
     if (feedCentral) feedCentral.style.display = 'none';
     if (vagasContainer) vagasContainer.style.display = 'none';
@@ -19234,6 +19264,7 @@ function mudarSecao(section, options = {}) {
     if (imagemContainer) imagemContainer.style.display = 'none';
     if (configurarContainer) configurarContainer.style.display = 'none';
     if (comandosContainer) comandosContainer.style.display = 'none';
+    if (pokemonContainer) pokemonContainer.style.display = 'none';
     const comunidadesContainer = document.getElementById('comunidadesContainer');
     if (comunidadesContainer) comunidadesContainer.style.display = 'none';
     // Garante rodapé sempre visível em qualquer seção
@@ -19306,6 +19337,16 @@ case 'watch':
         case 'imagem':
             if (imagemContainer) imagemContainer.style.display = 'block';
             break;
+case 'pokemon':
+    if (pokemonContainer) {
+        pokemonContainer.style.display = 'block';
+        try {
+            if (window.FabiPokemon && typeof window.FabiPokemon.load === 'function') {
+                window.FabiPokemon.load();
+            }
+        } catch (e) { console.warn('[Pokemon Adventure]', e); }
+    }
+    break;
 case 'comandos':
     if (comandosContainer) {
         comandosContainer.style.display = 'block';
@@ -20778,5 +20819,6 @@ window.addEventListener('beforeunload', () => {
 
 
 <script src="/assets/fabi-home-v5.js?v=20261007" defer></script>
+<script src="/assets/pokemon-adventure.js?v=20261008" defer></script>
 </body>
 </html>
