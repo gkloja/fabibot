@@ -2,8 +2,16 @@
 'use strict';
 const PROXY_HOST='https://orange-hill-2e61.gbscabral15.workers.dev';
 const BACKEND='http://br2.bronxyshost.com:4009';
-const API_URL=PROXY_HOST+'/br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009';
-const CATALOG_URL=API_URL+'/pokemon/data/pokemons.json';
+const BACKEND_HOST=BACKEND.replace(/^https?:\/\//,'').replace(/\/$/,'');
+const API_URL=PROXY_HOST+'/'+BACKEND_HOST+'/proxy?url=';
+
+// Mesmo padrão usado no conectar.html:
+// o destino COMPLETO vai dentro do parâmetro ?url= do Worker.
+function proxyUrl(target){
+  return API_URL+encodeURIComponent(String(target||''));
+}
+const CATALOG_TARGET=BACKEND+'/pokemon/data/pokemons.json';
+const CATALOG_URL=proxyUrl(CATALOG_TARGET);
 const APP_ID='6ba779b7-14c6-4a31-b955-0c8567a9039b';
 const state={profile:null,ranking:[],tab:'world',biome:'random',busy:false,query:'',rarity:'all',timer:null};
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
@@ -22,18 +30,72 @@ function session(){
   }
   return {numero:String(s.numero||s.telefone||s.phone||'').replace(/\D/g,''),nome:String(s.nome||s.username||s.name||'Treinador').slice(0,80),avatar:s.avatar||s.foto||s.fotoPerfil||'/flogo.jpg'};
 }
-function endpoint(path){return API_URL+path}
-function withAuth(path){const u=session();const sep=path.includes('?')?'&':'?';return endpoint(path)+(u.numero?`${sep}numero=${encodeURIComponent(u.numero)}&nome=${encodeURIComponent(u.nome)}`:'')}
+function backendTarget(path){
+  if(!path)return BACKEND;
+  if(/^https?:\/\//i.test(path))return path;
+  return BACKEND.replace(/\/$/,'')+(String(path).startsWith('/')?'':'/')+String(path);
+}
+function targetWithAuth(path){
+  const u=session();
+  const target=new URL(backendTarget(path));
+  if(u.numero)target.searchParams.set('numero',u.numero);
+  if(u.nome)target.searchParams.set('nome',u.nome);
+  return target.toString();
+}
+function endpoint(path){return proxyUrl(backendTarget(path))}
+function withAuth(path){return proxyUrl(targetWithAuth(path))}
 async function api(path,opts={}){
-  const method=(opts.method||'GET').toUpperCase();const u=session();
+  const method=(opts.method||'GET').toUpperCase();
+  const u=session();
   let body=opts.body||null;
-  if(method!=='GET'&&method!=='HEAD') body={...(body||{}),contaNumero:u.numero,nomeUsuario:u.nome};
-  const res=await fetch(method==='GET'?withAuth(path):endpoint(path),{method,mode:'cors',headers:{'Content-Type':'application/json','X-User-Numero':u.numero,'X-User-Nome':u.nome,...(opts.headers||{})},body:body?JSON.stringify(body):undefined});
-  const data=await res.json().catch(()=>({success:false,error:'Resposta inválida do servidor.'}));
-  if(!res.ok||data.success===false){const e=new Error(data.error||data.message||'Não foi possível concluir a ação.');e.status=res.status;e.remainingMs=data.remainingMs;e.energyCost=data.energyCost;throw e}
+
+  if(method!=='GET'&&method!=='HEAD'){
+    body={...(body||{}),contaNumero:u.numero,nomeUsuario:u.nome,nomeConta:u.nome};
+  }
+
+  // GET não envia headers personalizados: evita preflight CORS desnecessário.
+  const requestOptions={method,mode:'cors'};
+  if(method!=='GET'&&method!=='HEAD'){
+    requestOptions.headers={'Content-Type':'application/json',...(opts.headers||{})};
+    requestOptions.body=body?JSON.stringify(body):undefined;
+  }
+
+  let res;
+  try{
+    res=await fetch(method==='GET'?withAuth(path):endpoint(path),requestOptions);
+  }catch(fetchErr){
+    const e=new Error('Falha ao acessar o Proxy da Fabi.');
+    e.cause=fetchErr;
+    e.stage='proxy';
+    throw e;
+  }
+
+  const raw=await res.text();
+  let data;
+  try{
+    data=raw?JSON.parse(raw):{};
+  }catch(_){
+    const e=new Error(`Resposta inválida do backend (HTTP ${res.status}).`);
+    e.status=res.status;
+    e.preview=raw.slice(0,180);
+    e.stage='backend-response';
+    throw e;
+  }
+
+  if(!res.ok||data.success===false){
+    const e=new Error(data.error||data.message||`Backend respondeu HTTP ${res.status}.`);
+    e.status=res.status;
+    e.remainingMs=data.remainingMs;
+    e.energyCost=data.energyCost;
+    e.stage='backend';
+    throw e;
+  }
   return data;
 }
-function imageUrl(sp){const id=Number(sp?.id||sp?.speciesId||0);return id?`${API_URL}/pokemon/images/artwork_${id}.png`:'/flogo.jpg'}
+function imageUrl(sp){
+  const id=Number(sp?.id||sp?.speciesId||0);
+  return id?proxyUrl(`${BACKEND}/pokemon/images/artwork_${id}.png`):'/flogo.jpg';
+}
 function fallback(sp){return sp?.artworkFallback||sp?.artwork||'/flogo.jpg'}
 function timeLeft(iso){const ms=Date.parse(iso||0)-Date.now();if(ms<=0)return'PRONTO';const h=Math.floor(ms/3600000),m=Math.ceil((ms%3600000)/60000);return h?`${h}h ${m}min`:`${Math.max(1,m)}min`}
 function xpNeed(l){return 100+(Math.max(1,Number(l))-1)*45}
@@ -72,7 +134,23 @@ async function boot(){
   const u=session();const user=$('#pkUser');if(user)user.innerHTML=u.numero?`<span class="pk-dot"></span><strong>${esc(u.nome)}</strong><span>· conta ${esc(u.numero.slice(-4).padStart(4,'•'))}</span>`:'<span class="pk-dot"></span><strong>Visitante</strong>';
   if(!u.numero){renderLogin();return}
   initOneSignal();
-  try{const health=await api('/api/pokemon-adventure/health');if(!health.embedded)console.warn('Adventure API antiga detectada');const d=await api('/api/pokemon-adventure/profile');state.profile=d.profile;render();startClock()}catch(e){renderError(e)}
+  try{
+    const health=await api('/api/pokemon-adventure/health');
+    if(!health.embedded)console.warn('Adventure API antiga detectada');
+  }catch(e){
+    e.message='API Pokémon: '+(e.message||'falha de conexão');
+    renderError(e);
+    return;
+  }
+  try{
+    const d=await api('/api/pokemon-adventure/profile');
+    state.profile=d.profile;
+    render();
+    startClock();
+  }catch(e){
+    e.message='Perfil Pokémon: '+(e.message||'falha ao carregar');
+    renderError(e);
+  }
 }
 function renderLogin(){const a=$('#pkApp');a.innerHTML=`<section class="pk-hero"><div class="pk-eyebrow">🔐 Conta Fabi necessária</div><h1 class="pk-title">Sua jornada fica salva na <span>sua conta.</span></h1><p class="pk-subtitle">Entre primeiro no site principal. Depois volte aqui para iniciar sua coleção, missões e Arena.</p><div class="pk-actions"><a class="pk-primary" href="/login.html?redirect=/pokemon.html">Entrar na Fabi</a><a class="pk-ghost" href="/">Voltar ao início</a></div></section>`}
 function renderError(e){const a=$('#pkApp');a.innerHTML=`<div class="pk-card pk-error"><div class="pk-card-head"><div><h3>Não foi possível abrir o Pokémon Adventure</h3><p>${esc(e.message||'Falha de conexão')}</p></div><div class="pk-icon">⚠️</div></div><p style="color:var(--muted);font-size:.76rem;line-height:1.6;margin:0">Se você acabou de atualizar o backend, confirme se o <b>connect.js</b> foi reiniciado. O catálogo público esperado é <code>http://br2.bronxyshost.com:4009/pokemon/data/pokemons.json</code> — sem <code>/public</code> na URL.</p><div class="pk-actions"><button class="pk-primary" data-action="reload">Tentar novamente</button><button class="pk-ghost" data-action="health">Testar API</button><button class="pk-ghost" data-action="catalog">Testar catálogo</button></div></div>`}
@@ -117,7 +195,7 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el)return
   if(act==='biome'){state.biome=el.dataset.biome;render();return}
   if(act==='reload'){location.reload();return}
   if(act==='health'){try{const d=await api('/api/pokemon-adventure/health');toast(`API online · ${d.catalog} espécies · V${d.version}`)}catch(err){toast(err.message,'err')}return}
-  if(act==='catalog'){try{const r=await fetch(CATALOG_URL,{mode:'cors'});if(!r.ok)throw new Error(`Catálogo HTTP ${r.status}`);const d=await r.json();const total=Array.isArray(d)?d.length:Object.keys(d||{}).length;toast(`Catálogo online · ${fmt(total)} espécies`)}catch(err){toast(`Catálogo indisponível: ${err.message}`,'err')}return}
+  if(act==='catalog'){try{const r=await fetch(CATALOG_URL,{mode:'cors'});if(!r.ok)throw new Error(`HTTP ${r.status}`);const raw=await r.text();let d;try{d=JSON.parse(raw)}catch(_){throw new Error('resposta não é JSON')};const total=Array.isArray(d)?d.length:Object.keys(d||{}).length;toast(`Catálogo online · ${fmt(total)} espécies`)}catch(err){toast(`Catálogo via Proxy falhou: ${err.message}`,'err')}return}
   if(act==='notif'){requestNotifications();return}
   if(act==='close'){closeModal();return}
   if(act==='closecine'){closeCine();return}
