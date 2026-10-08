@@ -1,6 +1,10 @@
 (()=>{
 'use strict';
-const API_BASE='https://orange-hill-2e61.gbscabral15.workers.dev/br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009';
+const PROXY_HOST='https://orange-hill-2e61.gbscabral15.workers.dev';
+const BACKEND_HTTP='http://br2.bronxyshost.com:4009';
+const BACKEND_HOST_PATH='br2.bronxyshost.com:4009';
+const CATALOG_HTTP=BACKEND_HTTP+'/pokemon/data/pokemons.json';
+function proxyUrl(target){return `${PROXY_HOST}/${BACKEND_HOST_PATH}/proxy?url=${encodeURIComponent(target)}`;}
 const APP_ID='6ba779b7-14c6-4a31-b955-0c8567a9039b';
 const state={profile:null,ranking:[],tab:'world',biome:'random',busy:false,query:'',rarity:'all',timer:null};
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
@@ -19,7 +23,7 @@ function session(){
   }
   return {numero:String(s.numero||s.telefone||s.phone||'').replace(/\D/g,''),nome:String(s.nome||s.username||s.name||'Treinador').slice(0,80),avatar:s.avatar||s.foto||s.fotoPerfil||'/flogo.jpg'};
 }
-function endpoint(path){return API_BASE+path}
+function endpoint(path){return proxyUrl(BACKEND_HTTP+path)}
 function withAuth(path){const u=session();const sep=path.includes('?')?'&':'?';return endpoint(path)+(u.numero?`${sep}numero=${encodeURIComponent(u.numero)}&nome=${encodeURIComponent(u.nome)}`:'')}
 async function api(path,opts={}){
   const method=(opts.method||'GET').toUpperCase();const u=session();
@@ -30,7 +34,7 @@ async function api(path,opts={}){
   if(!res.ok||data.success===false){const e=new Error(data.error||data.message||'Não foi possível concluir a ação.');e.status=res.status;e.remainingMs=data.remainingMs;e.energyCost=data.energyCost;throw e}
   return data;
 }
-function imageUrl(sp){const id=Number(sp?.id||sp?.speciesId||0);return id?`${API_BASE}/pokemon/images/artwork_${id}.png`:'/flogo.jpg'}
+function imageUrl(sp){const id=Number(sp?.id||sp?.speciesId||0);return id?proxyUrl(`${BACKEND_HTTP}/pokemon/images/artwork_${id}.png`):'/flogo.jpg'}
 function fallback(sp){return sp?.artworkFallback||sp?.artwork||'/flogo.jpg'}
 function timeLeft(iso){const ms=Date.parse(iso||0)-Date.now();if(ms<=0)return'PRONTO';const h=Math.floor(ms/3600000),m=Math.ceil((ms%3600000)/60000);return h?`${h}h ${m}min`:`${Math.max(1,m)}min`}
 function xpNeed(l){return 100+(Math.max(1,Number(l))-1)*45}
@@ -72,7 +76,7 @@ async function boot(){
   try{const health=await api('/api/pokemon-adventure/health');if(!health.embedded)console.warn('Adventure API antiga detectada');const d=await api('/api/pokemon-adventure/profile');state.profile=d.profile;render();startClock()}catch(e){renderError(e)}
 }
 function renderLogin(){const a=$('#pkApp');a.innerHTML=`<section class="pk-hero"><div class="pk-eyebrow">🔐 Conta Fabi necessária</div><h1 class="pk-title">Sua jornada fica salva na <span>sua conta.</span></h1><p class="pk-subtitle">Entre primeiro no site principal. Depois volte aqui para iniciar sua coleção, missões e Arena.</p><div class="pk-actions"><a class="pk-primary" href="/login.html?redirect=/pokemon.html">Entrar na Fabi</a><a class="pk-ghost" href="/">Voltar ao início</a></div></section>`}
-function renderError(e){const a=$('#pkApp');a.innerHTML=`<div class="pk-card pk-error"><div class="pk-card-head"><div><h3>Não foi possível abrir o Pokémon Adventure</h3><p>${esc(e.message||'Falha de conexão')}</p></div><div class="pk-icon">⚠️</div></div><p style="color:var(--muted);font-size:.76rem;line-height:1.6;margin:0">Se você acabou de atualizar o backend, confirme se o <b>connect.js</b> foi reiniciado e se <code>public/pokemon/data/pokemons.json</code> está no servidor.</p><div class="pk-actions"><button class="pk-primary" data-action="reload">Tentar novamente</button><button class="pk-ghost" data-action="health">Testar API</button></div></div>`}
+function renderError(e){const a=$('#pkApp');a.innerHTML=`<div class="pk-card pk-error"><div class="pk-card-head"><div><h3>Não foi possível abrir o Pokémon Adventure</h3><p>${esc(e.message||'Falha de conexão')}</p></div><div class="pk-icon">⚠️</div></div><p style="color:var(--muted);font-size:.76rem;line-height:1.6;margin:0">Se você acabou de atualizar o backend, confirme se o <b>connect.js</b> foi reiniciado. O catálogo público esperado é <code>http://br2.bronxyshost.com:4009/pokemon/data/pokemons.json</code> — sem <code>/public</code> na URL.</p><div class="pk-actions"><button class="pk-primary" data-action="reload">Tentar novamente</button><button class="pk-ghost" data-action="health">Testar API</button><button class="pk-ghost" data-action="catalog">Testar catálogo</button></div></div>`}
 function render(){const p=state.profile;if(!p)return;const a=$('#pkApp');if(!p.collection?.length){a.innerHTML=starterHTML(p);bindFallbacks();return}const need=xpNeed(p.trainer.level),xpPct=Math.min(100,(p.trainer.xp/need)*100);a.innerHTML=`${heroHTML(p,xpPct)}${resourcesHTML(p)}${tabsHTML()}<div class="pk-panel ${state.tab==='world'?'active':''}">${worldHTML(p)}</div><div class="pk-panel ${state.tab==='collection'?'active':''}">${collectionHTML(p)}</div><div class="pk-panel ${state.tab==='missions'?'active':''}">${missionsHTML(p)}</div><div class="pk-panel ${state.tab==='arena'?'active':''}">${arenaHTML(p)}</div><div class="pk-panel ${state.tab==='ranking'?'active':''}">${rankingHTML()}</div><div class="pk-panel ${state.tab==='achievements'?'active':''}">${achievementsHTML(p)}</div>`;bindFallbacks();if(state.tab==='ranking'&&!state.ranking.length)loadRanking(true)}
 function starterHTML(p){const starters=[{id:1,name:'Bulbasaur',type:'Planta / Veneno'},{id:4,name:'Charmander',type:'Fogo'},{id:7,name:'Squirtle',type:'Água'},{id:25,name:'Pikachu',type:'Elétrico'}];return `<section class="pk-hero"><div class="pk-eyebrow">◉ POKÉMON ADVENTURE</div><h1 class="pk-title">Escolha quem vai iniciar <span>sua história.</span></h1><p class="pk-subtitle">Seu primeiro parceiro começa no nível 5. A partir daqui, sua coleção cresce com exploração, treino, missões, baús gratuitos e Arena.</p><div class="pk-starters">${starters.map(x=>`<button class="pk-starter" data-action="starter" data-id="${x.id}"><img src="${imageUrl(x)}" data-fallback="/flogo.jpg" alt="${x.name}"><strong>${x.name}</strong><span>${x.type}</span></button>`).join('')}</div><div class="pk-card" style="margin-top:14px"><div class="pk-card-head"><div><h3>Sem Golds, sem compra de caixas</h3><p>Este sistema usa apenas energia e recompensas ganhas jogando. As probabilidades dos baús são mostradas na interface.</p></div><div class="pk-icon">🧭</div></div></div></section>`}
 function heroHTML(p,xpPct){const c=p.champion;return `<section class="pk-hero"><div class="pk-hero-grid"><div><div class="pk-eyebrow">◉ FABI POKÉMON ADVENTURE</div><h1 class="pk-title">Explore. Capture. <span>Evolua.</span></h1><p class="pk-subtitle">Cada região consome uma quantidade diferente de energia. Regiões avançadas dão bônus de raridade. Seu Radar melhora depois de várias expedições.</p><div class="pk-profile-line"><span class="pk-pill">Nível ${p.trainer.level} · ${esc(p.trainer.title)}</span><span class="pk-pill">🏆 Arena ${fmt(p.trainer.arenaRating)}</span><span class="pk-pill">📚 ${fmt(p.stats.uniquePokemon)} espécies</span><span class="pk-pill">⭐ Score ${fmt(p.stats.score)}</span><span class="pk-pill">🔥 ${fmt(p.trainer.streak)}d</span></div><div class="pk-xp"><span style="width:${xpPct}%"></span></div></div>${c?championHTML(c):'<div class="pk-champion"><div class="pk-champion-copy"><small>Parceiro principal</small><h3>Nenhum selecionado</h3><p>Abra sua coleção e escolha um Pokémon.</p></div></div>'}</div></section>`}
@@ -114,6 +118,7 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el)return
   if(act==='biome'){state.biome=el.dataset.biome;render();return}
   if(act==='reload'){location.reload();return}
   if(act==='health'){try{const d=await api('/api/pokemon-adventure/health');toast(`API online · ${d.catalog} espécies · V${d.version}`)}catch(err){toast(err.message,'err')}return}
+  if(act==='catalog'){try{const r=await fetch(proxyUrl(CATALOG_HTTP),{mode:'cors'});if(!r.ok)throw new Error(`Catálogo HTTP ${r.status}`);const d=await r.json();const total=Array.isArray(d)?d.length:Object.keys(d||{}).length;toast(`Catálogo online · ${fmt(total)} espécies`)}catch(err){toast(`Catálogo indisponível: ${err.message}`,'err')}return}
   if(act==='notif'){requestNotifications();return}
   if(act==='close'){closeModal();return}
   if(act==='closecine'){closeCine();return}
