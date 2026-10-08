@@ -28,3 +28,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(prefers-reduced-motion:reduce){button{transition:none}}
 .pk-nav-icon{display:flex;align-items:center;justify-content:center}.pk-champion img{right:5px;bottom:8px}.pk-champion-copy{padding:20px 16px}
 @media(max-width:640px){.pk-champion{min-height:180px;padding:0}.pk-champion-copy{padding:16px;width:60%}.pk-champion-copy small{font-size:.65rem}.pk-champion-copy p{font-size:.72rem}.pk-champion img{right:4px;bottom:12px;width:44%;height:140px}.pk-hero .pk-subtitle{margin-bottom:12px}}
+
+/* V5: captura em foco, sem alterar o layout aprovado. */
+#pkCaptureControls{scroll-margin-top:calc(var(--pk-header-height) + 16px)}
+#pkCaptureControls:focus{outline:none}
+#pkSoundBtn[aria-pressed="true"]{border-color:#4c9968;color:#b7ffce}
+#pkSoundBtn[aria-pressed="false"]{color:#9aa99f;background:#18231d}
+.pk-cine-stage{max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain;padding:12px 0}

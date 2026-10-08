@@ -24,23 +24,62 @@ const fmt=n=>Number(n||0).toLocaleString('pt-BR');
 const pct=n=>`${Math.round(Number(n||0)*100)}%`;
 const R_LABEL={common:'Comum',uncommon:'Incomum',rare:'Raro',epic:'Épico',legendary:'Lendário',mythical:'Mítico'};
 const R_EMOJI={common:'⚪',uncommon:'🔵',rare:'🟣',epic:'🟠',legendary:'🟡',mythical:'🔴'};
-// Sons sintetizados: sem downloads, ativados somente pelo treinador.
-let soundOn=false,audioContext=null,lastSound=0,bossLoading=false;
-try{soundOn=localStorage.getItem('pk_sound')==='1'}catch(_){}
-function syncSound(){const b=$('#pkSoundBtn');if(b){b.textContent=soundOn?'♫':'♪';b.title=soundOn?'Silenciar efeitos sonoros':'Ativar efeitos sonoros';b.setAttribute('aria-label',b.title);b.setAttribute('aria-pressed',String(soundOn))}}
-function sound(kind='click'){
+// O primeiro gesto libera o áudio antes de qualquer chamada de rede.
+let soundOn=true,audioContext=null,audioMaster=null,audioReady=null,lastSound=0,bossLoading=false;
+const activeSoundNodes=new Set();
+try{soundOn=localStorage.getItem('pk_sound')!=='0'}catch(_){}
+function syncSound(){
+  const b=$('#pkSoundBtn');if(!b)return;
+  b.innerHTML=`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4 6 8H3v8h3l5 4Z"/>${soundOn?'<path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>':'<path d="m16 9 6 6m0-6-6 6"/>'}</svg>`;
+  b.title=soundOn?'Som ligado · clique para silenciar':'Som desligado · clique para ativar';
+  b.setAttribute('aria-label',b.title);b.setAttribute('aria-pressed',String(soundOn));
+}
+function unlockAudio(){
+  if(!soundOn||document.hidden)return Promise.resolve(false);
+  try{
+    const C=window.AudioContext||window.webkitAudioContext;if(!C)return Promise.resolve(false);
+    if(!audioContext||audioContext.state==='closed'){
+      audioContext=new C();audioMaster=audioContext.createGain();audioMaster.gain.value=.5;audioMaster.connect(audioContext.destination);
+    }
+    if(audioContext.state==='running')return Promise.resolve(true);
+    if(!audioReady)audioReady=audioContext.resume().then(()=>audioContext.state==='running').catch(()=>false).finally(()=>{audioReady=null});
+    return audioReady;
+  }catch(_){return Promise.resolve(false)}
+}
+function stopSounds(){
+  for(const node of activeSoundNodes){try{node.stop()}catch(_){}}
+  activeSoundNodes.clear();
+}
+async function sound(kind='click'){
   if(!soundOn||document.hidden)return;
-  const now=Date.now();if(kind==='click'&&now-lastSound<90)return;lastSound=now;
-  try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
-    audioContext=audioContext||new C();if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
-    const notes={click:[640],attack:[180,100],win:[523,659,784,1047],loss:[330,247,165],miss:[220,180]}[kind]||[640];
-    notes.forEach((hz,i)=>{const o=audioContext.createOscillator(),g=audioContext.createGain(),t=audioContext.currentTime+i*.09;
-      o.type=kind==='attack'?'triangle':'sine';o.frequency.setValueAtTime(hz,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.055,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+.12);o.connect(g);g.connect(audioContext.destination);o.start(t);o.stop(t+.13)});
+  const requestedAt=Date.now();if(kind==='click'&&requestedAt-lastSound<80)return;lastSound=requestedAt;
+  if(!await unlockAudio()||!soundOn||document.hidden||Date.now()-requestedAt>800)return;
+  try{
+    const patterns={click:[660,880],attack:[240,130,85],hit:[160,110],win:[523,659,784,1047],loss:[392,294,196,147],miss:[220,165],throw:[440,660,880],capture:[659,784,988,1318]};
+    const notes=patterns[kind]||patterns.click,step=kind==='click'?.045:.095,duration=kind==='click'?.09:.18;
+    notes.forEach((hz,i)=>{
+      const o=audioContext.createOscillator(),g=audioContext.createGain(),t=audioContext.currentTime+.005+i*step;
+      o.type=['attack','hit','throw'].includes(kind)?'triangle':'sine';o.frequency.setValueAtTime(hz,t);
+      if(kind==='attack'||kind==='throw')o.frequency.exponentialRampToValueAtTime(hz*.55,t+duration);
+      g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(kind==='click'?.17:.25,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+duration);
+      o.connect(g);g.connect(audioMaster);activeSoundNodes.add(o);
+      o.onended=()=>{activeSoundNodes.delete(o);o.disconnect();g.disconnect()};o.start(t);o.stop(t+duration+.02);
+    });
   }catch(_){}
 }
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled||!e.isTrusted)return;
-  if(b.id==='pkSoundBtn'){soundOn=!soundOn;try{localStorage.setItem('pk_sound',soundOn?'1':'0')}catch(_){}syncSound();sound();return}
-  if(!['boss-attack','battle-move'].includes(b.dataset.action))sound();
+function primeAudio(e){if(e.isTrusted&&soundOn)void unlockAudio()}
+document.addEventListener('pointerdown',primeAudio,{capture:true,passive:true});
+document.addEventListener('keydown',e=>{if(['Enter',' '].includes(e.key))primeAudio(e)},true);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopSounds()});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b||b.disabled||!e.isTrusted)return;
+  if(b.id==='pkSoundBtn'){
+    soundOn=!soundOn;try{localStorage.setItem('pk_sound',soundOn?'1':'0')}catch(_){}syncSound();
+    if(soundOn){void unlockAudio().then(ready=>{if(ready)sound('click');else toast('O navegador não liberou o áudio. Toque novamente no controle de som.','err')})}else stopSounds();
+    return;
+  }
+  if(['boss-attack','battle-move'].includes(b.dataset.action)){if(!state.busy)sound('attack');return}
+  sound(b.dataset.action==='capture'?'throw':'click');
 },true);
 function syncBossBeacon(){
   let b=$('#pkBossBeacon');if(!b){b=document.createElement('button');b.id='pkBossBeacon';b.type='button';b.className='pk-boss-beacon';b.dataset.action='tab';b.dataset.tab='boss';document.body.appendChild(b)}
@@ -127,7 +166,7 @@ async function api(path,opts={}){
     throw e;
   }
 
-  if(!res.ok||data.success===false){
+  if(!res.ok||(data.success===false&&!(String(path).split('?')[0]==='/api/pokemon-adventure/capture'&&typeof data.fled==='boolean'&&data.profile&&!data.error))){
     const e=new Error(data.error||data.message||`Backend respondeu HTTP ${res.status}.`);
     e.status=res.status;
     e.remainingMs=data.remainingMs;
@@ -237,6 +276,20 @@ function scrollActivePanel(){
     panel?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
   });
 }
+function scrollToCapture(){
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    if(state.tab!=='world'||$('#pkCinematic').classList.contains('open'))return;
+    const target=$('#pkCaptureControls')||$('.pk-panel.active');if(!target)return;
+    target.focus({preventScroll:true});
+    const offset=($('.pk-topnav')?.getBoundingClientRect().height||0)+16;
+    window.scrollTo({top:Math.max(0,window.scrollY+target.getBoundingClientRect().top-offset),behavior:'instant'});
+  }));
+}
+function returnToCapture(){
+  state.tab='world';startBossLive(false);startHallLive(false);
+  try{sessionStorage.setItem('pk_last_tab','world');const u=new URL(location.href);u.searchParams.set('tab','world');history.replaceState(null,'',u)}catch(_){}
+  render();scrollToCapture();
+}
 async function switchTab(tab,scroll=true){
   if(!TAB_IDS.includes(tab))return;
   state.tab=tab;
@@ -341,6 +394,7 @@ function encounterHTML(e){
     <h2>${esc(s.name)}</h2>
     <div style="color:var(--muted);font-size:.74rem">${esc(typesLabel(s.types))} · ${esc(pct((e.captureChances||{}).poke||0))} com Poké Ball</div>
     ${e.radarBoosted?'<div class="pk-pill" style="margin:10px auto 0;width:max-content">📡 Radar ativado</div>':''}
+    <div id="pkCaptureControls" tabindex="-1" aria-label="Tentativa de captura">
     ${weakened?'<div class="pk-weakened">⚔️ Enfraquecido · +18% de chance de captura</div>':needsBattle?'<div class="pk-wild-warning">🔥 Lendário/Mítico: vença uma batalha antes de tentar capturar.</div>':'<div class="pk-wild-hint">⚔️ Batalhar é opcional, mas enfraquecer aumenta a captura em +18%.</div>'}
     <div class="pk-actions" style="justify-content:center;margin:12px 0">
       ${!weakened?`<button class="pk-secondary" data-action="wild-battle">⚔️ Batalhar para enfraquecer</button>`:''}
@@ -349,6 +403,7 @@ function encounterHTML(e){
       ${[['poke','🔴','Poké Ball'],['great','🔵','Great Ball'],['ultra','🟡','Ultra Ball']].map(([k,ic,n])=>`<button class="pk-ball" data-action="capture" data-ball="${k}" ${(needsBattle&&!weakened)?'disabled':''}><strong>${ic} ${n}</strong><span>${pct(Math.min(.98,Number(e.captureChances?.[k]||0)+(weakened?.18:0)))}</span></button>`).join('')}
     </div>
     <div style="margin-top:10px;color:var(--muted);font-size:.66rem">Tentativas: ${e.attempts||0}/${e.maxAttempts||3} · encontro expira em 10 min</div>
+    </div>
   </div>`
 }
 function chestHTML(p,type,icon,name,readyAt,cooldown,note){const ready=Date.parse(readyAt)<=Date.now();let odds='';if(type==='daily')odds='<span>55% Incomum</span><span>32% Raro</span><span>8% Épico</span><span>4% Lendário</span><span>1% Mítico</span>';else if(type==='expedition')odds='<span>32% Comum</span><span>40% Incomum</span><span>25% Raro</span><span>3% Épico</span>';return `<div class="pk-chest ${ready?'ready':''}"><div class="pk-chest-row"><div class="pk-chest-icon">${icon}</div><div class="pk-chest-copy"><b>${name}</b><span>${esc(note)} · recarga ${cooldown}</span><span class="pk-chest-time" data-ready-at="${esc(readyAt)}">${ready?'PRONTO':timeLeft(readyAt)}</span></div></div>${odds?`<div class="pk-odds">${odds}</div>`:''}<div class="pk-actions"><button class="${ready?'pk-primary':'pk-ghost'}" data-action="box" data-box="${type}" ${ready?'':'disabled'}>${ready?'Abrir agora':'Recarregando'}</button></div></div>`}
@@ -589,10 +644,11 @@ function openModal(html){
   updateModal(html);
 }
 function closeModal(){
-  const m=$('#pkModal');modalVersion++;if(!m?.classList.contains('open'))return;
+  const m=$('#pkModal');const returnWild=state.tab==='arena'&&!!m?.querySelector('[data-action="battle-done"][data-mode="wild"]');modalVersion++;if(!m?.classList.contains('open'))return;
   m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.classList.remove('pk-modal-open');
   $('.pk-topnav').inert=false;$('#pkPage').inert=false;const beacon=$('#pkBossBeacon');if(beacon)beacon.inert=false;
   if(modalReturnFocus?.isConnected)modalReturnFocus.focus({preventScroll:true});modalReturnFocus=null;
+  if(returnWild)returnToCapture();
 }
 document.addEventListener('click',e=>{if(e.target.closest('[data-action="close"]')||e.target===$('#pkModal')){e.preventDefault();e.stopImmediatePropagation();closeModal()}},true);
 document.addEventListener('keydown',e=>{
@@ -608,9 +664,9 @@ function startLiveRanking(){clearInterval(state.rankTimer);state.rankTimer=setIn
 
 async function chestCinematic(type,data){const box={supply:['📦','Baú de Suprimentos'],expedition:['🧭','Baú de Expedição'],daily:['🎁','Baú Diário']}[type]||['📦','Baú'];const cine=$('#pkCinematic'),stage=$('#pkCineStage');cine.classList.add('open');cine.setAttribute('aria-hidden','false');stage.innerHTML=`<div class="pk-cine-rays"></div><div class="pk-chest-anim opening">${box[0]}</div><h2 class="pk-cine-title">Abrindo ${box[1]}…</h2><p class="pk-cine-sub">Sincronizando sua recompensa.</p>`;await sleep(900);$('.pk-chest-anim',stage)?.classList.add('reveal');await sleep(550);const p=data.pokemon;stage.innerHTML=`<div class="pk-reveal-card">${p?`<div class="pk-rarity">${p.shiny?'✨ SHINY · ':''}${R_EMOJI[p.rarity]||''} ${esc(rarityLabel(p.rarity))}</div><img src="${imageUrl(p.species)}" data-fallback="${esc(fallback(p.species))}" alt="${esc(p.name)}"><h2 style="margin:0 0 4px">${esc(p.name)}</h2><div style="color:var(--muted);font-size:.75rem">Lv.${p.level} · CP ${fmt(p.cp)}</div>`:'<div style="font-size:4rem">✨</div><h2>Recompensa coletada</h2>'}<div class="pk-reward-list">${rewardPills(data.rewards)}</div><div class="pk-actions" style="justify-content:center"><button class="pk-primary" data-action="closecine">Continuar jornada</button></div></div>`;bindFallbacks()}
 function rewardPills(r={}){const labels={pokeballs:'🔴 Poké Ball',greatballs:'🔵 Great Ball',ultraballs:'🟡 Ultra Ball',stardust:'✨ Pó Estelar',trainingTickets:'🎟️ Ticket',energy:'⚡ Energia'};return Object.entries(r).filter(([,v])=>v).map(([k,v])=>`<span>${labels[k]||k} +${fmt(v)}</span>`).join('')}
-async function captureCinematic(ball,data){const cine=$('#pkCinematic'),stage=$('#pkCineStage');cine.classList.add('open');cine.setAttribute('aria-hidden','false');stage.innerHTML=`<div class="pk-capture-ball">${ball==='ultra'?'🟡':ball==='great'?'🔵':'🔴'}</div><h2 class="pk-cine-title">Tentando capturar…</h2><p class="pk-cine-sub">Aguarde o resultado.</p>`;await sleep(1500);if(data.success){stage.innerHTML=`<div class="pk-reveal-card"><div class="pk-capture-success" style="font-size:2.8rem">✓</div><h2>${data.pokemon.shiny?'✨ ':''}${esc(data.pokemon.name)} capturado!</h2><img src="${imageUrl(data.pokemon.species)}" data-fallback="${esc(fallback(data.pokemon.species))}"><div class="pk-reward-list"><span>Lv.${data.pokemon.level}</span><span>CP ${fmt(data.pokemon.cp)}</span><span>${esc(rarityLabel(data.pokemon.rarity))}</span></div><div class="pk-actions" style="justify-content:center"><button class="pk-primary" data-action="closecine">Adicionar à equipe</button></div></div>`}else{stage.innerHTML=`<div class="pk-reveal-card"><div class="pk-capture-fail" style="font-size:2.8rem">${data.fled?'💨':'!'}</div><h2>${data.fled?'O Pokémon fugiu!':'Ele escapou da Ball.'}</h2><p class="pk-cine-sub">${data.fled?'Faça outra aventura para encontrar um novo Pokémon.':`Você ainda tem ${data.remaining} tentativa(s).`}</p><div class="pk-actions" style="justify-content:center"><button class="pk-primary" data-action="closecine">Continuar</button></div></div>`}bindFallbacks()}
-async function huntCinematic(d){const cine=$('#pkCinematic'),stage=$('#pkCineStage');cine.classList.add('open');stage.innerHTML=`<div class="pk-cine-rays"></div><div style="font-size:4rem">🧭</div><h2 class="pk-cine-title">Explorando ${esc(d.adventure?.biome||'região')}…</h2><p class="pk-cine-sub">Rastreando sinais e pegadas.</p>`;await sleep(850);stage.innerHTML=`<div class="pk-reveal-card"><div class="pk-rarity">${d.encounter.shiny?'✨ SHINY · ':''}${esc(rarityLabel(d.encounter.species.rarity))}</div><img src="${imageUrl(d.encounter.species)}" data-fallback="${esc(fallback(d.encounter.species))}"><h2>${esc(d.encounter.species.name)}</h2><p class="pk-cine-sub">Um Pokémon selvagem apareceu!</p><div class="pk-actions" style="justify-content:center"><button class="pk-primary" data-action="closecine">Tentar captura</button></div></div>`;bindFallbacks()}
-function closeCine(){const c=$('#pkCinematic');c.classList.remove('open');c.setAttribute('aria-hidden','true');render()}
+async function captureCinematic(ball,data){const cine=$('#pkCinematic'),stage=$('#pkCineStage');cine.classList.add('open');cine.setAttribute('aria-hidden','false');stage.innerHTML=`<div class="pk-capture-ball">${ball==='ultra'?'🟡':ball==='great'?'🔵':'🔴'}</div><h2 class="pk-cine-title">Tentando capturar…</h2><p class="pk-cine-sub">Aguarde o resultado.</p>`;await sleep(1500);sound(data.success?'capture':data.fled?'loss':'miss');if(data.success){stage.innerHTML=`<div class="pk-reveal-card"><div class="pk-capture-success" style="font-size:2.8rem">✓</div><h2>${data.pokemon.shiny?'✨ ':''}${esc(data.pokemon.name)} capturado!</h2><img src="${imageUrl(data.pokemon.species)}" data-fallback="${esc(fallback(data.pokemon.species))}"><div class="pk-reward-list"><span>Lv.${data.pokemon.level}</span><span>CP ${fmt(data.pokemon.cp)}</span><span>${esc(rarityLabel(data.pokemon.rarity))}</span></div><div class="pk-actions" style="justify-content:center"><button class="pk-primary" data-action="closecine" data-next="world">Adicionar à equipe</button></div></div>`}else{stage.innerHTML=`<div class="pk-reveal-card"><div class="pk-capture-fail" style="font-size:2.8rem">${data.fled?'💨':'!'}</div><h2>${data.fled?'O Pokémon fugiu!':'Ele escapou da Ball.'}</h2><p class="pk-cine-sub">${data.fled?'Faça outra aventura para encontrar um novo Pokémon.':`Você ainda tem ${data.remaining} tentativa(s).`}</p><div class="pk-actions" style="justify-content:center"><button class="pk-primary" data-action="closecine" data-next="${data.fled?'world':'capture'}">Continuar</button></div></div>`}bindFallbacks()}
+async function huntCinematic(d){const cine=$('#pkCinematic'),stage=$('#pkCineStage');cine.classList.add('open');cine.setAttribute('aria-hidden','false');stage.innerHTML=`<div class="pk-cine-rays"></div><div style="font-size:4rem">🧭</div><h2 class="pk-cine-title">Explorando ${esc(d.adventure?.biome||'região')}…</h2><p class="pk-cine-sub">Rastreando sinais e pegadas.</p>`;await sleep(850);stage.innerHTML=`<div class="pk-reveal-card"><div class="pk-rarity">${d.encounter.shiny?'✨ SHINY · ':''}${esc(rarityLabel(d.encounter.species.rarity))}</div><img src="${imageUrl(d.encounter.species)}" data-fallback="${esc(fallback(d.encounter.species))}"><h2>${esc(d.encounter.species.name)}</h2><p class="pk-cine-sub">Um Pokémon selvagem apareceu!</p><div class="pk-actions" style="justify-content:center"><button class="pk-primary" data-action="closecine" data-next="capture">Tentar captura</button></div></div>`;bindFallbacks()}
+function closeCine(next){const c=$('#pkCinematic');c.classList.remove('open');c.setAttribute('aria-hidden','true');if(next==='capture'||next==='world')returnToCapture();else render()}
 
 async function openPix(productId){try{const d=await action('/api/pokemon-adventure/shop/pix/create',{productId},()=>{});const tx=d.transactionId;openModal(`<div class="pk-modal-top"><div><div class="pk-eyebrow">💚 COMPRA FIXA · PIX</div><h2>${esc(d.product.label)}</h2></div><button class="pk-modal-close" data-action="close">✕</button></div><div class="pk-pix-modal">${d.qrCode?`<img src="${esc(d.qrCode)}" alt="QR Code PIX">`:''}<p>R$ ${Number(d.product.price).toFixed(2).replace('.',',')} · expira em 30 min</p><textarea readonly id="pkPixCode">${esc(d.copyPaste||'')}</textarea><div class="pk-actions"><button class="pk-primary" data-action="copy-pix">Copiar PIX</button><button class="pk-ghost" data-action="pix-status" data-tx="${esc(tx)}">Já paguei</button></div><div id="pkPixState" class="pk-safe-note">Aguardando pagamento. O backend também verifica automaticamente a cada 30 segundos.</div></div>`);startPixWatch(tx);}catch(_){} }
 function startPixWatch(tx){clearInterval(state.pixWatch);let n=0;state.pixWatch=setInterval(async()=>{if(++n>120){clearInterval(state.pixWatch);return}try{const d=await api('/api/pokemon-adventure/shop/pix/'+encodeURIComponent(tx));const box=$('#pkPixState');if(box)box.textContent=d.transaction.status==='approved'?'✅ Pagamento aprovado e item liberado.':`Status: ${d.transaction.status}`;if(d.transaction.status==='approved'){clearInterval(state.pixWatch);state.profile=d.profile||state.profile;toast('Compra aprovada!');setTimeout(()=>{closeModal();render()},900)}}catch(_){}},5000)}
@@ -627,7 +683,7 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el||el.di
     try{
       const d=await action('/api/pokemon-adventure/boss/attack',{pokemon:uid,moveIndex:Number(el.dataset.move||0)},()=>{});
       if(!d)return;
-      sound(d.boss?.status==='defeated'?'win':d.knockedOut?'loss':d.miss?'miss':'attack');
+      sound(d.boss?.status==='defeated'?'win':d.knockedOut?'loss':d.miss?'miss':'hit');
       state.profile=d.profile||state.profile;state.boss=await api('/api/pokemon-adventure/boss');
       const parts=[d.miss?'Seu ataque errou.':`${d.move.name}: ${fmt(d.damage)} de dano${d.critical?' · CRÍTICO!':''}`];
       if(d.knockedOut)parts.push('Seu Pokémon caiu e entrou em recuperação.');
@@ -700,16 +756,16 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el||el.di
   if(act==='catalog'){try{const d=await loadLocalCatalog();const total=Array.isArray(d)?d.length:Object.keys(d||{}).length;toast(`Catálogo local online · ${fmt(total)} espécies`)}catch(err){toast(`Catálogo local falhou: ${err.message}`,'err')}return}
   if(act==='notif'){requestNotifications();return}
   if(act==='close'){closeModal();return}
-  if(act==='closecine'){closeCine();return}
+  if(act==='closecine'){closeCine(el.dataset.next);return}
   if(act==='starter'){await action('/api/pokemon-adventure/starter',{speciesId:Number(el.dataset.id)},async d=>{toast(`${d.pokemon.name} agora é seu primeiro parceiro.`);state.tab='world';render()});return}
   if(act==='hunt'){try{const d=await action('/api/pokemon-adventure/hunt',{biome:state.biome},()=>{});await huntCinematic(d)}catch(_){}return}
   if(act==='capture'){try{const d=await action('/api/pokemon-adventure/capture',{ball:el.dataset.ball},()=>{});await captureCinematic(el.dataset.ball,d)}catch(_){}return}
   if(act==='box'){try{const d=await action('/api/pokemon-adventure/box',{type:el.dataset.box},()=>{});await chestCinematic(el.dataset.box,d)}catch(_){}return}
   if(act==='claim'){await action('/api/pokemon-adventure/missions/'+encodeURIComponent(el.dataset.id)+'/claim',{},d=>{toast(d.rewardText||'Recompensa coletada!');render()});return}
   if(act==='battle-start'){try{const d=await action('/api/pokemon-adventure/battle/start',{pokemon:state.profile.championUid},()=>{});state.profile=d.profile;state.tab='arena';render()}catch(_){}return}
-  if(act==='wild-battle'){try{const d=await action('/api/pokemon-adventure/battle/wild/start',{pokemon:state.profile.championUid},()=>{});state.profile=d.profile;state.tab='arena';render();toast('Batalha selvagem iniciada!')}catch(_){}return}
-  if(act==='battle-move'){try{const d=await action('/api/pokemon-adventure/battle/action',{moveIndex:Number(el.dataset.move||0)},()=>{});if(!d)return;state.profile=d.profile||state.profile;sound(d.battle?.status==='finished'?((d.result||d.battle.result)?.win===true?'win':'loss'):'attack');if(d.battle?.status==='finished'){openModal(battleResultHTML(d));bindFallbacks()}else render()}catch(_){}return}
-  if(act==='battle-done'){const mode=el.dataset.mode||'arena';closeModal();state.tab=mode==='wild'?'world':'arena';render();return}
+  if(act==='wild-battle'){try{const d=await action('/api/pokemon-adventure/battle/wild/start',{pokemon:state.profile.championUid},()=>{});state.profile=d.profile;state.tab='arena';render();scrollActivePanel();toast('Batalha selvagem iniciada!')}catch(_){}return}
+  if(act==='battle-move'){try{const d=await action('/api/pokemon-adventure/battle/action',{moveIndex:Number(el.dataset.move||0)},()=>{});if(!d)return;state.profile=d.profile||state.profile;sound(d.battle?.status==='finished'?((d.result||d.battle.result)?.win===true?'win':'loss'):'hit');if(d.battle?.status==='finished'){openModal(battleResultHTML(d));bindFallbacks()}else render()}catch(_){}return}
+  if(act==='battle-done'){const mode=el.dataset.mode||'arena';closeModal();if(mode==='wild')returnToCapture();else{state.tab='arena';render();scrollActivePanel()}return}
   if(act==='recover'){try{const d=await action('/api/pokemon-adventure/recover',{pokemon:el.dataset.uid||state.profile.championUid},()=>{});state.profile=d.profile||state.profile;toast(d.alreadyReady?'Pokémon já estava recuperado.':`Recuperação concluída por ${fmt(d.cost)}✨.`);closeModal();render()}catch(_){}return}
   if(act==='season-claim'){try{const d=await action('/api/pokemon-adventure/season/claim',{tier:Number(el.dataset.tier),track:el.dataset.track||'free'},()=>{});state.profile=d.profile||state.profile;toast(`Passe: ${d.label}`);render()}catch(_){}return}
   if(act==='openmon'){const x=state.profile.collection.find(m=>m.uid===el.dataset.uid);if(x)openModal(detailHTML(x,state.profile));return}
