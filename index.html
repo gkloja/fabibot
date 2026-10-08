@@ -7226,25 +7226,229 @@ body.light-mode .command-badge-mobile {
 </section>
 
 
+
+<style id="pk-home-promo-v3-css">
+/* Pokémon Home V3 — isolado do restante da Fabi */
+#pokemonHomePromo{
+  --pkh-green:#2fe27f;
+  --pkh-green2:#13a958;
+  --pkh-text:#f7fbf8;
+  --pkh-muted:#a0afa6;
+  --pkh-line:rgba(255,255,255,.09);
+  width:min(calc(100% - 24px),1100px);
+  margin:18px auto 16px;
+  padding:0;
+  color:var(--pkh-text);
+}
+#pokemonHomePromo *{box-sizing:border-box}
+#pokemonHomePromo .pkh-card{
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 210px;
+  align-items:center;
+  gap:18px;
+  min-height:210px;
+  padding:24px 26px;
+  border:1px solid var(--pkh-line);
+  border-radius:24px;
+  background:
+    radial-gradient(420px 220px at 84% 10%,rgba(47,226,127,.14),transparent 68%),
+    linear-gradient(145deg,#101813,#090e0b);
+  box-shadow:0 18px 48px rgba(0,0,0,.22);
+}
+#pokemonHomePromo .pkh-card::after{
+  content:"";
+  position:absolute;
+  right:-90px;
+  bottom:-130px;
+  width:310px;
+  height:310px;
+  border-radius:50%;
+  border:1px solid rgba(47,226,127,.10);
+  box-shadow:0 0 0 40px rgba(47,226,127,.025),0 0 0 90px rgba(47,226,127,.018);
+  pointer-events:none;
+}
+#pokemonHomePromo .pkh-copy{position:relative;z-index:2;min-width:0}
+#pokemonHomePromo .pkh-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  margin-bottom:10px;
+  border-radius:999px;
+  border:1px solid rgba(47,226,127,.23);
+  background:rgba(47,226,127,.08);
+  color:#bcf8d2;
+  font-size:.72rem;
+  font-weight:850;
+  letter-spacing:.035em;
+}
+#pokemonHomePromo h2{
+  margin:0 0 8px;
+  max-width:720px;
+  color:var(--pkh-text);
+  font-size:clamp(1.45rem,4vw,2.15rem);
+  line-height:1.1;
+  letter-spacing:-.035em;
+  font-weight:850;
+}
+#pokemonHomePromo p{
+  margin:0;
+  max-width:760px;
+  color:var(--pkh-muted);
+  font-size:.91rem;
+  line-height:1.65;
+}
+#pokemonHomePromo .pkh-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:17px;
+}
+#pokemonHomePromo .pkh-btn{
+  min-height:42px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:9px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  font-size:.82rem;
+  font-weight:800;
+  transition:.16s ease;
+}
+#pokemonHomePromo .pkh-btn.primary{
+  color:#03140a;
+  border:1px solid transparent;
+  background:linear-gradient(135deg,var(--pkh-green),#54ee99);
+  box-shadow:0 8px 22px rgba(47,226,127,.16);
+}
+#pokemonHomePromo .pkh-btn.secondary{
+  color:#d8e6dc;
+  border:1px solid var(--pkh-line);
+  background:rgba(255,255,255,.035);
+}
+#pokemonHomePromo .pkh-btn:hover{transform:translateY(-1px)}
+#pokemonHomePromo .pkh-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:14px;
+}
+#pokemonHomePromo .pkh-meta span{
+  padding:6px 8px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:9px;
+  background:rgba(255,255,255,.025);
+  color:#91a097;
+  font-size:.67rem;
+}
+#pokemonHomePromo .pkh-visual{
+  position:relative;
+  z-index:1;
+  min-height:165px;
+  display:grid;
+  place-items:center;
+}
+#pokemonHomePromo .pkh-orb{
+  width:150px;
+  height:150px;
+  position:relative;
+  border-radius:50%;
+  border:1px solid rgba(47,226,127,.20);
+  background:
+    radial-gradient(circle at 50% 50%,rgba(47,226,127,.15),rgba(5,16,10,.12) 46%,rgba(0,0,0,.12) 47%),
+    linear-gradient(180deg,rgba(47,226,127,.13),rgba(255,255,255,.015));
+  box-shadow:0 0 60px rgba(47,226,127,.08),inset 0 0 40px rgba(47,226,127,.04);
+}
+#pokemonHomePromo .pkh-orb::before{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:50%;
+  height:2px;
+  background:rgba(47,226,127,.28);
+  transform:translateY(-50%);
+}
+#pokemonHomePromo .pkh-orb::after{
+  content:"◉";
+  position:absolute;
+  left:50%;top:50%;
+  width:52px;height:52px;
+  transform:translate(-50%,-50%);
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  color:#b8f7cf;
+  font-size:2rem;
+  background:#08110c;
+  border:2px solid rgba(47,226,127,.38);
+  box-shadow:0 0 24px rgba(47,226,127,.18);
+}
+#pokemonHomePromo .pkh-orb-label{
+  position:absolute;
+  bottom:4px;
+  left:50%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  color:#7fe3a7;
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+@media(max-width:720px){
+  #pokemonHomePromo{width:calc(100% - 16px);margin:12px auto 12px}
+  #pokemonHomePromo .pkh-card{
+    grid-template-columns:1fr;
+    min-height:0;
+    padding:18px 17px;
+    border-radius:19px;
+  }
+  #pokemonHomePromo .pkh-visual{display:none}
+  #pokemonHomePromo h2{font-size:1.35rem}
+  #pokemonHomePromo p{font-size:.86rem;line-height:1.58}
+  #pokemonHomePromo .pkh-actions{margin-top:14px}
+  #pokemonHomePromo .pkh-btn{flex:1 1 150px}
+}
+body.light-mode #pokemonHomePromo{
+  --pkh-text:#111827;
+  --pkh-muted:#5f6f65;
+  --pkh-line:rgba(15,23,42,.10);
+}
+body.light-mode #pokemonHomePromo .pkh-card{
+  background:
+    radial-gradient(420px 220px at 84% 10%,rgba(22,163,74,.09),transparent 68%),
+    linear-gradient(145deg,#ffffff,#f5f9f6);
+  box-shadow:0 12px 32px rgba(15,23,42,.06);
+}
+body.light-mode #pokemonHomePromo .pkh-btn.secondary{color:#223129;background:rgba(15,23,42,.025)}
+</style>
+
 <section class="pk-home-promo" id="pokemonHomePromo" aria-label="Pokémon Adventure">
-  <div class="pk-home-promo-inner">
-    <div class="pk-home-copy">
-      <span class="pk-home-kicker">◉ NOVA EXPERIÊNCIA</span>
+  <div class="pkh-card">
+    <div class="pkh-copy">
+      <span class="pkh-kicker">◉ NOVA EXPERIÊNCIA</span>
       <h2>Pokémon Adventure ganhou um mundo próprio</h2>
-      <p>Entre no novo mundo Pokémon da Fabi: expedições com energia, baús gratuitos, Radar, coleção, treino, evolução, missões, Arena, ranking e notificações.</p>
-      <div class="pk-home-actions">
-        <button type="button" onclick="location.href='/pokemon.html'">Começar jornada</button>
-        <button type="button" class="outline" onclick="location.href='/pokemon.html'">Ver coleção</button>
+      <p>Explore regiões, use energia, abra baús gratuitos, capture Pokémon, treine sua equipe, cumpra missões e dispute a Arena em uma página separada da Fabi.</p>
+      <div class="pkh-actions">
+        <a class="pkh-btn primary" href="/pokemon.html">🧭 Começar jornada</a>
+        <a class="pkh-btn secondary" href="/pokemon.html">📚 Abrir Pokédex</a>
       </div>
-      <div class="pk-home-meta"><span>1.025 espécies no catálogo</span><span>Sem Golds nas caixas</span><span>Página própria e mais rápida</span></div>
+      <div class="pkh-meta">
+        <span>1.025 espécies</span>
+        <span>Caixas gratuitas</span>
+        <span>Energia + missões + Arena</span>
+      </div>
     </div>
-    <div class="pk-home-art" aria-hidden="true">
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="">
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png" alt="">
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png" alt="">
+    <div class="pkh-visual" aria-hidden="true">
+      <div class="pkh-orb"></div>
+      <div class="pkh-orb-label">Adventure</div>
     </div>
   </div>
 </section>
+
 
 <section class="fabi-adsense-editorial" aria-labelledby="fabiEditorialTitle">
   <div class="container editorial-wrap">

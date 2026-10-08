@@ -1,0 +1,34 @@
+{
+  "connect_js": {
+    "ok": true,
+    "stderr": ""
+  },
+  "index_js": {
+    "ok": true,
+    "stderr": ""
+  },
+  "pokemon_front_js": {
+    "ok": true,
+    "stderr": ""
+  },
+  "home": {
+    "promo_self_styled": true,
+    "no_giant_pokemon_images": true,
+    "pokemon_link": true,
+    "scripts_balanced": true,
+    "scripts_open": 14,
+    "scripts_close": 14
+  },
+  "catalog": {
+    "public_url_exact": true,
+    "no_public_in_http_url": true,
+    "proxy_encoded": true,
+    "health_exposes_catalog_url": true
+  },
+  "pokemon_page": {
+    "scripts_balanced": true,
+    "cache_bust_c": true,
+    "scripts_open": 2,
+    "scripts_close": 2
+  }
+}
