@@ -15,8 +15,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="/assets/pokemon-adventure-v10.css?v=20261008ux3">
-<link rel="stylesheet" href="/assets/pokemon-navigation-upgrade.css?v=20261008nav3">
+<link rel="stylesheet" href="/assets/pokemon-adventure-v10.css?v=20261008ux4">
+<link rel="stylesheet" href="/assets/pokemon-navigation-upgrade.css?v=20261008nav4">
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 </head>
 <body>
@@ -30,10 +30,10 @@
     <!-- Atalhos principais injetados por pokemon-navigation-upgrade.js -->
     <div class="pk-nav-actions">
       <button type="button" class="pk-nav-btn" id="pkNotifBtn" title="Notificações">
-        <i class="fa-regular fa-bell"></i><span>Alertas</span>
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span>Alertas</span>
         <b id="pkNotifBadge" class="pk-notif-badge" hidden></b>
       </button>
-      <a class="pk-nav-btn" href="/" title="Site Fabi Bot"><i class="fa-solid fa-house"></i><span>Início</span></a>
+      <a class="pk-nav-btn" href="/" title="Site Fabi Bot"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 11 9-8 9 8M5 10v11h5v-7h4v7h5V10"/></svg><span>Início</span></a>
     </div>
   </div>
 </header>
@@ -53,13 +53,13 @@
 </main>
 
 <div class="pk-toast-wrap" id="pkToastWrap" aria-live="polite"></div>
-<div class="pk-modal" id="pkModal" aria-hidden="true"><div class="pk-modal-card" id="pkModalCard"></div></div>
+<div class="pk-modal" id="pkModal" aria-hidden="true"><div class="pk-modal-card" id="pkModalCard" role="dialog" aria-modal="true" aria-label="Janela Pokémon" tabindex="-1"></div></div>
 <div class="pk-cinematic" id="pkCinematic" aria-hidden="true">
   <div class="pk-cine-backdrop"></div>
   <div class="pk-cine-stage" id="pkCineStage"></div>
 </div>
 
-<script src="/assets/pokemon-adventure-v10.js?v=20261008ux3" defer></script>
-<script src="/assets/pokemon-navigation-upgrade.js?v=20261008nav3" defer></script>
+<script src="/assets/pokemon-adventure-v10.js?v=20261008ux4" defer></script>
+<script src="/assets/pokemon-navigation-upgrade.js?v=20261008nav4" defer></script>
 </body>
 </html>
