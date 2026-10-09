@@ -44,7 +44,7 @@
       <button class="fabi-btn fabi-btn-primary" style="width:100%;margin-top:16px" type="submit" id="btn">Entrar</button>
     </form>
     <div style="margin-top:18px;color:var(--fabi-muted);font-size:.86rem;line-height:1.65">
-      Ainda não possui acesso? <a href="https://chat.whatsapp.com/JgJTVYqRpMvBftNLR91U47" target="_blank" rel="noopener" style="color:#baf2d0">Veja como registrar sua conta</a>.
+      <span id="registration">Ainda não possui acesso?</span> <a href="https://chat.whatsapp.com/JgJTVYqRpMvBftNLR91U47" target="_blank" rel="noopener" style="color:#baf2d0">Veja como registrar sua conta</a>.
       <br><a href="/" style="color:#baf2d0">← Voltar à Fabi</a>
     </div>
   </section>
@@ -93,6 +93,11 @@
         const sess={logado:true,id:u.id||u.nome||username,nome:u.nome||username,email:u.email||"",numero:u.numero||"",golds:u.golds||u.dinheiro||0,rank:0,avatar:u.avatar||u.foto||u.fotoPerfil||"/flogo.jpg",provider:"servidor",at:Date.now()};
         localStorage.setItem("fabi_session",JSON.stringify(sess));
         localStorage.setItem("neconecta_user_session",JSON.stringify({id:sess.id,nome:sess.nome,email:sess.email,numero:sess.numero,avatar:sess.avatar,provider:"servidor",seguidores:[],seguindo:[]}));
+        if(redirectTo.includes('pokemon')){
+          const response=await fetch(urlsFor('/api/pokemon-adventure/session')[0],{method:'POST',mode:'cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({contaNumero:sess.numero,credential:password,guestToken:localStorage.getItem('pk_guest_token')})});
+          const player=await response.json();if(!response.ok||!player.success)throw new Error(player.error||'Não foi possível iniciar a jornada Pokémon.');
+          localStorage.setItem('pk_player_session',JSON.stringify({token:player.token,guest:false,account:String(sess.numero).replace(/\D/g,'')}));
+        }
         show("Tudo certo. Abrindo sua conta…",true);
         setTimeout(()=>{location.href=redirectTo;},350);
         return;

@@ -3,10 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Pokémon Adventure | Fabi Bot</title>
+<title>Pokémon Adventure: jogue online como convidado | Fabi Bot</title>
 <meta name="description" content="Explore regiões, capture Pokémon, abra baús grátis, treine sua equipe, cumpra missões e dispute a Arena no Pokémon Adventure da Fabi Bot.">
-<meta name="robots" content="noindex,follow">
+<meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="https://www.fabibot.com.br/pokemon">
+<meta name="referrer" content="no-referrer">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pokémon Adventure · Sua próxima aventura começa aqui">
+<meta property="og:description" content="Jogue como convidado, capture Pokémon e cuide da sua equipe. Explore a fazenda, a Arena e a jornada de sete dias.">
+<meta property="og:url" content="https://www.fabibot.com.br/pokemon">
+<meta property="og:image" content="https://www.fabibot.com.br/flogo.jpg">
 <meta name="theme-color" content="#07100c">
 <link rel="icon" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -15,9 +21,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="/assets/pokemon-adventure-v10.css?v=20261008ux6">
-<link rel="stylesheet" href="/assets/pokemon-navigation-upgrade.css?v=20261008nav6">
+<link rel="stylesheet" href="/assets/pokemon-adventure-v10.css?v=20261009community7">
+<link rel="stylesheet" href="/assets/pokemon-navigation-upgrade.css?v=20261009community7">
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "VideoGame", "name": "Fabi Pokémon Adventure", "url": "https://www.fabibot.com.br/pokemon", "description": "Jogo de exploração, coleção de Pokémon e batalhas por turnos no navegador.", "inLanguage": "pt-BR", "gamePlatform": "Web browser", "genre": ["Adventure", "Role-playing"]}</script>
 </head>
 <body>
 <div class="pk-bg"></div>
@@ -45,11 +52,12 @@
   </section>
 
   <section class="pk-shell" id="pkApp">
-    <div class="pk-loading-card">
+    <div class="pk-loading-card" aria-live="polite">
       <div class="pk-loader-orb"></div>
-      <div><strong>Preparando sua jornada…</strong><span>Sincronizando coleção, energia e missões.</span></div>
+      <div><h1>Pokémon Adventure: explore, capture e evolua</h1><strong>Preparando sua jornada…</strong><span>Sincronizando coleção, energia e missões.</span></div>
     </div>
   </section>
+<section class="pk-public-info" aria-label="Sobre o jogo"><h2>Um mundo Pokémon para jogar no navegador</h2><p>No Fabi Pokémon Adventure, você escolhe um parceiro inicial, explora regiões e tenta capturar Pokémon para a sua coleção. Jogue como convidado com seu próprio nome e foto, ou entre na conta Fabi para conectar sua jornada à comunidade do WhatsApp.</p><h3>Explore, cuide e evolua</h3><p>Use energia nas expedições, fortaleça a equipe em batalhas por turnos e cultive berries na fazenda. Regar acelera a plantação; alimentar com as berries favoritas fortalece o laço com seu parceiro. Missões e atividades rendem progresso para o passe de temporada.</p><details><summary>Preciso criar uma conta para começar?</summary><p>Não. Escolha um nome e comece como convidado. Conserve os dados do navegador para voltar. Entre em uma conta sem coleção para transferir esse progresso e participar dos Pokémon Drops da Fabi no WhatsApp.</p></details><details><summary>Como funcionam os sete dias de presentes?</summary><p>Após escolher seu inicial, colete um presente por dia durante sete dias diferentes. Você não perde o progresso se faltar. O sétimo presente é um Eevee nível 10. Esta jornada pode ser concluída uma única vez por perfil, e continua ao vincular o convidado a uma conta nova.</p></details><details><summary>Onde encontro os perfis e os rankings?</summary><p>Abra Mais no menu e escolha Ranking ou Hall da Fama. Toque no nome ou na foto de um treinador para conhecer a coleção e suas conquistas.</p></details><p><a href="/pokemon-guia.html">Leia o guia completo do Pokémon Adventure →</a></p></section>
 </main>
 
 <div class="pk-toast-wrap" id="pkToastWrap" aria-live="polite"></div>
@@ -59,7 +67,7 @@
   <div class="pk-cine-stage" id="pkCineStage"></div>
 </div>
 
-<script src="/assets/pokemon-adventure-v10.js?v=20261008ux6" defer></script>
-<script src="/assets/pokemon-navigation-upgrade.js?v=20261008nav6" defer></script>
+<script src="/assets/pokemon-adventure-v10.js?v=20261009community7" defer></script>
+<script src="/assets/pokemon-navigation-upgrade.js?v=20261009community7" defer></script>
 </body>
 </html>
