@@ -150,7 +150,7 @@ function session(){
   for(const key of ['fabi_session','neconecta_user_session']){
     try{const x=JSON.parse(localStorage.getItem(key)||'null');if(x&&typeof x==='object')s={...s,...x};}catch(_){ }
   }
-  return {numero:String(s.numero||s.telefone||s.phone||'').replace(/\D/g,''),nome:String(s.nome||s.username||s.name||'Treinador').slice(0,80),avatar:s.avatar||s.foto||s.fotoPerfil||'/flogo.jpg'};
+  return {numero:String(s.numero||s.telefone||s.phone||'').replace(/\D/g,''),nome:String(s.nome||s.username||s.name||'Treinador').slice(0,80),credential:s.id||'',avatar:s.avatar||s.foto||s.fotoPerfil||'/flogo.jpg'};
 }
 function backendTarget(path){
   if(!path)return BACKEND;
@@ -162,6 +162,7 @@ function targetWithAuth(path){
   const target=new URL(backendTarget(path));
   if(u.numero)target.searchParams.set('numero',u.numero);
   if(u.nome)target.searchParams.set('nome',u.nome);
+  if(playerSession.token)target.searchParams.set('playerToken',playerSession.token);
   return target.toString();
 }
 function endpoint(path){return proxyUrl(backendTarget(path))}
@@ -172,7 +173,7 @@ async function api(path,opts={}){
   let body=opts.body||null;
 
   if(method!=='GET'&&method!=='HEAD'){
-    body={...(body||{}),contaNumero:u.numero,nomeUsuario:u.nome,nomeConta:u.nome};
+    body={playerToken:playerSession.token,...(body||{}),contaNumero:u.numero,nomeUsuario:u.nome,nomeConta:u.nome};
   }
 
   // GET não envia headers personalizados: evita preflight CORS desnecessário.
@@ -341,6 +342,7 @@ async function switchTab(tab,scroll=true){
   if(tab==='boss')await loadBoss(false);
   if(tab==='hall')await loadHall(false);
   if(tab==='ranking')await loadRanking(false);
+  if(state.profile&&['farm','collection','season'].includes(tab)){try{const d=await api('/api/pokemon-adventure/profile');state.profile=d.profile;if(state.tab===tab)render()}catch(e){toast(e.message,'err')}}
 }
 document.addEventListener('pk:navigate',e=>{switchTab(e.detail?.tab,true).catch(e=>toast(e.message||'Não foi possível abrir esta área.','err'))});
 document.addEventListener('pk:ready',()=>{syncSound();syncMusic();document.dispatchEvent(new CustomEvent('pk:tabchange',{detail:{tab:state.tab}}))});
@@ -353,6 +355,21 @@ async function shareAuction(a){
     else{await navigator.clipboard.writeText(url);toast('Link do leilão copiado!')}
   }catch(e){if(e?.name!=='AbortError')toast('Não foi possível compartilhar.','err')}
 }
+let playerSession={};
+try{playerSession=JSON.parse(localStorage.getItem('pk_player_session')||'{}')}catch(_){}
+function savePlayerSession(d){playerSession={token:d.token,guest:d.guest,account:session().numero};localStorage.setItem('pk_player_session',JSON.stringify(playerSession));if(d.guest)localStorage.setItem('pk_guest_token',d.token);}
+function avatarUrl(value){if(!value)return '/flogo.jpg';if(/^data:image\/(jpeg|png|webp);base64,/.test(value))return value;if(value.startsWith('/uploads/'))return proxyUrl(BACKEND+value);if(/^https:\/\//.test(value))return value;if(/^http:\/\//.test(value))return proxyUrl(value);return '/flogo.jpg';}
+function playerAvatar(value,name='Treinador'){return `<img class="pk-player-avatar" src="${esc(avatarUrl(value))}" alt="Foto de ${esc(name)}" width="44" height="44" data-fallback="/flogo.jpg" loading="lazy">`}
+function registerCTA(){return `<aside class="pk-join-note"><span>💬</span><div><b>Sua aventura também pode continuar no WhatsApp.</b><p>Crie uma conta Fabi para participar dos Pokémon Drops nos grupos e acessar trocas. Ao entrar em uma conta sem coleção, levamos seu progresso de convidado com você.</p><a href="/login.html?redirect=%2Fpokemon#registration" class="pk-link-btn pk-ghost">Criar minha conta</a> <a href="/login.html?redirect=%2Fpokemon" class="pk-link-btn pk-ghost">Já tenho conta</a><small>Enquanto for convidado, conserve os dados deste navegador para voltar ao jogo.</small></div></aside>`}
+function renderLogin(){
+ $('#pkApp').innerHTML=`<section class="pk-hero pk-onboarding"><div class="pk-eyebrow">SEU PRÓXIMO PARCEIRO ESTÁ ESPERANDO</div><h1 class="pk-title">Uma aventura.<br><span>Do seu jeito.</span></h1><p class="pk-subtitle">Explore, capture e construa sua coleção. Comece agora como convidado.</p><form id="pkGuestForm" class="pk-identity-form"><label>Nome do treinador<input id="pkGuestName" required minlength="2" maxlength="32" autocomplete="nickname" placeholder="Como quer ser chamado?"></label><label>Sua foto <small>opcional · JPG, PNG ou WebP</small><input id="pkGuestPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label><button class="pk-primary" type="submit">Começar minha aventura →</button><p id="pkGuestError" role="alert"></p></form>${registerCTA()}<a href="/pokemon-guia.html">Conhecer o jogo antes de começar</a></section>`;
+ $('#pkGuestForm').addEventListener('submit',async e=>{e.preventDefault();const b=e.submitter;b.disabled=true;try{const photo=await preparePhoto($('#pkGuestPhoto').files[0]);const d=await api('/api/pokemon-adventure/session',{method:'POST',body:{guest:true,name:$('#pkGuestName').value.trim()}});savePlayerSession(d);state.profile=d.profile;if(photo){try{const updated=await api('/api/pokemon-adventure/identity',{method:'POST',body:{name:$('#pkGuestName').value.trim(),avatar:photo}});state.profile=updated.profile}catch(err){toast('Convidado criado. Você pode tentar enviar a foto novamente em Editar perfil.','err')}}await boot();}catch(err){$('#pkGuestError').textContent=err.message;b.disabled=false;}});
+}
+function renderError(e){$('#pkApp').innerHTML=`<section class="pk-card"><h2>Vamos retomar sua aventura</h2><p>${esc(e.message)}</p><div class="pk-actions"><button class="pk-primary" data-action="reload">Tentar novamente</button><a class="pk-ghost pk-link-btn" href="/login.html?redirect=%2Fpokemon">Entrar na conta</a></div></section>`;}
+async function preparePhoto(file){if(!file)return null;if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024)throw new Error('Escolha JPG, PNG ou WebP de até 5 MB.');const bitmap=await createImageBitmap(file).catch(()=>{throw new Error('Não foi possível abrir essa foto. Escolha outra imagem.');});try{const c=document.createElement('canvas');c.width=c.height=256;const ctx=c.getContext('2d'),size=Math.min(bitmap.width,bitmap.height);ctx.drawImage(bitmap,(bitmap.width-size)/2,(bitmap.height-size)/2,size,size,0,0,256,256);return c.toDataURL('image/jpeg',.85);}finally{bitmap.close();}}
+function editIdentity(){const x=state.profile.identity||{};openModal(`<div class="pk-modal-top"><h2>Seu cartão de treinador</h2><button class="pk-modal-close" data-action="close" aria-label="Fechar">✕</button></div><form id="pkIdentityForm" class="pk-identity-form">${playerAvatar(x.avatar,x.name)}<label>Nome público<input id="pkIdentityName" required minlength="2" maxlength="32" value="${esc(x.name||state.profile.userName)}"></label><label>Alterar foto<input id="pkIdentityPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label><p>Seu nome e sua foto aparecem no perfil e nos rankings.${x.guest?'':' A foto também será atualizada na sua conta Fabi.'}</p><button type="submit" class="pk-primary">Salvar perfil</button><p id="pkIdentityError" role="alert"></p></form>`);bindFallbacks();$('#pkIdentityForm').addEventListener('submit',async e=>{e.preventDefault();const b=e.submitter;b.disabled=true;try{const avatar=await preparePhoto($('#pkIdentityPhoto').files[0]);const d=await api('/api/pokemon-adventure/identity',{method:'POST',body:{name:$('#pkIdentityName').value.trim(),avatar}});state.profile=d.profile;if(!d.profile.identity?.guest){for(const key of ['fabi_session','neconecta_user_session']){try{const cached=JSON.parse(localStorage.getItem(key)||'null');if(cached){cached.avatar=avatarUrl(d.profile.identity.avatar);localStorage.setItem(key,JSON.stringify(cached));}}catch(_){}}}state.ranking=[];state.hall=null;closeModal();render();toast('Perfil atualizado!');}catch(err){$('#pkIdentityError').textContent=err.message;b.disabled=false;}});}
+function welcomeHTML(p){const w=p.welcomeJourney;if(!w||w.completed)return '';return `<section class="pk-welcome"><div class="pk-card-head"><div><div class="pk-eyebrow">BOAS-VINDAS · UMA ÚNICA JORNADA</div><h2>Sete dias. Um novo amigo.</h2><p>Volte em 7 dias diferentes. Se faltar, seu progresso continua. No dia 7, Eevee entra para a equipe.</p></div><strong>${w.claimed}/7</strong></div><ol class="pk-welcome-days">${w.days.map(d=>`<li class="${d.claimed?'done':d.day===w.claimed+1?'next':''}"><small>DIA ${d.day}</small><span aria-hidden="true">${d.claimed?'✓':d.day===7?'🦊':'🎁'}</span><b>${esc(d.label)}</b></li>`).join('')}</ol><div class="pk-actions"><button class="pk-primary" data-action="welcome-claim" ${w.canClaim?'':'disabled'}>${w.canClaim?'Receber presente de hoje':'Recebido! Volte amanhã'}</button><small>Virada do dia: horário de Manaus.</small></div></section>`}
+
 async function boot(){
   const u=session();
   const user=$('#pkUser');
@@ -369,8 +386,8 @@ async function boot(){
     return;
   }
 
-  if(!u.numero){renderLogin();return}
-  initOneSignal();
+  if(!u.numero&&!playerSession.token){renderLogin();return}
+  if(u.numero)initOneSignal();
 
   // Health é somente diagnóstico: nunca mais bloqueia a abertura do jogo.
   api('/api/pokemon-adventure/health')
@@ -378,6 +395,7 @@ async function boot(){
     .catch(e=>console.warn('[Pokémon Adventure][health]',e.message));
 
   try{
+    if(u.numero&&(!playerSession.token||playerSession.guest||playerSession.account!==u.numero)){const d=await api('/api/pokemon-adventure/session',{method:'POST',body:{credential:u.credential,guestToken:localStorage.getItem('pk_guest_token')}});savePlayerSession(d);if(d.migration==='existing-account')toast('Sua conta já tem uma coleção. Mantivemos o progresso dela.');if(d.migration==='transferred')toast('Sua aventura de convidado agora está na sua conta!');}
     const d=await api('/api/pokemon-adventure/profile');
     state.profile=d.profile;
     const qs=new URLSearchParams(location.search),tradeSlug=qs.get('trade'),auctionId=qs.get('auction'),tab=qs.get('tab');
@@ -390,7 +408,9 @@ async function boot(){
     if(tradeSlug){state.tab='market';await loadMarket(true);await loadTradeTargetBySlug(tradeSlug);}
     if(auctionId){state.tab='market';state.focusAuction=auctionId;await loadMarket(true);}
     render();
+    if(qs.get('editProfile')==='1')editIdentity();
     startClock();
+    clearInterval(state.farmTimer);state.farmTimer=setInterval(async()=>{if(document.hidden||state.busy||state.tab!=='farm'||$('#pkModal').getAttribute('aria-hidden')==='false')return;try{const d=await api('/api/pokemon-adventure/profile');if(state.tab==='farm'&&!state.busy){state.profile=d.profile;render()}}catch(_){}},60000);
     startLiveRanking();
     startBossLive(state.tab==='boss');
     startHallLive(state.tab==='hall');
@@ -406,13 +426,15 @@ async function boot(){
 function render(){
   const p=state.profile;if(!p)return;
   const a=$('#pkApp');
+  const ident=p.identity||{};$('#pkUser').innerHTML=`<button class="pk-identity-button" data-action="edit-identity">${playerAvatar(ident.avatar,ident.name)}<span><b>${esc(ident.name||p.userName)}</b><small>${ident.guest?'Convidado · ':''}Editar perfil</small></span></button>`;
+  if(ident.slug)localStorage.setItem('pk_own_slug',ident.slug);
   document.dispatchEvent(new CustomEvent('pk:tabchange',{detail:{tab:state.tab}}));
   syncBossBeacon();
   if(!p.collection?.length){a.innerHTML=starterHTML(p);bindFallbacks();return}
   const need=xpNeed(p.trainer.level),xpPct=Math.min(100,(p.trainer.xp/need)*100);
   const panels={world:worldHTML,collection:collectionHTML,farm:farmHTML,missions:missionsHTML,arena:arenaHTML,boss:bossHTML,season:seasonHTML,ranking:rankingHTML,hall:hallHTML,market:marketHTML,shop:shopHTML,achievements:achievementsHTML};
   const content=(panels[state.tab]||worldHTML)(p);
-  a.innerHTML=`${state.tab==='world'?heroHTML(p,xpPct):''}${resourcesHTML(p)}${state.tab==='world'?quickHTML(p):''}<div class="pk-panel active" id="pkActivePanel" data-panel="${state.tab}">${content}</div>`;
+  a.innerHTML=`${state.tab==='world'?heroHTML(p,xpPct)+welcomeHTML(p)+(p.identity?.guest?registerCTA():''):''}${resourcesHTML(p)}${state.tab==='world'?quickHTML(p):''}<div class="pk-panel active" id="pkActivePanel" data-panel="${state.tab}">${content}</div>`;
   bindFallbacks();
   if(state.busy)setBusy(true);
 }
@@ -458,7 +480,7 @@ function monCard(x,champ){
   </button>`
 }
 function farmTime(ms){if(ms<=0)return 'PRONTO';const m=Math.ceil(ms/60000);return m<60?`${m} min`:`${Math.ceil(m/60)}h`}
-function farmHTML(p){const f=p.farm||{};const pantry=f.pantry||{};return `<div class="pk-grid"><section class="pk-card pk-col-8"><div class="pk-card-head"><div><h3>🌱 Fazenda Pokémon</h3><p>Use Pó Estelar para plantar. Colha berries e alimente seu parceiro para aumentar Laço e melhorar Treino Intensivo.</p></div><div class="pk-icon">🌱</div></div><div class="pk-pantry">${Object.entries(f.crops||{}).map(([k,c])=>`<span>${c.icon} ${c.label}: <b>${fmt(pantry[k]||0)}</b></span>`).join('')}</div><div class="pk-farm-grid">${(f.plots||[]).map(plot=>{if(plot.locked)return `<div class="pk-plot locked"><b>🔒 Canteiro ${plot.id}</b><span>Desbloqueie subindo seu nível.</span></div>`;if(plot.crop){return `<div class="pk-plot ${plot.crop.ready?'ready':''}"><b>${plot.crop.config.icon} ${plot.crop.config.label}</b><span>${plot.crop.ready?'Pronto para colher':`Pronto em ${farmTime(plot.crop.remainingMs)}`}</span><button class="${plot.crop.ready?'pk-primary':'pk-ghost'}" data-action="harvest" data-plot="${plot.id}" ${plot.crop.ready?'':'disabled'}>${plot.crop.ready?'Colher agora':'Crescendo…'}</button></div>`}return `<div class="pk-plot"><b>▫️ Canteiro ${plot.id}</b><span>Escolha o que plantar</span><div class="pk-crop-buttons">${Object.entries(f.crops||{}).map(([k,c])=>`<button data-action="plant" data-plot="${plot.id}" data-crop="${k}" title="${c.label}">${c.icon}<small>${c.cost}✨</small></button>`).join('')}</div></div>`}).join('')}</div></section><aside class="pk-card pk-col-4"><div class="pk-card-head"><div><h3>✨ Para que serve o Pó Estelar?</h3><p>Agora ele é a moeda de progresso da jornada.</p></div><div class="pk-icon">✨</div></div><ul class="pk-help-list"><li>🌱 Plantar berries na Fazenda</li><li>🏋️ Treino Intensivo</li><li>🌟 Evoluir Pokémon</li><li>🔴 Comprar Balls e Tickets</li><li>🔬 Pesquisa com Pokémon garantido</li></ul><button class="pk-primary" data-action="tab" data-tab="shop">Abrir Loja de Pó Estelar</button></aside></div>`}
+function farmHTML(p){const f=p.farm||{};const pantry=f.pantry||{};return `<div class="pk-grid"><section class="pk-card pk-col-8"><div class="pk-card-head"><div><h3>🌱 Fazenda Pokémon</h3><p>Use Pó Estelar para plantar. Colha berries e alimente seu parceiro para aumentar Laço e melhorar Treino Intensivo.</p></div><div class="pk-icon">🌱</div></div><div class="pk-actions"><button class="pk-primary" data-action="harvest-all" ${(f.plots||[]).some(x=>x.crop?.ready)?'':'disabled'}>Colher tudo que está pronto</button></div><div class="pk-pantry">${Object.entries(f.crops||{}).map(([k,c])=>`<span>${c.icon} ${c.label}: <b>${fmt(pantry[k]||0)}</b></span>`).join('')}</div><div class="pk-farm-grid">${(f.plots||[]).map(plot=>{if(plot.locked)return `<div class="pk-plot locked"><b>🔒 Canteiro ${plot.id}</b><span>Desbloqueie subindo seu nível.</span></div>`;if(plot.crop){return `<div class="pk-plot ${plot.crop.ready?'ready':''}"><b>${plot.crop.config.icon} ${plot.crop.config.label}</b><span>${plot.crop.ready?'Pronto para colher':`Pronto em ${farmTime(plot.crop.remainingMs)}`}</span><button class="${plot.crop.ready?'pk-primary':'pk-ghost'}" data-action="harvest" data-plot="${plot.id}" ${plot.crop.ready?'':'disabled'}>${plot.crop.ready?'Colher agora':'Crescendo…'}</button>${!plot.crop.ready?`<progress max="100" value="${Math.max(0,Math.min(100,100*(Date.now()-Date.parse(plot.crop.plantedAt))/(Date.parse(plot.crop.readyAt)-Date.parse(plot.crop.plantedAt))))}" aria-label="Crescimento da plantação"></progress><button class="pk-ghost" data-action="water" data-plot="${plot.id}" ${plot.crop.wateredAt?'disabled':''}>${plot.crop.wateredAt?'💧 Regada':'💧 Regar · cresce 15% mais rápido'}</button>`:''}</div>`}return `<div class="pk-plot"><b>▫️ Canteiro ${plot.id}</b><span>Escolha o que plantar</span><div class="pk-crop-buttons">${Object.entries(f.crops||{}).map(([k,c])=>`<button data-action="plant" data-plot="${plot.id}" data-crop="${k}" title="${c.label}">${c.icon}<small>${c.cost}✨</small></button>`).join('')}</div></div>`}).join('')}</div></section><aside class="pk-card pk-col-4"><div class="pk-card-head"><div><h3>✨ Para que serve o Pó Estelar?</h3><p>Agora ele é a moeda de progresso da jornada.</p></div><div class="pk-icon">✨</div></div><ul class="pk-help-list"><li>🌱 Plantar berries na Fazenda</li><li>🏋️ Treino Intensivo</li><li>🌟 Evoluir Pokémon</li><li>🔴 Comprar Balls e Tickets</li><li>🔬 Pesquisa com Pokémon garantido</li></ul><button class="pk-primary" data-action="tab" data-tab="shop">Abrir Loja de Pó Estelar</button></aside></div>`}
 function shopHTML(p){const sh=p.shop||{};return `<div class="pk-grid"><section class="pk-card pk-col-7"><div class="pk-card-head"><div><h3>✨ Loja de Pó Estelar</h3><p>Itens exatos. Nada aqui usa dinheiro real.</p></div><div class="pk-balance">${fmt(p.resources.stardust)} ✨</div></div><div class="pk-shop-grid">${(sh.stardustItems||[]).map(i=>`<article class="pk-shop-item"><i>${i.icon}</i><div><b>${esc(i.label)}</b><span>${esc(i.description)}</span></div><button data-action="dust-buy" data-item="${esc(i.id)}">${fmt(i.cost)} ✨</button></article>`).join('')}</div><div class="pk-card-head" style="margin-top:22px"><div><h3>🔬 Pesquisa do Dia</h3><p>Pokémon específico e garantido. As ofertas mudam diariamente.</p></div></div><div class="pk-research-grid">${(sh.researchOffers||[]).map(o=>`<article class="pk-research"><img src="${imageUrl(o.species)}" data-fallback="${esc(fallback(o.species))}"><div><small>${esc(rarityLabel(o.rarity))}</small><b>${esc(o.species.name)}</b><span>${fmt(o.cost)} ✨</span></div><button data-action="research-buy" data-offer="${esc(o.id)}">Resgatar</button></article>`).join('')}</div></section><aside class="pk-card pk-col-5"><div class="pk-card-head"><div><h3>💚 Loja PIX · Apoie a Fabi</h3><p>Somente cosméticos fixos. Não vende baú aleatório, Pokémon aleatório ou vantagem competitiva.</p></div><div class="pk-icon">💚</div></div><div class="pk-pix-list">${(sh.pixProducts||[]).map(i=>`<article class="pk-pix-item"><div><b>${i.icon} ${esc(i.label)}</b><span>${esc(i.description)}</span><strong>R$ ${Number(i.price).toFixed(2).replace('.',',')}</strong></div><button data-action="pix-buy" data-product="${esc(i.id)}">Comprar</button></article>`).join('')}</div><div class="pk-safe-note">🔒 Pagamento PIX é processado no backend. As compras desta seção não entram no cálculo de Score, CP, chances ou ranking.</div></aside></div>`}
 function missionsHTML(p){const all=[...(p.missions?.daily||[]).map(x=>({...x,kind:'Diária'})),...(p.missions?.weekly||[]).map(x=>({...x,kind:'Semanal'}))];return `<div class="pk-grid"><section class="pk-card pk-col-7"><div class="pk-card-head"><div><h3>📋 Missões</h3><p>Recompensas ganhas jogando. Missões diárias e semanais renovam automaticamente.</p></div><div class="pk-icon">📋</div></div>${all.map(m=>missionHTML(m)).join('')}</section><aside class="pk-card pk-col-5"><div class="pk-card-head"><div><h3>🎯 Progresso</h3><p>Seu histórico nesta jornada.</p></div><div class="pk-icon">📈</div></div>${[['Aventuras',p.counters.hunts],['Capturas',p.counters.captures],['Treinos',p.counters.trainings],['Batalhas',p.counters.battles],['Vitórias',p.counters.wins],['Evoluções',p.counters.evolutions]].map(([n,v])=>`<div class="pk-rank-row"><div>•</div><div class="pk-rank-user"><b>${n}</b></div><div>${fmt(v)}</div></div>`).join('')}</aside></div>`}
 function missionHTML(m){const done=Number(m.progress||0)>=Number(m.target||1);const pc=Math.min(100,(Number(m.progress||0)/Math.max(1,Number(m.target||1)))*100);return `<div class="pk-mission"><div class="pk-mission-top"><div><b>${m.kind} · ${esc(m.title)}</b><p>${esc(m.description)}</p></div><div>${m.claimed?'✅':done?'🎁':'⏳'}</div></div><div class="pk-progress"><span style="width:${pc}%"></span></div><div class="pk-reward">${Math.min(m.progress||0,m.target||1)}/${m.target} · ${esc(m.rewardText||'')}</div>${done&&!m.claimed?`<div class="pk-actions"><button class="pk-primary" data-action="claim" data-id="${esc(m.id)}">Coletar recompensa</button></div>`:''}</div>`}
@@ -475,7 +497,7 @@ function arenaHTML(p){
   </section>`
 }
 function rankingHTML(){return `<section class="pk-card"><div class="pk-card-head"><div><div class="pk-live">● AO VIVO · 15s</div><h3>🏆 Ranking Pokémon</h3><p>Global mede toda a jornada. Temporada reinicia o placar competitivo periodicamente.</p></div><div class="pk-rank-switch"><button class="${state.rankMode==='global'?'active':''}" data-action="rank-mode" data-mode="global">Global</button><button class="${state.rankMode==='season'?'active':''}" data-action="rank-mode" data-mode="season">Temporada</button></div></div>${state.ranking.length?`<div class="pk-ranking">${state.ranking.map(r=>rankRow(r)).join('')}</div>`:'<div class="pk-empty"><b>Carregando ranking…</b>Buscando os treinadores mais fortes.</div>'}</section>`}
-function rankRow(r){const medal=r.position===1?'🥇':r.position===2?'🥈':r.position===3?'🥉':`${r.position}º`;return `<div class="pk-rank-row"><div class="pk-rank-pos">${medal}</div><div class="pk-rank-user"><b>${esc(r.userName)}</b><span>${r.league?.icon||'🏆'} ${esc(r.league?.label||'Liga')} · Arena ${fmt(r.arenaRating)} · ${fmt(r.uniquePokemon)} espécies</span></div><div class="pk-rank-best">${r.best?`<img src="${imageUrl(r.best.species)}" data-fallback="${esc(fallback(r.best.species))}"><span>${esc(r.best.name)}<br>${state.rankMode==='season'?`${fmt(r.seasonPoints)} pts`:`Score ${fmt(r.score)}`}</span>`:`<span>${state.rankMode==='season'?`${fmt(r.seasonPoints)} pts`:`Score ${fmt(r.score)}`}</span>`}</div></div>`}
+function rankRow(r){const medal=r.position===1?'🥇':r.position===2?'🥈':r.position===3?'🥉':`${r.position}º`;return `<div class="pk-rank-row"><div class="pk-rank-pos">${medal}</div><div class="pk-rank-user"><a class="pk-rank-person" href="/pokemon-profile.html?p=${encodeURIComponent(r.slug||'')}">${playerAvatar(r.avatar,r.userName)}<b>${esc(r.userName)}</b></a><span>${r.league?.icon||'🏆'} ${esc(r.league?.label||'Liga')} · Arena ${fmt(r.arenaRating)} · ${fmt(r.uniquePokemon)} espécies</span></div><div class="pk-rank-best">${r.best?`<img src="${imageUrl(r.best.species)}" data-fallback="${esc(fallback(r.best.species))}"><span>${esc(r.best.name)}<br>${state.rankMode==='season'?`${fmt(r.seasonPoints)} pts`:`Score ${fmt(r.score)}`}</span>`:`<span>${state.rankMode==='season'?`${fmt(r.seasonPoints)} pts`:`Score ${fmt(r.score)}`}</span>`}</div></div>`}
 
 function marketTime(ms){ms=Math.max(0,Number(ms)||0);const h=Math.floor(ms/3600000),m=Math.ceil((ms%3600000)/60000);return h?`${h}h ${m}min`:`${Math.max(1,m)}min`}
 function auctionCard(a){
@@ -494,7 +516,7 @@ function tradeCard(t,p){
   const incoming=t.incoming===true;
   return `<article class="pk-trade-card"><header><span>${incoming?'📥 RECEBIDA':'📤 ENVIADA'}</span><small>${esc(t.id)}</small></header><div class="pk-trade-vs"><div><img src="${imageUrl(t.offer.species)}" data-fallback="${esc(fallback(t.offer.species))}"><b>${esc(t.offer.name)}</b><small>${esc(t.fromName)}</small></div><strong>⇄</strong><div><img src="${imageUrl(t.request.species)}" data-fallback="${esc(fallback(t.request.species))}"><b>${esc(t.request.name)}</b><small>${esc(t.toName)}</small></div></div>${incoming?`<div class="pk-actions"><button class="pk-primary" data-action="trade-resolve" data-id="${esc(t.id)}" data-accept="1">Aceitar</button><button class="pk-danger" data-action="trade-resolve" data-id="${esc(t.id)}" data-accept="0">Recusar</button></div>`:'<div class="pk-safe-note">Aguardando resposta do outro treinador.</div>'}</article>`
 }
-function marketHTML(p){
+function marketHTML(p){if(p.identity?.guest)return registerCTA();
   const m=state.market;
   if(!m)return `<section class="pk-card"><div class="pk-card-head"><div><h3>🔄 Mercado Pokémon</h3><p>Carregando trocas e leilões...</p></div><div class="pk-icon">🔄</div></div></section>`;
   const eligible=m.eligiblePokemon||[];
@@ -514,7 +536,7 @@ function tradeTargetHTML(target,eligible){
   const list=target.tradeCollection||[];
   return `<div class="pk-trade-target"><div class="pk-target-head"><b>${esc(target.userName)}</b><a href="/pokemon-profile.html?p=${encodeURIComponent(target.slug)}" target="_blank">ver perfil</a></div><label>Você oferece</label><select id="pkTradeOwn">${eligible.map(x=>`<option value="${esc(x.uid)}">${esc(x.name)} · CP ${fmt(x.cp)}</option>`).join('')}</select><label>Você quer</label><select id="pkTradeWant">${list.map(x=>`<option value="${esc(x.uid)}">${x.shiny?'✨ ':''}${esc(x.name)} · CP ${fmt(x.cp)}</option>`).join('')}</select><button class="pk-primary" data-action="trade-create" data-slug="${esc(target.slug)}" ${eligible.length&&list.length?'':'disabled'}>Enviar proposta</button></div>`
 }
-async function loadMarket(silent=false){try{const d=await api('/api/pokemon-adventure/market');state.market=d;if(d.profile)state.profile=d.profile;if(state.tab==='market'){render();if(state.focusAuction)setTimeout(()=>document.querySelector(`[data-auction-card="${CSS.escape(state.focusAuction)}"]`)?.scrollIntoView({behavior:'smooth',block:'center'}),120)}}catch(e){if(!silent)toast(e.message,'err')}}
+async function loadMarket(silent=false){if(state.profile?.identity?.guest){state.market=null;if(state.tab==='market')render();return;}try{const d=await api('/api/pokemon-adventure/market');state.market=d;if(d.profile)state.profile=d.profile;if(state.tab==='market'){render();if(state.focusAuction)setTimeout(()=>document.querySelector(`[data-auction-card="${CSS.escape(state.focusAuction)}"]`)?.scrollIntoView({behavior:'smooth',block:'center'}),120)}}catch(e){if(!silent)toast(e.message,'err')}}
 async function loadTradeTargetBySlug(slug){
   try{
     const pub=await fetch(proxyUrl(`${BACKEND}/api/pokemon-adventure/public-profile/${encodeURIComponent(slug)}`),{mode:'cors'});
@@ -533,7 +555,7 @@ function bossScheduleHTML(d){
 }
 function bossRankHTML(b){
   const rows=b?.leaderboard||[];
-  return `<div class="pk-boss-rank">${rows.length?rows.slice(0,10).map(x=>`<div class="${x.isMe?'me':''}"><span>${x.position===1?'🥇':x.position===2?'🥈':x.position===3?'🥉':x.position+'.'}</span><b>${esc(x.userName)}</b><strong>${fmt(x.damage)} dano</strong><small>${fmt(x.attacks)} ataques</small></div>`).join(''):'<div class="pk-empty"><b>Ninguém atacou ainda</b>O primeiro golpe pode ser seu.</div>'}</div>`
+  return `<div class="pk-boss-rank">${rows.length?rows.slice(0,10).map(x=>`<div class="${x.isMe?'me':''}"><span>${x.position===1?'🥇':x.position===2?'🥈':x.position===3?'🥉':x.position+'.'}</span><a class="pk-rank-person" href="/pokemon-profile.html?p=${encodeURIComponent(x.slug||'')}">${playerAvatar(x.avatar,x.userName)}<b>${esc(x.userName)}</b></a><strong>${fmt(x.damage)} dano</strong><small>${fmt(x.attacks)} ataques</small></div>`).join(''):'<div class="pk-empty"><b>Ninguém atacou ainda</b>O primeiro golpe pode ser seu.</div>'}</div>`
 }
 function bossHTML(p){
   const d=state.boss;
@@ -582,7 +604,7 @@ function hallHTML(){
   if(!h&&state.hallError)return `<section class="pk-card pk-load-error"><span aria-hidden="true">🏛️</span><h3>O Hall ainda não carregou</h3><p>Não foi possível buscar os recordes. Você pode tentar novamente.</p><button class="pk-primary" data-action="hall-refresh">Tentar novamente</button></section>`;
   if(!h)return `<section class="pk-card"><div class="pk-card-head"><div><h3>🏛️ Hall da Fama</h3><p>Carregando os maiores recordes do Pokémon Adventure…</p></div><div class="pk-icon">🏛️</div></div></section>`;
   return `<section class="pk-card pk-hall-shell"><div class="pk-card-head"><div><div class="pk-live">● RECORDES AO VIVO</div><h3>🏛️ Hall da Fama</h3><p>Não existe um único jeito de ser lendário. Cada categoria celebra uma parte diferente da jornada.</p></div><button class="pk-ghost" data-action="hall-refresh">Atualizar</button></div>
-    <div class="pk-hall-grid">${Object.entries(h).map(([key,cat])=>`<article class="pk-hall-card"><header><span>${cat.icon}</span><div><b>${esc(cat.title)}</b><small>${esc(cat.description)}</small></div></header><div>${(cat.rows||[]).slice(0,5).map(r=>`<a href="${r.slug?`/pokemon-profile.html?p=${encodeURIComponent(r.slug)}`:'#'}" class="pk-hall-row"><span>${r.position===1?'🥇':r.position===2?'🥈':r.position===3?'🥉':r.position+'.'}</span><b>${esc(r.userName)}</b><strong>${hallValue(key,r)}</strong></a>`).join('')}</div></article>`).join('')}</div>
+    <div class="pk-hall-grid">${Object.entries(h).map(([key,cat])=>`<article class="pk-hall-card"><header><span>${cat.icon}</span><div><b>${esc(cat.title)}</b><small>${esc(cat.description)}</small></div></header><div>${(cat.rows||[]).slice(0,5).map(r=>`<a href="${r.slug?`/pokemon-profile.html?p=${encodeURIComponent(r.slug)}`:'#'}" class="pk-hall-row"><span>${r.position===1?'🥇':r.position===2?'🥈':r.position===3?'🥉':r.position+'.'}</span><b class="pk-rank-person">${playerAvatar(r.avatar,r.userName)}${esc(r.userName)}</b><strong>${hallValue(key,r)}</strong></a>`).join('')}</div></article>`).join('')}</div>
   </section>`
 }
 async function loadBoss(silent=false){
@@ -622,7 +644,7 @@ function detailHTML(x,p){
   <div class="pk-detail-hero"><img src="${imageUrl(x.species)}" data-fallback="${esc(fallback(x.species))}" alt="${esc(x.name)}"><div><p style="color:var(--muted);line-height:1.6;font-size:.78rem">${esc(typesLabel(x.types))}<br>Lv.${x.level} · XP ${fmt(x.xp)} · CP ${fmt(x.cp)}<br>IV ${Math.max(0,ivTotal)}%</p><div class="pk-actions"><button class="pk-primary" data-action="champion" data-uid="${esc(x.uid)}">⭐ Definir parceiro</button>${ev&&x.level>=Number(ev.minLevel||999)?`<button class="pk-secondary" data-action="evolve" data-uid="${esc(x.uid)}">🌟 Evoluir para ${esc(ev.name)}</button>`:''}</div></div></div>
   <div class="pk-stats">${[['HP',stats.hp],['Ataque',stats.attack],['Defesa',stats.defense],['Atq. Especial',stats.specialAttack],['Def. Especial',stats.specialDefense],['Velocidade',stats.speed]].map(([n,v])=>`<div class="pk-stat"><span>${n}</span><b>${fmt(v||0)}</b></div>`).join('')}</div>
   ${rec.recovering?`<div class="pk-recovery-box"><div><b>💚 Em recuperação</b><span>Disponível em ${esc(timeLeft(rec.readyAt))}. Enquanto isso não pode treinar nem batalhar.</span></div><button class="pk-secondary" data-action="recover" data-uid="${esc(x.uid)}">✨ Acelerar · ${fmt(rec.stardustCost)} Pó</button></div>`:''}
-  <div class="pk-card" style="margin-top:12px"><div class="pk-card-head"><div><h3>💚 Cuidado e Laço</h3><p>Laço ${x.care?.bond||0}/100 · Humor ${x.care?.mood||50}/100. Berries favoritas mantêm um bônus temporário para Treino Intensivo.</p></div></div><div class="pk-berry-row">${Object.entries(p.farm?.pantry||{}).filter(([,v])=>v>0).map(([k,v])=>`<button class="pk-ghost" data-action="feed" data-uid="${esc(x.uid)}" data-berry="${k}">${k} ×${v}</button>`).join('')||'<span style="color:var(--muted);font-size:.72rem">Sua despensa está vazia. Visite a Fazenda.</span>'}</div></div>
+  <div class="pk-card" style="margin-top:12px"><div class="pk-card-head"><div><h3>💚 Cuidado e Laço</h3><p>Laço ${x.care?.bond||0}/100 · Humor ${x.care?.mood||50}/100. Saciedade ${x.care?.fullness||0}%. Berries marcadas com ♥ são favoritas e dão um bônus mais longo. Aguarde 15 minutos entre refeições.</p></div></div><div class="pk-berry-row">${Object.entries(p.farm?.pantry||{}).filter(([,v])=>v>0).map(([k,v])=>`<button class="pk-ghost" data-action="feed" data-uid="${esc(x.uid)}" data-berry="${k}" ${x.care?.canFeed===false?'disabled':''}>${x.care?.favorites?.includes(k)?'♥ ':''}${esc(p.farm?.crops?.[k]?.label||k)} ×${v}</button>`).join('')||'<span style="color:var(--muted);font-size:.72rem">Sua despensa está vazia. Visite a Fazenda.</span>'}</div></div>
   <div class="pk-card" style="margin-top:12px"><div class="pk-card-head"><div><h3>🏋️ Centro de Treino</h3><p>Treino normal: 3 grátis/dia e depois Tickets. Intensivo: 160✨, até 2/dia, com ganhos maiores.</p></div></div><div class="pk-train-grid">${[['balanced','Equilibrado'],['attack','Ataque'],['defense','Defesa'],['hp','HP'],['speed','Velocidade'],['specialAttack','Atq. Esp.'],['specialDefense','Def. Esp.']].map(([k,n])=>`<div><b>${n}</b><button data-action="train" data-mode="standard" data-uid="${esc(x.uid)}" data-focus="${k}" ${rec.recovering?'disabled':''}>Normal</button><button class="intensive" data-action="train" data-mode="intensive" data-uid="${esc(x.uid)}" data-focus="${k}" ${rec.recovering?'disabled':''}>Intensivo · 160✨</button></div>`).join('')}</div></div>`
 }
 
@@ -657,9 +679,9 @@ function seasonHTML(p){
   const sp=p.seasonPass||{},tiers=sp.tiers||[],progressInTier=Math.max(0,Number(sp.points||0)-((Number(sp.unlockedTier||1)-1)*50)),pctTier=Math.min(100,(progressInTier/50)*100);
   const product=(p.shop?.pixProducts||[]).find(x=>x.id==='seasonPass');
   return `<section class="pk-card pk-season-card">
-    <div class="pk-card-head"><div><div class="pk-live">● TEMPORADA ATIVA · 28 DIAS</div><h3>🎫 ${esc(sp.title||'Temporada 01 · Origem')}</h3><p>08/10/2026 inicia a Temporada 01. Cada temporada dura 4 semanas e tem 30 níveis.</p></div><div class="pk-icon">🎫</div></div>
+    <div class="pk-card-head"><div><div class="pk-live">● TEMPORADA ATIVA · 28 DIAS</div><h3>🎫 ${esc(sp.title||'Temporada 01 · Origem')}</h3><p>Explore, batalhe e cuide dos seus parceiros para avançar. Cada temporada tem ${tiers.length} níveis.</p></div><div class="pk-icon">🎫</div></div>
     <div class="pk-season-summary"><div><small>Pontos</small><strong>${fmt(sp.points||0)}</strong></div><div><small>Nível do Passe</small><strong>${fmt(sp.unlockedTier||1)}/30</strong></div><div><small>Termina em</small><strong>${esc(sp.endAt?seasonTimeLeft(sp.endAt):'—')}</strong></div><div><small>Premium</small><strong>${sp.premium?'Ativo ✅':'Não ativo'}</strong></div></div>
-    <div class="pk-season-progress"><span style="width:${pctTier}%"></span></div>
+    <div class="pk-actions"><button class="pk-primary" data-action="season-all" ${tiers.some(t=>t.unlocked&&(!t.free.claimed||(sp.premium&&t.premium.available&&!t.premium.claimed)))?'':'disabled'}>Coletar recompensas disponíveis</button><span>${sp.unlockedTier>=tiers.length?'Passe completo!':`${50-progressInTier} pontos para o próximo nível`}</span></div><div class="pk-season-progress"><span style="width:${pctTier}%"></span></div>
     <div class="pk-safe-note">A trilha grátis entrega recursos conquistáveis. O Premium é opcional e entrega apenas cosméticos, títulos e molduras — não aumenta CP, dano, captura ou ranking.</div>
     ${!sp.premium&&product?`<div class="pk-season-premium"><div><b>✨ Passe Premium ${esc(sp.id||'S01')}</b><span>${esc(product.description||'Recompensas cosméticas fixas.')}</span></div><button class="pk-primary" data-action="pix-buy" data-product="seasonPass">Ativar · R$ ${Number(product.price||9.9).toFixed(2).replace('.',',')}</button></div>`:''}
     <div class="pk-pass-grid">${tiers.map(t=>`<article class="pk-pass-tier ${t.unlocked?'unlocked':'locked'}"><header><b>Nível ${t.tier}</b><span>${fmt(t.requiredPoints)} pts</span></header>
@@ -711,6 +733,9 @@ async function openPix(productId){try{const d=await action('/api/pokemon-adventu
 function startPixWatch(tx){clearInterval(state.pixWatch);let n=0;state.pixWatch=setInterval(async()=>{if(++n>120){clearInterval(state.pixWatch);return}try{const d=await api('/api/pokemon-adventure/shop/pix/'+encodeURIComponent(tx));const box=$('#pkPixState');if(box)box.textContent=d.transaction.status==='approved'?'✅ Pagamento aprovado e item liberado.':`Status: ${d.transaction.status}`;if(d.transaction.status==='approved'){clearInterval(state.pixWatch);state.profile=d.profile||state.profile;toast('Compra aprovada!');setTimeout(()=>{closeModal();render()},900)}}catch(_){}},5000)}
 async function click(e){const el=e.target.closest('[data-action]');if(!el||el.disabled)return;const act=el.dataset.action;
   if(state.busy&&!['tab','close','closecine','notif-open','notif-enable','notif-read-all','hall-refresh'].includes(act))return;
+  if(act==='edit-identity'){editIdentity();return}
+  const communityActions={'welcome-claim':['welcome/claim','Presente recebido!'],'water':['farm/water','Canteiro regado!'],'harvest-all':['farm/harvest-all','Colheita guardada na despensa!'],'season-all':['season/claim-all','Recompensas do passe recebidas!']};
+  if(communityActions[act]){const [route,msg]=communityActions[act];try{await action('/api/pokemon-adventure/'+route,{plot:Number(el.dataset.plot)},()=>{toast(msg);if(act==='welcome-claim')sound('win');render()})}catch(_){}return}
   if(act==='tab'){await switchTab(el.dataset.tab,true);return}
   if(act==='biome'){state.biome=el.dataset.biome;render();return}
   if(act==='quick-hunt'){try{const d=await action('/api/pokemon-adventure/hunt',{biome:'random'},()=>{});await huntCinematic(d)}catch(_){}return}
@@ -823,5 +848,5 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el||el.di
 function input(e){const el=e.target;if(el.dataset.field==='query'){state.query=el.value;render()}if(el.dataset.field==='rarity'){state.rarity=el.value;render()}if(el.dataset.field==='bossPokemon'){state.bossPokemonUid=el.value;render()}}
 function startClock(){clearInterval(state.timer);state.timer=setInterval(()=>{if(state.busy)return;$$('[data-ready-at]').forEach(el=>{const ready=Date.parse(el.dataset.readyAt)<=Date.now();el.textContent=ready?'PRONTO':timeLeft(el.dataset.readyAt);if(ready){const card=el.closest('.pk-chest');card?.classList.add('ready');const b=card?.querySelector('[data-action="box"]');if(b){b.disabled=false;b.className='pk-primary';b.textContent='Abrir agora'}}});},15000)}
 
-document.addEventListener('click',click);document.addEventListener('input',input);document.addEventListener('change',input);$('#pkNotifBtn')?.addEventListener('click',openNotifications);boot();
+document.addEventListener('click',e=>{click(e).catch(err=>console.warn('[Pokémon]',err.message))});document.addEventListener('input',input);document.addEventListener('change',input);$('#pkNotifBtn')?.addEventListener('click',openNotifications);boot();
 })();
