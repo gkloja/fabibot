@@ -10,6 +10,11 @@
       "destination": "/pokemon",
       "permanent": true
     },
+        {
+      "source": "/como-proteger-grupo-whatsapp.html",
+      "destination": "/como-proteger-grupo-whatsapp",
+      "permanent": true
+    },
     {
       "source": "/index.html",
       "destination": "/",
