@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html data-theme="dark" lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
@@ -15,7 +15,9 @@
 <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
 <meta name="author" content="Fabi Bot">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-<meta name="theme-color" content="#16a34a">
+<meta name="theme-color" content="#080d12">
+<meta name="color-scheme" content="dark">
+<script>try{localStorage.setItem("theme","dark");localStorage.setItem("darkMode","true");}catch(_){}document.documentElement.style.colorScheme="dark";</script>
 <meta name="language" content="Portuguese">
 <meta name="geo.region" content="BR">
 <meta name="geo.placename" content="Brasil">
@@ -7018,11 +7020,12 @@ body.light-mode .command-badge-mobile {
 </style>
   <link rel="stylesheet" href="/assets/index-v3.css?v=20261007">
 <link rel="stylesheet" href="/assets/adsense-ready.css?v=20261007b">
-<link rel="stylesheet" href="/assets/fabi-home-v5.css?v=20261007">
+<link rel="stylesheet" href="/assets/fabi-home-v5.css?v=20261010home1">
 </head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
-<body>
-<button class="scroll-top" id="scrollTop"><i class="fas fa-arrow-up"></i></button>
+<body class="dark-mode">
+<a class="fabi-skip-link" href="#introSection">Pular para o conteúdo</a>
+<button class="scroll-top" id="scrollTop" type="button" aria-label="Voltar ao topo"><i class="fas fa-arrow-up"></i></button>
 
 
 
@@ -7053,15 +7056,12 @@ body.light-mode .command-badge-mobile {
     <a href="/pokemon.html" title="Pokémon Adventure" style="color:#7ee7b4;font-weight:800;">◉ Pokémon</a>
     <a href="?perfil" data-section="perfil">Perfil</a>
 </div>
-        <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menu" aria-controls="mainMenu" aria-expanded="false"><i class="fas fa-bars"></i></button>
 <div class="right-nav">
     <button class="icon-btn" id="musicPlayerBtn" onclick="toggleMusicNavbar()" title="Música de fundo">
         <i class="fas fa-music" id="musicIcon"></i>
     </button>
-    <button class="icon-btn" id="darkModeHeaderBtn" onclick="toggleDarkMode()" title="Alternar modo escuro/claro">
-        <i class="fas fa-moon" id="themeIconHeader"></i>
-    </button>
-    <button class="icon-btn" id="notificationBtn"><i class="fa-regular fa-bell"></i></button>
+<button class="icon-btn" id="notificationBtn" aria-label="Notificações"><i class="fa-regular fa-bell"></i></button>
     <div id="profileContainer"></div>
 
     <!-- Modal de Perfil / Trocar Foto (igual ao Index) -->
@@ -7094,21 +7094,16 @@ body.light-mode .command-badge-mobile {
 <button class="bottom-nav-item" data-section="comunidades">
     <i class="fas fa-users"></i>
     <span class="badge-count" id="bottomComunidadesBadge">0</span>
-    <span>Comunidades</span>
+    <span>Grupos</span>
 </button>
-        <button class="bottom-nav-item" data-section="configurar">
-            <i class="fas fa-cog"></i><span>Config.</span>
-        </button>
+
 <button class="bottom-nav-item" data-section="comandos" style="position: relative;">
     <i class="fas fa-terminal"></i>
     <span class="badge-count" id="bottomComandosBadge">0</span>
     <span class="badge-count badge-relatos" id="bottomRelatosBadge" style="display:none;">0</span>
     <span>Comandos</span>
 </button>
-        <button class="bottom-nav-item" data-section="depoimentos" style="position: relative;">
-            <i class="fas fa-quote-left"></i>
-            <span>Depoimentos</span>
-        </button>
+
         <a class="bottom-nav-item" href="/pokemon.html" style="position:relative;text-decoration:none;color:inherit;">
             <i class="fas fa-compass"></i><span>Pokémon</span>
         </a>
@@ -7121,6 +7116,8 @@ body.light-mode .command-badge-mobile {
 <!-- Menu "Mais" (Perfil, Assistir, Música, e futuros atalhos) -->
 <div class="bottom-nav-mais-overlay" id="bottomNavMaisOverlay" onclick="toggleMaisMenu(false)"></div>
 <div class="bottom-nav-mais-menu" id="bottomNavMaisMenu">
+    <button class="bottom-nav-mais-item" data-section="configurar" onclick="mudarSecao('configurar'); toggleMaisMenu(false);"><i class="fas fa-sliders" aria-hidden="true"></i><span>Configurar grupos</span></button>
+    <button class="bottom-nav-mais-item" data-section="depoimentos" onclick="mudarSecao('depoimentos'); toggleMaisMenu(false);"><i class="fas fa-quote-left" aria-hidden="true"></i><span>Depoimentos</span></button>
     <a class="bottom-nav-mais-item" href="golds.html" style="text-decoration:none;color:inherit;opacity:.72;">
         <i class="fas fa-coins"></i><span>Golds (legado)</span>
     </a>
@@ -7149,19 +7146,27 @@ body.light-mode .command-badge-mobile {
 <!-- INTRO HERO — Fabi segura os CTAs (imagem/vídeo + hotspots) -->
 <!-- Arquivos: /fabi-cta.jpg (poster) e /fabi-mascote.mp4 (loop opcional) -->
 <!-- ============================================================ -->
-<section class="fz-intro-section" id="introSection">
+<section class="fz-intro-section" id="introSection" tabindex="-1">
   <div class="container fz-intro-cta">
     <div class="fz-intro-cta-text">
-      <span class="fz-intro-badge"><i class="fas fa-bolt"></i> Conheça a Fabi Bot</span>
-      <h1 class="fz-intro-title">Conecte a <span>Fabi Bot</span><br>no seu grupo</h1>
+      <span class="fz-intro-badge"><span class="fabi-hero-dot" aria-hidden="true"></span> SEU GRUPO. MUITO MAIS POSSIBILIDADES.</span>
+      <h1 class="fz-intro-title">Menos trabalho.<br><span>Mais vida no seu grupo.</span></h1>
       <p class="fz-intro-subtitle">
-        Figurinhas, automação, ferramentas de mídia, IA e proteção de grupos — direto no WhatsApp.
+        A Fabi cuida da rotina do seu grupo com proteção, automação e IA. Você aproveita as conversas, as figurinhas e a diversão.
       </p>
+      <div class="fabi-hero-actions">
+        <a class="fabi-main-cta" href="/conectar.html">Conectar a Fabi <span aria-hidden="true">↗</span></a>
+        <a class="fabi-secondary-cta" href="?comandos" onclick="event.preventDefault();mudarSecao('comandos');">Explorar comandos</a>
+      </div>
+      <div class="fabi-hero-features" aria-label="Recursos da Fabi"><span>✦ Proteção de grupos</span><span>✦ Inteligência artificial</span><span>✦ Pokémon e diversão</span></div>
+      <a class="fabi-hero-guide" href="/como-conectar-bot-whatsapp.html">Primeira vez por aqui? Veja como começar <span aria-hidden="true">→</span></a>
     </div>
 
     <!-- 1) Vídeo tutorial — SÓ visitante, aparece PRIMEIRO -->
+    <details class="fabi-tutorial" id="fabiTutorial">
+      <summary><span>▶</span><div><strong>Veja a Fabi em ação</strong><small>Abra o vídeo para conhecer os recursos.</small></div><b aria-hidden="true">+</b></summary>
     <div class="fz-intro-video-wrap" id="introVideoWrap" style="display:none;">
-      <video id="fabibot-video" class="fz-intro-video" preload="metadata" poster="/flogo.jpg" controls playsinline>
+      <video id="fabibot-video" class="fz-intro-video" preload="none" poster="/flogo.jpg" controls playsinline>
         <source src="fabibot.mp4" type="video/mp4">
         Seu navegador não suporta vídeos HTML5.
       </video>
@@ -7177,6 +7182,8 @@ body.light-mode .command-badge-mobile {
         </a>
       </div>
     </div>
+
+    </details>
 
     <!-- 2) Personagem + hotspots (sempre; visitante vê depois do tutorial) -->
     <div class="fz-fabi-stage" id="fabiCtaStage" style="display:none;">
@@ -7590,6 +7597,8 @@ body.light-mode #pokemonHomePromo .pkh-btn.secondary{color:#223129;background:rg
         }
       }
     } catch (e) {}
+    var tutorial = document.getElementById('fabiTutorial');
+    if(tutorial)tutorial.hidden=logado;
     var hl = document.getElementById('hotspotsLogado');
     var hv = document.getElementById('hotspotsVisitante');
     var extra = document.getElementById('introActionsLogado');
@@ -7607,12 +7616,12 @@ body.light-mode #pokemonHomePromo .pkh-btn.secondary{color:#223129;background:rg
       // tenta tocar o loop da mascote
       try {
         var m = document.getElementById('fabiMascot');
-        if (m) { m.muted = true; m.play().catch(function(){}); }
+        if (m && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) { m.muted = true; m.play().catch(function(){}); }
       } catch(e) {}
     } else {
-      // Visitante: SÓ vídeo tutorial (sem personagem/botões)
-      if (stage) stage.style.display = 'none';
-      if (hl) hl.style.display = 'none';
+      // Visitante: mascote com ações e tutorial opcional.
+      if (stage) stage.style.display = 'block';
+      if (hl) { hl.style.display = 'block'; hl.style.pointerEvents = 'auto'; }
       if (hv) hv.style.display = 'none';
       if (extra) extra.style.display = 'none';
       if (videoEl) videoEl.style.display = 'block';
@@ -7632,6 +7641,7 @@ body.light-mode #pokemonHomePromo .pkh-btn.secondary{color:#223129;background:rg
     var v = document.getElementById('fabiMascot');
     var img = document.getElementById('fabiCtaImg');
     if (!v) return;
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){v.pause();v.style.display='none';if(img)img.style.display='block';return;}
     v.muted = true;
     var p = v.play();
     if (p && p.catch) {
@@ -13157,20 +13167,14 @@ function compartilharWhatsAppWatch(url, title) {
 
 // ==================== ATALHO FLUTUANTE PARA TEMA ====================
 
-function toggleDarkMode() {
-    const isDark = document.body.classList.toggle('dark-mode');
-    document.body.classList.toggle('light-mode', !isDark);
-    
-    localStorage.setItem('darkMode', isDark);
-    
-    // Atualiza o ícone do header
-    const themeIconHeader = document.getElementById('themeIconHeader');
-    if (themeIconHeader) {
-        themeIconHeader.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-    }
-    
-    showToastMsg(isDark ? '🌙 Modo escuro ativado' : '☀️ Modo claro ativado', 'success');
+function aplicarTemaEscuro() {
+    document.body.classList.remove('light-mode');
+    document.body.classList.add('dark-mode');
+    document.documentElement.dataset.theme='dark';
+    document.documentElement.style.colorScheme='dark';
+    try{localStorage.setItem('theme','dark');localStorage.setItem('darkMode','true');}catch(_){}
 }
+function toggleDarkMode() { aplicarTemaEscuro(); }
 // Configurar eventos dos novos elementos (adicione dentro do initComunidades ou no inicializador)
 
 // ==================== BOTÃO DE MÚSICA (atalho) ====================
@@ -13243,31 +13247,7 @@ function showToastMsg(message, type = 'success') {
     }
 }
 
-function initThemeFloating() {
-    const savedMode = localStorage.getItem('darkMode');
-    const themeIconHeader = document.getElementById('themeIconHeader');
-    
-    if (savedMode === 'true') {
-        document.body.classList.add('dark-mode');
-        document.body.classList.remove('light-mode');
-        if (themeIconHeader) themeIconHeader.className = 'fas fa-sun';
-    } else if (savedMode === 'false') {
-        document.body.classList.add('light-mode');
-        document.body.classList.remove('dark-mode');
-        if (themeIconHeader) themeIconHeader.className = 'fas fa-moon';
-    } else {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (prefersDark) {
-            document.body.classList.add('dark-mode');
-            document.body.classList.remove('light-mode');
-            if (themeIconHeader) themeIconHeader.className = 'fas fa-sun';
-        } else {
-            document.body.classList.add('light-mode');
-            document.body.classList.remove('dark-mode');
-            if (themeIconHeader) themeIconHeader.className = 'fas fa-moon';
-        }
-    }
-}
+function initThemeFloating() { aplicarTemaEscuro(); }
 
 // Chamar no inicializador
 const initThemeFloatingOriginal = initThemeFloating;
@@ -18752,31 +18732,19 @@ function abrirConfiguracoes() {
                     <label>Nome de exibição</label>
                     <input type="text" id="configNome" value="${escapeHtml(currentUser.nome)}" class="swal2-input">
                 </div>
-                <div class="form-group">
-                    <label>Tema</label>
-                    <select id="configTema" class="swal2-input">
-                        <option value="light" ${document.body.classList.contains('light-mode') ? 'selected' : ''}>Claro</option>
-                        <option value="dark" ${!document.body.classList.contains('light-mode') ? 'selected' : ''}>Escuro</option>
-                    </select>
-                </div>
+
             </div>`,
         confirmButtonText: 'Salvar',
         showCancelButton: true,
         cancelButtonText: 'Cancelar',
         preConfirm: () => {
             const nome = document.getElementById('configNome').value;
-            const tema = document.getElementById('configTema').value;
             if (nome && nome !== currentUser.nome) {
                 currentUser.nome = nome;
                 salvarSessao();
                 atualizarPerfilUI();
             }
-            if (tema === 'light') {
-                document.body.classList.add('light-mode');
-            } else {
-                document.body.classList.remove('light-mode');
-            }
-            localStorage.setItem('theme', tema);
+            aplicarTemaEscuro();
             renderizarPerfil();
         }
     });
@@ -19432,7 +19400,7 @@ function mudarSecao(section, options = {}) {
 
     // "Assistir" e "Música" agora vivem dentro do menu "Mais" do rodapé
     const maisBtn = document.getElementById('maisNavBtn');
-    if (maisBtn) maisBtn.classList.toggle('active', section === 'radio' || section === 'perfil');
+    if (maisBtn) maisBtn.classList.toggle('active', ['radio', 'perfil', 'configurar', 'depoimentos'].includes(section));
     document.querySelectorAll('.bottom-nav-mais-item').forEach(i => {
         i.classList.toggle('active', i.dataset.section === section);
     });
@@ -19920,22 +19888,7 @@ function tornarLinksClicaveis(texto, imagemUrl = null) {
 
     // ==================== THEME ====================
     
-    function initTheme() {
-    const saved = localStorage.getItem('theme');
-    // Se não tiver tema salvo, usa o modo claro como padrão
-    if (saved === null || saved === 'light') {
-        document.body.classList.add('light-mode');
-
-
-        if (saved === null) {
-            localStorage.setItem('theme', 'light');
-        }
-    } else {
-        document.body.classList.remove('light-mode');
-    }
-}
-    
-    
+    function initTheme() { aplicarTemaEscuro(); }
 
     // ==================== EVENTOS ====================
     
@@ -19946,9 +19899,7 @@ document.getElementById('notificationBtn')?.addEventListener('click', mostrarNot
 setInterval(verificarNotificacoes, 30000);
 
     
-    document.getElementById('notificationBtn')?.addEventListener('click', () => {
-        Swal.fire('Notificações', '📢 Sistema funcionando normalmente!', 'info');
-    });
+
     
     document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
         document.getElementById('mainMenu')?.classList.toggle('show');
@@ -21005,6 +20956,6 @@ window.addEventListener('beforeunload', () => {
 </div>
 
 
-<script src="/assets/fabi-home-v5.js?v=20261007" defer></script>
+<script src="/assets/fabi-home-v5.js?v=20261010home1" defer></script>
 </body>
 </html>
