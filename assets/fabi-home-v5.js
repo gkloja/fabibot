@@ -642,11 +642,14 @@ function boot(){
   hookSections();
   hookTestimonialButtons();
   loadTestimonials();
-  const tutorial=document.getElementById('fabiTutorial');
-  tutorial?.addEventListener('toggle',()=>{if(!tutorial.open)document.getElementById('fabibot-video')?.pause();});
+  document.getElementById('gruposGrid')?.addEventListener('click',e=>{
+    const button=e.target.closest('[data-group-details]');
+    if(button)window.abrirDetalhesGrupoMelhorado?.(button.dataset.groupDetails);
+  });
   const mobileMenu=document.getElementById('mainMenu'),menuButton=document.getElementById('mobileMenuBtn');
   if(mobileMenu&&menuButton){
     const updateMenu=()=>{const open=mobileMenu.classList.contains('show');menuButton.setAttribute('aria-expanded',String(open));menuButton.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');};
+    document.addEventListener('click',e=>{if(!mobileMenu.contains(e.target)&&!menuButton.contains(e.target))mobileMenu.classList.remove('show');});
     new MutationObserver(updateMenu).observe(mobileMenu,{attributes:true,attributeFilter:['class']});updateMenu();
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileMenu.classList.contains('show')){mobileMenu.classList.remove('show');menuButton.focus();}});
   }
