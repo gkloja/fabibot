@@ -1,0 +1,20 @@
+{
+  "redirects": [
+    {
+      "source": "/pokemon-profile.html",
+      "destination": "/pokemon-profile",
+      "permanent": true
+    },
+    {
+      "source": "/pokemon-profile/",
+      "destination": "/pokemon-profile",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/pokemon-profile",
+      "destination": "/pokemon-profile.html"
+    }
+  ]
+}
