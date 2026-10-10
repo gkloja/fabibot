@@ -13,7 +13,21 @@ function imageUrl(sp){const id=Number(sp?.id||sp?.speciesId||0);return id?proxyU
 function fallback(sp){const l=speciesLocal(sp?.id||sp?.speciesId);return sp?.artworkFallback||sp?.artwork||l?.artwork||l?.sprites?.official||'/flogo.jpg'}
 function bind(){document.querySelectorAll('img[data-fallback]').forEach(img=>img.addEventListener('error',()=>{const f=img.dataset.fallback;if(f&&img.src!==f)img.src=f},{once:true}))}
 function rarity(r){return({common:'Comum',uncommon:'Incomum',rare:'Raro',epic:'Épico',legendary:'Lendário',mythical:'Mítico'})[r]||r}
-function avatarUrl(v){if(!v)return '/flogo.jpg';if(v.startsWith('/uploads/'))return proxyUrl(BACKEND+v);if(/^https:\/\//.test(v))return v;if(/^http:\/\//.test(v))return proxyUrl(v);return '/flogo.jpg';}
+function avatarUrl(value){
+  const v=String(value||'').trim();
+  if(!v||v==='/flogo.jpg'||v==='flogo.jpg')return '/flogo.jpg';
+  if(/^data:image\/(jpeg|png|webp);base64,/i.test(v))return v;
+  if(/^(javascript|data|blob):/i.test(v))return '/flogo.jpg';
+  if(v.startsWith('//'))return 'https:'+v;
+  if(/^https?:\/\//i.test(v)){
+    const u=new URL(v);
+    if(/^\/uploads\//i.test(u.pathname)&&['fabibot.com.br','www.fabibot.com.br','fabibot.vercel.app'].includes(u.hostname))return proxyUrl(BACKEND+u.pathname+u.search);
+    return u.protocol==='http:'?proxyUrl(v):v;
+  }
+  const clean=v.replace(/^\.\//,'').replace(/^\//,'');
+  if(/^(uploads|perfil|perfis|avatars?|fotos?|imagens)\//i.test(clean))return proxyUrl(BACKEND+'/'+clean);
+  return '/'+clean;
+}
 function render(p){
  const c=p.champion,h=p.highlights||[],s=p.stats||{},social=p.social||{},season=p.season||{};
  $('#pkPublicApp').innerHTML=`<section class="pk-public-hero"><div><div class="pk-eyebrow">◉ PERFIL PÚBLICO</div><img class="pk-player-avatar" src="${esc(avatarUrl(p.avatar))}" alt="Foto de ${esc(p.userName)}" width="88" height="88" data-fallback="/flogo.jpg"><h1>${esc(p.userName)}</h1><p>${p.league?.icon||'🏆'} ${esc(p.league?.label||'Liga')} · Nível ${fmt(p.trainer?.level)} · Arena ${fmt(p.trainer?.arenaRating)}</p>

@@ -13,7 +13,8 @@ function proxyUrl(target){
 const CATALOG_URL='/assets/pokemons.json';
 let LOCAL_CATALOG=null;
 const APP_ID='6ba779b7-14c6-4a31-b955-0c8567a9039b';
-const state={profile:null,ranking:[],market:null,tradeTarget:null,notifications:[],boss:null,hall:null,unread:0,tab:'world',biome:'random',busy:false,query:'',rarity:'all',timer:null,rankTimer:null,notifTimer:null,bossTimer:null,hallTimer:null,rankMode:'global',pixWatch:null,focusAuction:null,bossPokemonUid:null};
+const state={profile:null,ranking:[],market:null,tradeTarget:null,notifications:[],boss:null,hall:null,unread:0,tab:'world',biome:'random',busy:false,query:'',rarity:'all',timer:null,rankTimer:null,notifTimer:null,bossTimer:null,hallTimer:null,rankMode:'global',pixWatch:null,focusAuction:null,bossPokemonUid:null,bossReadyAt:0};
+setInterval(()=>{if(document.hidden||state.tab!=='boss')return;const b=document.querySelector('[data-action="boss-quick"]');if(!b)return;const until=Math.max(state.bossReadyAt,Date.parse(state.boss?.active?.me?.nextAttackAt||0)||0),seconds=Math.max(0,Math.ceil((until-Date.now())/1000));b.textContent=seconds?`⏳ Próximo ataque em ${seconds}s`:'⚡ Ataque rápido · escolher por mim';b.disabled=state.busy||seconds>0||!(state.boss?.eligiblePokemon||[]).some(p=>p.available);document.querySelectorAll('[data-action="boss-attack"]').forEach(x=>{x.disabled=state.busy||seconds>0;});},1000);
 const TAB_IDS=['world','collection','farm','missions','arena','boss','season','ranking','hall','market','shop','achievements'];
 let modalVersion=0,modalReturnFocus=null,hallRequest=null;
 const pendingReads=new Set();
@@ -358,7 +359,21 @@ async function shareAuction(a){
 let playerSession={};
 try{playerSession=JSON.parse(localStorage.getItem('pk_player_session')||'{}')}catch(_){}
 function savePlayerSession(d){playerSession={token:d.token,guest:d.guest,account:session().numero};localStorage.setItem('pk_player_session',JSON.stringify(playerSession));if(d.guest)localStorage.setItem('pk_guest_token',d.token);}
-function avatarUrl(value){if(!value)return '/flogo.jpg';if(/^data:image\/(jpeg|png|webp);base64,/.test(value))return value;if(value.startsWith('/uploads/'))return proxyUrl(BACKEND+value);if(/^https:\/\//.test(value))return value;if(/^http:\/\//.test(value))return proxyUrl(value);return '/flogo.jpg';}
+function avatarUrl(value){
+  const v=String(value||'').trim();
+  if(!v||v==='/flogo.jpg'||v==='flogo.jpg')return '/flogo.jpg';
+  if(/^data:image\/(jpeg|png|webp);base64,/i.test(v))return v;
+  if(/^(javascript|data|blob):/i.test(v))return '/flogo.jpg';
+  if(v.startsWith('//'))return 'https:'+v;
+  if(/^https?:\/\//i.test(v)){
+    const u=new URL(v);
+    if(/^\/uploads\//i.test(u.pathname)&&['fabibot.com.br','www.fabibot.com.br','fabibot.vercel.app'].includes(u.hostname))return proxyUrl(BACKEND+u.pathname+u.search);
+    return u.protocol==='http:'?proxyUrl(v):v;
+  }
+  const clean=v.replace(/^\.\//,'').replace(/^\//,'');
+  if(/^(uploads|perfil|perfis|avatars?|fotos?|imagens)\//i.test(clean))return proxyUrl(BACKEND+'/'+clean);
+  return '/'+clean;
+}
 function playerAvatar(value,name='Treinador'){return `<img class="pk-player-avatar" src="${esc(avatarUrl(value))}" alt="Foto de ${esc(name)}" width="44" height="44" data-fallback="/flogo.jpg" loading="lazy">`}
 function registerCTA(){return `<aside class="pk-join-note"><span>💬</span><div><b>Sua aventura também pode continuar no WhatsApp.</b><p>Crie uma conta Fabi para participar dos Pokémon Drops nos grupos e acessar trocas. Ao entrar em uma conta sem coleção, levamos seu progresso de convidado com você.</p><a href="/login.html?redirect=%2Fpokemon#registration" class="pk-link-btn pk-ghost">Criar minha conta</a> <a href="/login.html?redirect=%2Fpokemon" class="pk-link-btn pk-ghost">Já tenho conta</a><small>Enquanto for convidado, conserve os dados deste navegador para voltar ao jogo.</small></div></aside>`}
 function renderLogin(){
@@ -562,6 +577,7 @@ function bossHTML(p){
   if(!d)return `<section class="pk-card"><div class="pk-card-head"><div><h3>👹 World Boss</h3><p>Carregando incursão global…</p></div><div class="pk-icon">👹</div></div></section>`;
   const b=d.active||d.next||d.featured;
   if(!b)return `<section class="pk-card"><div class="pk-card-head"><div><h3>👹 World Boss</h3><p>Nenhuma incursão disponível.</p></div></div>${bossScheduleHTML(d)}</section>`;
+  const cooldown=Math.max(0,Math.ceil((Math.max(state.bossReadyAt,Date.parse(b.me?.nextAttackAt||0)||0)-Date.now())/1000));
   const active=b.status==='active',defeated=b.status==='defeated',pct=Math.max(0,Math.min(100,Number(b.hpPct||0)*100));
   const eligible=(d.eligiblePokemon||[]).filter(x=>x.available);
   if(!state.bossPokemonUid||!eligible.some(x=>x.uid===state.bossPokemonUid))state.bossPokemonUid=eligible[0]?.uid||null;
@@ -575,8 +591,8 @@ function bossHTML(p){
         <div class="pk-boss-meta"><span>👥 ${fmt(b.participants)} participantes</span><span>💪 Comunidade ${fmt(b.community?.totalPower||0)}</span><span>⏳ ${active?bossCountdown(b.remainingMs):defeated?'Finalizado':`começa em ${bossCountdown(b.remainingMs)}`}</span></div>
         ${b.finalHitter?`<div class="pk-final-hit">🌟 Golpe final: <b>${esc(b.finalHitter.userName)}</b></div>`:''}
       </div></div>
-      ${active?`<div class="pk-boss-controls"><label>Seu Pokémon</label><select id="pkBossPokemon" data-field="bossPokemon">${eligible.map(x=>`<option value="${esc(x.uid)}" ${x.uid===state.bossPokemonUid?'selected':''}>${x.shiny?'✨ ':''}${esc(x.name)} · CP ${fmt(x.cp)} · HP ${fmt(x.raidHp)}/${fmt(x.raidMaxHp)}</option>`).join('')}</select>
-        ${mon?`<div class="pk-boss-moves">${(mon.moves||[]).map((m,i)=>`<button data-action="boss-attack" data-move="${i}"><b>${esc(m.name)}</b><small>${esc(TYPE_PT[m.type]||m.type)} · Poder ${fmt(m.power)} · ${Math.round(Number(m.accuracy||0)*100)}%</small></button>`).join('')}</div>`:'<div class="pk-empty"><b>Nenhum Pokémon disponível</b>Use outro Pokémon da coleção ou acelere uma recuperação com Pó Estelar.</div>'}
+      ${active?`<div class="pk-boss-controls"><button class="pk-primary pk-boss-quick" data-action="boss-quick" ${!eligible.length||cooldown?'disabled':''}>${cooldown?`⏳ Próximo ataque em ${cooldown}s`:'⚡ Ataque rápido · escolher por mim'}</button><p class="pk-safe-note">Um clique, um ataque. Usamos o Pokémon disponível de maior CP e recomendamos o golpe. Sem gastar itens de recuperação.</p><label>Seu Pokémon</label><select id="pkBossPokemon" data-field="bossPokemon">${eligible.map(x=>`<option value="${esc(x.uid)}" ${x.uid===state.bossPokemonUid?'selected':''}>${x.shiny?'✨ ':''}${esc(x.name)} · CP ${fmt(x.cp)} · HP ${fmt(x.raidHp)}/${fmt(x.raidMaxHp)}</option>`).join('')}</select>
+        ${mon?`<div class="pk-boss-moves">${(mon.moves||[]).map((m,i)=>`<button data-action="boss-attack" data-move="${i}" ${cooldown?'disabled':''}><b>${esc(m.name)}</b><small>${esc(TYPE_PT[m.type]||m.type)} · Poder ${fmt(m.power)} · ${Math.round(Number(m.accuracy||0)*100)}%</small></button>`).join('')}</div>`:'<div class="pk-empty"><b>Nenhum Pokémon disponível</b>Use outro Pokémon da coleção ou acelere uma recuperação com Pó Estelar.</div>'}
       </div>`:`<div class="pk-safe-note">${defeated?'A comunidade venceu esta incursão. As recompensas são processadas automaticamente.':'O Boss ainda não chegou. Você receberá aviso 15 minutos antes e no início da incursão.'}</div>`}
       ${active&&b.me?`<div class="pk-boss-me"><span>Seu dano <b>${fmt(b.me.damage)}</b></span><span>Posição <b>#${fmt(b.me.rank)}</b></span><span>Melhor golpe <b>${fmt(b.me.bestHit)}</b></span></div>`:''}
       <div class="pk-boss-feed">${(b.lastHits||[]).map(x=>`<div>${x.final?'🌟':'💥'} <b>${esc(x.userName)}</b> · ${esc(x.pokemonName)} · ${fmt(x.damage)} dano <small>${esc(ago(x.at))}</small></div>`).join('')||'<div class="pk-safe-note">Os últimos ataques aparecerão aqui em tempo real.</div>'}</div>
@@ -741,19 +757,20 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el||el.di
   if(act==='quick-hunt'){try{const d=await action('/api/pokemon-adventure/hunt',{biome:'random'},()=>{});await huntCinematic(d)}catch(_){}return}
   if(act==='hunt-biome'){try{const d=await action('/api/pokemon-adventure/hunt',{biome:el.dataset.biome||'random'},()=>{});await huntCinematic(d)}catch(_){}return}
   if(act==='rank-mode'){state.rankMode=el.dataset.mode||'global';state.ranking=[];await loadRanking(true);render();return}
-  if(act==='boss-attack'){
+  if(act==='boss-attack'||act==='boss-quick'){
     const uid=state.bossPokemonUid||$('#pkBossPokemon')?.value;
-    if(!uid){toast('Escolha um Pokémon disponível.','err');return}
+    if(act==='boss-attack'&&!uid){toast('Escolha um Pokémon disponível.','err');return}
     try{
-      const d=await action('/api/pokemon-adventure/boss/attack',{pokemon:uid,moveIndex:Number(el.dataset.move||0)},()=>{});
+      const d=await action('/api/pokemon-adventure/boss/attack',{pokemon:act==='boss-quick'?null:uid,moveIndex:act==='boss-quick'?null:Number(el.dataset.move||0)},()=>{});
       if(!d)return;
+      state.bossReadyAt=Date.now()+(d.cooldownMs||8000);
       sound(d.boss?.status==='defeated'?'win':d.knockedOut?'loss':d.miss?'miss':'hit');
       state.profile=d.profile||state.profile;state.boss=await api('/api/pokemon-adventure/boss');
       const parts=[d.miss?'Seu ataque errou.':`${d.move.name}: ${fmt(d.damage)} de dano${d.critical?' · CRÍTICO!':''}`];
       if(d.knockedOut)parts.push('Seu Pokémon caiu e entrou em recuperação.');
       if(d.boss?.status==='defeated')parts.push('WORLD BOSS DERROTADO!');
       toast(parts.join(' '),d.knockedOut?'err':'ok');syncBossBeacon();render();
-    }catch(e){toast(e.message,'err')}
+    }catch(e){if(e.remainingMs)state.bossReadyAt=Date.now()+e.remainingMs;toast(e.message,'err');render()}
     return
   }
   if(act==='hall-refresh'){await loadHall(false);return}
