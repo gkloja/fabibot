@@ -7020,7 +7020,7 @@ body.light-mode .command-badge-mobile {
 </style>
   <link rel="stylesheet" href="/assets/index-v3.css?v=20261007">
 <link rel="stylesheet" href="/assets/adsense-ready.css?v=20261007b">
-<link rel="stylesheet" href="/assets/fabi-home-v5.css?v=20261010home1">
+<link rel="stylesheet" href="/assets/fabi-home-v5.css?v=20261010home2">
 </head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
 <body class="dark-mode">
@@ -7056,7 +7056,7 @@ body.light-mode .command-badge-mobile {
     <a href="/pokemon.html" title="Pokémon Adventure" style="color:#7ee7b4;font-weight:800;">◉ Pokémon</a>
     <a href="?perfil" data-section="perfil">Perfil</a>
 </div>
-        <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menu" aria-controls="mainMenu" aria-expanded="false"><i class="fas fa-bars"></i></button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menu" aria-controls="mainMenu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
 <div class="right-nav">
     <button class="icon-btn" id="musicPlayerBtn" onclick="toggleMusicNavbar()" title="Música de fundo">
         <i class="fas fa-music" id="musicIcon"></i>
@@ -7104,9 +7104,9 @@ body.light-mode .command-badge-mobile {
     <span>Comandos</span>
 </button>
 
-        <a class="bottom-nav-item" href="/pokemon.html" style="position:relative;text-decoration:none;color:inherit;">
-            <i class="fas fa-compass"></i><span>Pokémon</span>
-        </a>
+        <button class="bottom-nav-item" data-section="configurar" type="button">
+            <i class="fas fa-cog" aria-hidden="true"></i><span>Configurar</span>
+        </button>
         <button class="bottom-nav-item" id="maisNavBtn" onclick="toggleMaisMenu()">
             <i class="fas fa-ellipsis-h"></i><span>Mais</span>
         </button>
@@ -7116,7 +7116,7 @@ body.light-mode .command-badge-mobile {
 <!-- Menu "Mais" (Perfil, Assistir, Música, e futuros atalhos) -->
 <div class="bottom-nav-mais-overlay" id="bottomNavMaisOverlay" onclick="toggleMaisMenu(false)"></div>
 <div class="bottom-nav-mais-menu" id="bottomNavMaisMenu">
-    <button class="bottom-nav-mais-item" data-section="configurar" onclick="mudarSecao('configurar'); toggleMaisMenu(false);"><i class="fas fa-sliders" aria-hidden="true"></i><span>Configurar grupos</span></button>
+    <a class="bottom-nav-mais-item" href="/pokemon.html"><i class="fas fa-compass" aria-hidden="true"></i><span>Pokémon Adventure</span></a>
     <button class="bottom-nav-mais-item" data-section="depoimentos" onclick="mudarSecao('depoimentos'); toggleMaisMenu(false);"><i class="fas fa-quote-left" aria-hidden="true"></i><span>Depoimentos</span></button>
     <a class="bottom-nav-mais-item" href="golds.html" style="text-decoration:none;color:inherit;opacity:.72;">
         <i class="fas fa-coins"></i><span>Golds (legado)</span>
@@ -7146,27 +7146,13 @@ body.light-mode .command-badge-mobile {
 <!-- INTRO HERO — Fabi segura os CTAs (imagem/vídeo + hotspots) -->
 <!-- Arquivos: /fabi-cta.jpg (poster) e /fabi-mascote.mp4 (loop opcional) -->
 <!-- ============================================================ -->
-<section class="fz-intro-section" id="introSection" tabindex="-1">
+<section class="fz-intro-section" id="introSection" tabindex="-1" aria-label="Conheça a Fabi">
+  <h1 class="fabi-sr-only">Fabi Bot: automação, proteção e diversão no WhatsApp</h1>
   <div class="container fz-intro-cta">
-    <div class="fz-intro-cta-text">
-      <span class="fz-intro-badge"><span class="fabi-hero-dot" aria-hidden="true"></span> SEU GRUPO. MUITO MAIS POSSIBILIDADES.</span>
-      <h1 class="fz-intro-title">Menos trabalho.<br><span>Mais vida no seu grupo.</span></h1>
-      <p class="fz-intro-subtitle">
-        A Fabi cuida da rotina do seu grupo com proteção, automação e IA. Você aproveita as conversas, as figurinhas e a diversão.
-      </p>
-      <div class="fabi-hero-actions">
-        <a class="fabi-main-cta" href="/conectar.html">Conectar a Fabi <span aria-hidden="true">↗</span></a>
-        <a class="fabi-secondary-cta" href="?comandos" onclick="event.preventDefault();mudarSecao('comandos');">Explorar comandos</a>
-      </div>
-      <div class="fabi-hero-features" aria-label="Recursos da Fabi"><span>✦ Proteção de grupos</span><span>✦ Inteligência artificial</span><span>✦ Pokémon e diversão</span></div>
-      <a class="fabi-hero-guide" href="/como-conectar-bot-whatsapp.html">Primeira vez por aqui? Veja como começar <span aria-hidden="true">→</span></a>
-    </div>
 
     <!-- 1) Vídeo tutorial — SÓ visitante, aparece PRIMEIRO -->
-    <details class="fabi-tutorial" id="fabiTutorial">
-      <summary><span>▶</span><div><strong>Veja a Fabi em ação</strong><small>Abra o vídeo para conhecer os recursos.</small></div><b aria-hidden="true">+</b></summary>
-    <div class="fz-intro-video-wrap" id="introVideoWrap" style="display:none;">
-      <video id="fabibot-video" class="fz-intro-video" preload="none" poster="/flogo.jpg" controls playsinline>
+    <div class="fz-intro-video-wrap" id="introVideoWrap" >
+      <video id="fabibot-video" class="fz-intro-video" preload="metadata" poster="/flogo.jpg" controls playsinline>
         <source src="fabibot.mp4" type="video/mp4">
         Seu navegador não suporta vídeos HTML5.
       </video>
@@ -7183,8 +7169,6 @@ body.light-mode .command-badge-mobile {
       </div>
     </div>
 
-    </details>
-
     <!-- 2) Personagem + hotspots (sempre; visitante vê depois do tutorial) -->
     <div class="fz-fabi-stage" id="fabiCtaStage" style="display:none;">
       <div class="fz-fabi-glow"></div>
@@ -7194,7 +7178,7 @@ body.light-mode .command-badge-mobile {
         class="fz-fabi-media"
         src="/fabi-mascote.mp4"
         poster="/fabi-cta.jpg"
-        autoplay muted loop playsinline preload="metadata"
+        muted loop playsinline preload="metadata"
       ></video>
       <img id="fabiCtaImg" class="fz-fabi-media fz-fabi-img-fallback" src="/fabi-cta.jpg" alt="Fabi Bot" style="display:none;" />
 
@@ -7597,8 +7581,6 @@ body.light-mode #pokemonHomePromo .pkh-btn.secondary{color:#223129;background:rg
         }
       }
     } catch (e) {}
-    var tutorial = document.getElementById('fabiTutorial');
-    if(tutorial)tutorial.hidden=logado;
     var hl = document.getElementById('hotspotsLogado');
     var hv = document.getElementById('hotspotsVisitante');
     var extra = document.getElementById('introActionsLogado');
@@ -7619,9 +7601,11 @@ body.light-mode #pokemonHomePromo .pkh-btn.secondary{color:#223129;background:rg
         if (m && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) { m.muted = true; m.play().catch(function(){}); }
       } catch(e) {}
     } else {
-      // Visitante: mascote com ações e tutorial opcional.
-      if (stage) stage.style.display = 'block';
-      if (hl) { hl.style.display = 'block'; hl.style.pointerEvents = 'auto'; }
+      // Visitante: vídeo em destaque; mascote somente após login.
+      if (stage) stage.style.display = 'none';
+      if (hl) hl.style.display = 'none';
+      var mascot = document.getElementById('fabiMascot');
+      if (mascot) mascot.pause();
       if (hv) hv.style.display = 'none';
       if (extra) extra.style.display = 'none';
       if (videoEl) videoEl.style.display = 'block';
@@ -7642,6 +7626,7 @@ body.light-mode #pokemonHomePromo .pkh-btn.secondary{color:#223129;background:rg
     var img = document.getElementById('fabiCtaImg');
     if (!v) return;
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){v.pause();v.style.display='none';if(img)img.style.display='block';return;}
+    if(document.getElementById('fabiCtaStage')?.style.display === 'none'){v.pause();return;}
     v.muted = true;
     var p = v.play();
     if (p && p.catch) {
@@ -10591,25 +10576,6 @@ function fzRenderAdminRank(infoGrupo, registro) {
 </div>
         </div>
 
-<!-- 🏅 PÓDIO DOS GRUPOS MAIS MEDALHISTAS -->
-<div class="podium-section" id="podiumMedalhistasSection">
-    <div class="podium-header">
-        <h3 class="podium-title">
-            <i class="fas fa-medal" style="color:#D89A2E;"></i>
-            <span class="gradient-text">Pódio dos Campeões</span>
-        </h3>
-        <p class="podium-subtitle">Os grupos que mais colecionaram medalhas nos rankings diários de Mais Ativos e Mais Golds</p>
-        <button type="button" class="podium-ranking-btn" onclick="event.preventDefault(); abrirRankingAoVivo(); return false;">
-            <i class="fas fa-arrow-up"></i> Ver Ranking Ao Vivo
-        </button>
-    </div>
-    <div class="podium-grid" id="podiumMedalhistasGrid">
-        <div class="podium-skeleton"></div>
-        <div class="podium-skeleton"></div>
-        <div class="podium-skeleton"></div>
-    </div>
-</div>
-
 <!-- FILTRO DE CATEGORIAS (ADICIONE ISSO!) -->
 <div id="categoriasContainer" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
     <!-- As categorias serão inseridas aqui via JavaScript -->
@@ -10619,10 +10585,10 @@ function fzRenderAdminRank(infoGrupo, registro) {
     <!-- Busca com ícone animado -->
     <div class="search-wrapper" style="position: relative; flex: 1; margin-bottom: 16px;">
         <i class="fas fa-search" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text2); font-size: 14px;"></i>
-        <input type="text" id="gruposSearchInput" placeholder="🔍 Buscar grupos por nome, categoria ou local..." 
+        <input type="text" id="gruposSearchInput" aria-label="Buscar grupos por nome, categoria ou estado" placeholder="Buscar nome, categoria ou estado..."
                style="width: 100%; padding: 14px 16px 14px 45px; border-radius: 50px; border: 1px solid var(--border); background: var(--card); color: inherit; outline: none; transition: all 0.3s ease;">
-        <button id="clearSearchBtn" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text2); cursor: pointer; display: none;">
-            <i class="fas fa-times-circle"></i>
+        <button id="clearSearchBtn" type="button" aria-label="Limpar busca" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text2); cursor: pointer; display: none;">
+            <span aria-hidden="true">×</span>
         </button>
     </div>
     
@@ -10632,7 +10598,7 @@ function fzRenderAdminRank(infoGrupo, registro) {
             <label style="display: block; font-size: 11px; font-weight: 600; margin-bottom: 4px; color: var(--text2);">
                 <i class="fas fa-map-marker-alt"></i> Localização
             </label>
-            <select id="estadoFilter" class="filter-select" style="width: 100%; padding: 10px 16px; border-radius: 30px; border: 1px solid var(--border); background: var(--card); color: inherit; cursor: pointer;">
+            <select id="estadoFilter" aria-label="Filtrar por estado" class="filter-select" style="width: 100%; padding: 10px 16px; border-radius: 30px; border: 1px solid var(--border); background: var(--card); color: inherit; cursor: pointer;">
                 <option value="">🌎 Todos os estados</option>
                 <option value="AC">Acre</option>
                 <option value="AL">Alagoas</option>
@@ -10685,7 +10651,7 @@ function fzRenderAdminRank(infoGrupo, registro) {
     
     <!-- Contador de resultados e botão limpar filtros -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border);">
-        <span id="gruposResultCount" style="font-size: 12px; color: var(--text2);">
+        <span id="gruposResultCount" role="status" aria-live="polite" style="font-size: 12px; color: var(--text2);">
             <i class="fas fa-users"></i> 0 grupos encontrados
         </span>
         <button id="clearFiltersBtn" style="background: none; border: none; color: var(--primary); font-size: 12px; cursor: pointer; display: none;">
@@ -10701,6 +10667,25 @@ function fzRenderAdminRank(infoGrupo, registro) {
     <div class="skeleton-card" style="background: var(--card); border-radius: 20px; padding: 16px; height: 220px; animation: pulse 1.5s infinite 0.4s;"></div>
     <div class="skeleton-card" style="background: var(--card); border-radius: 20px; padding: 16px; height: 220px; animation: pulse 1.5s infinite 0.6s;"></div>
 </div>
+<!-- 🏅 PÓDIO DOS GRUPOS MAIS MEDALHISTAS -->
+<div class="podium-section" id="podiumMedalhistasSection">
+    <div class="podium-header">
+        <h3 class="podium-title">
+            <i class="fas fa-medal" style="color:#D89A2E;"></i>
+            <span class="gradient-text">Pódio dos Campeões</span>
+        </h3>
+        <p class="podium-subtitle">Os grupos que mais colecionaram medalhas nos rankings diários de Mais Ativos e Mais Golds</p>
+        <button type="button" class="podium-ranking-btn" onclick="event.preventDefault(); abrirRankingAoVivo(); return false;">
+            <i class="fas fa-arrow-up"></i> Ver Ranking Ao Vivo
+        </button>
+    </div>
+    <div class="podium-grid" id="podiumMedalhistasGrid">
+        <div class="podium-skeleton"></div>
+        <div class="podium-skeleton"></div>
+        <div class="podium-skeleton"></div>
+    </div>
+</div>
+
 <!-- Modal de Detalhes do Grupo - VERSÃO PREMIUM -->
 <div id="grupoModal" class="modal">
     <div class="modal-content" style="max-width: 560px; border-radius: 26px; overflow: hidden; animation: modalSlideIn 0.3s ease; border: 1px solid var(--border);">
@@ -13211,6 +13196,8 @@ function initFiltrosBusca() {
             if (searchInput) searchInput.value = '';
             if (estadoFilter) estadoFilter.value = '';
             if (clearSearchBtn) clearSearchBtn.style.display = 'none';
+            categoriaAtual = 'Todos';
+            renderizarCategorias();
             renderizarGruposComFiltros();
         });
     }
@@ -16824,11 +16811,11 @@ function renderizarCategorias() {
         const emoji = cat === 'Todos' ? '📌' : getEmojiPorCategoria(cat);
         
         return `
-            <button class="categoria-btn ${isActive ? 'active' : ''}" data-categoria="${cat}" 
+            <button class="categoria-btn ${isActive ? 'active' : ''}" data-categoria="${escapeHtml(cat)}"
                     style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 40px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; 
                            ${isActive ? 'background: var(--primary); color: white; border: none;' : 'background: var(--card); border: 1px solid var(--border); color: var(--text-color);'}">
                 <span>${emoji}</span>
-                <span>${cat}</span>
+                <span>${escapeHtml(cat)}</span>
                 <span style="background: ${isActive ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)'}; border-radius: 20px; padding: 2px 6px; font-size: 10px;">${count}</span>
             </button>
         `;
@@ -19400,7 +19387,7 @@ function mudarSecao(section, options = {}) {
 
     // "Assistir" e "Música" agora vivem dentro do menu "Mais" do rodapé
     const maisBtn = document.getElementById('maisNavBtn');
-    if (maisBtn) maisBtn.classList.toggle('active', ['radio', 'perfil', 'configurar', 'depoimentos'].includes(section));
+    if (maisBtn) maisBtn.classList.toggle('active', ['radio', 'perfil', 'depoimentos'].includes(section));
     document.querySelectorAll('.bottom-nav-mais-item').forEach(i => {
         i.classList.toggle('active', i.dataset.section === section);
     });
@@ -20314,9 +20301,9 @@ async function carregarGruposMelhorado() {
         gruposDataCompleto = data.filter(g => g.link && g.link.includes('chat.whatsapp.com')).map(g => ({
             ...g,
             categoria: g.categoria || 'Geral',
-            participantes: g.participantes || Math.floor(Math.random() * 500) + 50,
-            dataCriacao: g.dataCriacao || new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString(),
-            estado: g.estado || ['CE', 'BA', 'PE', 'MA', 'PB', 'PI', 'RN', 'SE', 'AL'][Math.floor(Math.random() * 9)],
+            participantes: g.participantes == null || g.participantes === '' || !Number.isFinite(Number(g.participantes)) ? null : Math.max(0, Number(g.participantes)),
+            dataCriacao: g.dataCriacao || null,
+            estado: g.estado || '',
             descricao: g.descricao || '✨ Grupo incrível para você fazer parte!'
         }));
         
@@ -20347,11 +20334,11 @@ async function carregarGrupos() {
         gruposData = data.filter(g => g.link && g.link.includes('chat.whatsapp.com')).map(g => ({
             ...g,
             categoria: g.categoria || categoriasGrupos[Math.floor(Math.random() * categoriasGrupos.length)].nome,
-            participantes: g.participantes || Math.floor(Math.random() * 500) + 50,
-            verificado: Math.random() > 0.7,
+            participantes: g.participantes == null || g.participantes === '' || !Number.isFinite(Number(g.participantes)) ? null : Math.max(0, Number(g.participantes)),
+            verificado: g.verificado === true,
             destaque: g.destaque || false,
-            dataCriacao: g.dataCriacao || new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString(),
-            estado: g.estado || ['CE', 'BA', 'PE', 'MA', 'PB', 'PI', 'RN', 'SE', 'AL'][Math.floor(Math.random() * 9)],
+            dataCriacao: g.dataCriacao || null,
+            estado: g.estado || '',
             regras: g.regras || '✅ Respeito acima de tudo\n✅ Sem spam',
             administradores: g.administradores || ['Administrador']
         }));
@@ -20373,11 +20360,11 @@ function renderizarGruposComFiltros() {
     }
     
     // Filtrar por busca
-    const buscaTermo = document.getElementById('gruposSearchInput')?.value.toLowerCase() || '';
+    const normalizarBusca = valor => String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const buscaTermo = normalizarBusca(document.getElementById('gruposSearchInput')?.value).trim();
     if (buscaTermo) {
         filtrados = filtrados.filter(g => 
-            (g.nome || '').toLowerCase().includes(buscaTermo) ||
-            (g.descricao || '').toLowerCase().includes(buscaTermo)
+            [g.nome, g.descricao, g.categoria, g.estado].some(valor => normalizarBusca(valor).includes(buscaTermo))
         );
     }
     
@@ -20390,8 +20377,10 @@ function renderizarGruposComFiltros() {
     // Ordenação (Destaque, Membros, Novos)
     if (sortAtual === 'destaque') filtrados.sort((a, b) => (b.destaque ? 1 : 0) - (a.destaque ? 1 : 0));
     else if (sortAtual === 'membros') filtrados.sort((a, b) => (b.participantes || 0) - (a.participantes || 0));
-    else if (sortAtual === 'novos') filtrados.sort((a, b) => new Date(b.dataCriacao) - new Date(a.dataCriacao));
+    else if (sortAtual === 'novos') filtrados.sort((a, b) => (Date.parse(b.dataCriacao) || 0) - (Date.parse(a.dataCriacao) || 0));
     
+    const limpar = document.getElementById('clearFiltersBtn');
+    if(limpar)limpar.style.display = buscaTermo || estadoFiltro || categoriaAtual !== 'Todos' ? 'inline-flex' : 'none';
     // Atualizar contador de resultados
     const resultSpan = document.getElementById('gruposResultCount');
     if (resultSpan) {
@@ -20399,7 +20388,7 @@ function renderizarGruposComFiltros() {
     }
     
     if (filtrados.length === 0) {
-        container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;"><i class="fas fa-search" style="font-size:48px;"></i><h3>Nenhum grupo encontrado</h3><p>Tente outra categoria ou busca</p></div>`;
+        container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;"><i class="fas fa-search" style="font-size:48px;"></i><h3>Nenhum grupo encontrado</h3><p>Tente outro termo ou remova os filtros para explorar todos os grupos.</p><button type="button" class="btn-primary" onclick="document.getElementById('clearFiltersBtn').click()">Limpar filtros</button></div>`;
         return;
     }
     
@@ -20418,23 +20407,23 @@ function renderizarGruposComFiltros() {
         
         // Status de atividade baseado em membros
         let statusClass = 'status-calmo';
-        let statusTexto = 'Calmo';
-        if (grupo.participantes > 300) { statusClass = 'status-muito-ativo'; statusTexto = 'Muito Ativo'; }
-        else if (grupo.participantes > 100) { statusClass = 'status-ativo'; statusTexto = 'Ativo'; }
+        let statusTexto = 'Conheça o grupo';
+        if (grupo.participantes > 300) { statusClass = 'status-muito-ativo'; statusTexto = 'Comunidade grande'; }
+        else if (grupo.participantes > 100) { statusClass = 'status-ativo'; statusTexto = 'Novas conexões'; }
         
         return `
-            <div class="grupo-card" onclick="abrirDetalhesGrupoMelhorado('${grupo.grupoID}')">
+            <div class="grupo-card">
                 <div class="grupo-card-header">
                     <div class="grupo-avatar">
                         ${grupo.imagem ? 
-                            `<img src="${grupo.imagem}" alt="${escapeHtml(grupo.nome)}">` : 
+                            `<img src="${escapeHtml(grupo.imagem)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">` :
                             '<i class="fab fa-whatsapp"></i>'
                         }
                     </div>
                     <div class="grupo-info">
                         <h3 class="grupo-nome">${escapeHtml(grupo.nome || 'Grupo WhatsApp')}</h3>
                         <div class="grupo-meta">
-                            <span class="grupo-categoria">${getEmojiCategoria(grupo.categoria)} ${grupo.categoria || 'Geral'}</span>
+                            <span class="grupo-categoria">${getEmojiCategoria(grupo.categoria)} ${escapeHtml(grupo.categoria || 'Geral')}</span>
                             ${verificadoHtml}
                         </div>
                     </div>
@@ -20446,11 +20435,11 @@ function renderizarGruposComFiltros() {
                 <div class="grupo-stats">
                     <div class="grupo-stat">
                         <i class="fas fa-user-friends"></i>
-                        <span>${formatarNumero(grupo.participantes)} membros</span>
+                        <span>${grupo.participantes == null ? 'Membros não informados' : formatarNumero(grupo.participantes) + ' membros'}</span>
                     </div>
                     <div class="grupo-stat">
                         <i class="fas fa-map-marker-alt"></i>
-                        <span>${grupo.estado || 'BR'}</span>
+                        <span>${escapeHtml(grupo.estado || 'Local não informado')}</span>
                     </div>
                     <div class="grupo-stat ${statusClass}">
                         <i class="fas fa-chart-line"></i>
@@ -20459,6 +20448,7 @@ function renderizarGruposComFiltros() {
                 </div>
                 
                 <div class="grupo-footer">
+                    <button type="button" class="grupo-btn-detalhes" data-group-details="${escapeHtml(grupo.grupoID || '')}">Ver detalhes</button>
                     <button class="grupo-btn-entrar" onclick="event.stopPropagation(); entrarGrupoLink('${grupo.link}')">
                         <i class="fab fa-whatsapp"></i> Entrar no grupo
                     </button>
@@ -20507,15 +20497,15 @@ function abrirDetalhesGrupoMelhorado(grupoID) {
     
     // Status de atividade
     let statusClass = 'status-calmo';
-    let statusTexto = 'Calmo';
+    let statusTexto = 'Conheça o grupo';
     let statusIcon = 'fa-bed';
     if (isMuitoAtivo) { 
         statusClass = 'status-muito-ativo'; 
-        statusTexto = 'Muito Ativo'; 
+        statusTexto = 'Comunidade grande';
         statusIcon = 'fa-fire';
     } else if (isAtivo) { 
         statusClass = 'status-ativo'; 
-        statusTexto = 'Ativo'; 
+        statusTexto = 'Novas conexões';
         statusIcon = 'fa-chart-line';
     }
     
@@ -20531,13 +20521,13 @@ function abrirDetalhesGrupoMelhorado(grupoID) {
                 <div class="modal-header-grupo" style="background: linear-gradient(135deg, ${gradientStart}, ${gradientEnd});">
                     <div class="modal-avatar-grupo">
                         ${grupo.imagem ? 
-                            `<img src="${grupo.imagem}" alt="${escapeHtml(grupo.nome)}">` : 
+                            `<img src="${escapeHtml(grupo.imagem)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">` :
                             '<i class="fab fa-whatsapp"></i>'
                         }
                     </div>
                     <h2 class="modal-nome-grupo" style="color: white;">${escapeHtml(grupo.nome || 'Grupo WhatsApp')}</h2>
                     <div class="modal-categoria-grupo">
-                        ${getEmojiCategoria(grupo.categoria)} ${grupo.categoria || 'Geral'}
+                        ${getEmojiCategoria(grupo.categoria)} ${escapeHtml(grupo.categoria || 'Geral')}
                         ${grupo.verificado ? '<span class="verified-badge" style="background: rgba(16,185,129,0.15); color: #10b981;"><i class="fas fa-check-circle"></i> Verificado</span>' : ''}
                         ${isDestaque ? '<span class="verified-badge" style="background: linear-gradient(135deg, #FFD700, #FFA500); color:#000;"><i class="fas fa-crown"></i> Destaque</span>' : ''}
                         ${isNew ? '<span class="verified-badge" style="background: #10b981; color: white;"><i class="fas fa-clock"></i> Novo</span>' : ''}
@@ -20556,7 +20546,7 @@ function abrirDetalhesGrupoMelhorado(grupoID) {
                     <div class="modal-stat-card">
                         <i class="fas fa-map-marker-alt"></i>
                         <div>
-                            <div class="stat-number">${grupo.estado || 'BR'}</div>
+                            <div class="stat-number">${escapeHtml(grupo.estado || 'Local não informado')}</div>
                             <div class="stat-label">Localização</div>
                         </div>
                     </div>
@@ -20643,7 +20633,7 @@ function renderizarGrupos() {
     
     if (sortAtual === 'destaque') filtered.sort((a, b) => (b.destaque ? 1 : 0) - (a.destaque ? 1 : 0));
     else if (sortAtual === 'membros') filtered.sort((a, b) => (b.participantes || 0) - (a.participantes || 0));
-    else if (sortAtual === 'novos') filtered.sort((a, b) => new Date(b.dataCriacao) - new Date(a.dataCriacao));
+    else if (sortAtual === 'novos') filtered.sort((a, b) => (Date.parse(b.dataCriacao) || 0) - (Date.parse(a.dataCriacao) || 0));
     
     if (filtered.length === 0) {
         container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;text-align:center;padding:60px 20px;"><i class="fas fa-search" style="font-size:48px;color:var(--text2);"></i><h3>Nenhum grupo encontrado</h3><button class="btn-secondary" onclick="limparFiltrosGrupos()">Limpar filtros</button></div>`;
@@ -20674,7 +20664,7 @@ function renderizarGrupos() {
                     </div>
                     <p style="font-size:13px;color:var(--text2);margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${grupo.descricao || '✨ Grupo incrível para você fazer parte!'}</p>
                     <div class="grupo-stats">
-                        <span><i class="fas fa-user-friends"></i> ${formatarNumero(grupo.participantes)} membros</span>
+                        <span><i class="fas fa-user-friends"></i> ${grupo.participantes == null ? 'Membros não informados' : formatarNumero(grupo.participantes) + ' membros'}</span>
                         <span><i class="fas fa-map-marker-alt"></i> ${grupo.estado}</span>
                         ${grupo.verificado ? '<span><i class="fas fa-check-circle" style="color:#10b981;"></i> Verificado</span>' : ''}
                     </div>
@@ -20724,14 +20714,9 @@ function limparFiltrosGrupos() {
 function fecharModalGrupo() { document.getElementById('grupoModal').style.display = 'none'; }
 
 function initComunidades() {
-    const searchInput = document.getElementById('gruposSearchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', () => renderizarGruposComFiltros());
-    }
-    const estadoFilter = document.getElementById('estadoFilter');
-    if (estadoFilter) {
-        estadoFilter.addEventListener('change', () => renderizarGruposComFiltros());
-    }
+    if (window.__fabiComunidadesReady) return;
+    window.__fabiComunidadesReady = true;
+    initFiltrosBusca();
     document.querySelectorAll('.sort-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.sort-btn').forEach(b => {
@@ -20753,7 +20738,7 @@ const mudarSecaoOriginal = mudarSecao;
 mudarSecao = function(section, options = {}) {
     const container = document.getElementById('comunidadesContainer');
     if (container) container.style.display = section === 'comunidades' ? 'block' : 'none';
-    if (section === 'comunidades' && gruposData.length === 0) carregarGrupos();
+    // A comunidade usa o carregamento único de initComunidades, sem render legado concorrente.
     return mudarSecaoOriginal(section, options);
 };
 
@@ -20956,6 +20941,6 @@ window.addEventListener('beforeunload', () => {
 </div>
 
 
-<script src="/assets/fabi-home-v5.js?v=20261010home1" defer></script>
+<script src="/assets/fabi-home-v5.js?v=20261010home2" defer></script>
 </body>
 </html>
