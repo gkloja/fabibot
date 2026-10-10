@@ -10,7 +10,18 @@
       "destination": "/pokemon",
       "permanent": true
     },
-        {
+    {
+      "source": "/pokemon-profile.html",
+      "destination": "/pokemon-profile",
+      "permanent": true
+    },
+    {
+      "source": "/pokemon-profile/",
+      "destination": "/pokemon-profile",
+      "permanent": true
+    },
+
+    {
       "source": "/como-proteger-grupo-whatsapp.html",
       "destination": "/como-proteger-grupo-whatsapp",
       "permanent": true
@@ -161,6 +172,10 @@
       "source": "/pokemon",
       "destination": "/pokemon.html"
     },
+        {
+      "source": "/pokemon-profile",
+      "destination": "/pokemon-profile.html"
+        },
     {
       "source": "/conectar",
       "destination": "/conectar.html"
