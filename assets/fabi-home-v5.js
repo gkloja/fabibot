@@ -76,7 +76,7 @@ function injectAI(){
   if(document.getElementById('fabiAiLauncher')) return;
 
   document.body.insertAdjacentHTML('beforeend', `
-    <button class="fabi-ai-launcher" id="fabiAiLauncher" type="button" aria-controls="fabiAiPanel" aria-expanded="false">
+    <button class="fabi-ai-launcher" id="fabiAiLauncher" type="button" aria-controls="fabiAiPanel" aria-expanded="false" aria-label="Abrir assistente Fabi IA">
       <img src="/flogo.jpg" alt="">
       <span class="fabi-ai-launcher-text">
         <strong>Precisa de ajuda?</strong>
@@ -84,7 +84,7 @@ function injectAI(){
       </span>
     </button>
 
-    <aside class="fabi-ai-panel" id="fabiAiPanel" aria-label="Fabi Assistente">
+    <aside class="fabi-ai-panel" id="fabiAiPanel" aria-label="Fabi Assistente" role="dialog" aria-hidden="true">
       <header class="fabi-ai-head">
         <img src="/flogo.jpg" alt="">
         <div class="fabi-ai-head-copy">
@@ -105,7 +105,7 @@ function injectAI(){
         </div>
       </div>
 
-      <div class="fabi-ai-messages" id="fabiAiMessages">
+      <div class="fabi-ai-messages" id="fabiAiMessages" role="log" aria-live="polite" aria-relevant="additions">
         <div class="fabi-ai-welcome">
           <strong>Oi! Eu sou a Fabi.</strong><br>
           Posso ajudar com conexão, comandos, grupos, proteções, AutoDL, aluguel e navegação pelo site.
@@ -133,15 +133,25 @@ function injectAI(){
   const form = document.getElementById('fabiAiForm');
   const input = document.getElementById('fabiAiInput');
 
+  const hintKey='fabi_ai_hint_seen_v1';
+  let hintTimer=null;
+  function collapseHint(){
+    clearTimeout(hintTimer);launcher.classList.add('is-compact');
+    try{sessionStorage.setItem(hintKey,'1');}catch(_){}
+  }
+  try{if(sessionStorage.getItem(hintKey)==='1')launcher.classList.add('is-compact');}catch(_){}
+  if(!launcher.classList.contains('is-compact'))hintTimer=setTimeout(collapseHint,5000);
   function open(){
-    panel.classList.add('open');
-    launcher.setAttribute('aria-expanded','true');
-    setTimeout(()=>input?.focus(),80);
+    collapseHint();panel.classList.add('open');panel.setAttribute('aria-hidden','false');
+    launcher.setAttribute('aria-expanded','true');launcher.setAttribute('aria-label','Fechar assistente Fabi IA');
+    setTimeout(()=>{if(panel.classList.contains('open'))input?.focus();},80);
   }
   function shut(){
-    panel.classList.remove('open');
-    launcher.setAttribute('aria-expanded','false');
+    panel.classList.remove('open');panel.setAttribute('aria-hidden','true');
+    launcher.setAttribute('aria-expanded','false');launcher.setAttribute('aria-label','Abrir assistente Fabi IA');
+    launcher.focus({preventScroll:true});
   }
+  panel.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();shut();}});
   function clearChat(){
     saveHistory([]);
     const msgs = document.getElementById('fabiAiMessages');
@@ -584,7 +594,8 @@ function showTestimonialsView(options={}){
   document.getElementById('feedCentral')?.style.setProperty('display','none','important');
   document.getElementById('vendasContainer')?.style.setProperty('display','none','important');
 
-  document.querySelectorAll('.bottom-nav-item').forEach(i=>i.classList.toggle('active',i.dataset.section==='depoimentos'));
+  document.querySelectorAll('.bottom-nav-item').forEach(i=>i.classList.toggle('active',i.dataset.section==='depoimentos'||i.id==='maisNavBtn'));
+  document.querySelectorAll('.bottom-nav-mais-item').forEach(i=>i.classList.toggle('active',i.dataset.section==='depoimentos'));
   document.querySelectorAll('.menu a').forEach(i=>i.classList.remove('active'));
 
   if(!options.skipUrl){
@@ -631,6 +642,19 @@ function boot(){
   hookSections();
   hookTestimonialButtons();
   loadTestimonials();
+  const tutorial=document.getElementById('fabiTutorial');
+  tutorial?.addEventListener('toggle',()=>{if(!tutorial.open)document.getElementById('fabibot-video')?.pause();});
+  const mobileMenu=document.getElementById('mainMenu'),menuButton=document.getElementById('mobileMenuBtn');
+  if(mobileMenu&&menuButton){
+    const updateMenu=()=>{const open=mobileMenu.classList.contains('show');menuButton.setAttribute('aria-expanded',String(open));menuButton.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');};
+    new MutationObserver(updateMenu).observe(mobileMenu,{attributes:true,attributeFilter:['class']});updateMenu();
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileMenu.classList.contains('show')){mobileMenu.classList.remove('show');menuButton.focus();}});
+  }
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const mascot=document.getElementById('fabiMascot'),poster=document.getElementById('fabiCtaImg');
+    if(mascot){mascot.removeAttribute('autoplay');mascot.pause();mascot.style.display='none';}
+    if(poster)poster.style.display='block';
+  }
 
   document.querySelectorAll('.fabi-adsense-editorial a').forEach(a=>{
     if(/central de comandos/i.test(a.textContent||'')){

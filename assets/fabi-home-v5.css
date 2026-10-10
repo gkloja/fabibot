@@ -279,3 +279,66 @@ body.light-mode .fabi-ai-modebar{background:#f5f8f6;border-color:rgba(15,23,42,.
 body.light-mode .fabi-dep-dialog{background:#fff;border-color:rgba(15,23,42,.12)}body.light-mode .fabi-dep-head h2{color:#111827}body.light-mode .fabi-dep-head p{color:#647168}body.light-mode .fabi-dep-form>label{color:#344139}body.light-mode .fabi-dep-form input:not([type=checkbox]),body.light-mode .fabi-dep-form textarea{background:#fff;color:#111827;border-color:rgba(15,23,42,.12)}body.light-mode .fabi-dep-media-box{border-color:rgba(15,23,42,.09);background:#f8faf8}
 
 @media(max-width:760px){.fabi-testimonials-actions{width:100%;align-items:stretch}.fabi-testimonial-send-btn{width:100%}.fabi-dep-dialog{top:auto;bottom:0;transform:translateX(-50%);width:100%;max-height:92dvh;border-radius:22px 22px 0 0}.fabi-dep-head{padding:16px 15px 13px}.fabi-dep-form{padding:14px 15px 18px}.fabi-dep-media-actions{grid-template-columns:1fr}}
+
+/* Home 2026: dark-only, clear actions and a quieter assistant. */
+:root{color-scheme:dark}
+html[data-theme="dark"]{background:#080d12}
+body.dark-mode{--primary:#34d399;--primary-dark:#16a975;--primary-light:#6ee7b7;--bg:#080d12;--bg2:#0c141c;--card:#0f1922;--text:#f3f8f6;--text2:#a4b8b0;background:#080d12;color:#f3f8f6}
+[hidden]{display:none!important}
+.fabi-skip-link{position:fixed;top:12px;left:12px;z-index:100100;transform:translateY(-180%);padding:12px 18px;background:#6ee7b7;color:#062016;border-radius:10px;font-weight:800}.fabi-skip-link:focus{transform:none}
+:where(button,a,input,textarea,select,summary):focus-visible{outline:3px solid #6ee7b7;outline-offset:4px}
+body.dark-mode .navbar{background:#080d12ed;border-bottom:1px solid #ffffff12;backdrop-filter:blur(18px)}
+body.dark-mode .menu{background:#ffffff04;border:1px solid #ffffff0c;border-radius:14px}
+body.dark-mode .menu a{color:#a4b8b0;font-size:12px;border-radius:10px}.menu a.active{background:#34d39918!important;color:#9df5d5!important;border-color:#34d39930!important}
+body.dark-mode .icon-btn{background:#ffffff06;border:1px solid #ffffff12;border-radius:12px;color:#d9eee4}
+body.dark-mode #introSection{padding:52px 0 32px!important;background:radial-gradient(ellipse at 83% 35%,#0c584b38,transparent 56%),#080d12;border-bottom:1px solid #ffffff0d}
+body #introSection .fz-intro-cta{width:min(calc(100% - 48px),1160px);max-width:1160px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.8fr);gap:24px 40px;align-items:center;padding:0;text-align:left}
+body #introSection .fz-intro-cta-text{min-width:0;grid-column:1;grid-row:1;margin:0!important;padding:22px 0}
+body #introSection .fz-intro-badge{padding:0;background:transparent;border:0;color:#86e6c1;font-size:10px;letter-spacing:.13em;line-height:1.6;font-weight:800;margin-bottom:19px}
+.fabi-hero-dot{width:7px;height:7px;flex:0 0 7px;background:#34d399;border-radius:50%;box-shadow:0 0 0 5px #34d39914}
+body #introSection .fz-intro-title{font-size:clamp(2rem,4.5vw,3.65rem);line-height:1.12;letter-spacing:-.055em;margin:0 0 21px;color:#f3f8f6}
+body #introSection .fz-intro-title span{color:#6ee7b7}
+body #introSection .fz-intro-subtitle{max-width:510px;margin:0;color:#a4b8b0;font-size:15px;line-height:1.85}
+.fabi-hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.fabi-main-cta,.fabi-secondary-cta{display:inline-flex;justify-content:center;align-items:center;gap:24px;min-height:48px;padding:13px 21px;border-radius:12px;font-weight:800;font-size:13px;text-decoration:none;transition:transform .18s,background .18s}
+.fabi-main-cta{background:#6ee7b7;color:#06251b;box-shadow:0 8px 30px #34d39915}.fabi-main-cta:hover{background:#a7f3d0;transform:translateY(-2px)}
+.fabi-secondary-cta{border:1px solid #ffffff24;background:#ffffff03;color:#edf7f2}.fabi-secondary-cta:hover{border-color:#6ee7b76b;background:#34d39908}
+.fabi-hero-features{display:flex;flex-wrap:wrap;gap:7px 15px;margin-top:24px;color:#a4b8b0;font-size:10px;line-height:1.8}.fabi-hero-features span{white-space:nowrap}
+.fabi-hero-guide{display:inline-block;margin-top:19px;color:#93b1a3;font-size:11px;line-height:1.8;text-decoration:none}.fabi-hero-guide:hover{color:#c6f9e3;text-decoration:underline}
+body #introSection .fz-fabi-stage{grid-column:2;grid-row:1;max-width:350px;width:100%;margin:0 auto;aspect-ratio:3/4;background:transparent;border-radius:26px;overflow:hidden}
+body #introSection .fz-fabi-stage::after{background:none;pointer-events:none}
+body #introSection .fz-fabi-media{border-radius:24px;background:transparent}
+body #introSection .fz-fabi-glow{animation:none;opacity:.5}
+body #introSection .fz-fabi-status{bottom:4%;color:#b6d5c8;background:#080d12d9;white-space:nowrap}
+body #introSection #introActionsLogado{grid-column:1/-1;margin:0;justify-content:flex-start}
+body #introSection .fabi-tutorial{grid-column:1/-1;grid-row:2;margin-top:6px;background:#0e1921;border:1px solid #ffffff12;border-radius:16px;overflow:hidden}
+.fabi-tutorial>summary{display:flex;align-items:center;gap:13px;padding:16px 20px;cursor:pointer;list-style:none}.fabi-tutorial>summary::-webkit-details-marker{display:none}.fabi-tutorial>summary>span{display:grid;place-items:center;width:39px;height:39px;border-radius:12px;background:#34d39914;color:#80eac0;font-size:14px}.fabi-tutorial summary div{flex:1}.fabi-tutorial summary strong{display:block;font-size:13px;color:#e2f3eb}.fabi-tutorial summary small{display:block;margin-top:5px;font-size:11px;color:#92aa9d}.fabi-tutorial summary b{font-size:19px;font-weight:400;color:#a3c3b3}.fabi-tutorial[open] summary b{transform:rotate(45deg)}
+body #introSection .fabi-tutorial .fz-intro-video-wrap{margin:0;border:0;border-top:1px solid #ffffff10;border-radius:0;max-width:100%;box-shadow:none}.fabi-tutorial .fz-intro-video{max-height:450px;object-fit:contain}.fabi-tutorial .fz-intro-video-caption{background:#0c151c}
+body #pokemonHomePromo{width:min(calc(100% - 48px),1160px);margin-top:25px;margin-bottom:25px}
+body #pokemonHomePromo .pkh-card{border-color:#34d39926;border-radius:22px;background:radial-gradient(ellipse at 85% 20%,#34d39918,transparent 65%),#0d1820;box-shadow:none}
+body .fabi-adsense-editorial{background:#0a1118;border-color:#ffffff0d;padding-top:40px;padding-bottom:40px}.fabi-adsense-editorial .editorial-wrap{max-width:1160px}
+body .fabi-home-testimonials{background:#080f15;border-color:#ffffff0d}.fabi-testimonials-shell{max-width:1160px}
+.fabi-testimonial-card{border-radius:18px;box-shadow:none;background:linear-gradient(145deg,#101d25,#0b151c)}
+.fabi-ai-launcher{bottom:calc(22px + env(safe-area-inset-bottom));right:20px;min-height:54px;padding:7px 15px 7px 7px;gap:10px;border-color:#6ee7b744;background:#0e1c21;box-shadow:0 10px 35px #0006;transition:padding .25s,gap .25s,transform .18s}
+.fabi-ai-launcher img{width:38px;height:38px;flex:0 0 38px}.fabi-ai-launcher-text{max-width:170px;overflow:hidden;opacity:1;white-space:nowrap;transition:max-width .28s,opacity .2s;visibility:visible}
+.fabi-ai-launcher.is-compact{padding-right:7px;gap:0}.fabi-ai-launcher.is-compact .fabi-ai-launcher-text{max-width:0;opacity:0;visibility:hidden}
+@media(hover:hover){.fabi-ai-launcher.is-compact:not([aria-expanded="true"]):hover{padding-right:15px;gap:10px}.fabi-ai-launcher.is-compact:not([aria-expanded="true"]):hover .fabi-ai-launcher-text{max-width:170px;opacity:1;visibility:visible}}
+.fabi-ai-launcher.is-compact:not([aria-expanded="true"]):focus-visible{padding-right:15px;gap:10px}.fabi-ai-launcher.is-compact:not([aria-expanded="true"]):focus-visible .fabi-ai-launcher-text{max-width:170px;opacity:1;visibility:visible}
+.fabi-ai-panel{bottom:calc(89px + env(safe-area-inset-bottom));height:min(610px,calc(100dvh - 115px))}.fabi-ai-bubble{overflow-wrap:anywhere}.fabi-ai-messages{scrollbar-width:thin;scrollbar-color:#2c5941 transparent}
+body #scrollTop{bottom:calc(89px + env(safe-area-inset-bottom));right:23px;background:#11251c;border:1px solid #6ee7b738;color:#a7f3d0;width:46px;height:46px}
+body.dark-mode .bottom-nav{background:#0b141cf5;border-top:1px solid #ffffff16;backdrop-filter:blur(18px)}
+body .bottom-nav-items{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));width:100%;gap:2px}.bottom-nav-item{min-width:0;min-height:52px}.bottom-nav-item span{font-size:10px}
+body.dark-mode .bottom-nav-item.active{color:#9df5d5;background:#34d39914}
+.swal2-popup{background:#0e1921!important;color:#e4f0e9!important;border:1px solid #ffffff15!important}.swal2-title,.swal2-html-container{color:#e4f0e9!important}
+@media(max-width:900px){body #introSection .fz-intro-cta{gap:20px;grid-template-columns:1.1fr .8fr}body #introSection .fz-intro-title{font-size:2.7rem}.fabi-hero-actions{gap:8px}.fabi-main-cta,.fabi-secondary-cta{font-size:12px;padding:12px 15px}}
+@media(max-width:760px){
+ body.dark-mode #introSection{padding:29px 0 25px!important}body #introSection .fz-intro-cta{width:calc(100% - 32px);display:flex;flex-direction:column;gap:20px;text-align:left}
+ body #introSection .fz-intro-cta-text{width:100%;padding:0}body #introSection .fz-intro-badge{font-size:8px;letter-spacing:.08em;margin-bottom:15px}body #introSection .fz-intro-title{font-size:clamp(2rem,8.8vw,3rem);line-height:1.12;margin-bottom:16px}body #introSection .fz-intro-subtitle{font-size:13px;line-height:1.8}
+ .fabi-hero-actions{margin-top:21px;display:grid;grid-template-columns:1fr 1fr;gap:8px}.fabi-main-cta,.fabi-secondary-cta{min-height:48px;font-size:11px;padding:11px 10px;gap:8px}.fabi-hero-features{font-size:9px;gap:4px 10px;margin-top:17px}.fabi-hero-guide{margin-top:12px;font-size:10px}
+ body #introSection .fz-fabi-stage{order:2;max-width:260px;width:82%;border-radius:22px}body #introSection .fabi-tutorial{order:3;width:100%;margin-top:0}.fabi-tutorial>summary{padding:13px 14px}.fabi-tutorial summary strong{font-size:12px}.fabi-tutorial summary small{font-size:10px}
+ body #introSection #introActionsLogado{order:4}body #pokemonHomePromo{width:calc(100% - 32px);margin:19px auto}
+ .fabi-ai-launcher{right:12px;bottom:calc(83px + env(safe-area-inset-bottom));min-height:52px}.fabi-ai-panel{right:8px;left:8px;bottom:calc(80px + env(safe-area-inset-bottom));width:auto;height:min(650px,calc(100dvh - 100px))}.fabi-ai-panel.open{z-index:10030}
+ body #scrollTop{bottom:calc(148px + env(safe-area-inset-bottom));right:15px}.bottom-nav{padding-bottom:env(safe-area-inset-bottom)}
+}
+@media(max-width:360px){.fabi-hero-actions{grid-template-columns:1fr}.bottom-nav-item span{font-size:8px}.bottom-nav-item{padding:5px 1px}.fabi-ai-launcher-text strong{font-size:11px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}.fabi-ai-launcher,.fabi-ai-launcher-text{transition:none}}
