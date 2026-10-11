@@ -24,8 +24,7 @@
     if(t!=="light"&&t!=="dark"){
       var d=localStorage.getItem("darkMode");
       if(d==="false") t="light";
-      else if(d==="true") t="dark";
-      else t=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";
+      else t="dark";
     }
     document.documentElement.setAttribute("data-theme",t);
     document.documentElement.style.colorScheme=t==="light"?"light":"dark";
@@ -36,7 +35,7 @@
   }
 })();
 </script>
-<link rel="stylesheet" href="/assets/fabi-theme.css?v=20261011b">
+<link rel="stylesheet" href="/assets/fabi-theme.css?v=20261011c">
 <meta name="language" content="Portuguese">
 <meta name="geo.region" content="BR">
 <meta name="geo.placename" content="Brasil">
@@ -7796,12 +7795,14 @@ body.light-mode .fz-fabi-stage::after {
 body.light-mode .fz-fabi-media {
   mix-blend-mode: normal;
   opacity: 1;
-  filter: drop-shadow(0 18px 36px rgba(15, 23, 42, 0.18));
-  -webkit-mask-image: radial-gradient(ellipse 82% 78% at 50% 40%, #000 48%, rgba(0,0,0,.85) 68%, transparent 88%);
-  mask-image: radial-gradient(ellipse 82% 78% at 50% 40%, #000 48%, rgba(0,0,0,.85) 68%, transparent 88%);
+  filter: drop-shadow(0 12px 28px rgba(15, 23, 42, 0.2));
+  -webkit-mask-image: radial-gradient(ellipse 90% 88% at 50% 42%, #000 62%, rgba(0,0,0,.9) 78%, transparent 96%);
+  mask-image: radial-gradient(ellipse 90% 88% at 50% 42%, #000 62%, rgba(0,0,0,.9) 78%, transparent 96%);
 }
 body.light-mode .fz-fabi-stage {
-  background: transparent;
+  background: #e8eef5;
+  border-radius: 24px;
+  overflow: hidden;
 }
 
 /* Hotspots — calibrados pelo print mobile (cápsulas nas mãos) */
@@ -20998,6 +20999,6 @@ window.addEventListener('beforeunload', () => {
 
 
 <script src="/assets/fabi-home-v5.js?v=20261010home2" defer></script>
-<script src="/assets/fabi-theme.js?v=20261011b" defer></script>
+<script src="/assets/fabi-theme.js?v=20261011c" defer></script>
 </body>
 </html>

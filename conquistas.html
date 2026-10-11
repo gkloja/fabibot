@@ -8,16 +8,18 @@
     if(t!=="light"&&t!=="dark"){
       var d=localStorage.getItem("darkMode");
       if(d==="false") t="light";
-      else if(d==="true") t="dark";
-      else t=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";
+      else t="dark";
     }
     document.documentElement.setAttribute("data-theme",t);
     document.documentElement.style.colorScheme=t==="light"?"light":"dark";
     if(t==="light") document.documentElement.classList.add("light-mode");
-  }catch(_){document.documentElement.setAttribute("data-theme","dark");}
+  }catch(_){
+    document.documentElement.setAttribute("data-theme","dark");
+    document.documentElement.style.colorScheme="dark";
+  }
 })();
 </script>
-<link rel="stylesheet" href="/assets/fabi-theme.css?v=20261011b">
+<link rel="stylesheet" href="/assets/fabi-theme.css?v=20261011c">
 
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
@@ -419,6 +421,6 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}footer a
   })();
 })();
 </script>
-<script src="/assets/fabi-theme.js?v=20261011b" defer></script>
+<script src="/assets/fabi-theme.js?v=20261011c" defer></script>
 </body>
 </html>
