@@ -1,6 +1,6 @@
 /**
  * Fabi Bot — Theme controller (dark / light)
- * Shared across pages. Persists preference and syncs UI.
+ * Toggle lives in the page header/navbar — not floating.
  */
 (function () {
   'use strict';
@@ -8,7 +8,7 @@
   var STORAGE_KEY = 'theme';
   var STORAGE_DARK = 'darkMode';
   var THEME_COLOR_DARK = '#080d12';
-  var THEME_COLOR_LIGHT = '#f9fafb';
+  var THEME_COLOR_LIGHT = '#f4f7f5';
 
   function safeGet(key) {
     try {
@@ -30,7 +30,6 @@
     var darkFlag = safeGet(STORAGE_DARK);
     if (darkFlag === 'false') return 'light';
     if (darkFlag === 'true') return 'dark';
-    // Prefer system preference when no stored choice
     try {
       if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
         return 'light';
@@ -64,7 +63,6 @@
     if (!video && !img) return;
 
     if (theme === 'light') {
-      // Prefer static image in light mode — video with dark plate looks harsh on white
       if (video) {
         video.classList.add('is-light-fallback');
         try {
@@ -88,10 +86,7 @@
       }
       if (img) {
         img.classList.remove('is-light-visible');
-        // keep fallback logic of the page; only hide if video is active
-        if (video && !video.classList.contains('is-light-fallback')) {
-          img.style.display = 'none';
-        }
+        if (video) img.style.display = 'none';
       }
     }
   }
@@ -132,32 +127,124 @@
     applyTheme(current === 'light' ? 'dark' : 'light');
   }
 
-  function ensureToggleButton() {
-    if (document.getElementById('fabiThemeToggle')) return;
-
+  function createToggleButton() {
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.id = 'fabiThemeToggle';
-    btn.className = 'fabi-theme-toggle';
+    btn.className = 'fabi-theme-toggle icon-btn';
     btn.setAttribute('aria-label', 'Alternar tema');
     btn.innerHTML =
       '<i class="fas fa-sun fabi-theme-icon-sun" aria-hidden="true"></i>' +
       '<i class="fas fa-moon fabi-theme-icon-moon" aria-hidden="true"></i>';
     btn.addEventListener('click', function (e) {
       e.preventDefault();
+      e.stopPropagation();
       toggleTheme();
     });
+    return btn;
+  }
 
-    // Prefer existing floating-theme slot if present
-    var legacy = document.querySelector('.floating-theme');
-    if (legacy) {
-      legacy.replaceWith(btn);
+  function findHeaderMount() {
+    // Priority: known action bars / right side of headers
+    var selectors = [
+      '.right-nav',
+      '.pk-nav-actions',
+      '.fabi-topbar-in',
+      '.fabi-nav',
+      '.navbar .nav-content',
+      'header .pk-nav-inner',
+      'header.fabi-topbar',
+      'nav.navbar',
+      'header'
+    ];
+    for (var i = 0; i < selectors.length; i++) {
+      var el = document.querySelector(selectors[i]);
+      if (el) return { el: el, selector: selectors[i] };
+    }
+    return null;
+  }
+
+  function ensureToggleButton() {
+    // Remove floating leftovers
+    var floating = document.querySelectorAll('.fabi-theme-toggle.floating, .floating-theme');
+    for (var i = 0; i < floating.length; i++) {
+      if (floating[i].id !== 'fabiThemeToggle') floating[i].remove();
+    }
+
+    var existing = document.getElementById('fabiThemeToggle');
+    if (existing) {
+      // If still floating at body root, move into header
+      var mount = findHeaderMount();
+      if (mount && !mount.el.contains(existing)) {
+        placeInHeader(existing, mount);
+      }
+      return;
+    }
+
+    var btn = createToggleButton();
+    var mountInfo = findHeaderMount();
+    if (mountInfo) {
+      placeInHeader(btn, mountInfo);
     } else {
+      // Fallback only if no header exists yet — try again shortly
       document.body.appendChild(btn);
+      btn.classList.add('fabi-theme-fallback');
+      setTimeout(function () {
+        var m = findHeaderMount();
+        if (m && btn.parentNode === document.body) placeInHeader(btn, m);
+      }, 400);
     }
   }
 
-  // Public API
+  function placeInHeader(btn, mountInfo) {
+    var el = mountInfo.el;
+    var sel = mountInfo.selector;
+    btn.classList.remove('fabi-theme-fallback');
+    btn.classList.add('fabi-theme-toggle');
+
+    if (sel === '.right-nav') {
+      // Index: before profile container
+      var profile = document.getElementById('profileContainer');
+      if (profile && profile.parentNode === el) {
+        el.insertBefore(btn, profile);
+      } else {
+        el.appendChild(btn);
+      }
+      return;
+    }
+
+    if (sel === '.pk-nav-actions') {
+      // Pokémon: first action (left of alerts)
+      el.insertBefore(btn, el.firstChild);
+      return;
+    }
+
+    if (sel === '.fabi-topbar-in' || sel === '.fabi-nav') {
+      // V2 pages: append next to nav links
+      var nav = el.classList.contains('fabi-nav') ? el : el.querySelector('.fabi-nav');
+      if (nav) {
+        nav.appendChild(btn);
+      } else {
+        el.appendChild(btn);
+      }
+      return;
+    }
+
+    if (sel === '.navbar .nav-content') {
+      var right = el.querySelector('.right-nav');
+      if (right) {
+        var profile2 = document.getElementById('profileContainer');
+        if (profile2 && profile2.parentNode === right) right.insertBefore(btn, profile2);
+        else right.appendChild(btn);
+      } else {
+        el.appendChild(btn);
+      }
+      return;
+    }
+
+    el.appendChild(btn);
+  }
+
   window.FabiTheme = {
     apply: applyTheme,
     toggle: toggleTheme,
@@ -169,7 +256,6 @@
     }
   };
 
-  // Back-compat for index.html old helpers
   window.aplicarTemaEscuro = function () {
     applyTheme('dark');
   };

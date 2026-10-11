@@ -437,3 +437,72 @@ body.light-mode .session-item{
 }
 html[data-theme="light"] .text-muted,
 body.light-mode .text-muted{color:#64748b !important}
+
+/* Light mode — stronger contrast */
+html[data-theme="light"] body,
+body.light-mode{
+  background:#eef2f6 !important;
+  color:#0f172a !important;
+}
+html[data-theme="light"] .card,
+html[data-theme="light"] .modal-content,
+html[data-theme="light"] .list-group-item,
+body.light-mode .card,
+body.light-mode .modal-content{
+  background:#fff !important;
+  color:#0f172a !important;
+  border-color:rgba(15,23,42,.12) !important;
+}
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4,
+html[data-theme="light"] h5,
+html[data-theme="light"] label,
+html[data-theme="light"] .form-label,
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode h3,
+body.light-mode label{
+  color:#0f172a !important;
+}
+html[data-theme="light"] .text-muted,
+html[data-theme="light"] small,
+body.light-mode .text-muted{
+  color:#475569 !important;
+}
+html[data-theme="light"] .form-control,
+html[data-theme="light"] .form-select,
+body.light-mode .form-control{
+  background:#fff !important;
+  color:#0f172a !important;
+  border-color:rgba(15,23,42,.14) !important;
+}
+html[data-theme="light"] .btn-outline-light,
+html[data-theme="light"] .btn-dark{
+  color:#0f172a !important;
+  border-color:rgba(15,23,42,.2) !important;
+  background:#f8fafc !important;
+}
+html[data-theme="light"] .table,
+html[data-theme="light"] .table td,
+html[data-theme="light"] .table th{
+  color:#0f172a !important;
+}
+html[data-theme="light"] .navbar,
+html[data-theme="light"] .topbar,
+body.light-mode .navbar{
+  background:rgba(255,255,255,.96) !important;
+  border-color:rgba(15,23,42,.1) !important;
+}
+html[data-theme="light"] .session-item,
+body.light-mode .session-item{
+  background:#fff !important;
+  border-color:rgba(15,23,42,.12) !important;
+  color:#0f172a !important;
+}
+html[data-theme="light"] code,
+html[data-theme="light"] .code-display{
+  color:#0f172a !important;
+  background:#f1f5f9 !important;
+}
