@@ -216,3 +216,65 @@
 @media(prefers-reduced-motion:reduce){
   .fabi-v2-page *{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 }
+
+/* ========== Light mode (data-theme / body.light-mode) ========== */
+html[data-theme="light"]{
+  color-scheme:light;
+}
+html[data-theme="light"] .fabi-v2-page,
+body.light-mode.fabi-v2-page{
+  --fabi-bg:#f6f8f7;
+  --fabi-bg-2:#eef2f0;
+  --fabi-surface:#ffffff;
+  --fabi-surface-2:#f8faf9;
+  --fabi-border:rgba(15,23,42,.1);
+  --fabi-text:#0f172a;
+  --fabi-muted:#5b6b63;
+  --fabi-primary:#16a34a;
+  --fabi-primary-strong:#15803d;
+  --fabi-primary-soft:rgba(22,163,74,.1);
+  --fabi-blue:#2563eb;
+  --fabi-warning:#d97706;
+  --fabi-shadow:0 10px 30px rgba(15,23,42,.08);
+  background:var(--fabi-bg);
+  color:var(--fabi-text);
+}
+html[data-theme="light"] .fabi-v2-page .fabi-glass,
+body.light-mode .fabi-v2-page .fabi-glass{
+  background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(248,250,249,.98));
+  border-color:var(--fabi-border);
+  box-shadow:var(--fabi-shadow);
+}
+html[data-theme="light"] .fabi-v2-page .fabi-badge,
+body.light-mode .fabi-v2-page .fabi-badge{
+  color:#166534;background:rgba(22,163,74,.1);border-color:rgba(22,163,74,.22);
+}
+html[data-theme="light"] .fabi-v2-page .fabi-btn-primary,
+body.light-mode .fabi-v2-page .fabi-btn-primary{color:#fff}
+html[data-theme="light"] .fabi-v2-page .fabi-btn-secondary,
+body.light-mode .fabi-v2-page .fabi-btn-secondary{
+  background:rgba(15,23,42,.04);border-color:var(--fabi-border);color:var(--fabi-text);
+}
+html[data-theme="light"] .fabi-v2-page .fabi-search,
+body.light-mode .fabi-v2-page .fabi-search{
+  background:#fff;color:var(--fabi-text);border-color:var(--fabi-border);
+}
+html[data-theme="light"] .fabi-v2-page .fabi-command code,
+body.light-mode .fabi-v2-page .fabi-command code{color:#166534}
+html[data-theme="light"] .fabi-v2-page .fabi-copy,
+body.light-mode .fabi-v2-page .fabi-copy{
+  color:var(--fabi-muted);background:rgba(15,23,42,.04);
+}
+html[data-theme="light"] .fabi-v2-page .fabi-footer a,
+body.light-mode .fabi-v2-page .fabi-footer a{color:#334155}
+html[data-theme="light"] .fabi-v2-page .fabi-topbar,
+body.light-mode .fabi-v2-page .fabi-topbar{
+  background:rgba(255,255,255,.92);
+  border-bottom:1px solid var(--fabi-border);
+  backdrop-filter:blur(14px);
+}
+html[data-theme="light"] .fabi-v2-page .fabi-card,
+body.light-mode .fabi-v2-page .fabi-card{
+  background:var(--fabi-surface);
+  border-color:var(--fabi-border);
+}

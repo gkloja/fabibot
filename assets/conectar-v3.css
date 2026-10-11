@@ -402,3 +402,38 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   .modal-dialog{margin:10px !important}
   .modal-content{border-radius:18px !important}
 }
+
+/* Light mode */
+html[data-theme="light"] body,
+body.light-mode{
+  background:#f6f8fa !important;
+  color:#0f172a !important;
+}
+html[data-theme="light"] .card,
+html[data-theme="light"] .modal-content,
+body.light-mode .card,
+body.light-mode .modal-content{
+  background:#fff !important;
+  color:#0f172a !important;
+  border-color:rgba(15,23,42,.1) !important;
+}
+html[data-theme="light"] .form-control,
+body.light-mode .form-control{
+  background:#fff !important;
+  color:#0f172a !important;
+  border-color:rgba(15,23,42,.12) !important;
+}
+html[data-theme="light"] .navbar,
+html[data-theme="light"] .topbar,
+body.light-mode .navbar{
+  background:rgba(255,255,255,.94) !important;
+  border-color:rgba(15,23,42,.1) !important;
+}
+html[data-theme="light"] .session-item,
+body.light-mode .session-item{
+  background:#fff !important;
+  border-color:rgba(15,23,42,.1) !important;
+  color:#0f172a !important;
+}
+html[data-theme="light"] .text-muted,
+body.light-mode .text-muted{color:#64748b !important}

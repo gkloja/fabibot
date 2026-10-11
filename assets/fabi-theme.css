@@ -1,0 +1,222 @@
+/* ============================================================
+   Fabi Bot — Theme system (dark / light)
+   Shared across pages. Professional toggle + light-mode polish.
+   ============================================================ */
+
+:root {
+  color-scheme: dark;
+}
+
+html[data-theme="light"],
+html.light-mode,
+body.light-mode {
+  color-scheme: light;
+}
+
+/* ---------- Floating theme toggle ---------- */
+.fabi-theme-toggle {
+  position: fixed;
+  bottom: 88px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(165deg, #1a2332 0%, #0d1219 100%);
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9990;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(37, 99, 235, 0.15);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fabi-theme-toggle:hover {
+  transform: scale(1.08);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-color: transparent;
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.4);
+}
+
+.fabi-theme-toggle:focus-visible {
+  outline: 3px solid rgba(96, 165, 250, 0.75);
+  outline-offset: 3px;
+}
+
+.fabi-theme-toggle .fabi-theme-icon-sun,
+.fabi-theme-toggle .fabi-theme-icon-moon {
+  display: none;
+}
+
+html[data-theme="dark"] .fabi-theme-toggle .fabi-theme-icon-sun,
+html:not([data-theme="light"]) .fabi-theme-toggle .fabi-theme-icon-sun {
+  display: inline-block;
+}
+
+html[data-theme="light"] .fabi-theme-toggle .fabi-theme-icon-moon,
+body.light-mode .fabi-theme-toggle .fabi-theme-icon-moon {
+  display: inline-block;
+}
+
+html[data-theme="light"] .fabi-theme-toggle .fabi-theme-icon-sun,
+body.light-mode .fabi-theme-toggle .fabi-theme-icon-sun {
+  display: none;
+}
+
+html[data-theme="light"] .fabi-theme-toggle,
+body.light-mode .fabi-theme-toggle {
+  background: linear-gradient(165deg, #ffffff 0%, #f1f5f9 100%);
+  color: #0f172a;
+  border-color: #e2e8f0;
+  box-shadow:
+    0 10px 24px rgba(15, 23, 42, 0.12),
+    0 0 0 1px rgba(37, 99, 235, 0.08);
+}
+
+html[data-theme="light"] .fabi-theme-toggle:hover,
+body.light-mode .fabi-theme-toggle:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  border-color: transparent;
+}
+
+/* Avoid overlapping bottom nav on mobile */
+@media (max-width: 768px) {
+  .fabi-theme-toggle {
+    bottom: 96px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+}
+
+/* ---------- Light mode for Fabi V2 pages ---------- */
+html[data-theme="light"] .fabi-v2-page,
+body.light-mode.fabi-v2-page,
+.fabi-v2-page.light-mode {
+  --fabi-bg: #f6f8f7;
+  --fabi-bg-2: #eef2f0;
+  --fabi-surface: #ffffff;
+  --fabi-surface-2: #f8faf9;
+  --fabi-border: rgba(15, 23, 42, 0.1);
+  --fabi-text: #0f172a;
+  --fabi-muted: #5b6b63;
+  --fabi-primary: #16a34a;
+  --fabi-primary-strong: #15803d;
+  --fabi-primary-soft: rgba(22, 163, 74, 0.1);
+  --fabi-blue: #2563eb;
+  --fabi-warning: #d97706;
+  --fabi-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  background: var(--fabi-bg);
+  color: var(--fabi-text);
+}
+
+html[data-theme="light"] .fabi-v2-page .fabi-glass,
+body.light-mode .fabi-v2-page .fabi-glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 249, 0.98));
+  border-color: var(--fabi-border);
+  box-shadow: var(--fabi-shadow);
+}
+
+html[data-theme="light"] .fabi-v2-page .fabi-badge,
+body.light-mode .fabi-v2-page .fabi-badge {
+  color: #166534;
+  background: rgba(22, 163, 74, 0.1);
+  border-color: rgba(22, 163, 74, 0.22);
+}
+
+html[data-theme="light"] .fabi-v2-page .fabi-btn-primary,
+body.light-mode .fabi-v2-page .fabi-btn-primary {
+  color: #fff;
+}
+
+html[data-theme="light"] .fabi-v2-page .fabi-btn-secondary,
+body.light-mode .fabi-v2-page .fabi-btn-secondary {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: var(--fabi-border);
+  color: var(--fabi-text);
+}
+
+html[data-theme="light"] .fabi-v2-page .fabi-btn-secondary:hover,
+body.light-mode .fabi-v2-page .fabi-btn-secondary:hover {
+  background: rgba(15, 23, 42, 0.08);
+}
+
+html[data-theme="light"] .fabi-v2-page .fabi-search,
+body.light-mode .fabi-v2-page .fabi-search {
+  background: #fff;
+  color: var(--fabi-text);
+  border-color: var(--fabi-border);
+}
+
+html[data-theme="light"] .fabi-v2-page .fabi-command code,
+body.light-mode .fabi-v2-page .fabi-command code {
+  color: #166534;
+}
+
+html[data-theme="light"] .fabi-v2-page .fabi-copy,
+body.light-mode .fabi-v2-page .fabi-copy {
+  color: var(--fabi-muted);
+  background: rgba(15, 23, 42, 0.04);
+}
+
+html[data-theme="light"] .fabi-v2-page .fabi-footer a,
+body.light-mode .fabi-v2-page .fabi-footer a {
+  color: #334155;
+}
+
+html[data-theme="light"] .fabi-v2-page .fabi-topbar,
+body.light-mode .fabi-v2-page .fabi-topbar {
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid var(--fabi-border);
+  backdrop-filter: blur(14px);
+}
+
+/* ---------- Mascot polish in light mode (index) ---------- */
+body.light-mode .fz-fabi-stage {
+  background: transparent;
+}
+
+body.light-mode .fz-fabi-glow {
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.22) 0%, rgba(37, 99, 235, 0.1) 42%, transparent 68%);
+  opacity: 0.85;
+}
+
+/* Soft edge instead of harsh black box on white */
+body.light-mode .fz-fabi-media {
+  mix-blend-mode: normal;
+  opacity: 1;
+  filter: drop-shadow(0 18px 36px rgba(15, 23, 42, 0.18));
+  -webkit-mask-image: radial-gradient(ellipse 82% 78% at 50% 40%, #000 48%, rgba(0, 0, 0, 0.85) 68%, transparent 88%);
+  mask-image: radial-gradient(ellipse 82% 78% at 50% 40%, #000 48%, rgba(0, 0, 0, 0.85) 68%, transparent 88%);
+}
+
+body.light-mode .fz-fabi-stage::after {
+  background:
+    linear-gradient(to right, #f9fafb 0%, transparent 18%, transparent 82%, #f9fafb 100%),
+    linear-gradient(to bottom, #f9fafb 0%, transparent 14%, transparent 82%, #f9fafb 100%);
+  opacity: 0.95;
+}
+
+/* Prefer static poster in light mode if video still looks heavy */
+body.light-mode #fabiMascot.is-light-fallback {
+  display: none !important;
+}
+
+body.light-mode #fabiCtaImg.is-light-visible {
+  display: block !important;
+  filter: drop-shadow(0 18px 36px rgba(15, 23, 42, 0.18));
+  -webkit-mask-image: radial-gradient(ellipse 82% 78% at 50% 40%, #000 48%, rgba(0, 0, 0, 0.85) 68%, transparent 88%);
+  mask-image: radial-gradient(ellipse 82% 78% at 50% 40%, #000 48%, rgba(0, 0, 0, 0.85) 68%, transparent 88%);
+}
+
+/* theme-color meta is updated via JS */
