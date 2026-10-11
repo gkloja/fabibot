@@ -19,8 +19,8 @@ Também atualize title/description se quiser alinhar:
   "name": "Fabi Bot",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "WhatsApp, Web",
-  "url": "https://fabibot.vercel.app",
-  "image": "https://fabibot.vercel.app/og-image.jpg",
+  "url": "https://www.fabibot.com.br",
+  "image": "https://www.fabibot.com.br/og-image.jpg",
   "description": "Bot de WhatsApp para criar figurinhas, baixar músicas e vídeos, jogar, usar IA e gerenciar grupos com anti-spam.",
   "featureList": [
     "Criação de figurinhas",

@@ -1,7 +1,7 @@
 /* Fabi Platform V2 — Service Worker + OneSignal */
 importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
 
-const CACHE = "fabi-platform-v2-20261007";
+const CACHE = "fabi-platform-v2-news-20261011";
 const SHELL = [
   "/",
   "/index.html",
@@ -38,6 +38,7 @@ self.addEventListener("fetch", event => {
 
   // Never cache API/proxy or account-like routes.
   if (/\/api\/|\/proxy\b/i.test(url.pathname + url.search)) return;
+  if (url.pathname === '/noticias' || url.pathname.startsWith('/noticias/')) return;
 
   if (req.mode === "navigate") {
     event.respondWith(

@@ -10,3 +10,6 @@ Disallow: /public/database/
 Disallow: /tmp_video_fix/
 
 Sitemap: https://www.fabibot.com.br/sitemap.xml
+
+Disallow: /noticias-admin
+Sitemap: https://www.fabibot.com.br/noticias/sitemap.xml

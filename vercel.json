@@ -1,6 +1,11 @@
 {
   "redirects": [
     {
+      "source": "/noticias/",
+      "destination": "/noticias",
+      "permanent": true
+    },
+    {
       "source": "/pokemon/",
       "destination": "/pokemon",
       "permanent": true
@@ -20,7 +25,6 @@
       "destination": "/pokemon-profile",
       "permanent": true
     },
-
     {
       "source": "/como-proteger-grupo-whatsapp.html",
       "destination": "/como-proteger-grupo-whatsapp",
@@ -169,13 +173,21 @@
   ],
   "rewrites": [
     {
+      "source": "/noticias",
+      "destination": "/api/news?path=noticias"
+    },
+    {
+      "source": "/noticias/:path*",
+      "destination": "/api/news?path=noticias/:path*"
+    },
+    {
       "source": "/pokemon",
       "destination": "/pokemon.html"
     },
-        {
+    {
       "source": "/pokemon-profile",
       "destination": "/pokemon-profile.html"
-        },
+    },
     {
       "source": "/conectar",
       "destination": "/conectar.html"
@@ -308,5 +320,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/news.js": {
+      "maxDuration": 60
+    }
+  }
 }
