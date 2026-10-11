@@ -246,112 +246,200 @@ button,a,input,select{font:inherit}.pk-bg{position:fixed;inset:0;z-index:-2;back
 /* ========== Light mode support (high contrast) ========== */
 html[data-theme="light"]{
   color-scheme:light;
-  --bg:#eef2f0;
-  --bg2:#e2e8e4;
+  --bg:#e8edeb;
+  --bg2:#dce4e0;
   --surface:#ffffff;
-  --surface2:#f4f7f5;
-  --surface3:#e8eee9;
-  --line:rgba(15,23,42,.14);
-  --line2:rgba(22,163,74,.32);
-  --text:#0b1220;
-  --muted:#3f4f46;
-  --green:#15803d;
-  --green2:#166534;
-  --blue:#1d4ed8;
-  --gold:#b45309;
-  --purple:#6d28d9;
-  --red:#be123c;
-  --shadow:0 14px 40px rgba(15,23,42,.12);
+  --surface2:#f3f6f4;
+  --surface3:#e7eeea;
+  --line:rgba(15,23,42,.16);
+  --line2:rgba(21,128,61,.35);
+  --text:#0a0f14;
+  --muted:#334155;
+  --green:#166534;
+  --green2:#14532d;
+  --blue:#1e40af;
+  --gold:#92400e;
+  --purple:#5b21b6;
+  --red:#9f1239;
+  --shadow:0 12px 36px rgba(15,23,42,.1);
 }
+html[data-theme="light"],
 html[data-theme="light"] body{
   background:var(--bg)!important;
   color:var(--text)!important;
 }
 html[data-theme="light"] .pk-bg{
   background:
-    radial-gradient(900px 520px at 14% -8%,rgba(22,163,74,.12),transparent 64%),
-    radial-gradient(850px 480px at 100% 12%,rgba(37,99,235,.08),transparent 64%),
-    linear-gradient(180deg,#eef2f0,#e2e8e4 72%)!important;
+    radial-gradient(900px 520px at 14% -8%,rgba(22,163,74,.1),transparent 64%),
+    radial-gradient(850px 480px at 100% 12%,rgba(37,99,235,.07),transparent 64%),
+    linear-gradient(180deg,#e8edeb,#dce4e0 72%)!important;
 }
-html[data-theme="light"] .pk-bg:after{opacity:.08}
+html[data-theme="light"] .pk-bg:after{opacity:.06}
+
+/* Header */
 html[data-theme="light"] .pk-topnav{
-  background:rgba(255,255,255,.94)!important;
-  border-bottom-color:var(--line)!important;
+  background:rgba(255,255,255,.96)!important;
+  border-bottom:1px solid var(--line)!important;
 }
 html[data-theme="light"] .pk-brand,
-html[data-theme="light"] .pk-brand b{color:var(--text)!important}
-html[data-theme="light"] .pk-brand span{color:var(--muted)!important}
+html[data-theme="light"] .pk-brand b{color:#0a0f14!important}
+html[data-theme="light"] .pk-brand span{color:#475569!important}
 html[data-theme="light"] .pk-nav-btn{
-  background:#f1f5f3!important;
-  color:#0f172a!important;
-  border-color:rgba(15,23,42,.14)!important;
+  background:#eef2f0!important;
+  color:#0a0f14!important;
+  border:1px solid rgba(15,23,42,.14)!important;
 }
 html[data-theme="light"] .pk-nav-btn:hover{
   background:#e2e8e4!important;
-  border-color:rgba(22,163,74,.35)!important;
-  color:#0b1220!important;
+  color:#000!important;
 }
+
+/* Status / muted */
 html[data-theme="light"] .pk-statusbar,
 html[data-theme="light"] .pk-user,
-html[data-theme="light"] .pk-live{color:var(--muted)!important}
+html[data-theme="light"] .pk-live,
+html[data-theme="light"] .pk-user strong{color:#334155!important}
+
+/* Cards & surfaces — force white + dark text */
 html[data-theme="light"] .pk-loading-card,
 html[data-theme="light"] .pk-hero,
 html[data-theme="light"] .pk-card,
-html[data-theme="light"] .pk-panel{
-  background:var(--surface)!important;
-  color:var(--text)!important;
-  border-color:var(--line)!important;
-  box-shadow:var(--shadow);
+html[data-theme="light"] .pk-panel,
+html[data-theme="light"] .pk-section,
+html[data-theme="light"] .pk-box,
+html[data-theme="light"] .pk-tile,
+html[data-theme="light"] .pk-shop-item,
+html[data-theme="light"] .pk-plot,
+html[data-theme="light"] .pk-welcome,
+html[data-theme="light"] .pk-join-note,
+html[data-theme="light"] .pk-rank-row,
+html[data-theme="light"] .pk-biome,
+html[data-theme="light"] .pk-region,
+html[data-theme="light"] .pk-mon,
+html[data-theme="light"] .pk-resource,
+html[data-theme="light"] .pk-modal-content,
+html[data-theme="light"] .pk-dialog,
+html[data-theme="light"] .pk-sheet{
+  background:#fff!important;
+  color:#0a0f14!important;
+  border-color:rgba(15,23,42,.14)!important;
 }
-html[data-theme="light"] .pk-loading-card span,
-html[data-theme="light"] .pk-card p,
-html[data-theme="light"] .pk-hero p,
-html[data-theme="light"] .pk-mon-meta{color:var(--muted)!important}
+
+html[data-theme="light"] .pk-loading-card{
+  background:linear-gradient(160deg,#fff,#f3f6f4)!important;
+}
+
+/* Titles & body text */
 html[data-theme="light"] .pk-title,
+html[data-theme="light"] .pk-page h1,
+html[data-theme="light"] .pk-page h2,
+html[data-theme="light"] .pk-page h3,
+html[data-theme="light"] .pk-page h4,
 html[data-theme="light"] .pk-card strong,
 html[data-theme="light"] .pk-card h2,
 html[data-theme="light"] .pk-card h3,
 html[data-theme="light"] .pk-hero h1,
 html[data-theme="light"] .pk-hero strong,
-html[data-theme="light"] .pk-mon-body strong{color:var(--text)!important}
-html[data-theme="light"] .pk-search,
-html[data-theme="light"] .pk-select{background:#fff!important;color:var(--text)!important;border-color:var(--line)!important}
-html[data-theme="light"] .pk-mon{background:linear-gradient(180deg,#fff,#f4f7f5)!important;border-color:var(--line)!important}
-html[data-theme="light"] .pk-mon:hover{border-color:rgba(22,163,74,.4)!important}
-html[data-theme="light"] .pk-identity-form p,
-html[data-theme="light"] .pk-public-info{color:var(--muted)!important}
-html[data-theme="light"] .pk-public-info h2,
-html[data-theme="light"] .pk-public-info h3,
-html[data-theme="light"] .pk-public-info summary{color:var(--text)!important}
-html[data-theme="light"] .pk-public-info a,
-html[data-theme="light"] .pk-onboarding>a{color:#166534!important}
-html[data-theme="light"] .pk-public-info details{border-bottom-color:var(--line)!important}
-html[data-theme="light"] .pk-resource{background:var(--surface2)!important;border-color:var(--line)!important;color:var(--text)!important}
-html[data-theme="light"] .pk-resource strong{color:var(--text)!important}
-html[data-theme="light"] .pk-shiny,
-html[data-theme="light"] .pk-champ{color:var(--text)!important}
-html[data-theme="light"] .pk-tab,
-html[data-theme="light"] .pk-chip,
-html[data-theme="light"] .pk-filter{background:#f1f5f3!important;color:#1e293b!important;border-color:var(--line)!important}
-html[data-theme="light"] .pk-tab.active,
-html[data-theme="light"] .pk-chip.active{background:rgba(22,163,74,.14)!important;color:#14532d!important;border-color:rgba(22,163,74,.35)!important}
-html[data-theme="light"] .pk-rank-row,
-html[data-theme="light"] .pk-list-item{background:var(--surface)!important;color:var(--text)!important;border-color:var(--line)!important}
-html[data-theme="light"] .pk-modal-content,
-html[data-theme="light"] .pk-dialog{background:#fff!important;color:var(--text)!important}
-html[data-theme="light"] .pk-biome,
-html[data-theme="light"] .pk-region{background:var(--surface)!important;color:var(--text)!important;border-color:var(--line)!important}
-html[data-theme="light"] .pk-page{color:var(--text)}
-html[data-theme="light"] progress{accent-color:var(--green)}
-html[data-theme="light"] .pk-hint,
-html[data-theme="light"] .pk-empty,
-html[data-theme="light"] .pk-empty-state{color:var(--muted)!important}
-/* Catch pale text classes common in adventure UI */
-html[data-theme="light"] .pk-shell .muted,
-html[data-theme="light"] .pk-shell .text-muted,
-html[data-theme="light"] .pk-desc,
-html[data-theme="light"] .pk-sub{color:var(--muted)!important}
+html[data-theme="light"] .pk-mon-body strong,
+html[data-theme="light"] .pk-resource strong,
 html[data-theme="light"] .pk-shell h1,
 html[data-theme="light"] .pk-shell h2,
 html[data-theme="light"] .pk-shell h3,
-html[data-theme="light"] .pk-shell h4{color:var(--text)!important}
+html[data-theme="light"] .pk-shell h4,
+html[data-theme="light"] .pk-shell strong{
+  color:#0a0f14!important;
+}
+
+html[data-theme="light"] .pk-card p,
+html[data-theme="light"] .pk-hero p,
+html[data-theme="light"] .pk-loading-card span,
+html[data-theme="light"] .pk-mon-meta,
+html[data-theme="light"] .pk-resource span,
+html[data-theme="light"] .pk-desc,
+html[data-theme="light"] .pk-sub,
+html[data-theme="light"] .pk-hint,
+html[data-theme="light"] .pk-empty,
+html[data-theme="light"] .pk-identity-form p,
+html[data-theme="light"] .pk-public-info,
+html[data-theme="light"] .pk-shell p,
+html[data-theme="light"] .pk-shell span:not(.pk-nav-btn span){
+  color:#334155;
+}
+
+/* Forms */
+html[data-theme="light"] .pk-search,
+html[data-theme="light"] .pk-select,
+html[data-theme="light"] input:not([type=checkbox]):not([type=radio]),
+html[data-theme="light"] select,
+html[data-theme="light"] textarea{
+  background:#fff!important;
+  color:#0a0f14!important;
+  border:1px solid rgba(15,23,42,.16)!important;
+}
+
+/* Tabs / chips */
+html[data-theme="light"] .pk-tab,
+html[data-theme="light"] .pk-chip,
+html[data-theme="light"] .pk-filter{
+  background:#eef2f0!important;
+  color:#0a0f14!important;
+  border-color:rgba(15,23,42,.14)!important;
+}
+html[data-theme="light"] .pk-tab.active,
+html[data-theme="light"] .pk-chip.active{
+  background:rgba(22,163,74,.16)!important;
+  color:#14532d!important;
+  border-color:rgba(22,163,74,.4)!important;
+}
+
+/* Links & accents */
+html[data-theme="light"] .pk-public-info a,
+html[data-theme="light"] .pk-onboarding>a,
+html[data-theme="light"] a.pk-link{
+  color:#166534!important;
+  font-weight:600;
+}
+html[data-theme="light"] .pk-public-info h2,
+html[data-theme="light"] .pk-public-info h3,
+html[data-theme="light"] .pk-public-info summary{
+  color:#0a0f14!important;
+}
+html[data-theme="light"] .pk-public-info details{
+  border-bottom-color:rgba(15,23,42,.12)!important;
+}
+
+/* Buttons primary */
+html[data-theme="light"] .pk-btn-primary,
+html[data-theme="light"] button.pk-primary,
+html[data-theme="light"] .pk-boss-quick{
+  background:#166534!important;
+  color:#fff!important;
+  border-color:#166534!important;
+}
+
+/* Kill common pale-on-dark hardcoded colors when light is on */
+html[data-theme="light"] [style*="color:#c0d3c8"],
+html[data-theme="light"] [style*="color:#b5cfc3"],
+html[data-theme="light"] [style*="color:#9fb0a5"],
+html[data-theme="light"] [style*="color:#c7d7cc"],
+html[data-theme="light"] [style*="color:#dce9e0"],
+html[data-theme="light"] [style*="color:#e2f7e9"],
+html[data-theme="light"] [style*="color:#f7fbf8"],
+html[data-theme="light"] [style*="color:#adf3ca"],
+html[data-theme="light"] [style*="color:#b4f39a"]{
+  color:#334155!important;
+}
+
+/* Soft green text that was meant for dark bg */
+html[data-theme="light"] .pk-shell .pk-green,
+html[data-theme="light"] .text-success{color:#166534!important}
+
+/* Borders on gradients that used dark translucent backgrounds */
+html[data-theme="light"] .pk-mon-img{
+  background:radial-gradient(120px 90px at 50% 55%,rgba(22,163,74,.1),transparent 70%)!important;
+}
+
+html[data-theme="light"] progress{accent-color:#166534}
+
+/* Ensure page base */
+html[data-theme="light"] .pk-page{color:#0a0f14}

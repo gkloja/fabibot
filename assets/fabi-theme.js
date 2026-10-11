@@ -30,11 +30,7 @@
     var darkFlag = safeGet(STORAGE_DARK);
     if (darkFlag === 'false') return 'light';
     if (darkFlag === 'true') return 'dark';
-    try {
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-        return 'light';
-      }
-    } catch (_) {}
+    // Padrão sempre escuro — não segue o tema do sistema
     return 'dark';
   }
 
@@ -58,36 +54,24 @@
   }
 
   function polishMascotForTheme(theme) {
+    // Mantém o vídeo/GIF do mascote rodando nos dois temas.
+    // O visual no claro é tratado só por CSS (máscara + sombra).
     var video = document.getElementById('fabiMascot');
     var img = document.getElementById('fabiCtaImg');
-    if (!video && !img) return;
-
-    if (theme === 'light') {
-      if (video) {
-        video.classList.add('is-light-fallback');
-        try {
-          video.pause();
-        } catch (_) {}
-      }
-      if (img) {
-        img.classList.add('is-light-visible');
-        img.style.display = 'block';
-      }
-    } else {
-      if (video) {
-        video.classList.remove('is-light-fallback');
-        video.style.display = '';
-        try {
-          if (video.paused && video.readyState >= 2) {
-            var p = video.play();
-            if (p && typeof p.catch === 'function') p.catch(function () {});
-          }
-        } catch (_) {}
-      }
-      if (img) {
-        img.classList.remove('is-light-visible');
-        if (video) img.style.display = 'none';
-      }
+    if (video) {
+      video.classList.remove('is-light-fallback');
+      video.style.display = '';
+      try {
+        if (video.paused && video.readyState >= 2) {
+          var p = video.play();
+          if (p && typeof p.catch === 'function') p.catch(function () {});
+        }
+      } catch (_) {}
+    }
+    if (img) {
+      img.classList.remove('is-light-visible');
+      // só mostra a imagem se o vídeo não existir / falhar
+      if (video) img.style.display = 'none';
     }
   }
 

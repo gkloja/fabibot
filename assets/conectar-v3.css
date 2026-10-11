@@ -506,3 +506,127 @@ html[data-theme="light"] .code-display{
   color:#0f172a !important;
   background:#f1f5f9 !important;
 }
+
+/* ========== Light mode — contraste alto ========== */
+html[data-theme="light"]{
+  color-scheme:light;
+}
+html[data-theme="light"] body,
+body.light-mode{
+  background:#e8edf2 !important;
+  color:#0a0f14 !important;
+}
+html[data-theme="light"] .card,
+html[data-theme="light"] .modal-content,
+html[data-theme="light"] .list-group-item,
+html[data-theme="light"] .dropdown-menu,
+html[data-theme="light"] .offcanvas,
+html[data-theme="light"] .toast,
+body.light-mode .card,
+body.light-mode .modal-content{
+  background:#fff !important;
+  color:#0a0f14 !important;
+  border-color:rgba(15,23,42,.14) !important;
+}
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4,
+html[data-theme="light"] h5,
+html[data-theme="light"] h6,
+html[data-theme="light"] label,
+html[data-theme="light"] .form-label,
+html[data-theme="light"] .card-title,
+html[data-theme="light"] .modal-title,
+html[data-theme="light"] strong,
+html[data-theme="light"] b,
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode h3,
+body.light-mode label,
+body.light-mode strong{
+  color:#0a0f14 !important;
+}
+html[data-theme="light"] p,
+html[data-theme="light"] span,
+html[data-theme="light"] li,
+html[data-theme="light"] td,
+html[data-theme="light"] th,
+html[data-theme="light"] .text-muted,
+html[data-theme="light"] small,
+html[data-theme="light"] .form-text,
+body.light-mode p,
+body.light-mode .text-muted{
+  color:#334155 !important;
+}
+html[data-theme="light"] .form-control,
+html[data-theme="light"] .form-select,
+html[data-theme="light"] input,
+html[data-theme="light"] select,
+html[data-theme="light"] textarea,
+body.light-mode .form-control{
+  background:#fff !important;
+  color:#0a0f14 !important;
+  border-color:rgba(15,23,42,.18) !important;
+}
+html[data-theme="light"] .form-control::placeholder{
+  color:#64748b !important;
+}
+html[data-theme="light"] .btn-outline-light,
+html[data-theme="light"] .btn-dark,
+html[data-theme="light"] .btn-secondary{
+  color:#0a0f14 !important;
+  border-color:rgba(15,23,42,.2) !important;
+  background:#f1f5f9 !important;
+}
+html[data-theme="light"] .btn-primary{
+  color:#fff !important;
+}
+html[data-theme="light"] .table,
+html[data-theme="light"] .table td,
+html[data-theme="light"] .table th,
+html[data-theme="light"] .table thead{
+  color:#0a0f14 !important;
+  background:#fff !important;
+  border-color:rgba(15,23,42,.12) !important;
+}
+html[data-theme="light"] .navbar,
+html[data-theme="light"] .topbar,
+html[data-theme="light"] .navbar-dark,
+body.light-mode .navbar{
+  background:rgba(255,255,255,.97) !important;
+  border-color:rgba(15,23,42,.12) !important;
+  color:#0a0f14 !important;
+}
+html[data-theme="light"] .navbar a,
+html[data-theme="light"] .navbar-brand,
+html[data-theme="light"] .nav-link{
+  color:#0a0f14 !important;
+}
+html[data-theme="light"] .session-item,
+html[data-theme="light"] .list-group-item,
+body.light-mode .session-item{
+  background:#fff !important;
+  border-color:rgba(15,23,42,.12) !important;
+  color:#0a0f14 !important;
+}
+html[data-theme="light"] code,
+html[data-theme="light"] .code-display,
+html[data-theme="light"] pre{
+  color:#0a0f14 !important;
+  background:#f1f5f9 !important;
+}
+html[data-theme="light"] .badge,
+html[data-theme="light"] .status-badge{
+  color:#0a0f14 !important;
+}
+html[data-theme="light"] .bg-dark,
+html[data-theme="light"] .text-white{
+  /* só neutraliza quando faz sentido em cards */
+}
+html[data-theme="light"] .text-white:not(.btn):not(.badge){
+  color:#0a0f14 !important;
+}
+html[data-theme="light"] a:not(.btn){
+  color:#1d4ed8 !important;
+}
