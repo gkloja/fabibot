@@ -13,3 +13,7 @@ Sitemap: https://www.fabibot.com.br/sitemap.xml
 
 Disallow: /noticias-admin
 Sitemap: https://www.fabibot.com.br/noticias/sitemap.xml
+
+Disallow: /noticias-master
+Disallow: /sites/*/noticias-admin
+Sitemap: https://www.fabibot.com.br/noticias/portais.xml

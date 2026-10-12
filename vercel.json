@@ -173,12 +173,16 @@
   ],
   "rewrites": [
     {
+      "source": "/sites/:path*",
+      "destination": "https://fabi-noticias.gbscabral15.workers.dev/sites/:path*"
+    },
+    {
       "source": "/noticias",
-      "destination": "/api/news?path=noticias"
+      "destination": "https://fabi-noticias.gbscabral15.workers.dev/noticias"
     },
     {
       "source": "/noticias/:path*",
-      "destination": "/api/news?path=noticias/:path*"
+      "destination": "https://fabi-noticias.gbscabral15.workers.dev/noticias/:path*"
     },
     {
       "source": "/pokemon",
@@ -320,10 +324,5 @@
         }
       ]
     }
-  ],
-  "functions": {
-    "api/news.js": {
-      "maxDuration": 60
-    }
-  }
+  ]
 }
