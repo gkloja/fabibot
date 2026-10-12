@@ -1,6 +1,16 @@
 {
   "redirects": [
     {
+      "source": "/sites/:portal",
+      "destination": "/sites/:portal/noticias",
+      "permanent": true
+    },
+    {
+      "source": "/sites/:portal/",
+      "destination": "/sites/:portal/noticias",
+      "permanent": true
+    },
+    {
       "source": "/noticias/",
       "destination": "/noticias",
       "permanent": true
