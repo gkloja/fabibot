@@ -415,7 +415,7 @@ async function boot(){
     state.profile=d.profile;
     const qs=new URLSearchParams(location.search),tradeSlug=qs.get('trade'),auctionId=qs.get('auction'),tab=qs.get('tab');
     if(tab&&['world','collection','farm','missions','arena','boss','season','ranking','hall','market','shop','achievements'].includes(tab))state.tab=tab;
-    if(!tab&&!tradeSlug&&!auctionId){try{const last=sessionStorage.getItem('pk_last_tab');if(TAB_IDS.includes(last))state.tab=last}catch(_){}}
+    if(!tab&&!tradeSlug&&!auctionId)state.tab='world';
     if(state.tab==='market'&&!tradeSlug&&!auctionId)await loadMarket(true);
     if(state.tab==='boss')await loadBoss(true);
     if(state.tab==='hall')await loadHall(true);
@@ -429,8 +429,8 @@ async function boot(){
     startLiveRanking();
     startBossLive(state.tab==='boss');
     startHallLive(state.tab==='hall');
-    await loadNotifications(true);
-    await loadBoss(true);
+    await loadNotifications(true).catch(e=>console.warn('[Pokémon] Avisos indisponíveis:',e.message));
+    await loadBoss(true).catch(e=>console.warn('[Pokémon] Boss indisponível:',e.message));
     clearInterval(state.notifTimer);state.notifTimer=setInterval(()=>loadNotifications(true),30000);
     if(tradeSlug||auctionId||tab)setTimeout(scrollActivePanel,120);
   }catch(e){
