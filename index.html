@@ -249,12 +249,14 @@
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function (OneSignal) {
     try {
-      await OneSignal.init({
+      const botInit = OneSignal.init({
         appId: "6ba779b7-14c6-4a31-b955-0c8567a9039b",
         safari_web_id: "web.onesignal.auto.5136aa20-d33c-4de6-8d7f-c3f8c4b264dc",
         serviceWorkerPath: "sw.js",
         serviceWorkerParam: { scope: "/" },
         allowLocalhostAsSecureOrigin: true,
+        requiresUserPrivacyConsent: true,
+        autoResubscribe: false,
         notifyButton: {
           enable: false
         },
@@ -262,7 +264,7 @@
           slidedown: {
             prompts: [{
               type: "push",
-              autoPrompt: true,
+              autoPrompt: false,
               text: {
                 actionMessage: "Quer receber avisos da Fabi Bot? Feed, sessão offline e chat.",
                 acceptButton: "Sim, quero",
@@ -277,6 +279,10 @@
           message: "Notificações ativadas! Você será avisado sobre o feed e sua sessão."
         }
       });
+      window.fabiBotPushInit=botInit;
+      window.fabiBotPushReady=OneSignal;
+      document.dispatchEvent(new Event("fabi-bot-push-ready"));
+      await botInit;
       console.log("✅ OneSignal Fabi Bot inicializado");
       try {
         if (typeof window.vincularOneSignalUsuario === 'function') {
@@ -21002,5 +21008,30 @@ window.addEventListener('beforeunload', () => {
 
 <script src="/assets/fabi-home-v5.js?v=20261010home2" defer></script>
 <script src="/assets/fabi-theme.js?v=20261011c" defer></script>
-<script src="/assets/news-push-preference.js?v=10" defer></script></body>
+<script src="/assets/news-push-preference.js?v=10" defer></script>
+<style>
+#bot-push-control{position:fixed;bottom:16px;left:16px;z-index:1000;border:1px solid #28ca94;background:#13221d;color:#fff;border-radius:30px;padding:10px 16px;font:600 13px system-ui;cursor:pointer}
+#bot-push-card{position:fixed;bottom:68px;left:16px;z-index:1001;width:min(370px,calc(100vw - 32px));background:#13221d;color:#fff;border:1px solid #28ca94;border-radius:20px;padding:22px;box-sizing:border-box;box-shadow:0 12px 50px #0006;font:15px/1.5 system-ui}
+#bot-push-card[hidden]{display:none}#bot-push-card h2{font-size:21px;color:#fff;margin:0 0 8px}#bot-push-card button{padding:10px 15px;border-radius:20px;cursor:pointer;margin:5px 5px 0 0;border:0;background:#28ca94;color:#092017}#bot-push-state{font-size:13px}
+</style>
+<button id="bot-push-control" type="button">🔔 Avisos da Fabi Bot</button>
+<aside id="bot-push-card" hidden aria-labelledby="bot-push-heading"><h2 id="bot-push-heading">A Fabi avisa você.</h2><p>Receba novidades da Fabi Bot, avisos do feed e da sua sessão.</p><button id="bot-push-enable" type="button">Quero receber</button><button id="bot-push-disable" type="button">Pausar avisos</button><button id="bot-push-close" type="button">Fechar</button><p id="bot-push-state" role="status"></p></aside>
+<script>
+(()=>{const $=id=>document.getElementById(id),card=$('bot-push-card'),state=$('bot-push-state');
+const read=k=>{try{return localStorage.getItem(k);}catch{return null;}},write=(k,v)=>{try{localStorage.setItem(k,v);}catch{}};
+$('bot-push-control').onclick=()=>{card.hidden=!card.hidden;if(!window.fabiBotPushReady)state.textContent='Carregando o serviço de notificações…';};
+$('bot-push-close').onclick=()=>{card.hidden=true;write('fabi-bot-invite-after',String(Date.now()+7*86400000));};
+async function enable(){const os=window.fabiBotPushReady;if(!os){state.textContent='O serviço ainda não carregou. Recarregue a página e tente novamente.';return;}
+$('bot-push-enable').disabled=true;try{
+if(!('Notification' in window))throw Error('Este navegador não permite notificações.');
+const permission=Notification.permission==='granted'?'granted':await Notification.requestPermission();if(permission!=='granted')throw Error('Libere as notificações deste site nas configurações do navegador.');
+await os.setConsentGiven(true);await window.fabiBotPushInit;await os.User.PushSubscription.optIn();await os.User.addTag('fabi_news_only','0');write('fabi-bot-push-choice','on');state.textContent='Avisos da Fabi Bot ativados.';
+}catch(e){state.textContent=e.message||'Não foi possível ativar agora.';}finally{$('bot-push-enable').disabled=false;}}
+$('bot-push-enable').onclick=enable;
+$('bot-push-disable').onclick=async()=>{try{const os=window.fabiBotPushReady;if(!os)throw Error('Aguarde o carregamento do serviço.');await os.User.PushSubscription.optOut();write('fabi-bot-push-choice','off');state.textContent='Avisos da Fabi Bot pausados.';}catch(e){state.textContent=e.message;}};
+function ready(){if(read('fabi-bot-push-choice')==='on'&&window.Notification?.permission==='granted'){enable();return;}if(!read('fabi-bot-push-choice')&&Date.now()>Number(read('fabi-bot-invite-after')||0))setTimeout(()=>{card.hidden=false;},8000);}
+document.addEventListener('fabi-bot-push-ready',ready);if(window.fabiBotPushReady)ready();
+})();
+</script>
+</body>
 </html>
