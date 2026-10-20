@@ -255,7 +255,7 @@
         serviceWorkerPath: "sw.js",
         serviceWorkerParam: { scope: "/" },
         allowLocalhostAsSecureOrigin: true,
-        requiresUserPrivacyConsent: true,
+        requiresUserPrivacyConsent: false,
         autoResubscribe: false,
         notifyButton: {
           enable: false
@@ -291,7 +291,7 @@
           let raw = localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session');
           if (raw) {
             const s = JSON.parse(raw);
-            const ext = String((s && (s.id || s.numero || s.email)) || '').trim();
+            const ext = String((s && (s.oneSignalExternalId || s.registroId)) || '').trim();
             if (ext && OneSignal.login) await OneSignal.login(ext);
           }
         }
@@ -305,7 +305,7 @@
 </script>
 
 <script>
-  // external_user_id = id OU número da conta (mesmo valor no push do servidor)
+  // external_id = ID estável da conta (mesmo registro no site e backend)
   window.vincularOneSignalUsuario = async function vincularOneSignalUsuario(user) {
     try {
       const u = user || (typeof currentUser !== 'undefined' ? currentUser : null);
@@ -313,11 +313,21 @@
       try {
         s = JSON.parse(localStorage.getItem('fabi_session') || localStorage.getItem('neconecta_user_session') || 'null');
       } catch (_) {}
-      const ext = String(
-        (u && (u.id || u.numero || u.email)) ||
-        (s && (s.id || s.numero || s.email)) ||
+      let ext = String(
+        (u && (u.oneSignalExternalId || u.registroId)) ||
+        (s && (s.oneSignalExternalId || s.registroId)) ||
         ''
       ).trim();
+      if (!ext) {
+        try {
+          const backend=(typeof API_URL!=='undefined' && API_URL)?String(API_URL).replace(//$/,''):'';
+          const reply=await fetch(backend+'/api/me',{credentials:'include',cache:'no-store'});
+          if (reply.ok) {
+            const response=await reply.json();
+            ext=String(response?.user?.oneSignalExternalId||response?.user?.registroId||'').trim();
+          }
+        }catch(_){}
+      }
       if (!ext) return;
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       window.OneSignalDeferred.push(async function (OneSignal) {
@@ -334,6 +344,38 @@
       console.warn('vincularOneSignalUsuario:', e);
     }
   };
+</script>
+
+
+<!-- fabi-onesignal-corrigido-v1: opt-in explicito e diagnostico -->
+<script>
+(function(){
+  const button=document.createElement('button');
+  button.id='fabi-push-enable';button.type='button';
+  button.textContent='🔔 Ativar avisos do bot';
+  button.style.cssText='position:fixed;right:12px;bottom:135px;z-index:99;border:0;border-radius:18px;padding:11px 14px;background:#7448ea;color:white;font:700 13px system-ui;box-shadow:0 6px 24px #0004;cursor:pointer;';
+  button.hidden=true;
+  document.addEventListener('DOMContentLoaded',()=>document.body.append(button));
+  window.OneSignalDeferred=window.OneSignalDeferred||[];
+  OneSignalDeferred.push(async function(sdk){
+    try{
+      if(window.fabiBotPushInit)await window.fabiBotPushInit;
+      const refresh=()=>{const opted=!!sdk.User?.PushSubscription?.optedIn;button.hidden=opted||sdk.Notifications?.permission===false;};
+      refresh();
+      sdk.User?.PushSubscription?.addEventListener?.('change',refresh);
+      button.addEventListener('click',async()=>{
+        button.disabled=true;
+        try{
+          await sdk.Notifications.requestPermission();
+          if(typeof window.vincularOneSignalUsuario==='function')await window.vincularOneSignalUsuario();
+          refresh();
+          if(!sdk.User?.PushSubscription?.optedIn)alert('A notificação não foi ativada. Confira as permissões do navegador.');
+        }catch(e){console.warn('[Fabi Push] Ativação:',e);alert('Não foi possível ativar as notificações neste navegador.');}
+        finally{button.disabled=false;}
+      });
+    }catch(e){console.warn('[Fabi Push] Inicialização:',e);}
+  });
+})();
 </script>
 
 <!-- ===== SESSÃO DO SERVIDOR (login igual ao Index — sem Firebase/Google) ===== -->
