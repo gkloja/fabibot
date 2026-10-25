@@ -39,12 +39,18 @@
      const {res,data}=await tryLogin(username,password);
      if(res.ok&&data&&data.success){
        const u=data.user||{};
-       try{localStorage.removeItem('fabi_session');localStorage.removeItem('neconecta_user_session');sessionStorage.removeItem('fabi_group_token');}catch(_){}
+       try{localStorage.removeItem('fabi_session');localStorage.removeItem('neconecta_user_session');localStorage.removeItem('fabi_group_refresh_v33');sessionStorage.removeItem('fabi_group_token');}catch(_){}
        const sess={logado:true,id:u.id||u.nome||username,nome:u.nome||username,email:u.email||'',numero:u.numero||'',golds:u.golds||u.dinheiro||0,rank:0,avatar:u.avatar||u.foto||u.fotoPerfil||'/flogo.jpg',provider:'servidor',at:Date.now()};
        localStorage.setItem('fabi_session',JSON.stringify(sess));
        localStorage.setItem('neconecta_user_session',JSON.stringify({id:sess.id,nome:sess.nome,email:sess.email,numero:sess.numero,avatar:sess.avatar,provider:'servidor',seguidores:[],seguindo:[]}));
-       // V29: credencial de 12h assinada PELO SERVIDOR, restrita a configuração de grupos.
+       // V33: acesso curto + renovação limitada ao navegador desta conta.
        if(data.fabiGrupoToken)sessionStorage.setItem('fabi_group_token',data.fabiGrupoToken);
+       if(data.fabiGrupoRefreshToken) {
+         localStorage.setItem('fabi_group_refresh_v33',JSON.stringify({
+           numero:String(sess.numero||'').replace(/\D/g,''),
+           token:data.fabiGrupoRefreshToken
+         }));
+       }
        if(redirectTo.includes('pokemon')){
           const response=await fetch(urlsFor('/api/pokemon-adventure/session')[0],{method:'POST',mode:'cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({contaNumero:sess.numero,credential:password,guestToken:localStorage.getItem('pk_guest_token')})});
           const player=await response.json();if(!response.ok||!player.success)throw new Error(player.error||'Não foi possível iniciar a jornada Pokémon.');

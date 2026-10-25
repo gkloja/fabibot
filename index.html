@@ -8938,6 +8938,97 @@ function fz31AvisarPermissao(kind, titulo='', descricao='') {
     if(login)login.hidden=kind!=='expired';
     if(retry)retry.hidden=kind!=='unavailable' && kind!=='offline';
 }
+// V33: renovação silenciosa, apenas com refresh emitido por login autenticado.
+// Não utiliza nome ou número enviados pelo navegador como autorização.
+let fz33RefreshPendente=null;
+function fz33ContaAtualNumero() {
+    try {
+        const s=JSON.parse(localStorage.getItem('fabi_session')||'{}');
+        return s.logado?String(s.numero||'').replace(/\D/g,''):'';
+    }catch(_){return '';}
+}
+function fz33RefreshSalvo() {
+    try {
+        const atual=fz33ContaAtualNumero();
+        const armazenado=JSON.parse(localStorage.getItem('fabi_group_refresh_v33')||'null');
+        if(!atual || !armazenado || armazenado.numero!==atual || !armazenado.token)return '';
+        return String(armazenado.token);
+    }catch(_){return '';}
+}
+function fz33TokenDados(token) {
+    try {
+        if(!token)return null;
+        return JSON.parse(atob(token.split('.')[0].replace(/-/g,'+').replace(/_/g,'/')));
+    }catch(_){return null;}
+}
+function fz33ExpiraEm(token) {
+    const data=fz33TokenDados(token);
+    return data?Number(data.exp)||0:0;
+}
+function fz33TokenPertenceConta(token) {
+    const d=fz33TokenDados(token);
+    return !!(d && d.num && String(d.num)===fz33ContaAtualNumero());
+}
+async function fz33AssegurarGrupoToken(force=false) {
+    try {
+        let atual=sessionStorage.getItem('fabi_group_token')||'';
+        if(atual && !fz33TokenPertenceConta(atual)){
+            sessionStorage.removeItem('fabi_group_token');
+            atual='';
+        }
+        if(!fz33ContaAtualNumero())return false;
+        if(!force && fz33ExpiraEm(atual)>Date.now()+2*60*1000)return true;
+        const refresh=fz33RefreshSalvo();
+        if(!refresh)return fz33ExpiraEm(atual)>Date.now()+15000;
+        if(fz33RefreshPendente)return fz33RefreshPendente;
+        fz33RefreshPendente=(async()=>{
+            const conta=fz33ContaAtualNumero();
+            const url=apiProxyUrl('/api/grupos/renovar-token');
+            const response=await fetch(url,{
+                method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
+                body:JSON.stringify({fabiGrupoRefreshToken:refresh})
+            });
+            const data=await response.json().catch(()=>({}));
+            if(response.status===401 || response.status===403){
+                // Token explicitamente revogado ou expirado: não repetir indefinidamente.
+                if(fz33RefreshSalvo()===refresh)localStorage.removeItem('fabi_group_refresh_v33');
+                sessionStorage.removeItem('fabi_group_token');
+                localStorage.removeItem('fabi_group_refresh_v33');
+                return false;
+            }
+            if(!response.ok || !data.success)throw new Error(data.message||'Falha ao renovar autorização');
+            if(!data.fabiGrupoToken || !data.fabiGrupoRefreshToken ||
+               String(data.numero||'')!==conta || conta!==fz33ContaAtualNumero())return false;
+            sessionStorage.setItem('fabi_group_token',data.fabiGrupoToken);
+            localStorage.setItem('fabi_group_refresh_v33',JSON.stringify({numero:conta,token:data.fabiGrupoRefreshToken}));
+            return true;
+        })().finally(()=>{fz33RefreshPendente=null;});
+        return await fz33RefreshPendente;
+    }catch(err){
+        console.warn('[Fabi grupos] Renovação temporariamente indisponível:',err.message);
+        // Se houve erro de rede e token atual ainda está válido, continua sem bloquear.
+        return fz33ExpiraEm(sessionStorage.getItem('fabi_group_token')||'')>Date.now()+15000;
+    }
+}
+// Renova quando o visitante volta à aba de configuração, sem checagem repetitiva excessiva.
+document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible' && fz33ContaAtualNumero() &&
+       (typeof currentSection==='undefined' || currentSection==='configurar')) {
+        fz33AssegurarGrupoToken().then(ok=>{
+            if(ok && typeof fz31EstadoPermissoes!=='undefined' && fz31EstadoPermissoes==='expired')cfgPainelCarregarGrupos();
+        });
+    }
+});
+window.addEventListener('storage',e=>{
+    if(e.key==='fabi_session'){
+        const token=sessionStorage.getItem('fabi_group_token')||'';
+        if(token && !fz33TokenPertenceConta(token))sessionStorage.removeItem('fabi_group_token');
+    }
+    if(e.key==='fabi_group_refresh_v33' && document.visibilityState==='visible' &&
+       fz33ContaAtualNumero() && typeof fz31EstadoPermissoes!=='undefined' &&
+       fz31EstadoPermissoes==='expired')fz33AssegurarGrupoToken().then(ok=>{if(ok)cfgPainelCarregarGrupos();});
+});
+
 function fz31TokenTemporarioExpirou() {
     try {
         const token = sessionStorage.getItem('fabi_group_token') || '';
@@ -9179,7 +9270,7 @@ function cfgAuthBody() {
       contaNumero: s.numero ? String(s.numero).replace(/\D/g, "") : "",
       nome: s.nome || s.id || "",
       nomeConta: s.nome || s.id || "",
-      fabiGrupoToken: sessionStorage.getItem('fabi_group_token') || ''
+      fabiGrupoToken: (typeof fz33TokenPertenceConta==='function' && fz33TokenPertenceConta(sessionStorage.getItem('fabi_group_token')||'')) ? sessionStorage.getItem('fabi_group_token') : ''
     };
   } catch (e) { return {}; }
 }
@@ -9199,6 +9290,8 @@ async function cfgSalvarTodas() {
     if (el) body[id] = el.value;
   });
   try {
+    await fz33AssegurarGrupoToken();
+    body.fabiGrupoToken = sessionStorage.getItem('fabi_group_token') || '';
     const resp = await fetch(API_URL + "/alterarConfig", {
       method: "POST",
       headers: {
@@ -9316,12 +9409,19 @@ async function cfgPainelCarregarGrupos() {
         if (carregamento!==fz31CarregamentoId)return;
         cfgGruposOriginais = lista;
         cfgGruposAdmin = [];
+        await fz33AssegurarGrupoToken();
         const avisoTempoDeLogin = fz31TokenTemporarioExpirou();
         try {
-            const respPerm = await fetch(API_URL + '/api/grupos/permissoes-conta', {
+            let respPerm = await fetch(API_URL + '/api/grupos/permissoes-conta', {
                 method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
                 body: JSON.stringify(cfgAuthBody())
             });
+            if(respPerm.status===401 && await fz33AssegurarGrupoToken(true)){
+                respPerm=await fetch(API_URL + '/api/grupos/permissoes-conta', {
+                    method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
+                    body:JSON.stringify(cfgAuthBody())
+                });
+            }
             const perm = await respPerm.json().catch(()=>({}));
             if(carregamento!==fz31CarregamentoId)return;
             if (!respPerm.ok || !perm.success) {
@@ -9347,7 +9447,7 @@ async function cfgPainelCarregarGrupos() {
             console.warn('[Fabi Grupos] Não foi possível confirmar as permissões:', e.message);
             const expirou=e.status===401 || e.status===403 || (avisoTempoDeLogin && !e.status);
             if(expirou){
-                fz31AvisarPermissao('expired','Sua autorização de grupos precisa ser renovada','Você continua logado no site, mas a autorização para configurar grupos é temporária. Faça login novamente na mesma aba para recuperar o acesso da sua robô.');
+                fz31AvisarPermissao('expired','Sua autorização de grupos precisa ser renovada','Não foi possível renovar automaticamente a autorização deste dispositivo. Entre novamente uma vez para reativar o acesso seguro aos grupos.');
             } else {
                 fz31AvisarPermissao('unavailable','Não foi possível consultar os grupos agora',String(e.message||'Falha na conexão com o servidor.')+' Seus grupos não foram excluídos; tente atualizar a consulta.');
             }
@@ -9632,6 +9732,7 @@ async function g1SalvarEstados() {
     }
 
     try {
+        await fz33AssegurarGrupoToken();
         const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
         const resp = await fetch(API_URL + '/alterarEstadosG1', {
             method: 'POST',
@@ -9667,7 +9768,7 @@ async function g1SalvarEstados() {
 // Feedback visual ao ativar/desativar cada configuração
 function cfgPainelIniciarListeners() {
     document.querySelectorAll('#configForm .config-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
+        checkbox.addEventListener('change', async function () {
             const configName = this.dataset.configName;
             const friendlyName = this.dataset.friendlyName;
             const isChecked = this.checked;
@@ -9679,6 +9780,7 @@ function cfgPainelIniciarListeners() {
                 statusSpan.className = `fz-cfg-status ${isChecked ? 'on' : 'off'}`;
             }
 
+            await fz33AssegurarGrupoToken();
             fetch(API_URL + '/alterarConfig', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -9922,6 +10024,7 @@ async function salvarHorarioGrupo() {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
 
     try {
+        await fz33AssegurarGrupoToken();
         const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
         const resp = await fetch((typeof apiProxyUrl === 'function' ? apiProxyUrl('/alterarHorarioGrupo') : ((typeof API_URL !== 'undefined' ? API_URL : '') + '/alterarHorarioGrupo')), {
             method: 'POST',
@@ -10043,6 +10146,7 @@ async function fzCarregarControleSessaoDona(grupoID, sessaoPreferida = '') {
     const gid = grupoID || cfgPainelObterGrupoSelecionado();
     if (!gid) return fzEsconderControleSessao('sem grupo');
     try {
+        await fz33AssegurarGrupoToken();
         const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
         const qs = new URLSearchParams({
             grupoID: gid,
@@ -10108,7 +10212,8 @@ function fzTrocarSessaoControle(sessao) {
 async function fzSalvarAluguelPayload(payload) {
     const grupoID = cfgPainelObterGrupoSelecionado();
     if (!grupoID || !fzSessaoControleAtual) return;
-    const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
+    await fz33AssegurarGrupoToken();
+        const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
     const resp = await fetch(fzApi('/api/grupo/aluguel'), {
         method: 'POST',
         headers: fzAuthHeaders(),
@@ -10161,6 +10266,7 @@ async function fzCarregarBotoff(grupoID, sessaoForcada = '') {
     const chk = document.getElementById('fzBotAtivo');
     if (!gid || !sessao) return;
     try {
+        await fz33AssegurarGrupoToken();
         const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
         const qs = new URLSearchParams({ grupoID: gid, sessao, numero: auth.contaNumero || '', nome: auth.nome || '' });
         const resp = await fetch(fzApi('/api/grupo/botoff?' + qs.toString()), { headers: fzAuthHeaders() });
@@ -10193,6 +10299,7 @@ async function fzToggleBotoff(ligado) {
         return;
     }
     try {
+        await fz33AssegurarGrupoToken();
         const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
         const resp = await fetch(fzApi('/api/grupo/botoff'), {
             method: 'POST', headers: fzAuthHeaders(),
@@ -10232,6 +10339,7 @@ async function fzCarregarPalavras(grupoID) {
         return;
     }
     try {
+        await fz33AssegurarGrupoToken();
         const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
         const resp = await fetch(fzApi('/api/grupo/palavras/listar'), {
             method:'POST', headers: {'Content-Type':'application/json'},
@@ -10272,6 +10380,7 @@ async function fzAddPalavra() {
         return;
     }
     try {
+        await fz33AssegurarGrupoToken();
         const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
         const resp = await fetch(fzApi('/api/grupo/palavras'), {
             method: 'POST',
@@ -10298,6 +10407,7 @@ async function fzDelPalavra(palavra) {
     const grupoID = cfgPainelObterGrupoSelecionado();
     if (!grupoID || !palavra) return;
     try {
+        await fz33AssegurarGrupoToken();
         const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
         const resp = await fetch(fzApi('/api/grupo/palavras'), {
             method: 'DELETE',
