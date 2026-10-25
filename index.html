@@ -7351,6 +7351,40 @@ html, body { max-width:100%; overflow-x:clip; }
 .fz-intro-video, .fz-fabi-media { max-width:100%; height:auto; }
 img, video, iframe { max-width:100%; }
 @media(max-width:760px){ input:not([type="checkbox"]):not([type="radio"]), textarea, select { font-size:max(16px,1rem);} }
+/* FABI HOME V20 — alcance comunitário, sem dados individuais. */
+.fbs-reach { margin:0 0 16px; padding:15px 16px 13px; border:1px solid rgba(50,218,161,.20); border-radius:18px;
+  background:linear-gradient(120deg,rgba(52,211,153,.085),rgba(59,130,246,.055) 62%,rgba(52,211,153,.025)); position:relative; overflow:hidden; }
+.fbs-reach::after {content:""; position:absolute;right:-34px;top:-54px;width:145px;height:145px;border-radius:50%;border:1px solid rgba(52,211,153,.12);box-shadow:0 0 0 27px rgba(52,211,153,.026),0 0 0 55px rgba(52,211,153,.013);pointer-events:none;}
+.fbs-reach-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px;margin:0 0 13px;position:relative;z-index:1;}
+.fbs-reach-title{display:flex;align-items:center;gap:8px;color:#e7fbf4;font-size:12px;font-weight:850;letter-spacing:.015em;}
+.fbs-reach-title svg{width:17px;height:17px;stroke:#56e6b2;stroke-width:2;flex:0 0 auto;}
+.fbs-reach-tag{display:inline-flex;align-items:center;gap:6px;color:#a4c5b9;font-size:10px;font-weight:750;white-space:nowrap;}
+.fbs-reach-tag::before{content:"";width:5px;height:5px;border-radius:50%;background:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.12);}
+.fbs-reach-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;position:relative;z-index:1;}
+.fbs-reach-tile{min-width:0;display:flex;align-items:center;gap:12px;padding:15px 16px;border:1px solid rgba(148,163,184,.12);border-radius:15px;background:linear-gradient(115deg,rgba(255,255,255,.065),rgba(255,255,255,.025));box-shadow:inset 0 1px 0 rgba(255,255,255,.045);}
+.fbs-reach-symbol{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:13px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.18);color:#80f2c3;}
+.fbs-reach-tile:nth-child(2) .fbs-reach-symbol{background:rgba(96,165,250,.12);border-color:rgba(96,165,250,.18);color:#93c5fd;}
+.fbs-reach-symbol svg{width:23px;height:23px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.fbs-reach-copy{min-width:0;display:flex;flex-direction:column;gap:3px;}
+.fbs-reach-count{font-size:clamp(23px,3.7vw,34px);font-weight:900;color:#f9fefd;line-height:1.08;letter-spacing:-.055em;font-variant-numeric:tabular-nums;}
+.fbs-reach-tile:first-child .fbs-reach-count{color:#78f0bc;}
+.fbs-reach-caption{color:#b5c5d6;font-size:11px;font-weight:650;line-height:1.35;}
+.fbs-reach-foot{display:flex;align-items:center;gap:6px;margin:10px 2px 0;color:#8fa6b4;font-size:10px;line-height:1.45;position:relative;z-index:1;}
+.fbs-reach-foot svg{width:13px;height:13px;stroke:#8fa6b4;fill:none;stroke-width:2;flex-shrink:0;}
+body.light-mode .fbs-reach{border-color:#bcebd9;background:linear-gradient(115deg,#effdf8,#f2f8ff);}
+body.light-mode .fbs-reach-title{color:#126249;}
+body.light-mode .fbs-reach-tag,body.light-mode .fbs-reach-foot{color:#52766f;}
+body.light-mode .fbs-reach-tile{background:rgba(255,255,255,.8);border-color:#d9e9e4;}
+body.light-mode .fbs-reach-count{color:#17344a;}
+body.light-mode .fbs-reach-tile:first-child .fbs-reach-count{color:#087955;}
+body.light-mode .fbs-reach-caption{color:#596b7f;}
+@media(max-width:760px){.fbs-reach{padding:12px 11px 11px;border-radius:15px;margin-bottom:12px;}.fbs-reach-grid{gap:8px;}.fbs-reach-tile{padding:13px 11px;gap:9px;border-radius:13px;}.fbs-reach-symbol{width:36px;height:36px;flex-basis:36px;border-radius:11px;}.fbs-reach-symbol svg{width:20px;height:20px;}.fbs-reach-count{font-size:clamp(22px,6vw,28px);}.fbs-reach-caption{font-size:10px;}.fbs-reach-foot{font-size:9.5px;}}
+@media(max-width:360px){.fbs-reach-tile{gap:7px;padding:11px 9px;}.fbs-reach-symbol{width:32px;height:32px;flex-basis:32px;}.fbs-reach-count{font-size:22px;}.fbs-reach-title{font-size:11px;}}
+body.light-mode .fbs-metric:first-child .fbs-number{color:#09845b;}
+body.light-mode .fbs-badge{color:#0c5376;background:#e6f3fb;border-color:#c4e5f7;}
+body.light-mode .fbs-reach-symbol{color:#087955;background:rgba(16,185,129,.10);}
+body.light-mode .fbs-reach-tile:nth-child(2) .fbs-reach-symbol{color:#235e9a;background:rgba(96,165,250,.10);}
+body.light-mode .fbs-reach-title svg{stroke:#078b68;}
 /* Fabi Shield V18: home only, mobile-first and no overlapping grid children. */
 .fbs-shield{display:none;contain:layout style;}
 body[data-fabi-section="feed"] .fbs-shield:not([hidden]){display:block;}
@@ -7414,6 +7448,26 @@ body.light-mode .fbs-panel{background:radial-gradient(circle at 0% 0%,rgba(16,18
       </div>
       <span class="fbs-chip" id="fbsState">◉ Sincronizando painel</span>
     </div>
+    <div class="fbs-reach" role="group" aria-labelledby="fbsReachTitle">
+      <div class="fbs-reach-head">
+        <span class="fbs-reach-title" id="fbsReachTitle">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none"/><path d="M3 12h18M12 3a16 16 0 0 1 0 18M12 3a16 16 0 0 0 0 18" fill="none"/></svg>
+          Nossa comunidade em números
+        </span>
+        <span class="fbs-reach-tag">Alcance da Fabi Bot</span>
+      </div>
+      <div class="fbs-reach-grid" aria-label="Grupos e membros da Fabi Bot">
+        <div class="fbs-reach-tile">
+          <span class="fbs-reach-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9h10M7 13h6M7 17h4"/></svg></span>
+          <span class="fbs-reach-copy"><strong class="fbs-reach-count" id="fbsGrupos">—</strong><span class="fbs-reach-caption">Grupos cadastrados</span></span>
+        </div>
+        <div class="fbs-reach-tile">
+          <span class="fbs-reach-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M2.5 20v-2a6.5 6.5 0 0 1 13 0v2M16 5a3 3 0 0 1 0 6M17.5 14a5.5 5.5 0 0 1 4 5.3V20"/></svg></span>
+          <span class="fbs-reach-copy"><strong class="fbs-reach-count" id="fbsMembros">—</strong><span class="fbs-reach-caption">Membros somados</span></span>
+        </div>
+      </div>
+      <div class="fbs-reach-foot" id="fbsReachFoot"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><span>Dados agregados do cadastro de grupos. Membros podem participar de vários grupos.</span></div>
+    </div>
     <div class="fbs-main">
       <div class="fbs-left">
         <div class="fbs-metrics" aria-label="Estatísticas de moderação">
@@ -7442,6 +7496,7 @@ body.light-mode .fbs-panel{background:radial-gradient(circle at 0% 0%,rgba(16,18
 (() => {
   const $ = (id) => document.getElementById(id);
   const fmt = new Intl.NumberFormat('pt-BR');
+  const fmtCompact = new Intl.NumberFormat('pt-BR', { notation:'compact', maximumFractionDigits:1 });
   const rotulos = [
     ['divulgacao', 'Divulgação e spam'],
     ['pagamento', 'Mensagens de pagamento'],
@@ -7459,7 +7514,33 @@ body.light-mode .fbs-panel{background:radial-gradient(circle at 0% 0%,rgba(16,18
   };
   const num = (x) => Number.isFinite(Number(x)) ? Math.max(0, Math.floor(Number(x))) : 0;
   const setState = (text) => { const e = $('fbsState'); if (e) e.textContent = text; };
+  // Usa somente totais agregados; nunca divulga grupos, números ou participantes individuais.
+  function renderComunidade(comunidade) {
+    const grupos = comunidade?.grupos;
+    const membros = comunidade?.membros;
+    const okGrupos = Number.isSafeInteger(grupos) && grupos >= 0;
+    const okMembros = Number.isSafeInteger(membros) && membros >= 0;
+    const g = $('fbsGrupos'), m = $('fbsMembros');
+    if (g) {
+      g.textContent = okGrupos ? fmt.format(grupos) : '—';
+      g.setAttribute('aria-label', okGrupos ? fmt.format(grupos) + ' grupos cadastrados' : 'Dados de grupos indisponíveis');
+      g.title = okGrupos ? fmt.format(grupos) + ' grupos cadastrados' : 'Indisponível';
+    }
+    if (m) {
+      m.textContent = okMembros ? (membros >= 10000 ? fmtCompact.format(membros) : fmt.format(membros)) : '—';
+      m.setAttribute('aria-label', okMembros ? fmt.format(membros) + ' participações somadas nos grupos' : 'Dados de membros indisponíveis');
+      m.title = okMembros ? fmt.format(membros) + ' participações (não são pessoas únicas)' : 'Indisponível';
+    }
+    const foot = $('fbsReachFoot');
+    if (foot) {
+      const txt = foot.querySelector('span');
+      if (txt) txt.textContent = (!okGrupos && !okMembros)
+        ? 'Contagem de grupos temporariamente indisponível.'
+        : 'Leitura do cadastro • cache de 45 s • participações podem se repetir.';
+    }
+  }
   function render(d) {
+    renderComunidade(d.comunidade);
     $('fbsTotal').textContent = fmt.format(num(d.total));
     $('fbsSemana').textContent = fmt.format(num(d.ultimos7dias));
     $('fbsSpam').textContent = fmt.format(num(d.categorias?.divulgacao));
@@ -8676,6 +8757,7 @@ const CFG_NOMES = {
   autosticker: "🎉 Criar Figurinhas Automaticamente",
   jogos: "🎮 Ativar Jogos (use o /menujogos)",
   sistemGold: "🪙 Modo RPG (use: /menurpg)",
+  pokemonAuto: "🎴 Pokémon Automático · Boss + Figurinhas",
   nsfw: "⚠️ Verificar Links Suspeitos",
   registrarFIGUS: "🎁 Bem-Vindo por Figurinhas",
   autodl: "📥 Baixar Mídias Automaticamente",
@@ -8685,7 +8767,7 @@ const CFG_NOMES = {
   futebol: "⚽ Notícias de Futebol (ge.globo)"
 };
 // Ordem base igual ao EJS
-const CFG_ORDEM_BASE = ["sistemGold","visuUnica","x9","soadm","soinsta","sogrupo","soinstaface","modovoz","antipolitica","antirepeticoes","antistatus","antiimg","antivideo","antiaudio","antisticker","antidoc","antictt","antiloc","antilinkgp","level","antilinkhard","antifake","antispam","antinotas","antiporno","simi1","fabidomal","fabimeme","autosticker","autodl","Odelete","jogos","registrarFIGUS","jovempan","oliberal","futebol","nsfw"];
+const CFG_ORDEM_BASE = ["sistemGold","pokemonAuto","visuUnica","x9","soadm","soinsta","sogrupo","soinstaface","modovoz","antipolitica","antirepeticoes","antistatus","antiimg","antivideo","antiaudio","antisticker","antidoc","antictt","antiloc","antilinkgp","level","antilinkhard","antifake","antispam","antinotas","antiporno","simi1","fabidomal","fabimeme","autosticker","autodl","Odelete","jogos","registrarFIGUS","jovempan","oliberal","futebol","nsfw"];
 // Selos: hot primeiro, depois novo (igual EJS)
 const CFG_BADGES = {
   antipolitica: "hot",
@@ -8698,7 +8780,8 @@ const CFG_BADGES = {
   autodl: "novo",
   jovempan: "novo",
   oliberal: "novo",
-  futebol: "novo"
+  futebol: "novo",
+  pokemonAuto: "novo"
 };
 const CFG_ORDEM = (function () {
   const peso = { hot: 0, novo: 1 };
@@ -8720,8 +8803,10 @@ function cfgRenderizarOpcoes(cfg0) {
     const on = !!cfg0[config];
     const badge = CFG_BADGES[config] === "hot" ? '<span class="fz-cfg-badge fz-cfg-badge-hot">🔥 Hot</span>' :
                   CFG_BADGES[config] === "novo" ? '<span class="fz-cfg-badge fz-cfg-badge-novo">🆕 Novo</span>' : "";
+    const help = config === 'pokemonAuto' ? '<small class="fabi-pokeauto-hint">👹 Avisos de Boss e 🎴 figurinhas automáticas. Desligado por padrão; requer RPG ativo. Admins: /pokeauto ligar ou /pokeauto desligar.</small>' : '';
     html += `<div class="fz-cfg-item" id="group-${config}">
       <label for="${config}">${CFG_NOMES[config] || config} ${badge}</label>
+      ${help}
       <div class="fz-cfg-item-row">
         <label class="fz-cfg-switch">
           <input type="checkbox" name="${config}" id="${config}" class="config-checkbox"
@@ -9193,6 +9278,13 @@ async function g1SalvarEstados() {
     }
 }
 
+// Preferência explícita do grupo: nunca habilita automaticamente ao entrar na página.
+// Renderiza a explicação do novo controle sem interferir com as demais opções.
+(function(){
+  const css = document.createElement('style');
+  css.textContent = '.fabi-pokeauto-hint{display:block;margin:7px 0 10px;font-size:11px;line-height:1.5;color:#7dd3af;font-weight:600}#group-pokemonAuto{border-color:rgba(16,185,129,.28);background:linear-gradient(135deg,rgba(16,185,129,.07),rgba(59,130,246,.03))}body.light-mode .fabi-pokeauto-hint{color:#047857}';
+  document.head.appendChild(css);
+})();
 // Feedback visual ao ativar/desativar cada configuração
 function cfgPainelIniciarListeners() {
     document.querySelectorAll('#configForm .config-checkbox').forEach(checkbox => {
@@ -9213,15 +9305,16 @@ function cfgPainelIniciarListeners() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ grupoID, [configName]: isChecked ? 'on' : 'off', ...cfgAuthBody() })
             })
-            .then(r => r.json())
-            .then(data => {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1800,
-                        icon: data.success ? 'success' : 'error',
-                        title: data.success ? `${friendlyName}: ${isChecked ? 'ativado' : 'desativado'}` : 'Erro ao salvar' });
-                }
+            .then(async r => { const data=await r.json(); if (!r.ok || !data.success) throw new Error(data.message || 'Falha ao salvar'); return data; })
+            .then(() => {
+                if (typeof Swal !== 'undefined') Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1800,
+                    icon: 'success', title: `${friendlyName}: ${isChecked ? 'ativado' : 'desativado'}` });
             })
-            .catch(() => { if (typeof Swal !== 'undefined') Swal.fire('Erro', 'Falha ao salvar configuração.', 'error'); });
+            .catch((e) => {
+                this.checked = !isChecked;
+                if (statusSpan) { statusSpan.textContent = this.checked ? 'Ativo' : 'Inativo'; statusSpan.className = `fz-cfg-status ${this.checked ? 'on' : 'off'}`; }
+                if (typeof Swal !== 'undefined') Swal.fire('Erro', e.message || 'Falha ao salvar configuração.', 'error');
+            });
         });
     });
 }
