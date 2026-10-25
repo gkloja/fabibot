@@ -7086,7 +7086,7 @@ body.light-mode .command-badge-mobile {
   <link rel="stylesheet" href="/assets/index-v3.css?v=20261007">
 <link rel="stylesheet" href="/assets/adsense-ready.css?v=20261007b">
 <link rel="stylesheet" href="/assets/fabi-home-v5.css?v=20261010home2">
-<style>.fabi-news-shortcut{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:6px 10px;border:1px solid #25c79460;border-radius:14px;background:linear-gradient(135deg,#25c79425,#25c79408);color:inherit;text-decoration:none;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0}.fabi-news-shortcut img{width:28px;height:28px;object-fit:cover;border-radius:8px}.fabi-news-shortcut:hover{border-color:#25c794}.fabi-news-shortcut:focus-visible{outline:3px solid #25c794;outline-offset:3px}@media(max-width:380px){.fabi-news-shortcut{padding:5px;gap:4px;font-size:10px}.fabi-news-shortcut img{width:22px;height:22px}}</style></head>
+</head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
 <body class="dark-mode">
 <a class="fabi-skip-link" href="#introSection">Pular para o conteúdo</a>
@@ -7109,7 +7109,7 @@ body.light-mode .command-badge-mobile {
             </div>
         </div>
 <div class="menu" id="mainMenu">
-<button class="bot-push-open" type="button">🔔 Avisos da Fabi Bot</button>
+
     <a href="?feed" data-section="feed" class="active">Home</a>
     <a href="?comunidades" data-section="comunidades">Comunidades</a>
     <a href="?configurar" data-section="configurar">Configurar</a>
@@ -7127,8 +7127,9 @@ body.light-mode .command-badge-mobile {
     <button class="icon-btn" id="musicPlayerBtn" onclick="toggleMusicNavbar()" title="Música de fundo">
         <i class="fas fa-music" id="musicIcon"></i>
     </button>
-<button class="icon-btn" id="notificationBtn" aria-label="Notificações"><i class="fa-regular fa-bell"></i></button>
+
     <div id="profileContainer"></div>
+    <button type="button" id="maisDesktopBtn" class="fabi-desktop-more" aria-label="Abrir mais opções" aria-controls="bottomNavMaisMenu" aria-expanded="false" onclick="toggleMaisMenu()">⋯</button>
 
     <!-- Modal de Perfil / Trocar Foto (igual ao Index) -->
     <div id="userModal" class="user-modal">
@@ -7149,7 +7150,7 @@ body.light-mode .command-badge-mobile {
         </div>
     </div>
 </div>
-<a href="/noticias" class="fabi-news-shortcut" aria-label="Abrir Fabi Notícias"><img src="https://dl.dropboxusercontent.com/scl/fi/rijskbez0upsjkfmr018y/1791820108693_tmp.jpg?rlkey=itqf4onz1bkfm1redpdbga6vv&dl=0" alt=""><span>Notícias</span></a>
+
 </nav>
 
 
@@ -7174,7 +7175,7 @@ body.light-mode .command-badge-mobile {
         <button class="bottom-nav-item" data-section="configurar" type="button">
             <i class="fas fa-cog" aria-hidden="true"></i><span>Configurar</span>
         </button>
-        <button class="bottom-nav-item" id="maisNavBtn" onclick="toggleMaisMenu()">
+        <button class="bottom-nav-item" id="maisNavBtn" type="button" aria-label="Abrir mais opções" aria-controls="bottomNavMaisMenu" aria-expanded="false" onclick="toggleMaisMenu()">
             <i class="fas fa-ellipsis-h"></i><span>Mais</span>
         </button>
     </div>
@@ -7182,9 +7183,27 @@ body.light-mode .command-badge-mobile {
 
 <!-- Menu "Mais" (Perfil, Assistir, Música, e futuros atalhos) -->
 <div class="bottom-nav-mais-overlay" id="bottomNavMaisOverlay" onclick="toggleMaisMenu(false)"></div>
-<div class="bottom-nav-mais-menu" id="bottomNavMaisMenu">
-    <button id="bot-push-control" class="bottom-nav-mais-item bot-push-open" type="button"><i class="fa-regular fa-bell" aria-hidden="true"></i><span>Avisos da Fabi Bot</span></button>
-    <a class="bottom-nav-mais-item" href="/noticias"><i class="fas fa-newspaper" aria-hidden="true"></i><span>Fabi Notícias · leia e ouça</span></a>
+<div class="bottom-nav-mais-menu" id="bottomNavMaisMenu" role="region" aria-label="Mais opções da Fabi Bot">
+    <div class="fabi-more-heading"><span class="fabi-more-pulse" aria-hidden="true"></span><span>Central Fabi Bot</span><small>Seus atalhos em um só lugar</small></div>
+    <div class="fabi-more-group" aria-label="Notificações e avisos">
+      <button class="bottom-nav-mais-item fabi-more-feature" id="notificationBtn" type="button" aria-label="Abrir notificações do site">
+        <span class="fabi-more-icon fabi-more-icon-blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></span>
+        <span class="fabi-more-copy"><strong>Notificações</strong><small>Atividades e recados do site</small></span>
+        <span id="fabiMaisNotifBadge" class="fabi-mais-notif-badge" hidden aria-label="Notificações não lidas"></span>
+        <span class="fabi-more-chevron" aria-hidden="true">›</span>
+      </button>
+      <button id="bot-push-control" class="bottom-nav-mais-item bot-push-open fabi-more-feature" type="button">
+        <span class="fabi-more-icon fabi-more-icon-green"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span>
+        <span class="fabi-more-copy"><strong>Avisos da robô</strong><small>Push de sessão e atualizações</small></span>
+        <span class="fabi-more-chevron" aria-hidden="true">›</span>
+      </button>
+      <a class="bottom-nav-mais-item fabi-more-feature fabi-more-news" href="/noticias">
+        <span class="fabi-more-icon fabi-more-icon-violet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h14v16H6a2 2 0 0 1-2-2V4Z"/><path d="M18 8h2v11a1 1 0 0 1-1 1h-1M7 8h8M7 12h4M7 16h8M13 12h2"/></svg></span>
+        <span class="fabi-more-copy"><strong>Fabi Notícias</strong><small>Notícias, podcast e novidades</small></span>
+        <span class="fabi-more-chevron" aria-hidden="true">›</span>
+      </a>
+    </div>
+    <div class="fabi-more-section-title">Explorar Fabi Bot</div>
     <a class="bottom-nav-mais-item" href="/pokemon.html"><i class="fas fa-compass" aria-hidden="true"></i><span>Pokémon Adventure</span></a>
     <button class="bottom-nav-mais-item" data-section="depoimentos" onclick="mudarSecao('depoimentos'); toggleMaisMenu(false);"><i class="fas fa-quote-left" aria-hidden="true"></i><span>Depoimentos</span></button>
     <a class="bottom-nav-mais-item" href="golds.html" style="text-decoration:none;color:inherit;opacity:.72;">
@@ -7437,14 +7456,66 @@ body.light-mode .fbs-panel{background:radial-gradient(circle at 0% 0%,rgba(16,18
 }
 @media(max-width:355px){.fbs-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}.fbs-metric:last-child{grid-column:auto;}.fbs-number{font-size:21px;}.fbs-event-top{flex-wrap:wrap;}}
 @media(prefers-reduced-motion:reduce){.fbs-event{transition:none;}}
+
+/* V21 — Cabeçalho sem atalhos duplicados; central Mais com acesso a notificações e notícias. */
+.fabi-more-heading{padding:10px 14px 12px;display:grid;grid-template-columns:8px 1fr;gap:3px 8px;color:#eafbf4;font-weight:900;font-size:14px;letter-spacing:-.02em;align-items:center;}
+.fabi-more-heading small{grid-column:2;color:#95a7b7;font-size:10px;font-weight:600;letter-spacing:0;}
+.fabi-more-pulse{width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 0 5px rgba(52,211,153,.13)}
+.fabi-more-group{display:grid;gap:6px;padding:4px 4px 12px;border-bottom:1px solid rgba(148,163,184,.16);margin-bottom:7px;}
+.fabi-more-feature{display:flex!important;align-items:center;gap:12px;padding:10px!important;border:1px solid rgba(148,163,184,.13)!important;border-radius:14px!important;background:rgba(255,255,255,.03)!important;text-decoration:none!important;color:inherit!important;min-height:58px;}
+.fabi-more-feature:hover,.fabi-more-feature:focus-visible{border-color:rgba(52,211,153,.5)!important;background:rgba(52,211,153,.075)!important;}
+.fabi-more-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:12px;background:rgba(59,130,246,.12);color:#93c5fd;}
+.fabi-more-icon i{width:auto!important;color:inherit!important;font-size:16px!important;}
+.fabi-more-icon-green{background:rgba(16,185,129,.12);color:#6ee7b7;}
+.fabi-more-icon-violet{background:rgba(139,92,246,.14);color:#c4b5fd;}
+.fabi-more-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px;}
+.fabi-more-copy strong{font-size:13px;font-weight:850;line-height:1.15;}
+.fabi-more-copy small{font-size:10px;color:#8fa3b5;font-weight:500;line-height:1.3;}
+.fabi-more-chevron{color:#688092!important;font-size:11px!important;width:auto!important;}
+.fabi-mais-notif-badge{flex:0 0 auto;border-radius:99px;min-width:21px;min-height:21px;padding:3px 5px;color:white;background:#ef4444;text-align:center;font:800 10px/15px system-ui;}
+.fabi-mais-notif-badge[hidden]{display:none!important;}
+.fabi-more-section-title{padding:8px 14px 2px;color:#8fa3b5;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;}
+.bottom-nav-mais-menu{max-width:440px!important;margin:0 auto!important;left:12px!important;right:12px!important;max-height:calc(100dvh - 110px)!important;overflow-y:auto!important;overscroll-behavior:contain!important;padding:10px!important;border-radius:22px!important;border:1px solid rgba(148,163,184,.2)!important;box-shadow:0 18px 65px rgba(0,0,0,.6)!important;background:#101a23!important;color:#ecf4ff!important;}
+body.light-mode .bottom-nav-mais-menu{background:#fff!important;color:#142439!important;border-color:#dbe4ed!important;}
+body.light-mode .fabi-more-heading{color:#102635;}
+body.light-mode .fabi-more-heading small, body.light-mode .fabi-more-copy small, body.light-mode .fabi-more-section-title{color:#64748b;}
+body.light-mode .fabi-more-feature{background:#f6fafc!important;border-color:#dbe5ec!important;color:#102635!important;}
+body.light-mode .fabi-more-feature:hover{background:#effcf7!important;}
+/* V21 — Explicação da proteção global, sempre dentro da home. */
+.fbs-how{margin:0 0 15px;padding:16px;border-radius:18px;border:1px solid rgba(78,157,159,.20);background:linear-gradient(115deg,rgba(16,185,129,.06),rgba(59,130,246,.05));}
+.fbs-how-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.fbs-how-heading{display:inline-flex;align-items:center;gap:8px;color:#e8f9f4;font-size:12px;font-weight:850;}
+.fbs-how-heading i{color:#7af0bd;}
+.fbs-how-tag{font-size:10px;font-weight:750;color:#90baa9;border:1px solid rgba(52,211,153,.17);border-radius:99px;padding:5px 9px;}
+.fbs-how-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.fbs-how-item{display:flex;min-width:0;gap:11px;padding:13px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.13);}
+.fbs-how-icon{flex:0 0 35px;width:35px;height:35px;display:grid;place-items:center;border-radius:11px;background:rgba(52,211,153,.12);color:#78f0bc;}
+.fbs-how-item-alert .fbs-how-icon{background:rgba(245,158,11,.11);color:#fbbf24;}
+.fbs-how-item strong{font-size:11.5px;color:#f1f8ff;line-height:1.3;display:block;}
+.fbs-how-item p{font-size:10.5px;line-height:1.5;color:#aabed0;margin:5px 0 0;}
+.fbs-how-note{display:flex;align-items:flex-start;gap:7px;margin:11px 2px 0;color:#839caf;font-size:10px;line-height:1.4;}
+.fbs-how-note i{color:#70b9ac;flex:0 0 auto;margin-top:2px;}
+body.light-mode .fbs-how{background:linear-gradient(115deg,#f1fff8,#f2f8ff);border-color:#d1e8e1;}
+body.light-mode .fbs-how-heading,body.light-mode .fbs-how-item strong{color:#153247;}
+body.light-mode .fbs-how-item{background:rgba(255,255,255,.75);border-color:#dde8ec;}
+body.light-mode .fbs-how-item p,body.light-mode .fbs-how-note,body.light-mode .fbs-how-tag{color:#526b7a;}
+@media(max-width:690px){.fbs-how{padding:12px;margin-bottom:11px;border-radius:15px;}.fbs-how-grid{grid-template-columns:1fr;gap:7px;}.fbs-how-item{padding:11px 10px;}.fbs-how-item p{font-size:10.4px;}.fbs-how-tag{display:none;}}
+
+.fabi-more-icon svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.85; stroke-linecap:round; stroke-linejoin:round; }
+.fabi-more-chevron { width:auto!important; font-size:22px!important; line-height:1; color:#8296a9!important; }
+.fabi-desktop-more { display:inline-grid;place-items:center;width:38px;height:38px;flex:0 0 38px;padding:0;border-radius:12px;cursor:pointer;border:1px solid rgba(148,163,184,.20);background:rgba(255,255,255,.045);color:inherit;font-size:25px;font-weight:900;line-height:1; }
+.fabi-desktop-more:hover,.fabi-desktop-more:focus-visible{border-color:rgba(52,211,153,.65);background:rgba(52,211,153,.1);}
+body.light-mode .fabi-desktop-more{background:#f3f7f9;border-color:#d4dfe6;color:#182d3a;}
+@media(max-width:1024px){.fabi-desktop-more{display:none!important;}}
+@media(min-width:1025px){.bottom-nav-mais-menu{left:auto!important;right:20px!important;top:83px!important;bottom:auto!important;margin:0!important;width:380px!important;max-width:calc(100vw - 40px)!important;max-height:calc(100dvh - 100px)!important;}}
 </style>
 <section id="fabiShieldHome" class="fbs-shield" aria-labelledby="fabiShieldTitle" hidden>
   <div class="fbs-panel">
     <div class="fbs-head">
       <div>
-        <span class="fbs-kicker">Fabi Shield · Inteligência global</span>
-        <h2 class="fbs-title" id="fabiShieldTitle">Um retrato da proteção global.</h2>
-        <p class="fbs-desc">Moderação em números: registros, categorias e três ocorrências recentes, com dados pessoais protegidos.</p>
+        <span class="fbs-kicker">Fabi Shield · Proteção compartilhada</span>
+        <h2 class="fbs-title" id="fabiShieldTitle">Banimentos globais. Grupos mais protegidos.</h2>
+        <p class="fbs-desc">A lista negra global da Fabi Bot reúne históricos de banimentos e sinalizações. Em grupos protegidos, esses cadastros ajudam os administradores a identificar ocorrências anteriores e decidir com mais segurança.</p>
       </div>
       <span class="fbs-chip" id="fbsState">◉ Sincronizando painel</span>
     </div>
@@ -7468,12 +7539,33 @@ body.light-mode .fbs-panel{background:radial-gradient(circle at 0% 0%,rgba(16,18
       </div>
       <div class="fbs-reach-foot" id="fbsReachFoot"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><span>Dados agregados do cadastro de grupos. Membros podem participar de vários grupos.</span></div>
     </div>
+    <div class="fbs-how" aria-label="Como funciona a proteção global">
+      <div class="fbs-how-top">
+        <span class="fbs-how-heading"><i class="fas fa-shield-alt" aria-hidden="true"></i> Como funciona a proteção global</span>
+        <span class="fbs-how-tag">Ações conforme o histórico</span>
+      </div>
+      <div class="fbs-how-grid">
+        <div class="fbs-how-item">
+          <span class="fbs-how-icon" aria-hidden="true"><i class="fas fa-user-shield"></i></span>
+          <div><strong>Ficha enviada aos administradores</strong>
+            <p>Ao entrar ou solicitar acesso, quem tem registro global pode gerar um alerta com a categoria e o motivo. Os administradores decidem nos casos comuns.</p>
+          </div>
+        </div>
+        <div class="fbs-how-item fbs-how-item-alert">
+          <span class="fbs-how-icon" aria-hidden="true"><i class="fas fa-ban"></i></span>
+          <div><strong>Remoção automática por pagamento</strong>
+            <p>Se houver registro por links ou mensagens de pagamento, a Fabi tenta remover a pessoa quando entrar no grupo, desde que tenha permissão de administração.</p>
+          </div>
+        </div>
+      </div>
+      <p class="fbs-how-note"><i class="fas fa-circle-info" aria-hidden="true"></i> O cadastro é um registro de moderação compartilhado; nem toda sinalização causa expulsão automática.</p>
+    </div>
     <div class="fbs-main">
       <div class="fbs-left">
         <div class="fbs-metrics" aria-label="Estatísticas de moderação">
-          <div class="fbs-metric"><strong class="fbs-number" id="fbsTotal">—</strong><span class="fbs-metric-label">Registros na base</span></div>
-          <div class="fbs-metric"><strong class="fbs-number" id="fbsSemana">—</strong><span class="fbs-metric-label">Últimos 7 dias</span></div>
-          <div class="fbs-metric"><strong class="fbs-number" id="fbsSpam">—</strong><span class="fbs-metric-label">Sinalizações de spam</span></div>
+          <div class="fbs-metric"><strong class="fbs-number" id="fbsTotal">—</strong><span class="fbs-metric-label">Registros de banimento global</span></div>
+          <div class="fbs-metric"><strong class="fbs-number" id="fbsSemana">—</strong><span class="fbs-metric-label">Registros dos últimos 7 dias</span></div>
+          <div class="fbs-metric"><strong class="fbs-number" id="fbsSpam">—</strong><span class="fbs-metric-label">Registros por divulgação / spam</span></div>
         </div>
         <div class="fbs-card">
           <div class="fbs-card-title">Motivos mais frequentes <span class="fbs-mini">Por categoria</span></div>
@@ -7488,7 +7580,7 @@ body.light-mode .fbs-panel{background:radial-gradient(circle at 0% 0%,rgba(16,18
       </div>
     </div>
     <div class="fbs-footer">
-      <p class="fbs-disclaimer">Telefones são mascarados. As sinalizações são administrativas e podem ser revisadas.</p>
+      <p class="fbs-disclaimer">Os números representam registros de moderação, não uma contagem de expulsões executadas. Telefones são mascarados e sinalizações podem ser revisadas.</p>
     </div>
   </div>
 </section>
@@ -14679,15 +14771,13 @@ async function verificarNotificacoes() {
         const notifBtn = document.getElementById('notificationBtn');
         if (!notifBtn) return;
         
-        if (data.total > 0) {
-            notifBtn.style.position = 'relative';
-            notifBtn.innerHTML = `
-                <i class="fa-regular fa-bell"></i>
-                <span class="notification-badge">${data.total > 99 ? '99+' : data.total}</span>
-            `;
-        } else {
-            notifBtn.style.position = '';
-            notifBtn.innerHTML = '<i class="fa-regular fa-bell"></i>';
+        // Mantém o texto e o clique do menu Mais: atualiza apenas o badge.
+        const badgeMais = document.getElementById('fabiMaisNotifBadge');
+        if (badgeMais) {
+            const total = Math.max(0, Number(data.total) || 0);
+            badgeMais.hidden = total === 0;
+            badgeMais.textContent = total > 99 ? '99+' : String(total);
+            badgeMais.setAttribute('aria-label', total + ' notificações não lidas');
         }
     } catch (error) {
         // Silencioso
@@ -18903,12 +18993,8 @@ async function verificarMensagensNaoLidas() {
             badge.style.display = 'none';
         }
         
-        // Atualizar ícone de notificação
-        const notifBtn = document.getElementById('notificationBtn');
-        if (notifBtn && data.total > 0) {
-            notifBtn.style.position = 'relative';
-            notifBtn.innerHTML = '<i class="fa-regular fa-bell"></i><span style="position: absolute; top: -4px; right: -4px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700;">' + data.total + '</span>';
-        }
+        // Mensagens privadas usam #msgNaoLidas; não sobrescrever #notificationBtn,
+        // que agora também contém o texto e a estrutura do menu Mais.
     } catch (error) {
         // Silencioso
     }
@@ -19568,6 +19654,10 @@ function toggleMaisMenu(force) {
     const mostrar = typeof force === 'boolean' ? force : !menu.classList.contains('show');
     menu.classList.toggle('show', mostrar);
     overlay.classList.toggle('show', mostrar);
+    const botao = document.getElementById('maisNavBtn');
+    if (botao) botao.setAttribute('aria-expanded', String(mostrar));
+    const desktopBtn = document.getElementById('maisDesktopBtn');
+    if (desktopBtn) desktopBtn.setAttribute('aria-expanded', String(mostrar));
 }
 
 function mudarSecao(section, options = {}) {
@@ -20120,7 +20210,7 @@ function tornarLinksClicaveis(texto, imagemUrl = null) {
     // ==================== EVENTOS ====================
     
     // Evento do sino
-document.getElementById('notificationBtn')?.addEventListener('click', mostrarNotificacoes);
+document.getElementById('notificationBtn')?.addEventListener('click', () => { toggleMaisMenu(false); mostrarNotificacoes(); });
 
 // Verificar notificações a cada 30 segundos
 setInterval(verificarNotificacoes, 30000);
