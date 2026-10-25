@@ -8659,7 +8659,7 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
             </div>
             <div class="fz-cfg-filter-bar" id="cfgFilterBar">
                 <button type="button" class="fz-cfg-filter-btn active" data-filter="todos" onclick="cfgPainelSetFilter('todos')">Todos os grupos</button>
-                <button type="button" class="fz-cfg-filter-btn" data-filter="admin" onclick="cfgPainelSetFilter('admin')">Onde sou admin</button>
+                <button type="button" class="fz-cfg-filter-btn" data-filter="admin" onclick="cfgPainelSetFilter('admin')">Posso configurar</button>
                 <span class="fz-cfg-filter-count" id="cfgFilterCount"></span>
             </div>
 
@@ -9091,7 +9091,8 @@ function cfgAuthBody() {
     return {
       contaNumero: s.numero ? String(s.numero).replace(/\D/g, "") : "",
       nome: s.nome || s.id || "",
-      nomeConta: s.nome || s.id || ""
+      nomeConta: s.nome || s.id || "",
+      fabiGrupoToken: sessionStorage.getItem('fabi_group_token') || ''
     };
   } catch (e) { return {}; }
 }
@@ -9141,23 +9142,25 @@ async function cfgPainelCarregarGrupos() {
         let lista = await resp.json();
         if (!Array.isArray(lista)) lista = [];
 
-        // Guarda TODOS os grupos; filtro "Onde sou admin" é opcional na UI
+        // Todos os grupos seguem visíveis; a autorização de edição vem do SERVIDOR.
         cfgGruposOriginais = lista;
-        const numUser = (typeof cfgObterNumeroUsuario === "function" ? cfgObterNumeroUsuario() : "") || String(
-            (window.SERVER_SESSION && window.SERVER_SESSION.numero) ||
-            (typeof currentUser !== "undefined" && currentUser && currentUser.numero) ||
-            ""
-        ).replace(/\D/g, "");
-
         cfgGruposAdmin = [];
-        if (numUser) {
-            cfgGruposAdmin = lista.filter(g => {
-                if (typeof cfgUsuarioEhAdminDoGrupo === "function") {
-                    return cfgUsuarioEhAdminDoGrupo(g, numUser);
-                }
-                const admins = [].concat(g.administradores || [], g.admins || []).map(a => String(a).replace(/\D/g, ""));
-                return admins.some(a => a && (a === numUser || a.endsWith(numUser) || numUser.endsWith(a)));
+        try {
+            const respPerm = await fetch(API_URL + '/api/grupos/permissoes-conta', {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify(cfgAuthBody())
             });
+            const perm = await respPerm.json();
+            if (!respPerm.ok || !perm.success) throw new Error(perm.message || 'Sessão expirada');
+            cfgGruposAdmin = Array.isArray(perm.grupos) ? perm.grupos : [];
+            // Grupos ligados à robô podem ainda não existir no catálogo público.
+            const existentes = new Set(lista.map(g => String(g.grupoID || g.groupId || g.id || '')));
+            for (const g of cfgGruposAdmin) {
+                const gid = String(g.grupoID || g.groupId || g.id || '');
+                if (gid && !existentes.has(gid)) {cfgGruposOriginais.push(g);existentes.add(gid);}
+            }
+        } catch (e) {
+            console.warn('[Fabi Grupos] Faça login novamente para habilitar edição:', e.message);
         }
 
         // Mantém filtro escolhido (padrão: todos)
@@ -9181,9 +9184,7 @@ function cfgPainelSetFilter(filtro) {
 
 function cfgPainelAtualizarLista() {
     const termo = (document.getElementById("searchInput")?.value || '').toLowerCase();
-    const base = (cfgFiltroAtual === 'admin' && cfgGruposAdmin.length)
-        ? cfgGruposAdmin
-        : cfgGruposOriginais;
+    const base = cfgFiltroAtual === 'admin' ? cfgGruposAdmin : cfgGruposOriginais;
 
     cfgGruposFiltrados = base.filter(g =>
         (g.nome || '').toLowerCase().includes(termo) || String(g.grupoID || '').includes(termo)
@@ -9218,11 +9219,18 @@ function cfgPainelRenderizarPagina() {
         card.className = "cyber-card";
         if (String(grupoSalvo) === String(g.grupoID)) card.classList.add("selected");
         card.onclick = () => cfgPainelSelecionarGrupo(g.grupoID, card);
-        card.innerHTML = `
-            <div class="cyber-number">${inicio + idx + 1}</div>
-            <div class="cyber-name">🔹 ${g.nome || "Grupo sem nome"}</div>
-            <div class="cyber-id">ID do grupo: <b>${g.grupoID}</b></div>
-        `;
+        // Dados de grupos não devem ser inseridos como HTML executável.
+        card.innerHTML = '<div class="cyber-number"></div><div class="cyber-name"></div><div class="cyber-id">ID do grupo: <b></b></div>';
+        card.querySelector('.cyber-number').textContent = String(inicio + idx + 1);
+        card.querySelector('.cyber-name').textContent = '🔹 ' + (g.nome || 'Grupo sem nome');
+        card.querySelector('.cyber-id b').textContent = String(g.grupoID || '');
+        const autorizado = cfgGruposAdmin.find(x => String(x.grupoID || x.groupId || x.id || '') === String(g.grupoID));
+        if (autorizado) {
+            const badge = document.createElement('span');
+            badge.textContent = autorizado.fontePermissao === 'robo-admin' ? '🤖 Sua robô é admin' : '✓ Admin do grupo';
+            badge.style.cssText = 'display:inline-block;margin:8px 0 0;padding:5px 9px;border-radius:999px;border:1px solid #16a34a77;background:#16a34a20;color:#86efac;font:700 11px system-ui';
+            card.appendChild(badge);
+        }
         grid.appendChild(card);
     });
 
@@ -9494,40 +9502,18 @@ async function cfgVerificarAdmin() {
         } else if (typeof fzEsconderControleSessao === 'function') {
             fzEsconderControleSessao('usuário não logado');
         }
-        const resp = await fetch(API_URL + "/grupos.json");
-        if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        const dados = await resp.json();
-        const lista = Array.isArray(dados) ? dados : [];
-
-        const grupo = lista.find(g =>
-            String(g.groupId || '') === String(grupoSelecionado) ||
-            String(g.grupoID || '') === String(grupoSelecionado) ||
-            String(g.grupo || '') === String(grupoSelecionado) ||
-            String(g.id || '') === String(grupoSelecionado)
+        // V29: Não inferir admin lendo grupos.json ou números no navegador.
+        // A lista autorizada foi obtida na API assinada /api/grupos/permissoes-conta.
+        cfgIsAdmin = cfgGruposAdmin.some(g =>
+            String(g.grupoID || g.groupId || g.id || '') === String(grupoSelecionado)
         );
-
-        cfgIsAdmin = false;
-        if (grupo && typeof cfgUsuarioEhAdminDoGrupo === 'function') {
-            cfgIsAdmin = cfgUsuarioEhAdminDoGrupo(grupo, numUser);
-        } else if (grupo) {
-            const admins = [].concat(grupo.administradores || [], grupo.admins || []).map(a => String(a).replace(/\D/g, ''));
-            cfgIsAdmin = !!numUser && admins.some(a => a && (a === numUser || a.endsWith(numUser) || numUser.endsWith(a)));
-        }
-
-        // Se a lista do painel já foi filtrada como "meus grupos admin", confia na seleção
-        if (!cfgIsAdmin && Array.isArray(window.cfgGruposOriginais) && numUser) {
-            const inMyList = cfgGruposOriginais.some(g => String(g.grupoID) === String(grupoSelecionado));
-            if (inMyList && cfgGruposOriginais.length < (lista.length || 999999)) {
-                cfgIsAdmin = true;
-            }
-        }
 
         // Sem número logado: orienta login
         if (!numUser) {
             cfgIsAdmin = false;
             if (avisoNaoAdmin) {
                 avisoNaoAdmin.style.display = 'block';
-                avisoNaoAdmin.innerHTML = '<i class="fas fa-right-to-bracket"></i><p>Faça login na Fabi Bot para verificar se você é administrador deste grupo e editar as configurações.</p>';
+                avisoNaoAdmin.innerHTML = '<i class="fas fa-right-to-bracket"></i><p>Faça login novamente para confirmar as permissões de configuração.</p>';
             }
             if (areaAdmin) areaAdmin.style.display = 'none';
             return;
@@ -9548,7 +9534,7 @@ async function cfgVerificarAdmin() {
             avisoNaoAdmin.style.display = 'none';
         } else {
             avisoNaoAdmin.style.display = 'block';
-            avisoNaoAdmin.innerHTML = '<i class="fas fa-lock"></i><p>Você precisa ser <strong>administrador</strong> deste grupo (no WhatsApp) e estar logado com o mesmo número na Fabi Bot para ver e alterar essas configurações.</p>';
+            avisoNaoAdmin.innerHTML = '<i class="fas fa-lock"></i><p>Para editar este grupo, entre novamente na sua conta. Você precisa ser administrador do grupo ou proprietário de uma sessão conectada cuja robô seja administradora.</p>';
         }
     }
 
@@ -9765,7 +9751,8 @@ function fzAuthHeaders() {
     return {
         'Content-Type': 'application/json',
         'X-User-Numero': auth.contaNumero || auth.numero || '',
-        'X-User-Nome': auth.nome || auth.nomeConta || ''
+        'X-User-Nome': auth.nome || auth.nomeConta || '',
+        'X-Fabi-Grupo-Token': auth.fabiGrupoToken || ''
     };
 }
 function fzApi(path) {
@@ -10009,8 +9996,10 @@ async function fzCarregarPalavras(grupoID) {
     }
     try {
         const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
-        const qs = new URLSearchParams({ grupoID: gid, numero: auth.contaNumero || '', nome: auth.nome || '' });
-        const resp = await fetch(fzApi('/api/grupo/palavras?' + qs.toString()), { headers: fzAuthHeaders() });
+        const resp = await fetch(fzApi('/api/grupo/palavras/listar'), {
+            method:'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({grupoID:gid,...auth})
+        });
         const data = await resp.json();
         if (!data.success) {
             if (boxP) boxP.innerHTML = `<span style="color:#f87171;font-size:13px;">${data.message || 'Erro'}</span>`;
@@ -15496,6 +15485,7 @@ function mostrarSeguindoDeOutroUsuario(usuarioId, usuarioNome) {
                 localStorage.removeItem('fabi_session');
                 localStorage.removeItem('neconecta_user_session');
                 localStorage.removeItem('grupoSelecionadoAdmin');
+                sessionStorage.removeItem('fabi_group_token');
             } catch(e) {}
             window.SERVER_SESSION = { logado: false, id: '', nome: '', numero: '', email: '', avatar: '', golds: 0, rank: 0, ip: '' };
             if (typeof currentUser !== 'undefined') currentUser = null;
