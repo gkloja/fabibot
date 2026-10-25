@@ -8460,6 +8460,21 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
         <div class="fz-cfg-form-card">
             <h3><i class="fas fa-sliders"></i> Configurações Gerais do Grupo</h3>
             <p class="fz-cfg-hint">Selecione um grupo abaixo e ative ou desative os recursos da Fabi Bot para ele.</p>
+            <div class="fz30-grupo-acesso" id="fz30AcessoGrupo" hidden aria-live="polite">
+                <div class="fz30-grupo-selecionado">
+                    <span class="fz30-icon"><i class="fas fa-sliders"></i></span>
+                    <div class="fz30-textos">
+                        <span class="fz30-label">CONFIGURANDO AGORA</span>
+                        <strong id="fz30NomeGrupo">Seu grupo</strong>
+                        <small id="fz30PermissaoGrupo">Acesso confirmado pelo servidor</small>
+                    </div>
+                </div>
+                <div class="fz30-acoes">
+                    <button type="button" id="fz30CompartilharLink" onclick="fz30CompartilharAtalho()" aria-label="Compartilhar link de configuração deste grupo"><i class="fas fa-share-nodes"></i> Compartilhar link</button>
+                    <button type="button" id="fz30CopiarLink" onclick="fz30CopiarAtalho()" aria-label="Copiar link de configuração deste grupo"><i class="fas fa-link"></i> Copiar atalho</button>
+                </div>
+                <p class="fz30-nota"><i class="fas fa-shield-halved"></i> O link apenas abre este grupo. Para configurar, a pessoa precisa entrar na própria conta e ter permissão de administrador ou uma robô administradora vinculada.</p>
+            </div>
 
             <div id="fzCfgNaoAdmin" class="fz-cfg-not-admin" style="display:none;">
                 <i class="fas fa-lock"></i>
@@ -8677,6 +8692,18 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
 </div>
 
 <style>
+/* FABI GRUPOS V30: atalho de configuração e seleção direta */
+.fz30-grupo-acesso{border:1px solid rgba(52,211,153,.38);border-radius:17px;padding:15px 16px;margin:14px 0 20px;background:linear-gradient(115deg,rgba(16,185,129,.13),rgba(15,23,42,.28));color:#e5fff4;box-shadow:0 6px 24px rgba(0,0,0,.12)}
+.fz30-grupo-acesso[hidden]{display:none!important}
+.fz30-grupo-selecionado{display:flex;align-items:center;gap:12px;min-width:0}.fz30-icon{display:grid;place-items:center;flex:0 0 42px;height:42px;border-radius:13px;background:rgba(52,211,153,.18);color:#6ee7b7;font-size:19px}
+.fz30-textos{display:grid;gap:3px;min-width:0}.fz30-label{font:bold 10px system-ui;letter-spacing:.11em;color:#7de3b8}.fz30-textos strong{font:800 16px/1.3 system-ui;color:#f3fff9;overflow-wrap:anywhere}.fz30-textos small{color:#bad2c6;font:12px system-ui}
+.fz30-acoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}.fz30-acoes button{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 13px;min-height:42px;border-radius:11px;cursor:pointer;font:800 12px system-ui;color:#022d20;border:0;background:#5ce0af}.fz30-acoes button+button{background:transparent;color:#baf7de;border:1px solid #5ce0af77}
+.fz30-acoes button:focus-visible,.fz30-card-link:focus-visible{outline:3px solid #ffe680;outline-offset:2px}.fz30-nota{margin:11px 0 0;color:#bed6ca;font:11px/1.55 system-ui}
+.fz30-card-link{display:inline-flex;align-items:center;gap:7px;margin-top:9px;padding:7px 10px;border-radius:10px;border:1px solid #10b98177;background:#10b98117;color:#94f7d2;font:750 11px system-ui;cursor:pointer}
+#configurarContainer .fz-cfg-form-card{scroll-margin-top:86px}
+@media(max-width:550px){.fz30-acoes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.fz30-acoes button{font-size:11px;padding:10px 7px}}
+body.light-mode .fz30-grupo-acesso{background:#ecfdf5;color:#064e3b;border-color:#80dfb5}body.light-mode .fz30-textos strong{color:#064e3b}body.light-mode .fz30-textos small,body.light-mode .fz30-nota{color:#426c59}body.light-mode .fz30-acoes button+button{color:#047857}
+
 /* ===== BOTÃO TROCAR FOTO NO PERFIL ===== */
 .btn-trocar-foto {
     display: inline-flex;
@@ -9131,6 +9158,89 @@ async function cfgSalvarTodas() {
 }
 
 
+// V30 — atalhos usam ?grupo=ID@g.us, sem token de acesso embutido.
+// Permissões são sempre avaliadas por /api/grupos/permissoes-conta.
+let fz30LinkPendente = null;
+let fz30SelecaoGeracao = 0;
+function fz30GrupoDaUrl() {
+    try {
+        const id = String(new URLSearchParams(location.search).get('grupo') || '');
+        return /^\d{6,22}(?:-\d{1,20})?@g\.us$/.test(id) ? id : '';
+    } catch (_) { return ''; }
+}
+function fz30UrlGrupo(id) {
+    if (!/^\d{6,22}(?:-\d{1,20})?@g\.us$/.test(String(id || ''))) return '';
+    return location.origin + '/?grupo=' + encodeURIComponent(id);
+}
+function fz30BuscarGrupo(id) {
+    return (cfgGruposOriginais || []).find(g => String(g.grupoID || g.groupId || g.id) === String(id)) ||
+           (cfgGruposAdmin || []).find(g => String(g.grupoID || g.groupId || g.id) === String(id));
+}
+function fz30GrupoAutorizado(id) {
+    return (cfgGruposAdmin || []).find(g => String(g.grupoID || g.groupId || g.id) === String(id));
+}
+function fz30RenderAtalho(id) {
+    const box = document.getElementById('fz30AcessoGrupo');
+    if (!box) return;
+    const autorizado = fz30GrupoAutorizado(id);
+    const grupo = fz30BuscarGrupo(id);
+    if (!autorizado || !grupo) { box.hidden = true; return; }
+    box.hidden = false;
+    document.getElementById('fz30NomeGrupo').textContent = String(grupo.nome || autorizado.nome || id);
+    document.getElementById('fz30PermissaoGrupo').textContent = autorizado.fontePermissao === 'robo-admin'
+      ? 'Sua robô é administradora deste grupo' : 'Seu acesso como administrador foi confirmado';
+}
+async function fz30CopiarAtalho() {
+    const id = cfgPainelObterGrupoSelecionado();
+    const link = fz30GrupoAutorizado(id) ? fz30UrlGrupo(id) : '';
+    if (!link) return;
+    try {
+      await navigator.clipboard.writeText(link);
+      if (typeof Swal !== 'undefined') Swal.fire({toast:true,position:'top-end',icon:'success',title:'Link do grupo copiado!',showConfirmButton:false,timer:2200});
+    } catch(e) {
+      if(typeof Swal !== 'undefined') Swal.fire({title:'Atalho do grupo',text:link,confirmButtonText:'Fechar'});
+      else window.prompt('Copie o link do grupo:',link);
+    }
+}
+async function fz30CompartilharAtalho() {
+    const id = cfgPainelObterGrupoSelecionado();
+    const permitido = fz30GrupoAutorizado(id);
+    const link = permitido ? fz30UrlGrupo(id) : '';
+    if (!link) return;
+    if (navigator.share) {
+      try { await navigator.share({ title:'Configurar grupo na Fabi Bot', text:'Acesse as configurações deste grupo na Fabi Bot (login e permissão necessários).', url:link });return; }
+      catch(e){ if(e && e.name==='AbortError')return; }
+    }
+    return fz30CopiarAtalho();
+}
+function fz30RolarConfig(inicio) {
+    const alvo = document.querySelector('#configurarContainer .fz-cfg-form-card');
+    if (!alvo) return;
+    try { alvo.scrollIntoView({behavior: inicio ? 'auto' : 'smooth',block:'start'}); }
+    catch(_) { window.scrollTo(0, Math.max(0, alvo.getBoundingClientRect().top + window.scrollY - 85)); }
+}
+function fz30RestaurarAtalho() {
+    const id = fz30GrupoDaUrl();
+    if (!id) return false;
+    // O grupo só pode ser escolhido automaticamente após o servidor confirmar o acesso.
+    if (!fz30GrupoAutorizado(id)) {
+      // Nunca reexibir as opções do grupo previamente selecionado quando o atalho é de outro grupo.
+      try { localStorage.removeItem('grupoSelecionadoAdmin'); } catch(_) {}
+      const box = document.getElementById('fz30AcessoGrupo'); if(box)box.hidden=true;
+      const area=document.getElementById('areaAdmin'); if(area)area.style.display='none';
+      const aviso=document.getElementById('fzCfgNaoAdmin');
+      if(aviso){aviso.style.display='block';aviso.textContent='Faça login com uma conta autorizada a configurar este grupo.';}
+      fz30RolarConfig(true);
+      return false;
+    }
+    cfgPainelSetFilter('admin');
+    cfgPaginaAtual = Math.max(1,Math.floor(cfgGruposFiltrados.findIndex(g=>String(g.grupoID||g.id||g.groupId)===id)/cfgPorPagina)+1);
+    cfgPainelRenderizarPagina();
+    const card = Array.from(document.querySelectorAll('.fz-cfg-grid .cyber-card')).find(c=>c.dataset.grupoId===id);
+    cfgPainelSelecionarGrupo(id, card, {fromLink:true});
+    return true;
+}
+
 function cfgPainelObterGrupoSelecionado() {
     return localStorage.getItem("grupoSelecionadoAdmin") || "";
 }
@@ -9166,6 +9276,8 @@ async function cfgPainelCarregarGrupos() {
         // Mantém filtro escolhido (padrão: todos)
         if (!cfgFiltroAtual) cfgFiltroAtual = 'todos';
         cfgPainelAtualizarLista();
+        if (fz30GrupoDaUrl()) fz30RestaurarAtalho();
+        else fz30RenderAtalho(cfgPainelObterGrupoSelecionado());
     } catch (err) {
         console.error("Erro ao carregar grupos para configuração:", err);
         const grid = document.getElementById("cyberGrid");
@@ -9217,6 +9329,7 @@ function cfgPainelRenderizarPagina() {
     gruposPagina.forEach((g, idx) => {
         const card = document.createElement("div");
         card.className = "cyber-card";
+        card.dataset.grupoId = String(g.grupoID || g.groupId || g.id || '');
         if (String(grupoSalvo) === String(g.grupoID)) card.classList.add("selected");
         card.onclick = () => cfgPainelSelecionarGrupo(g.grupoID, card);
         // Dados de grupos não devem ser inseridos como HTML executável.
@@ -9230,6 +9343,19 @@ function cfgPainelRenderizarPagina() {
             badge.textContent = autorizado.fontePermissao === 'robo-admin' ? '🤖 Sua robô é admin' : '✓ Admin do grupo';
             badge.style.cssText = 'display:inline-block;margin:8px 0 0;padding:5px 9px;border-radius:999px;border:1px solid #16a34a77;background:#16a34a20;color:#86efac;font:700 11px system-ui';
             card.appendChild(badge);
+            const linkButton = document.createElement('button');
+            linkButton.type = 'button';
+            linkButton.className = 'fz30-card-link';
+            linkButton.innerHTML = '<i class="fas fa-link"></i> Copiar link direto';
+            linkButton.setAttribute('aria-label','Copiar link direto deste grupo');
+            linkButton.addEventListener('click', async event => {
+                event.stopPropagation();
+                const link = fz30UrlGrupo(card.dataset.grupoId);
+                if (!link) return;
+                try { await navigator.clipboard.writeText(link); if(typeof Swal!=='undefined') Swal.fire({toast:true,position:'top-end',icon:'success',title:'Atalho copiado!',showConfirmButton:false,timer:1900}); }
+                catch(_) { if(typeof Swal!=='undefined')Swal.fire({title:'Link para configuração',text:link}); else window.prompt('Copie o link:',link); }
+            });
+            card.appendChild(linkButton);
         }
         grid.appendChild(card);
     });
@@ -9250,8 +9376,14 @@ function cfgPainelMudaPagina(dir) {
     cfgPainelRenderizarPagina();
 }
 
-function cfgPainelSelecionarGrupo(id, card) {
+function cfgPainelSelecionarGrupo(id, card, options = {}) {
+    if (!fz30BuscarGrupo(id)) return;
     localStorage.setItem("grupoSelecionadoAdmin", id);
+    fz30RenderAtalho(id);
+    // Rola imediatamente para as configurações, sem aguardar a API.
+    // Evita deixar o usuário no fim da lista depois de escolher um grupo.
+    fz30RolarConfig(!!options.fromLink);
+    const geracao = ++fz30SelecaoGeracao;
     document.querySelectorAll(".fz-cfg-grid .cyber-card").forEach(c => c.classList.remove("selected"));
     if (card) card.classList.add("selected");
     const inputGrupoID = document.getElementById('grupoIDInput');
@@ -9273,6 +9405,7 @@ function cfgPainelSelecionarGrupo(id, card) {
     }
     // CRÍTICO: verificar admin + carregar toggles (antes só carregava config com painel escondido)
     setTimeout(() => {
+        if (geracao !== fz30SelecaoGeracao || cfgPainelObterGrupoSelecionado() !== id) return;
         if (typeof cfgVerificarAdmin === 'function') cfgVerificarAdmin();
         else if (typeof cfgCarregarConfigGrupo === 'function') cfgCarregarConfigGrupo(id);
     }, 150);
@@ -9469,6 +9602,11 @@ function cfgPainelIniciarListeners() {
 // Chamada pelo mudarSecao('configurar') sempre que o usuário abre essa seção
 function inicializarPainelConfiguracao() {
     cfgPainelJaInicializado = true;
+    if(fz30GrupoDaUrl()) {
+      // Esconde a configuração salva anteriormente até a API validar o grupo do link.
+      const area=document.getElementById('areaAdmin'); if(area)area.style.display='none';
+      try { localStorage.removeItem('grupoSelecionadoAdmin'); } catch(_) {}
+    }
     cfgPainelCarregarGrupos();
     cfgVerificarAdmin();
     g1AtualizarContador();
@@ -19800,7 +19938,13 @@ function mudarSecao(section, options = {}) {
             if (configurarContainer) {
                 configurarContainer.style.display = 'block';
                 if (!currentUser) {
-                    mostrarLoginPrompt();
+                    if (fz30GrupoDaUrl() && typeof Swal !== 'undefined') {
+                      Swal.fire({
+                        icon:'info',title:'Entre para configurar o grupo',
+                        text:'O link leva diretamente ao grupo, mas apenas administradores e donos de sessões autorizadas podem alterar as configurações.',
+                        confirmButtonText:'Fazer login',showCancelButton:true,cancelButtonText:'Depois'
+                      }).then(r=>{if(r.isConfirmed) location.href='/login?redirect='+encodeURIComponent('/?grupo='+encodeURIComponent(fz30GrupoDaUrl()));});
+                    } else mostrarLoginPrompt();
                 } else {
                     inicializarPainelConfiguracao();
                 }
