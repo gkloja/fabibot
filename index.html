@@ -8678,6 +8678,18 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
                 <span class="fz-cfg-filter-count" id="cfgFilterCount"></span>
             </div>
 
+            <div id="fz31PermissoesAviso" class="fz31-permissoes-aviso" role="status" aria-live="polite" hidden>
+                <span class="fz31-permissoes-icone" aria-hidden="true"><i class="fas fa-shield-halved"></i></span>
+                <div class="fz31-permissoes-copy">
+                    <strong id="fz31PermissoesTitulo">Conferindo suas permissões</strong>
+                    <p id="fz31PermissoesDescricao">Verificando sua conta e as robôs conectadas.</p>
+                    <div class="fz31-permissoes-acoes">
+                        <button type="button" class="fz31-permissoes-btn" id="fz31PermissoesLogin" onclick="fz31EntrarNovamente()" hidden><i class="fas fa-right-to-bracket"></i> Entrar novamente</button>
+                        <button type="button" class="fz31-permissoes-btn secundario" id="fz31PermissoesRecarregar" onclick="cfgPainelCarregarGrupos()" hidden><i class="fas fa-rotate"></i> Atualizar grupos</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="cyberGrid" class="fz-cfg-grid"></div>
 
             <div class="fz-cfg-pagination">
@@ -8880,6 +8892,17 @@ body.light-mode .fz-cfg-text-options input[type="text"] { background: #f9fafb; b
 body.light-mode .fz-cfg-not-admin { color: #6b7280; }
 </style>
 
+<style id="fz31-group-recovery-style">
+/* V31: mostrar porque um usuário logado vê 0 grupos ao invés de esconder falhas de autorização */
+.fz31-permissoes-aviso{display:flex;align-items:flex-start;gap:13px;border:1px solid rgba(59,130,246,.35);background:linear-gradient(110deg,rgba(30,64,175,.13),rgba(16,185,129,.065));border-radius:18px;padding:15px 16px;margin:14px 0 17px;color:#e2e8f0}
+.fz31-permissoes-aviso[hidden],.fz31-permissoes-btn[hidden]{display:none!important}
+.fz31-permissoes-aviso[data-kind="expired"]{border-color:rgba(251,191,36,.55);background:linear-gradient(105deg,rgba(161,98,7,.2),rgba(15,23,42,.1))}
+.fz31-permissoes-aviso[data-kind="unavailable"]{border-color:rgba(248,113,113,.4);background:rgba(127,29,29,.12)}
+.fz31-permissoes-icone{display:grid;place-items:center;width:39px;height:39px;flex-shrink:0;border-radius:12px;background:rgba(59,130,246,.17);color:#93c5fd}
+.fz31-permissoes-copy{min-width:0;flex:1}.fz31-permissoes-copy strong{display:block;font:850 15px/1.4 system-ui;color:#f8fafc}.fz31-permissoes-copy p{margin:5px 0 11px;color:#b8c8d6;font:13px/1.5 system-ui}
+.fz31-permissoes-acoes{display:flex;flex-wrap:wrap;gap:9px}.fz31-permissoes-btn{border:0;border-radius:10px;padding:10px 13px;background:#34d399;color:#032b1d;font:800 12px/1.3 system-ui;cursor:pointer}.fz31-permissoes-btn.secundario{background:transparent;border:1px solid #a7f3d077;color:#a7f3d0}
+body.light-mode .fz31-permissoes-aviso{background:#f0f9ff;color:#1e293b;border-color:#93c5fd}body.light-mode .fz31-permissoes-copy strong{color:#164e63}body.light-mode .fz31-permissoes-copy p{color:#475569}body.light-mode .fz31-permissoes-btn.secundario{color:#047857;border-color:#047857}
+</style>
 <script>
 // ==================== PAINEL "CONFIGURAR GRUPO" (portado do index.html) ====================
 let cfgGruposOriginais = [];   // lista completa da API
@@ -8889,6 +8912,43 @@ let cfgPaginaAtual = 1;
 let cfgFiltroAtual = 'todos';  // 'todos' | 'admin'
 const cfgPorPagina = 12;
 let cfgPainelJaInicializado = false;
+let fz31EstadoPermissoes = 'loading';  // loading | ready | expired | unavailable | offline | none
+let fz31UltimaConsultaPermissoes = 0;
+let fz31CarregamentoId = 0;
+function fz31UrlVoltar() {
+    const grupo = typeof fz30GrupoDaUrl === 'function' ? fz30GrupoDaUrl() : '';
+    return grupo ? ('/?grupo=' + encodeURIComponent(grupo)) : '/?configurar';
+}
+function fz31EntrarNovamente() {
+    location.href = '/login?redirect=' + encodeURIComponent(fz31UrlVoltar());
+}
+function fz31AvisarPermissao(kind, titulo='', descricao='') {
+    fz31EstadoPermissoes = kind;
+    const panel=document.getElementById('fz31PermissoesAviso');
+    if(!panel)return;
+    const show = kind !== 'ready' && kind !== 'none';
+    panel.hidden=!show;
+    panel.dataset.kind=kind;
+    const tit=document.getElementById('fz31PermissoesTitulo');
+    const des=document.getElementById('fz31PermissoesDescricao');
+    if(tit)tit.textContent=titulo;
+    if(des)des.textContent=descricao;
+    const login=document.getElementById('fz31PermissoesLogin');
+    const retry=document.getElementById('fz31PermissoesRecarregar');
+    if(login)login.hidden=kind!=='expired';
+    if(retry)retry.hidden=kind!=='unavailable' && kind!=='offline';
+}
+function fz31TokenTemporarioExpirou() {
+    try {
+        const token = sessionStorage.getItem('fabi_group_token') || '';
+        if(!token)return true;
+        const part=token.split('.')[0];
+        if(!part)return true;
+        const payload=JSON.parse(atob(part.replace(/-/g,'+').replace(/_/g,'/')));
+        return !(Number(payload.exp)>Date.now()+15000);
+    } catch(_) { return true; }
+}
+
 
 
 // ===== Configurações do grupo (espelha o EJS) =====
@@ -9246,42 +9306,72 @@ function cfgPainelObterGrupoSelecionado() {
 }
 
 async function cfgPainelCarregarGrupos() {
+    const carregamento = ++fz31CarregamentoId;
+    fz31AvisarPermissao('loading', 'Verificando acesso aos grupos', 'Conferindo sua conta, sessões conectadas e os grupos administrados pela robô.');
     try {
-        const resp = await fetch(API_URL + "/grupos.json");
-        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        const resp = await fetch(API_URL + '/grupos.json', {cache:'no-store'});
+        if (!resp.ok) throw new Error('Não foi possível carregar o catálogo de grupos (HTTP '+resp.status+').');
         let lista = await resp.json();
         if (!Array.isArray(lista)) lista = [];
-
-        // Todos os grupos seguem visíveis; a autorização de edição vem do SERVIDOR.
+        if (carregamento!==fz31CarregamentoId)return;
         cfgGruposOriginais = lista;
         cfgGruposAdmin = [];
+        const avisoTempoDeLogin = fz31TokenTemporarioExpirou();
         try {
             const respPerm = await fetch(API_URL + '/api/grupos/permissoes-conta', {
-                method: 'POST', headers: {'Content-Type':'application/json'},
+                method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
                 body: JSON.stringify(cfgAuthBody())
             });
-            const perm = await respPerm.json();
-            if (!respPerm.ok || !perm.success) throw new Error(perm.message || 'Sessão expirada');
+            const perm = await respPerm.json().catch(()=>({}));
+            if(carregamento!==fz31CarregamentoId)return;
+            if (!respPerm.ok || !perm.success) {
+                const err = new Error(perm.message || 'Não foi possível verificar a autorização.');
+                err.status=respPerm.status;
+                throw err;
+            }
             cfgGruposAdmin = Array.isArray(perm.grupos) ? perm.grupos : [];
-            // Grupos ligados à robô podem ainda não existir no catálogo público.
+            // V29 preservada: grupos exclusivos da robô podem não estar no catálogo.
             const existentes = new Set(lista.map(g => String(g.grupoID || g.groupId || g.id || '')));
             for (const g of cfgGruposAdmin) {
-                const gid = String(g.grupoID || g.groupId || g.id || '');
-                if (gid && !existentes.has(gid)) {cfgGruposOriginais.push(g);existentes.add(gid);}
+                const gid=String(g.grupoID || g.groupId || g.id || '');
+                if(gid && !existentes.has(gid)){cfgGruposOriginais.push(g);existentes.add(gid);}
             }
-        } catch (e) {
-            console.warn('[Fabi Grupos] Faça login novamente para habilitar edição:', e.message);
+            fz31UltimaConsultaPermissoes=Date.now();
+            if(cfgGruposAdmin.length){fz31AvisarPermissao('ready');}
+            else if(perm.sessoesVinculadas>0 && Number(perm.sessoesConectadas||0)===0){
+                fz31AvisarPermissao('offline','Robô sem conexão para verificar grupos','A sessão vinculada à sua conta não está disponível neste momento. Confira a conexão da robô e toque em Atualizar grupos.');
+            }else{
+                fz31AvisarPermissao('none');
+            }
+        } catch(e) {
+            console.warn('[Fabi Grupos] Não foi possível confirmar as permissões:', e.message);
+            const expirou=e.status===401 || e.status===403 || (avisoTempoDeLogin && !e.status);
+            if(expirou){
+                fz31AvisarPermissao('expired','Sua autorização de grupos precisa ser renovada','Você continua logado no site, mas a autorização para configurar grupos é temporária. Faça login novamente na mesma aba para recuperar o acesso da sua robô.');
+            } else {
+                fz31AvisarPermissao('unavailable','Não foi possível consultar os grupos agora',String(e.message||'Falha na conexão com o servidor.')+' Seus grupos não foram excluídos; tente atualizar a consulta.');
+            }
         }
-
-        // Mantém filtro escolhido (padrão: todos)
-        if (!cfgFiltroAtual) cfgFiltroAtual = 'todos';
+        if(!cfgFiltroAtual)cfgFiltroAtual='todos';
+        cfgPaginaAtual=1;
         cfgPainelAtualizarLista();
-        if (fz30GrupoDaUrl()) fz30RestaurarAtalho();
-        else fz30RenderAtalho(cfgPainelObterGrupoSelecionado());
-    } catch (err) {
-        console.error("Erro ao carregar grupos para configuração:", err);
-        const grid = document.getElementById("cyberGrid");
-        if (grid) grid.innerHTML = '<p style="color:#A0A0A0;grid-column:1/-1;text-align:center;">Não foi possível carregar seus grupos agora.</p>';
+        if(fz31EstadoPermissoes==='ready'){
+            if(fz30GrupoDaUrl())fz30RestaurarAtalho();
+            else {
+                fz30RenderAtalho(cfgPainelObterGrupoSelecionado());
+                // Revalidar a seleção depois de receber as permissões reais.
+                if(cfgPainelObterGrupoSelecionado())cfgVerificarAdmin();
+            }
+        } else {
+            const box=document.getElementById('fz30AcessoGrupo');if(box)box.hidden=true;
+            const area=document.getElementById('areaAdmin');if(area)area.style.display='none';
+        }
+    } catch(err){
+        if(carregamento!==fz31CarregamentoId)return;
+        console.error('[Fabi Grupos] Erro ao carregar lista:',err);
+        cfgGruposAdmin=[];
+        fz31AvisarPermissao('unavailable','Falha ao carregar a lista de grupos','Não foi possível acessar a lista de grupos. Seus grupos estão preservados; toque em Atualizar grupos.');
+        cfgPainelAtualizarLista();
     }
 }
 
@@ -9305,9 +9395,13 @@ function cfgPainelAtualizarLista() {
     if (countEl) {
         const total = cfgGruposOriginais.length;
         const adminN = cfgGruposAdmin.length;
-        countEl.textContent = cfgFiltroAtual === 'admin'
-            ? `${cfgGruposFiltrados.length} admin · ${total} no total`
-            : `${cfgGruposFiltrados.length} de ${total} grupos` + (adminN ? ` · ${adminN} onde sou admin` : '');
+        countEl.textContent = fz31EstadoPermissoes === 'loading'
+            ? `Verificando permissões · ${total} grupos`
+            : ((fz31EstadoPermissoes === 'expired' || fz31EstadoPermissoes === 'unavailable' || fz31EstadoPermissoes === 'offline')
+                ? `Acesso pendente · ${total} grupos`
+                : cfgFiltroAtual === 'admin'
+                    ? `${cfgGruposFiltrados.length} admin · ${total} no total`
+                    : `${cfgGruposFiltrados.length} de ${total} grupos` + (adminN ? ` · ${adminN} onde sou admin` : ''));
     }
     if (cfgPaginaAtual < 1) cfgPaginaAtual = 1;
     cfgPainelRenderizarPagina();
@@ -9323,7 +9417,12 @@ function cfgPainelRenderizarPagina() {
     const grupoSalvo = cfgPainelObterGrupoSelecionado();
 
     if (gruposPagina.length === 0) {
-        grid.innerHTML = '<p style="color:#A0A0A0;grid-column:1/-1;text-align:center;">Nenhum grupo encontrado.</p>';
+        const empty = document.createElement('p');
+        empty.style.cssText = 'color:var(--text2,#94a3b8);grid-column:1/-1;text-align:center;padding:24px 8px;font:14px/1.6 system-ui';
+        empty.textContent = ['expired','unavailable','offline','loading'].includes(fz31EstadoPermissoes)
+            ? 'Aguardando a verificação de permissões acima. Seus grupos não foram apagados.'
+            : (cfgFiltroAtual==='admin' ? 'Nenhum grupo administrado foi confirmado para esta conta no momento.' : 'Nenhum grupo encontrado.');
+        grid.appendChild(empty);
     }
 
     gruposPagina.forEach((g, idx) => {
@@ -9608,7 +9707,7 @@ function inicializarPainelConfiguracao() {
       try { localStorage.removeItem('grupoSelecionadoAdmin'); } catch(_) {}
     }
     cfgPainelCarregarGrupos();
-    cfgVerificarAdmin();
+    // cfgVerificarAdmin deve rodar apenas após a lista autorizada chegar do servidor.
     g1AtualizarContador();
 }
 
