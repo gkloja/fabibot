@@ -2178,58 +2178,48 @@ img,video { max-width:100%; height:auto; }
             <h1>Sua central de comando <span>Fabi Bot</span></h1>
             <p>Pareie números, acompanhe sessões em tempo real e gerencie sua carteira — tudo em um só lugar.</p>
         </div>
-
-        <!-- V23: Caminho guiado para quem está começando -->
-        <section class="fb23-onboard" id="fb23Comecar" aria-labelledby="fb23Titulo">
-            <div class="fb23-headline">
-                <div>
-                    <span class="fb23-kicker">● COMEÇAR É SIMPLES</span>
-                    <h2 id="fb23Titulo">Conecte sua Fabi em 3 passos</h2>
-                    <p>Escolha seu plano, pague uma única vez e receba o código para conectar seu WhatsApp. O plano por PIX é ativado assim que o pagamento é confirmado.</p>
+        <!-- V25: área de ajuda priorizando YouTube + microdemonstração -->
+        <section class="fb25-help-top" aria-labelledby="fb25HelpTitle">
+            <div class="fb25-help-copy">
+                <span class="fb25-kicker">▶ COMEÇE POR AQUI</span>
+                <h2 id="fb25HelpTitle">Tutoriais principais para conectar sua Fabi</h2>
+                <p>Os vídeos do YouTube são o caminho principal. Logo abaixo, deixei uma <strong>microdemonstração em looping</strong> mostrando onde encontrar a tela para digitar o código.</p>
+            </div>
+            <div class="fb25-youtube-grid">
+                <a class="fb25-yt-card" href="https://www.youtube.com/watch?v=0FcqWiIrB9o" target="_blank" rel="noopener noreferrer">
+                    <span class="fb25-yt-badge"><i class="fab fa-youtube"></i> Tutorial principal</span>
+                    <strong>Como abrir a tela do código no WhatsApp</strong>
+                    <small>Passo a passo completo para parear seu número</small>
+                </a>
+                <a class="fb25-yt-card fb25-yt-card-alt" href="https://www.youtube.com/watch?v=5UsyLmYi9jQ" target="_blank" rel="noopener noreferrer">
+                    <span class="fb25-yt-badge"><i class="fab fa-youtube"></i> Configuração</span>
+                    <strong>Como configurar grupos e recursos da Fabi</strong>
+                    <small>Ideal para quem quer ativar tudo depois da conexão</small>
+                </a>
+            </div>
+            <div class="fb25-mini-demo">
+                <div class="fb25-mini-copy">
+                    <span class="fb25-mini-tag">Microdemonstração</span>
+                    <h3>Onde digitar o código?</h3>
+                    <ol>
+                        <li>Abra <strong>WhatsApp</strong>.</li>
+                        <li>Vá em <strong>Dispositivos conectados</strong>.</li>
+                        <li>Toque em <strong>Conectar dispositivo</strong>.</li>
+                        <li>Escolha <strong>Conectar com número</strong>.</li>
+                    </ol>
+                    <p>Quando o código aparecer aqui no site, basta digitá-lo no WhatsApp.</p>
                 </div>
-                <span class="fb23-tag">⚡ Guia rápido</span>
+                <div class="fb25-mini-video-wrap">
+                    <video id="fb23Video" src="/assets/tutorial-codigo-whatsapp.mp4?v=25-loop" poster="/assets/tutorial-codigo-capa.jpg?v=25-loop" autoplay muted loop playsinline preload="metadata" aria-label="Demonstração rápida de como chegar até a tela do código no WhatsApp"></video>
+                    <button type="button" class="fb25-mini-open" onclick="window.open('https://www.youtube.com/watch?v=0FcqWiIrB9o','_blank','noopener')">
+                        <i class="fab fa-youtube"></i> Abrir tutorial completo
+                    </button>
+                </div>
             </div>
-            <div class="fb23-steps" aria-label="Etapas da conexão">
-                <div class="fb23-step" id="fb23StepPlan"><strong>01</strong><span><b>Escolha um plano</b><small>Escolha o tempo ideal</small></span></div>
-                <div class="fb23-step" id="fb23StepPay"><strong>02</strong><span><b>Faça o pagamento</b><small>PIX direto ou saldo disponível</small></span></div>
-                <div class="fb23-step" id="fb23StepConnect"><strong>03</strong><span><b>Conecte seu número</b><small>Insira o código no WhatsApp</small></span></div>
+            <div class="fb25-help-foot">
+                <a class="fb25-help-link" href="https://wa.me/5521989047220?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20para%20conectar%20a%20Fabi%20Bot" target="_blank" rel="noopener noreferrer">💬 Falar com o suporte</a>
             </div>
-            <div id="fb23PagamentoEstado" class="fb23-payment-state" role="status" aria-live="polite"><span>Seu plano será liberado automaticamente após o pagamento por PIX.</span></div>
-            <div class="fb23-actions">
-                <button type="button" id="fb23BtnPlanos" class="fb23-btn-primary" onclick="abrirModalPlanos()">✨ Escolher meu plano</button>
-                <button type="button" id="fb23BtnConectar" class="fb23-btn-secondary" onclick="fabi23AbrirCriarSessao()">📱 Já tenho plano · Conectar</button>
-            </div>
-            <p id="fb23SaldoAviso" class="fb23-saldo-aviso" hidden>Você já tem saldo na carteira. Selecione um plano e escolha <b>Usar meu saldo</b> — não precisa pagar outro PIX.</p>
         </section>
-
-        <section class="fb23-guide" aria-labelledby="fb23VideoTitle">
-          <div class="fb23-guide-copy">
-            <span class="fb23-kicker">🎬 VÍDEO RÁPIDO · 12 SEGUNDOS</span>
-            <h3 id="fb23VideoTitle">Onde digitar o código no WhatsApp?</h3>
-            <p>Preparar o celular é fácil. Assista ao tutorial e siga o caminho:</p>
-            <ol>
-              <li>Abra <strong>WhatsApp → Dispositivos conectados</strong>.</li>
-              <li>Toque em <strong>Conectar dispositivo</strong>.</li>
-              <li>Escolha <strong>Conectar com número de telefone</strong>.</li>
-              <li>Quando a Fabi mostrar o código, digite-o no WhatsApp.</li>
-            </ol>
-            <div class="fb23-guide-support">Se a notificação não aparecer, <strong>não precisa esperar</strong>: abra essa tela manualmente.</div>
-            <a class="fb23-simple-link" href="https://www.youtube.com/watch?v=0FcqWiIrB9o" target="_blank" rel="noopener noreferrer">Ver tutorial completo no YouTube ↗</a>
-          </div>
-          <div class="fb23-video-frame">
-            <video id="fb23Video" src="/assets/tutorial-codigo-whatsapp.mp4?v=24-original" poster="/assets/tutorial-codigo-capa.jpg?v=24-original" controls playsinline preload="none" aria-label="Tutorial de como preparar o WhatsApp para inserir o código de pareamento"></video>
-            <div class="fb23-video-caption">Seu vídeo original · 15 segundos · o código é gerado no site</div>
-          </div>
-        </section>
-
-        <details class="fb23-more-tutorials">
-          <summary>Precisa de mais ajuda? Ver tutoriais completos e suporte <span aria-hidden="true">⌄</span></summary>
-          <div class="fb23-more-body">
-            <a href="https://www.youtube.com/watch?v=0FcqWiIrB9o" target="_blank" rel="noopener noreferrer">▶ Tutorial completo: conectar a Fabi</a>
-            <a href="https://www.youtube.com/watch?v=5UsyLmYi9jQ" target="_blank" rel="noopener noreferrer">▶ Tutorial: configurar a Fabi</a>
-            <a href="https://wa.me/5521989047220?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20para%20conectar%20a%20Fabi%20Bot" target="_blank" rel="noopener noreferrer">💬 Falar com o suporte no WhatsApp</a>
-          </div>
-        </details>
 
         <div class="card-whatsapp mt-4">
             <div class="card-body">
@@ -2300,18 +2290,23 @@ img,video { max-width:100%; height:auto; }
     </div>
 </div>
         </div>
-
         <!-- Botões de ação -->
-        <p class="fb23-wallet-note">💡 <strong>Quer conectar agora?</strong> Escolha um plano e pague por PIX diretamente. Adicionar saldo é opcional e <em>não ativa um plano sozinho</em>.</p>
+        <div class="fb25-wallet-strip">
+            <div>
+                <span class="fb25-wallet-pill">⚡ Pronto para conectar</span>
+                <p>Escolha um plano para liberar sua próxima sessão. Se você já tiver saldo na carteira, o site mostra essa opção automaticamente.</p>
+            </div>
+        </div>
+        <p id="fb23SaldoAviso" class="fb23-saldo-aviso" hidden>Você já tem saldo na carteira. Ao escolher um plano, a opção de usar saldo aparecerá automaticamente.</p>
         <div class="row mb-4 fb23-wallet-actions">
             <div class="col-md-6">
-                <button class="btn btn-outline-secondary btn-lg w-100 mb-2" onclick="abrirModalDeposito()">
-                    <i class="fas fa-plus-circle"></i> Adicionar saldo (opcional)
+                <button class="btn btn-whatsapp btn-lg w-100 mb-2" onclick="abrirModalPlanos()">
+                    <i class="fas fa-crown"></i> Escolher e ativar plano
                 </button>
             </div>
             <div class="col-md-6">
-                <button class="btn btn-whatsapp btn-lg w-100" onclick="abrirModalPlanos()">
-                    <i class="fas fa-crown"></i> Escolher e ativar plano
+                <button class="btn btn-outline-secondary btn-lg w-100 mb-2" onclick="abrirModalDeposito()">
+                    <i class="fas fa-plus-circle"></i> Adicionar saldo (opcional)
                 </button>
             </div>
         </div>
@@ -2442,7 +2437,34 @@ img,video { max-width:100%; height:auto; }
         </div>
     </div>
 
-    <!-- Modal Nova Sessão -->
+    
+    <!-- Modal sem plano / sem sessão disponível -->
+    <div class="modal fade" id="semPlanoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content fb25-empty-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-bolt"></i> Falta liberar sua próxima conexão</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="fb25-empty-icon"><i class="fas fa-link"></i></div>
+                    <h4>Você está sem sessão disponível no momento</h4>
+                    <p id="semPlanoTexto">Para gerar o código do WhatsApp, primeiro ative um plano. Assim que o pagamento for confirmado, você já pode voltar e conectar.</p>
+                    <div class="fb25-empty-points">
+                        <div><i class="fas fa-check-circle"></i> O plano libera a próxima sessão automaticamente</div>
+                        <div><i class="fas fa-wallet"></i> Se houver saldo na carteira, o botão de usar saldo aparece sozinho</div>
+                        <div><i class="fas fa-play-circle"></i> Os tutoriais do YouTube no topo mostram exatamente como inserir o código</div>
+                    </div>
+                </div>
+                <div class="modal-footer fb25-empty-actions">
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Agora não</button>
+                    <button type="button" class="btn btn-success" onclick="fabiIrParaPlanos()"><i class="fas fa-crown"></i> Escolher plano agora</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Modal Nova Sessão -->
     <div class="modal fade" id="novaSessaoModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -2877,9 +2899,12 @@ img,video { max-width:100%; height:auto; }
                 <div id="metodoPagamento" style="display: none;">
                     <h6 class="mb-3">Escolha como ativar seu plano:</h6><p class="fb23-payment-help">O PIX desta tela ativa <strong>diretamente o plano selecionado</strong>. Não será necessário converter saldo depois. <strong>Se você já adicionou saldo antes, escolha a primeira opção.</strong></p>
                     <div class="d-grid gap-2">
-                        <button class="btn btn-success" onclick="pagarComSaldo()">
-                            <i class="fas fa-wallet"></i> Ativar usando saldo disponível
-                        </button>
+                        <div id="btnPagarSaldoWrap" style="display:none;">
+                            <button class="btn btn-success" id="btnPagarSaldo" onclick="pagarComSaldo()">
+                                <i class="fas fa-wallet"></i> Ativar usando saldo disponível
+                            </button>
+                        </div>
+                        <div id="saldoPlanoHint" class="fb25-saldo-hint" style="display:none;"></div>
                         <button class="btn btn-primary" onclick="pagarComPix()">
                             <i class="fas fa-qrcode"></i> Gerar PIX
                         </button>
@@ -3042,6 +3067,78 @@ let sessaoAtual = '';
 let planoSelecionado = null;
 let transacaoAtual = null;
 
+window.fabiConnectState = window.fabiConnectState || { saldo: 0, sessoes: 0, planoAtual: 'Nenhum', planoAtivo: false, tempoRestante: '' };
+function fabiTemSaldoDisponivel(valorMinimo) {
+    valorMinimo = Number(valorMinimo || 0);
+    var saldo = Number((window.fabiConnectState && window.fabiConnectState.saldo) || 0);
+    return saldo > 0 && saldo >= valorMinimo;
+}
+function fabiAtualizarResumoCarteira(data) {
+    window.fabiConnectState = {
+        saldo: Number(data && data.saldo || 0),
+        sessoes: Number(data && data.sessoesRestantes || 0),
+        planoAtual: String(data && data.planoAtual || 'Nenhum'),
+        planoAtivo: !!((data && data.tempoRestante) || ((data && data.planoAtual) && String(data.planoAtual).toLowerCase() !== 'nenhum')),
+        tempoRestante: String(data && data.tempoRestante || '')
+    };
+    if (typeof fabiAtualizarBotaoSaldoNoModal === 'function') fabiAtualizarBotaoSaldoNoModal();
+}
+function fabiAtualizarBotaoSaldoNoModal(valorPlano) {
+    var wrap = document.getElementById('btnPagarSaldoWrap');
+    var btn = document.getElementById('btnPagarSaldo');
+    var hint = document.getElementById('saldoPlanoHint');
+    if (!wrap || !btn || !hint) return;
+    var saldo = Number((window.fabiConnectState && window.fabiConnectState.saldo) || 0);
+    var minimo = Number(valorPlano != null ? valorPlano : (window.fabiPlanoSelecionadoAtual && window.fabiPlanoSelecionadoAtual.valor) || 0);
+    if (saldo <= 0) {
+        wrap.style.display = 'none';
+        hint.style.display = 'none';
+        return;
+    }
+    wrap.style.display = '';
+    if (saldo >= minimo && minimo > 0) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-wallet"></i> Ativar usando saldo disponível';
+        hint.style.display = '';
+        hint.innerHTML = 'Saldo detectado na carteira: <strong>R$ ' + saldo.toFixed(2) + '</strong>. Você pode ativar este plano sem gerar novo PIX.';
+    } else if (minimo > 0) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-wallet"></i> Saldo insuficiente para este plano';
+        hint.style.display = '';
+        hint.innerHTML = 'Você possui <strong>R$ ' + saldo.toFixed(2) + '</strong> na carteira. Para este plano, gere o PIX ou escolha um plano menor.';
+    } else {
+        btn.disabled = false;
+        hint.style.display = 'none';
+    }
+}
+function fabiOpenModalById(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (window.bootstrap && bootstrap.Modal) {
+        bootstrap.Modal.getOrCreateInstance(el).show();
+    } else if (window.jQuery) {
+        jQuery(el).modal('show');
+    }
+}
+function fabiHideModalById(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (window.bootstrap && bootstrap.Modal) {
+        bootstrap.Modal.getOrCreateInstance(el).hide();
+    } else if (window.jQuery) {
+        jQuery(el).modal('hide');
+    }
+}
+function fabiAbrirSemPlanoModal(mensagem) {
+    var alvo = document.getElementById('semPlanoTexto');
+    if (alvo && mensagem) alvo.textContent = mensagem;
+    fabiOpenModalById('semPlanoModal');
+}
+function fabiIrParaPlanos() {
+    fabiHideModalById('semPlanoModal');
+    setTimeout(function(){ abrirModalPlanos(); }, 220);
+}
+
 // ========== FUNÇÕES DE ATUALIZAÇÃO (APENAS LEITURA) ==========
 function carregarCarteira() {
     fetch(apiUrl(withAuth('/api/carteira/saldo')))
@@ -3068,6 +3165,7 @@ function carregarCarteira() {
                     $('#tempoRestante').attr('title', `Expira em: ${dataFormatada}`);
                     $('#tempoRestante').attr('data-bs-toggle', 'tooltip');
                 }
+                if (typeof fabiAtualizarResumoCarteira === 'function') fabiAtualizarResumoCarteira(data);
             }
         })
         .catch(error => console.error('Erro ao carregar carteira:', error));
@@ -3550,6 +3648,11 @@ let codigoImediatoSegundos = 70;
 let windowCodigoAtualImediato = '';
 let windowSessaoAtualImediato = '';
 function criarNovaSessao() {
+    if (Number((window.fabiConnectState && window.fabiConnectState.sessoes) || 0) < 1) {
+        $('#novaSessaoModal').modal('hide');
+        fabiAbrirSemPlanoModal('Seu plano atual não possui sessão disponível para criar uma nova conexão. Escolha um plano e tente novamente.');
+        return;
+    }
     const numero = $('#inputNumero').val();
     const nome = $('#inputNome').val() || numero;
     const modoPrivado = $('#modoPrivado') ? $('#modoPrivado').is(':checked') : false;
@@ -3603,8 +3706,15 @@ function criarNovaSessao() {
             }, 3000);
             
         } else {
-            $('#mensagemStatus').html(`<i class="fas fa-times-circle text-danger"></i> ${data.message || 'Erro ao criar sessão'}`);
+            const mensagemErro = String(data.message || 'Erro ao criar sessão');
+            $('#mensagemStatus').html(`<i class="fas fa-times-circle text-danger"></i> ${mensagemErro}`);
             $('#btnCriarSessao').prop('disabled', false).html('<i class="fas fa-plus"></i> Criar Sessão');
+            if (/sess|plano|limite|saldo/i.test(mensagemErro)) {
+                setTimeout(() => {
+                    $('#novaSessaoModal').modal('hide');
+                    fabiAbrirSemPlanoModal('No momento sua conta não pode abrir uma nova sessão. Escolha um plano para liberar a conexão e tente de novo.');
+                }, 450);
+            }
             setTimeout(() => {
                 $('#resultadoCriacao').hide();
                 $('#mensagemStatus').text('Criando sessão...');
@@ -3877,6 +3987,7 @@ function copiarCodigoPix() {
 
 function selecionarPlano(tipo, valor) {
     planoSelecionado = { tipo, valor };
+    window.fabiPlanoSelecionadoAtual = planoSelecionado;
     const planos = {
         '2dias': { nome: '2 DIAS', duracao: '48 horas', sessoes: 1, valor: 4 },
         'semanal': { nome: 'SEMANAL', duracao: '7 dias', sessoes: 1, valor: 10 },
@@ -3896,6 +4007,7 @@ function selecionarPlano(tipo, valor) {
     `);
     $('#metodoPagamento').show();
     $('#pagamentoPix').hide();
+    if (typeof fabiAtualizarBotaoSaldoNoModal === 'function') fabiAtualizarBotaoSaldoNoModal(plano.valor);
     if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
         const atual=document.getElementById('planosModal');
         const proximo=document.getElementById('confirmarPlanoModal');
@@ -3911,6 +4023,11 @@ function selecionarPlano(tipo, valor) {
 
 function pagarComSaldo() {
     if (!planoSelecionado) return;
+    if (typeof fabiTemSaldoDisponivel === 'function' && !fabiTemSaldoDisponivel(planoSelecionado.valor)) {
+        toastr.error('Seu saldo atual não cobre esse plano. Gere o PIX ou escolha outro plano.', 'Saldo insuficiente');
+        if (typeof fabiAtualizarBotaoSaldoNoModal === 'function') fabiAtualizarBotaoSaldoNoModal(planoSelecionado.valor);
+        return;
+    }
     fetch(apiUrl('/api/planos/comprar-com-saldo'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -5546,6 +5663,30 @@ body.light-mode .fb23-btn-secondary{color:#11664f;border-color:#10b98188}
 body.light-mode .fb23-payment-state{color:#12654e}
 body.light-mode .fb23-guide-support{color:#166e55}
 @media(prefers-reduced-motion:reduce){.fb23-onboard *,.fb23-guide *{animation:none!important;transition:none!important}}
+
+.fb25-help-top{margin-top:18px;border:1px solid #1f434f;border-radius:24px;padding:22px;background:radial-gradient(circle at top left,#13333f 0,#0d1d29 55%,#0a1520 100%);box-shadow:0 16px 40px rgba(0,0,0,.28)}
+.fb25-help-copy h2{margin:8px 0 10px;color:#f4fffd;font:900 clamp(24px,3vw,34px)/1.1 system-ui}.fb25-help-copy p{margin:0;color:#a9c1c8;font:14px/1.7 system-ui}
+.fb25-kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px;background:#12b98120;border:1px solid #1ce0b073;color:#99f6e4;font:800 11px/1 system-ui;letter-spacing:.12em;text-transform:uppercase}
+.fb25-youtube-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}
+.fb25-yt-card{display:block;text-decoration:none!important;background:linear-gradient(135deg,#1b2538,#0f2330);border:1px solid #ffffff22;border-radius:18px;padding:18px;box-shadow:0 14px 28px rgba(0,0,0,.18);transition:transform .18s ease,border-color .18s ease}.fb25-yt-card:hover{transform:translateY(-2px);border-color:#4ade80aa}
+.fb25-yt-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;padding:6px 10px;border-radius:999px;background:#ff000022;border:1px solid #ff4d4f55;color:#ffd8d8;font:700 11px system-ui}
+.fb25-yt-card strong{display:block;color:#fff;font:850 18px/1.3 system-ui;margin-bottom:6px}.fb25-yt-card small{display:block;color:#a8bcc4;font:13px/1.55 system-ui}
+.fb25-yt-card-alt .fb25-yt-badge{background:#2563eb22;border-color:#60a5fa66;color:#dbeafe}
+.fb25-mini-demo{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr);gap:18px;align-items:center;background:#0d1821;border:1px solid #ffffff18;border-radius:20px;padding:18px}
+.fb25-mini-tag{display:inline-block;margin-bottom:10px;color:#90f7d6;font:800 11px/1 system-ui;letter-spacing:.1em;text-transform:uppercase}
+.fb25-mini-copy h3{margin:0 0 8px;color:#f5fffb;font:800 24px/1.2 system-ui}.fb25-mini-copy p{margin:8px 0 0;color:#aec4cb;font:13px/1.6 system-ui}.fb25-mini-copy ol{margin:0;padding-left:20px;color:#e5f0f0;font:13px/1.8 system-ui}
+.fb25-mini-video-wrap{display:flex;flex-direction:column;gap:10px;align-items:center}.fb25-mini-video-wrap video{width:100%;max-width:220px;aspect-ratio:9/19;border-radius:18px;background:#02070a;border:1px solid #52d7c17d;object-fit:cover;box-shadow:0 16px 34px rgba(0,0,0,.35)}
+.fb25-mini-open{width:100%;max-width:220px;border:0;border-radius:12px;padding:11px 14px;background:linear-gradient(90deg,#ef4444,#dc2626);color:#fff;font:800 13px/1 system-ui}
+.fb25-help-foot{display:flex;justify-content:flex-end;margin-top:14px}.fb25-help-link{color:#93f5d1!important;text-decoration:none;font:800 13px system-ui}
+.fb25-wallet-strip{padding:14px 16px;border:1px solid #2dd4bf2e;border-radius:16px;background:linear-gradient(90deg,rgba(16,185,129,.12),rgba(59,130,246,.08));margin-bottom:10px}.fb25-wallet-pill{display:inline-flex;padding:6px 11px;border-radius:999px;background:#082a23;border:1px solid #1abf9a4d;color:#8bf2d0;font:800 11px system-ui;text-transform:uppercase;letter-spacing:.08em}.fb25-wallet-strip p{margin:9px 0 0;color:#d3e6e6;font:13px/1.6 system-ui}
+.fb25-saldo-hint{padding:10px 12px;border-radius:12px;border:1px solid #3b82f63b;background:#13243d;color:#eaf4ff;font:12px/1.55 system-ui}
+.fb25-empty-modal .modal-content,.fb25-empty-modal .modal-body,.fb25-empty-modal .modal-footer,.fb25-empty-modal .modal-header{background:linear-gradient(180deg,#0d1624,#0d1828)!important}
+.fb25-empty-icon{width:72px;height:72px;border-radius:20px;display:grid;place-items:center;margin:0 auto 16px;background:linear-gradient(135deg,#10b98133,#2563eb22);border:1px solid #46d6a77a;color:#9af7d6;font-size:28px}
+.fb25-empty-modal h4{text-align:center;color:#fff;font:850 24px/1.2 system-ui;margin-bottom:10px}.fb25-empty-modal p{text-align:center;color:#b8c8cf;font:14px/1.65 system-ui;margin-bottom:16px}
+.fb25-empty-points{display:grid;gap:10px}.fb25-empty-points div{display:flex;gap:10px;align-items:flex-start;padding:12px 13px;border-radius:14px;background:#ffffff08;border:1px solid #ffffff12;color:#e5f3f1;font:13px/1.55 system-ui}.fb25-empty-points i{color:#7ef0c8;margin-top:2px}.fb25-empty-actions{gap:10px}
+@media(max-width:720px){.fb25-youtube-grid,.fb25-mini-demo{grid-template-columns:1fr}.fb25-help-foot{justify-content:flex-start}.fb25-help-top{padding:18px 16px}.fb25-yt-card strong{font-size:17px}}
+body.light-mode .fb25-help-top,body.light-mode .fb25-mini-demo,body.light-mode .fb25-wallet-strip{background:#fff;color:#123;border-color:#d7ebe7}body.light-mode .fb25-help-copy h2,body.light-mode .fb25-mini-copy h3{color:#17302f}body.light-mode .fb25-help-copy p,body.light-mode .fb25-mini-copy p,body.light-mode .fb25-mini-copy ol,body.light-mode .fb25-wallet-strip p{color:#496566}body.light-mode .fb25-yt-card{background:#f8fbff;border-color:#d9e7ef}body.light-mode .fb25-yt-card strong{color:#153544}body.light-mode .fb25-yt-card small{color:#5d747a}body.light-mode .fb25-saldo-hint{background:#eef6ff;color:#17324f;border-color:#bfdcff}
+
 </style>
 <script id="fb23-onboard-js">
 // Fabi Connect V23: checkout direto, confirmação acompanhada e próxima etapa clara.
@@ -5560,7 +5701,14 @@ body.light-mode .fb23-guide-support{color:#166e55}
  function save(t){try{if(t)sessionStorage.setItem(key,JSON.stringify(t));else sessionStorage.removeItem(key);}catch(e){}}
  function fetchSafe(url){return fetch(url,{cache:'no-store'}).then(async function(r){var j=await r.json();if(!r.ok)throw new Error(j.message||j.error||'HTTP '+r.status);return j;});}
  window.fabi23PlanoAtivado=function(){completed=true;pending=null;save(null);if(timer)clearTimeout(timer);state('✅ Plano ativado! Agora toque em “Conectar meu WhatsApp” para criar a sessão.',true);move(2);var b=get('fb23BtnPlanos');if(b){b.textContent='✅ Plano ativo';b.disabled=false;}var c=get('fb23BtnConectar');if(c){c.textContent='📱 Conectar meu WhatsApp';c.classList.add('fb23-btn-primary');}modal('confirmarPlanoModal','hide');try{carregarDadosAtualizados();}catch(e){}get('fb23Comecar')?.scrollIntoView({behavior:'smooth',block:'start'});};
- window.fabi23AbrirCriarSessao=function(){modal('novaSessaoModal','show');};
+ window.fabi23AbrirCriarSessao=function(){
+   var sessoes = Number((window.fabiConnectState && window.fabiConnectState.sessoes) || 0);
+   if(sessoes < 1){
+     fabiAbrirSemPlanoModal('Para gerar o código do WhatsApp, você precisa liberar uma sessão primeiro. Escolha um plano e, assim que confirmar, volte para conectar.');
+     return;
+   }
+   modal('novaSessaoModal','show');
+};
  window.fabi23AbrirVideoTutorial=function(e){if(e&&e.preventDefault)e.preventDefault();var overlay=get('fb23VideoOverlay'),v=get('fb23OverlayPlayer');if(overlay&&v){overlay.hidden=false;document.body.style.overflow='hidden';var pr=v.play();if(pr&&pr.catch)pr.catch(function(){/* pode tocar em reproduzir */});}return false;};
  window.fabi23FecharVideo=function(){var overlay=get('fb23VideoOverlay'),v=get('fb23OverlayPlayer');if(v)v.pause();if(overlay)overlay.hidden=true;document.body.style.overflow='';};
  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!get('fb23VideoOverlay')?.hidden)window.fabi23FecharVideo();});
@@ -5605,6 +5753,16 @@ body.light-mode .fb23-guide-support{color:#166e55}
    // Mostra explicação sobre créditos sem autorizar uma compra silenciosa.
    var obs=new MutationObserver(function(){var eSaldo=get('saldoUsuario'),notice=get('fb23SaldoAviso');if(!eSaldo||!notice)return;var v=parseFloat(eSaldo.textContent.replace(/[^0-9,]/g,'').replace(',','.'));notice.hidden=!(v>0);});
    if(get('saldoUsuario')){obs.observe(get('saldoUsuario'),{characterData:true,subtree:true,childList:true});}
+   var novaSessaoEl = get('novaSessaoModal');
+   if (novaSessaoEl && window.bootstrap) {
+     novaSessaoEl.addEventListener('show.bs.modal', function(ev){
+       var sessoes = Number((window.fabiConnectState && window.fabiConnectState.sessoes) || 0);
+       if (sessoes < 1) {
+         ev.preventDefault();
+         fabiAbrirSemPlanoModal('Você não tem sessão disponível no momento. Primeiro escolha um plano para liberar a próxima conexão.');
+       }
+     });
+   }
  });
 })();
 </script>
