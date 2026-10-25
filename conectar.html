@@ -2185,16 +2185,34 @@ img,video { max-width:100%; height:auto; }
                 <h2 id="fb25HelpTitle">Tutoriais principais para conectar sua Fabi</h2>
                 <p>Os vídeos do YouTube são o caminho principal. Logo abaixo, deixei uma <strong>microdemonstração em looping</strong> mostrando onde encontrar a tela para digitar o código.</p>
             </div>
-            <div class="fb25-youtube-grid">
-                <a class="fb25-yt-card" href="https://www.youtube.com/watch?v=0FcqWiIrB9o" target="_blank" rel="noopener noreferrer">
-                    <span class="fb25-yt-badge"><i class="fab fa-youtube"></i> Tutorial principal</span>
-                    <strong>Como abrir a tela do código no WhatsApp</strong>
-                    <small>Passo a passo completo para parear seu número</small>
+            <div class="fb25-youtube-grid" aria-label="Tutoriais completos do YouTube">
+                <a class="fb25-yt-card" href="https://www.youtube.com/watch?v=0FcqWiIrB9o" target="_blank" rel="noopener noreferrer" aria-label="Assistir no YouTube: como abrir a tela do código no WhatsApp">
+                    <span class="fb26-yt-cover">
+                        <span class="fb26-yt-cover-fallback" aria-hidden="true"><span class="fb26-fallback-icon">📲</span><span>Fabi Bot</span></span>
+                        <img src="https://i.ytimg.com/vi/0FcqWiIrB9o/hqdefault.jpg" alt="Prévia do tutorial de como conectar a Fabi Bot ao WhatsApp" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="480" height="360" onerror="this.hidden=true">
+                        <span class="fb26-yt-play" aria-hidden="true">▶</span>
+                        <span class="fb26-yt-corner" aria-hidden="true">YouTube</span>
+                    </span>
+                    <span class="fb26-yt-content">
+                        <span class="fb25-yt-badge"><i class="fab fa-youtube" aria-hidden="true"></i> Tutorial principal</span>
+                        <strong>Como abrir a tela do código no WhatsApp</strong>
+                        <small>Veja o passo a passo completo para parear seu número.</small>
+                        <span class="fb26-yt-watch">▶ Assistir no YouTube <span aria-hidden="true">↗</span></span>
+                    </span>
                 </a>
-                <a class="fb25-yt-card fb25-yt-card-alt" href="https://www.youtube.com/watch?v=5UsyLmYi9jQ" target="_blank" rel="noopener noreferrer">
-                    <span class="fb25-yt-badge"><i class="fab fa-youtube"></i> Configuração</span>
-                    <strong>Como configurar grupos e recursos da Fabi</strong>
-                    <small>Ideal para quem quer ativar tudo depois da conexão</small>
+                <a class="fb25-yt-card fb25-yt-card-alt" href="https://www.youtube.com/watch?v=5UsyLmYi9jQ" target="_blank" rel="noopener noreferrer" aria-label="Assistir no YouTube: como configurar grupos e recursos da Fabi Bot">
+                    <span class="fb26-yt-cover fb26-yt-cover-alt">
+                        <span class="fb26-yt-cover-fallback" aria-hidden="true"><span class="fb26-fallback-icon">⚙️</span><span>Fabi Bot</span></span>
+                        <img src="https://i.ytimg.com/vi/5UsyLmYi9jQ/hqdefault.jpg" alt="Prévia do tutorial de como configurar grupos e recursos da Fabi Bot" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="480" height="360" onerror="this.hidden=true">
+                        <span class="fb26-yt-play" aria-hidden="true">▶</span>
+                        <span class="fb26-yt-corner" aria-hidden="true">YouTube</span>
+                    </span>
+                    <span class="fb26-yt-content">
+                        <span class="fb25-yt-badge"><i class="fab fa-youtube" aria-hidden="true"></i> Configuração</span>
+                        <strong>Como configurar grupos e recursos da Fabi</strong>
+                        <small>Ative os recursos depois de conectar seu WhatsApp.</small>
+                        <span class="fb26-yt-watch">▶ Assistir no YouTube <span aria-hidden="true">↗</span></span>
+                    </span>
                 </a>
             </div>
             <div class="fb25-mini-demo">
@@ -5686,6 +5704,31 @@ body.light-mode .fb23-guide-support{color:#166e55}
 .fb25-empty-points{display:grid;gap:10px}.fb25-empty-points div{display:flex;gap:10px;align-items:flex-start;padding:12px 13px;border-radius:14px;background:#ffffff08;border:1px solid #ffffff12;color:#e5f3f1;font:13px/1.55 system-ui}.fb25-empty-points i{color:#7ef0c8;margin-top:2px}.fb25-empty-actions{gap:10px}
 @media(max-width:720px){.fb25-youtube-grid,.fb25-mini-demo{grid-template-columns:1fr}.fb25-help-foot{justify-content:flex-start}.fb25-help-top{padding:18px 16px}.fb25-yt-card strong{font-size:17px}}
 body.light-mode .fb25-help-top,body.light-mode .fb25-mini-demo,body.light-mode .fb25-wallet-strip{background:#fff;color:#123;border-color:#d7ebe7}body.light-mode .fb25-help-copy h2,body.light-mode .fb25-mini-copy h3{color:#17302f}body.light-mode .fb25-help-copy p,body.light-mode .fb25-mini-copy p,body.light-mode .fb25-mini-copy ol,body.light-mode .fb25-wallet-strip p{color:#496566}body.light-mode .fb25-yt-card{background:#f8fbff;border-color:#d9e7ef}body.light-mode .fb25-yt-card strong{color:#153544}body.light-mode .fb25-yt-card small{color:#5d747a}body.light-mode .fb25-saldo-hint{background:#eef6ff;color:#17324f;border-color:#bfdcff}
+
+
+/* V26: miniaturas reais de YouTube, clicáveis sem iframe/JavaScript */
+.fb25-youtube-grid .fb25-yt-card { overflow:hidden; padding:0; border-radius:20px; background:linear-gradient(150deg,#121d2b,#112734); min-width:0; }
+.fb26-yt-cover { display:block; position:relative; overflow:hidden; width:100%; aspect-ratio:16 / 9; background:#071821; isolation:isolate; }
+.fb26-yt-cover-alt { background:#0d1d36; }
+.fb26-yt-cover img { display:block; position:absolute; width:100%; height:100%; inset:0; z-index:1; object-fit:cover; object-position:50% 50%; }
+.fb26-yt-cover img[hidden] { display:none !important; }
+.fb26-yt-cover-fallback { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px; color:#b2f6e4; background:radial-gradient(circle at 50% 35%,#146c5a,#102536 70%); font:850 19px system-ui; }
+.fb26-yt-cover-alt .fb26-yt-cover-fallback { color:#d0e7ff; background:radial-gradient(circle at 50% 35%,#2b4f82,#111b37 70%); }
+.fb26-fallback-icon { font-size:40px; line-height:1; }
+.fb26-yt-play { position:absolute; z-index:3; top:50%; left:50%; transform:translate(-50%,-50%); display:grid; place-items:center; border-radius:16px; width:66px; height:46px; color:white; background:#f52930; box-shadow:0 6px 25px #0009; font:800 23px system-ui; padding-left:3px; transition:transform .2s ease, background .2s ease; }
+.fb25-yt-card:hover .fb26-yt-play, .fb25-yt-card:focus-visible .fb26-yt-play { transform:translate(-50%,-50%) scale(1.08); background:#df1219; }
+.fb26-yt-corner { position:absolute; z-index:3; bottom:10px; right:12px; color:#fff; background:rgba(0,0,0,.7); padding:4px 8px; border-radius:7px; font:800 11px system-ui; }
+.fb26-yt-content { display:flex; flex-direction:column; align-items:flex-start; padding:16px 17px 18px; }
+.fb26-yt-content .fb25-yt-badge { margin-bottom:10px; }
+.fb25-youtube-grid .fb25-yt-card strong { margin-bottom:8px; }
+.fb26-yt-watch { margin-top:14px; display:inline-flex; gap:8px; align-items:center; color:#8cf5d7; font:800 12px system-ui; }
+.fb25-yt-card-alt .fb26-yt-watch { color:#b5d7ff; }
+.fb25-yt-card:focus-visible { outline:3px solid #34d399; outline-offset:3px; }
+body.light-mode .fb25-youtube-grid .fb25-yt-card { background:#f7fbfe; border-color:#dbe6ed; }
+body.light-mode .fb26-yt-watch { color:#047857; }
+body.light-mode .fb25-yt-card-alt .fb26-yt-watch { color:#1557ac; }
+@media (max-width:720px) { .fb26-yt-content { padding:14px; } .fb26-yt-play { width:61px; height:43px; } }
+@media (prefers-reduced-motion:reduce) { .fb26-yt-play { transition:none; } }
 
 </style>
 <script id="fb23-onboard-js">
