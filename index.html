@@ -7509,6 +7509,48 @@ body.light-mode .fabi-desktop-more{background:#f3f7f9;border-color:#d4dfe6;color
 @media(max-width:1024px){.fabi-desktop-more{display:none!important;}}
 @media(min-width:1025px){.bottom-nav-mais-menu{left:auto!important;right:20px!important;top:83px!important;bottom:auto!important;margin:0!important;width:380px!important;max-width:calc(100vw - 40px)!important;max-height:calc(100dvh - 100px)!important;}}
 </style>
+<style id="fbs-demo-v22-css">
+/* V22 — Demonstração visual do fluxo de moderação global */
+.fbs-demo,.fbs-demo *{box-sizing:border-box}
+.fbs-demo{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(14px,3vw,35px);align-items:center;margin:0 0 17px;padding:clamp(18px,3vw,28px);border:1px solid rgba(45,180,154,.23);border-radius:24px;background:radial-gradient(ellipse at 85% 40%,rgba(22,163,110,.115),transparent 45%),linear-gradient(140deg,rgba(3,17,19,.84),rgba(12,27,37,.8));box-shadow:inset 0 1px 0 rgba(255,255,255,.045)}
+.fbs-demo::before{content:"";position:absolute;left:0;top:15%;bottom:15%;width:3px;border-radius:99px;background:linear-gradient(#10b981,#38bdf8);box-shadow:0 0 22px rgba(16,185,129,.32)}
+.fbs-demo-copy{position:relative;z-index:2;min-width:0}
+.fbs-demo-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid rgba(52,211,153,.2);border-radius:99px;background:rgba(16,185,129,.08);color:#89efc0;font-size:10px;font-weight:900;letter-spacing:.085em}
+.fbs-demo h3{max-width:565px;margin:15px 0 11px;font-size:clamp(22px,3.4vw,32px);line-height:1.14;letter-spacing:-.045em;color:#f5fff9;font-weight:900}
+.fbs-demo h3 span{color:#62e7ae}
+.fbs-demo-lead{max-width:480px;margin:0 0 20px;color:#aebfcc;font-size:12px;line-height:1.7}
+.fbs-demo-steps{display:grid;gap:9px}
+.fbs-demo-step{display:grid;grid-template-columns:35px minmax(0,1fr);align-items:start;gap:11px;padding:10px 11px;border:1px solid rgba(148,163,184,.13);border-radius:13px;background:rgba(255,255,255,.028)}
+.fbs-demo-n{display:grid;place-items:center;min-height:34px;border-radius:9px;color:#86f7c9;font-size:11px;font-weight:900;background:rgba(16,185,129,.095);border:1px solid rgba(52,211,153,.16)}
+.fbs-demo-step strong{display:block;margin:1px 0 3px;font-size:11.5px;color:#f2f6fc;font-weight:850}
+.fbs-demo-step span:last-child{display:block;color:#a2b2c2;font-size:10.6px;line-height:1.42}
+.fbs-demo-rules{display:grid;gap:8px;margin-top:15px}
+.fbs-demo-rule{display:flex;align-items:center;gap:8px;color:#a9e9d1;font-size:10.5px;font-weight:750;line-height:1.4}
+.fbs-demo-rule svg{flex:0 0 17px;width:17px;height:17px;fill:none;stroke:#47dba2;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.fbs-demo-rule-warning{color:#e9c994}
+.fbs-demo-rule-warning svg{stroke:#fbbf24}
+.fbs-demo-clarify{margin:12px 0 0;color:#8197a8;font-size:10px;line-height:1.5}
+.fbs-demo-visual{position:relative;display:grid;justify-items:center;align-content:center;min-width:0;min-height:460px;text-align:center}
+.fbs-demo-orbit{position:absolute;inset:12% 0 10%;border-radius:100%;background:radial-gradient(ellipse,rgba(16,185,129,.20),rgba(32,152,143,.065) 43%,transparent 65%);filter:blur(18px);pointer-events:none}
+.fbs-demo-visual-top{position:relative;z-index:2;display:inline-flex;align-items:center;gap:7px;color:#a6eace;font-size:9.5px;font-weight:900;letter-spacing:.1em;margin-bottom:10px;white-space:nowrap}
+.fbs-demo-live-dot{width:7px;height:7px;border-radius:50%;background:#3ee9a0;box-shadow:0 0 0 4px rgba(52,211,153,.12)}
+.fbs-demo-photo-link{position:relative;z-index:2;display:grid;place-items:center;text-decoration:none!important;width:100%;max-width:355px;border-radius:30px;cursor:zoom-in;outline-offset:5px}
+.fbs-demo-photo-link img{display:block;width:auto;height:auto;max-width:100%;max-height:570px;object-fit:contain;filter:drop-shadow(0 18px 22px rgba(0,0,0,.35));transition:transform .25s ease}
+.fbs-demo-photo-link:hover img,.fbs-demo-photo-link:focus-visible img{transform:translateY(-4px) scale(1.015)}
+.fbs-demo-zoom{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:inline-flex;white-space:nowrap;border:1px solid rgba(52,211,153,.29);border-radius:99px;padding:6px 10px;font-size:9px;font-weight:800;color:#d3ffeb;background:rgba(2,18,16,.85);box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.fbs-demo-visual-note{position:relative;z-index:2;margin:5px 0 0;font-size:9px;color:#829baa;line-height:1.5}
+body.light-mode .fbs-demo{border-color:#b9dfd4;background:linear-gradient(135deg,#f3fff9,#f1f9ff)}
+body.light-mode .fbs-demo h3{color:#102f32}body.light-mode .fbs-demo h3 span{color:#087a57}
+body.light-mode .fbs-demo-lead,body.light-mode .fbs-demo-step span:last-child,body.light-mode .fbs-demo-clarify,body.light-mode .fbs-demo-visual-note{color:#567084}
+body.light-mode .fbs-demo-step{border-color:#d7e8e6;background:rgba(255,255,255,.7)}
+body.light-mode .fbs-demo-step strong{color:#183449}
+body.light-mode .fbs-demo-rule{color:#086849}body.light-mode .fbs-demo-rule-warning{color:#8d5c00}
+body.light-mode .fbs-demo-eyebrow{color:#057e59;background:#e9fbf2}
+body.light-mode .fbs-demo-visual-top{color:#157756}
+@media(max-width:760px){.fbs-demo{grid-template-columns:minmax(0,1fr);gap:18px;margin-bottom:12px;padding:17px 14px;border-radius:17px}.fbs-demo h3{font-size:clamp(22px,6vw,27px);margin:11px 0 8px}.fbs-demo-lead{font-size:11px;line-height:1.58;margin-bottom:12px}.fbs-demo-steps{gap:7px}.fbs-demo-step{padding:9px 10px}.fbs-demo-rules{margin-top:12px}.fbs-demo-visual{min-height:0;padding:9px 0 3px}.fbs-demo-photo-link{max-width:300px}.fbs-demo-photo-link img{max-height:465px}.fbs-demo-zoom{bottom:6px}.fbs-demo-visual-note{font-size:9px}}
+@media(max-width:370px){.fbs-demo-photo-link{max-width:252px}.fbs-demo-photo-link img{max-height:415px}.fbs-demo{padding:13px 11px}}
+@media(prefers-reduced-motion:reduce){.fbs-demo-photo-link img{transition:none}}
+</style>
 <section id="fabiShieldHome" class="fbs-shield" aria-labelledby="fabiShieldTitle" hidden>
   <div class="fbs-panel">
     <div class="fbs-head">
@@ -7539,27 +7581,32 @@ body.light-mode .fabi-desktop-more{background:#f3f7f9;border-color:#d4dfe6;color
       </div>
       <div class="fbs-reach-foot" id="fbsReachFoot"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><span>Dados agregados do cadastro de grupos. Membros podem participar de vários grupos.</span></div>
     </div>
-    <div class="fbs-how" aria-label="Como funciona a proteção global">
-      <div class="fbs-how-top">
-        <span class="fbs-how-heading"><i class="fas fa-shield-alt" aria-hidden="true"></i> Como funciona a proteção global</span>
-        <span class="fbs-how-tag">Ações conforme o histórico</span>
-      </div>
-      <div class="fbs-how-grid">
-        <div class="fbs-how-item">
-          <span class="fbs-how-icon" aria-hidden="true"><i class="fas fa-user-shield"></i></span>
-          <div><strong>Ficha enviada aos administradores</strong>
-            <p>Ao entrar ou solicitar acesso, quem tem registro global pode gerar um alerta com a categoria e o motivo. Os administradores decidem nos casos comuns.</p>
-          </div>
+    <section class="fbs-demo" aria-labelledby="fbsDemoTitle">
+      <div class="fbs-demo-copy">
+        <span class="fbs-demo-eyebrow"><span aria-hidden="true">✦</span> PROTEÇÃO EM AÇÃO</span>
+        <h3 id="fbsDemoTitle">Quando alguém entra, <span>os administradores ficam sabendo.</span></h3>
+        <p class="fbs-demo-lead">Veja como a Fabi Bot apresenta a ficha de um membro com registro global e oferece uma decisão rápida aos administradores do grupo.</p>
+        <div class="fbs-demo-steps" aria-label="Etapas da verificação">
+          <div class="fbs-demo-step"><span class="fbs-demo-n">01</span><div><strong>Consulta o histórico</strong><span>Verifica os registros associados à pessoa.</span></div></div>
+          <div class="fbs-demo-step"><span class="fbs-demo-n">02</span><div><strong>Apresenta a ficha</strong><span>Exibe categoria, motivo e origem para análise.</span></div></div>
+          <div class="fbs-demo-step"><span class="fbs-demo-n">03</span><div><strong>O administrador decide</strong><span>Manter ou remover — sem respostas de usuários comuns.</span></div></div>
         </div>
-        <div class="fbs-how-item fbs-how-item-alert">
-          <span class="fbs-how-icon" aria-hidden="true"><i class="fas fa-ban"></i></span>
-          <div><strong>Remoção automática por pagamento</strong>
-            <p>Se houver registro por links ou mensagens de pagamento, a Fabi tenta remover a pessoa quando entrar no grupo, desde que tenha permissão de administração.</p>
-          </div>
+        <div class="fbs-demo-rules">
+          <span class="fbs-demo-rule"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.3 8.1-8 10-4.7-1.9-8-5-8-10V7l8-4z"/><path d="m9 12 2 2 4-4"/></svg> Decisão reservada aos admins</span>
+          <span class="fbs-demo-rule fbs-demo-rule-warning"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3l9 16H3L12 3z"/><path d="M12 9v4m0 4h.01"/></svg> Registro de links de pagamento: remoção automática, se permitido</span>
         </div>
+        <p class="fbs-demo-clarify">Uma sinalização comum não provoca banimento automático. A imagem ilustra como a escolha aparece no WhatsApp.</p>
       </div>
-      <p class="fbs-how-note"><i class="fas fa-circle-info" aria-hidden="true"></i> O cadastro é um registro de moderação compartilhado; nem toda sinalização causa expulsão automática.</p>
-    </div>
+      <div class="fbs-demo-visual">
+        <span class="fbs-demo-orbit" aria-hidden="true"></span>
+        <div class="fbs-demo-visual-top"><span class="fbs-demo-live-dot" aria-hidden="true"></span> VISUALIZAÇÃO DO AVISO</div>
+        <a class="fbs-demo-photo-link" href="/assets/fabi-shield-demo.webp" target="_blank" rel="noopener" aria-label="Abrir a demonstração ampliada em uma nova aba">
+          <img src="/assets/fabi-shield-demo.webp" alt="Exemplo ilustrativo de como a Fabi Bot exibe um alerta de membro com histórico global, incluindo ficha e lista interativa com as opções Manter no grupo e Banir ou Remover." loading="lazy" decoding="async" width="714" height="1423">
+          <span class="fbs-demo-zoom" aria-hidden="true">↗ Toque para ampliar</span>
+        </a>
+        <p class="fbs-demo-visual-note">Prévia ilustrativa · A aparência pode variar conforme a versão do WhatsApp</p>
+      </div>
+    </section>
     <div class="fbs-main">
       <div class="fbs-left">
         <div class="fbs-metrics" aria-label="Estatísticas de moderação">
