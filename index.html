@@ -3,7 +3,7 @@
 <html data-theme="dark" lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <!-- TÍTULO PRINCIPAL -->
 <title>Fabi Bot para WhatsApp — Figurinhas, Proteção, IA e Grupos</title>
@@ -320,7 +320,7 @@
       ).trim();
       if (!ext) {
         try {
-          const backend=(typeof API_URL!=='undefined' && API_URL)?String(API_URL).replace(//$/,''):'';
+          const backend=(typeof API_URL!=='undefined' && API_URL)?String(API_URL).replace(/\/$/,''):'';
           const reply=await fetch(backend+'/api/me',{credentials:'include',cache:'no-store'});
           if (reply.ok) {
             const response=await reply.json();
@@ -345,7 +345,6 @@
     }
   };
 </script>
-
 
 <!-- fabi-onesignal-corrigido-v1: opt-in explicito e diagnostico -->
 <script>
@@ -7288,227 +7287,180 @@ body.light-mode .command-badge-mobile {
 
 
 
-<style id="pk-home-promo-v3-css">
-/* Pokémon Home V3 — isolado do restante da Fabi */
-#pokemonHomePromo{
-  --pkh-green:#2fe27f;
-  --pkh-green2:#13a958;
-  --pkh-text:#f7fbf8;
-  --pkh-muted:#a0afa6;
-  --pkh-line:rgba(255,255,255,.09);
-  width:min(calc(100% - 24px),1100px);
-  margin:18px auto 16px;
-  padding:0;
-  color:var(--pkh-text);
-}
-#pokemonHomePromo *{box-sizing:border-box}
-#pokemonHomePromo .pkh-card{
-  position:relative;
-  overflow:hidden;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 210px;
-  align-items:center;
-  gap:18px;
-  min-height:210px;
-  padding:24px 26px;
-  border:1px solid var(--pkh-line);
-  border-radius:24px;
-  background:
-    radial-gradient(420px 220px at 84% 10%,rgba(47,226,127,.14),transparent 68%),
-    linear-gradient(145deg,#101813,#090e0b);
-  box-shadow:0 18px 48px rgba(0,0,0,.22);
-}
-#pokemonHomePromo .pkh-card::after{
-  content:"";
-  position:absolute;
-  right:-90px;
-  bottom:-130px;
-  width:310px;
-  height:310px;
-  border-radius:50%;
-  border:1px solid rgba(47,226,127,.10);
-  box-shadow:0 0 0 40px rgba(47,226,127,.025),0 0 0 90px rgba(47,226,127,.018);
-  pointer-events:none;
-}
-#pokemonHomePromo .pkh-copy{position:relative;z-index:2;min-width:0}
-#pokemonHomePromo .pkh-kicker{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  padding:7px 10px;
-  margin-bottom:10px;
-  border-radius:999px;
-  border:1px solid rgba(47,226,127,.23);
-  background:rgba(47,226,127,.08);
-  color:#bcf8d2;
-  font-size:.72rem;
-  font-weight:850;
-  letter-spacing:.035em;
-}
-#pokemonHomePromo h2{
-  margin:0 0 8px;
-  max-width:720px;
-  color:var(--pkh-text);
-  font-size:clamp(1.45rem,4vw,2.15rem);
-  line-height:1.1;
-  letter-spacing:-.035em;
-  font-weight:850;
-}
-#pokemonHomePromo p{
-  margin:0;
-  max-width:760px;
-  color:var(--pkh-muted);
-  font-size:.91rem;
-  line-height:1.65;
-}
-#pokemonHomePromo .pkh-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:9px;
-  margin-top:17px;
-}
-#pokemonHomePromo .pkh-btn{
-  min-height:42px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:9px 14px;
-  border-radius:12px;
-  text-decoration:none;
-  font-size:.82rem;
-  font-weight:800;
-  transition:.16s ease;
-}
-#pokemonHomePromo .pkh-btn.primary{
-  color:#03140a;
-  border:1px solid transparent;
-  background:linear-gradient(135deg,var(--pkh-green),#54ee99);
-  box-shadow:0 8px 22px rgba(47,226,127,.16);
-}
-#pokemonHomePromo .pkh-btn.secondary{
-  color:#d8e6dc;
-  border:1px solid var(--pkh-line);
-  background:rgba(255,255,255,.035);
-}
-#pokemonHomePromo .pkh-btn:hover{transform:translateY(-1px)}
-#pokemonHomePromo .pkh-meta{
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-  margin-top:14px;
-}
-#pokemonHomePromo .pkh-meta span{
-  padding:6px 8px;
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:9px;
-  background:rgba(255,255,255,.025);
-  color:#91a097;
-  font-size:.67rem;
-}
-#pokemonHomePromo .pkh-visual{
-  position:relative;
-  z-index:1;
-  min-height:165px;
-  display:grid;
-  place-items:center;
-}
-#pokemonHomePromo .pkh-orb{
-  width:150px;
-  height:150px;
-  position:relative;
-  border-radius:50%;
-  border:1px solid rgba(47,226,127,.20);
-  background:
-    radial-gradient(circle at 50% 50%,rgba(47,226,127,.15),rgba(5,16,10,.12) 46%,rgba(0,0,0,.12) 47%),
-    linear-gradient(180deg,rgba(47,226,127,.13),rgba(255,255,255,.015));
-  box-shadow:0 0 60px rgba(47,226,127,.08),inset 0 0 40px rgba(47,226,127,.04);
-}
-#pokemonHomePromo .pkh-orb::before{
-  content:"";
-  position:absolute;
-  left:0;right:0;top:50%;
-  height:2px;
-  background:rgba(47,226,127,.28);
-  transform:translateY(-50%);
-}
-#pokemonHomePromo .pkh-orb::after{
-  content:"◉";
-  position:absolute;
-  left:50%;top:50%;
-  width:52px;height:52px;
-  transform:translate(-50%,-50%);
-  display:grid;
-  place-items:center;
-  border-radius:50%;
-  color:#b8f7cf;
-  font-size:2rem;
-  background:#08110c;
-  border:2px solid rgba(47,226,127,.38);
-  box-shadow:0 0 24px rgba(47,226,127,.18);
-}
-#pokemonHomePromo .pkh-orb-label{
-  position:absolute;
-  bottom:4px;
-  left:50%;
-  transform:translateX(-50%);
-  white-space:nowrap;
-  color:#7fe3a7;
-  font-size:.68rem;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-@media(max-width:720px){
-  #pokemonHomePromo{width:calc(100% - 16px);margin:12px auto 12px}
-  #pokemonHomePromo .pkh-card{
-    grid-template-columns:1fr;
-    min-height:0;
-    padding:18px 17px;
-    border-radius:19px;
-  }
-  #pokemonHomePromo .pkh-visual{display:none}
-  #pokemonHomePromo h2{font-size:1.35rem}
-  #pokemonHomePromo p{font-size:.86rem;line-height:1.58}
-  #pokemonHomePromo .pkh-actions{margin-top:14px}
-  #pokemonHomePromo .pkh-btn{flex:1 1 150px}
-}
-body.light-mode #pokemonHomePromo{
-  --pkh-text:#111827;
-  --pkh-muted:#5f6f65;
-  --pkh-line:rgba(15,23,42,.10);
-}
-body.light-mode #pokemonHomePromo .pkh-card{
-  background:
-    radial-gradient(420px 220px at 84% 10%,rgba(22,163,74,.09),transparent 68%),
-    linear-gradient(145deg,#ffffff,#f5f9f6);
-  box-shadow:0 12px 32px rgba(15,23,42,.06);
-}
-body.light-mode #pokemonHomePromo .pkh-btn.secondary{color:#223129;background:rgba(15,23,42,.025)}
-</style>
+<!-- FABI SHIELD V15: visão pública agregada; não mostra dados pessoais -->
+<style id="fabi-shield-css">
+/* Fabi Shield · vitrine responsiva de moderação global */
+.fbs-shield, .fbs-shield * { box-sizing:border-box; }
+.fbs-shield { width:min(1100px,calc(100% - 32px)); max-width:100%; margin:22px auto 24px; color:#f1f5f9; }
+.fbs-panel { position:relative; isolation:isolate; overflow:hidden; border:1px solid rgba(148,163,184,.18); border-radius:26px; padding:clamp(18px,3vw,30px); background:radial-gradient(circle at 100% 0%,rgba(16,185,129,.16),transparent 45%),linear-gradient(130deg,#121c26 0%,#0c1118 100%); box-shadow:0 18px 52px rgba(0,0,0,.18); }
+.fbs-panel:before { content:""; position:absolute; inset:0 auto 0 0; width:4px; background:linear-gradient(180deg,#34d399,#2563eb); }
+.fbs-head { display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:22px; }
+.fbs-kicker { display:inline-flex; align-items:center; gap:7px; font-size:11px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:#6ee7b7; margin-bottom:9px; }
+.fbs-kicker:before { content:""; width:8px; height:8px; background:#34d399; border-radius:50%; box-shadow:0 0 0 4px rgba(52,211,153,.12); }
+.fbs-title { margin:0 0 8px; font-size:clamp(21px,4.5vw,30px); line-height:1.14; letter-spacing:-.04em; color:inherit; font-weight:850; }
+.fbs-desc { margin:0; max-width:610px; font-size:13px; line-height:1.65; color:#aab7c7; }
+.fbs-chip { display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(52,211,153,.22); border-radius:999px; color:#86efac; padding:9px 12px; background:rgba(16,185,129,.08); font-size:11px; font-weight:800; white-space:nowrap; }
+.fbs-main { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:14px; align-items:stretch; }
+.fbs-left, .fbs-right { min-width:0; }
+.fbs-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-bottom:12px; }
+.fbs-metric { min-width:0; border:1px solid rgba(148,163,184,.13); padding:16px 13px; border-radius:17px; background:rgba(255,255,255,.04); }
+.fbs-number { display:block; line-height:1.1; letter-spacing:-.045em; font-size:clamp(22px,3.8vw,31px); color:#f8fafc; font-weight:850; font-variant-numeric:tabular-nums; }
+.fbs-metric:first-child .fbs-number { color:#6ee7b7; }
+.fbs-metric-label { display:block; font-size:11px; line-height:1.35; color:#9aaabc; margin-top:8px; }
+.fbs-card { border:1px solid rgba(148,163,184,.14); border-radius:19px; padding:16px; background:rgba(255,255,255,.03); height:100%; }
+.fbs-card-title { display:flex; align-items:center; justify-content:space-between; margin:0 0 15px; font-size:13px; font-weight:800; letter-spacing:-.01em; color:#f1f5f9; gap:8px; }
+.fbs-mini { color:#94a3b8; font-size:10px; font-weight:500; }
+.fbs-bar { margin-bottom:12px; }
+.fbs-bar:last-child { margin-bottom:0; }
+.fbs-bar-label { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 6px; color:#bdc9d7; font-size:11px; }
+.fbs-bar-label strong { color:#e2e8f0; font-variant-numeric:tabular-nums; }
+.fbs-bar-track { width:100%; height:7px; background:rgba(148,163,184,.13); overflow:hidden; border-radius:20px; }
+.fbs-bar-fill { width:0; height:100%; border-radius:20px; background:linear-gradient(90deg,#22c55e,#34d399); transition:width .4s ease; }
+.fbs-bar:nth-child(3) .fbs-bar-fill { background:linear-gradient(90deg,#3b82f6,#60a5fa); }
+.fbs-bar:nth-child(4) .fbs-bar-fill { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+.fbs-events { display:grid; gap:9px; }
+.fbs-event { display:grid; grid-template-columns:34px minmax(0,1fr); align-items:center; gap:10px; min-width:0; background:rgba(255,255,255,.035); border:1px solid rgba(148,163,184,.11); border-radius:13px; padding:11px 12px; }
+.fbs-event-icon { width:34px; height:34px; display:grid; place-items:center; background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.15); border-radius:11px; font-size:15px; }
+.fbs-event-title { display:flex; justify-content:space-between; gap:8px; color:#e2e8f0; font-size:12px; font-weight:750; }
+.fbs-event-title time { color:#93a5b8; font-size:10px; font-weight:500; white-space:nowrap; }
+.fbs-event-reason { display:block; font-size:11px; color:#a4b1c1; margin-top:3px; line-height:1.4; overflow-wrap:anywhere; }
+.fbs-footer { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; padding-top:15px; }
+.fbs-disclaimer { color:#8292a6; font-size:10px; line-height:1.5; max-width:540px; margin:0; }
+.fbs-action { text-decoration:none !important; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#22c55e; border:1px solid #22c55e; color:#07180e !important; padding:11px 16px; font-size:12px; font-weight:850; border-radius:11px; transition:background .2s ease; }
+.fbs-action:hover { background:#86efac; }
+body.light-mode .fbs-panel { color:#0f172a; border-color:#dbe4ee; background:radial-gradient(circle at 100% 0%,rgba(16,185,129,.09),transparent 50%),#fff; box-shadow:0 10px 30px rgba(15,23,42,.06); }
+body.light-mode .fbs-title, body.light-mode .fbs-card-title, body.light-mode .fbs-number, body.light-mode .fbs-bar-label strong, body.light-mode .fbs-event-title { color:#132236; }
+body.light-mode .fbs-desc, body.light-mode .fbs-metric-label, body.light-mode .fbs-mini, body.light-mode .fbs-bar-label, body.light-mode .fbs-event-reason { color:#64748b; }
+body.light-mode .fbs-metric, body.light-mode .fbs-card, body.light-mode .fbs-event { background:#f8fafc; border-color:#e2e8f0; }
+body.light-mode .fbs-metric:first-child .fbs-number { color:#0f9763; }
+body.light-mode .fbs-event-title time, body.light-mode .fbs-disclaimer { color:#64748b; }
+body.light-mode .fbs-chip { color:#047857; }
+@media(max-width:700px){ .fbs-shield { width:calc(100% - 20px); margin:12px auto 18px; } .fbs-panel { border-radius:20px; padding:18px 15px; } .fbs-main {grid-template-columns:minmax(0,1fr);} .fbs-metrics {gap:7px;} .fbs-metric {padding:13px 9px; border-radius:13px;} .fbs-number {font-size:clamp(20px,5vw,27px);} .fbs-chip {padding:7px 10px;} .fbs-head{margin-bottom:16px;} .fbs-card{padding:13px;} }
+@media(max-width:350px){.fbs-metrics {grid-template-columns:repeat(2,minmax(0,1fr));}.fbs-metric:last-child{grid-column:1 / -1;} .fbs-event-title{flex-wrap:wrap;} }
+@media(prefers-reduced-motion:reduce){.fbs-bar-fill {transition:none;} }
+/* Proteção de largura: preserva o zoom acessível, mas evita elementos alargando a página. */
+html, body { max-width:100%; overflow-x:clip; }
+.fz-intro-section, .fz-intro-cta, .fz-intro-video-wrap, .fz-fabi-stage, .main-layout, .feed-central { max-width:100%; min-width:0; }
+.fz-intro-video, .fz-fabi-media { max-width:100%; height:auto; }
+img,video,iframe { max-width:100%; }
+@media(max-width:760px){ input:not([type="checkbox"]):not([type="radio"]), textarea, select {font-size:max(16px,1rem);} }
 
-<section class="pk-home-promo" id="pokemonHomePromo" aria-label="Pokémon Adventure">
-  <div class="pkh-card">
-    <div class="pkh-copy">
-      <span class="pkh-kicker">◉ NOVA EXPERIÊNCIA</span>
-      <h2>Pokémon Adventure ganhou um mundo próprio</h2>
-      <p>Explore regiões, use energia, abra baús gratuitos, capture Pokémon, treine sua equipe, cumpra missões e dispute a Arena em uma página separada da Fabi.</p>
-      <div class="pkh-actions">
-        <a class="pkh-btn primary" href="/pokemon.html">🧭 Começar jornada</a>
-        <a class="pkh-btn secondary" href="/pokemon.html">📚 Abrir Pokédex</a>
+</style>
+<section id="fabiShieldHome" class="fbs-shield" aria-labelledby="fabiShieldTitle">
+  <div class="fbs-panel">
+    <div class="fbs-head">
+      <div>
+        <span class="fbs-kicker">Fabi Shield · Moderação inteligente</span>
+        <h2 class="fbs-title" id="fabiShieldTitle">Sua comunidade, mais protegida.</h2>
+        <p class="fbs-desc">Acompanhe o panorama de moderação global da Fabi Bot. Registros recentes e categorias, com informações pessoais preservadas.</p>
       </div>
-      <div class="pkh-meta">
-        <span>1.025 espécies</span>
-        <span>Caixas gratuitas</span>
-        <span>Energia + missões + Arena</span>
+      <span class="fbs-chip" id="fbsState">◉ Sincronizando dados</span>
+    </div>
+    <div class="fbs-main">
+      <div class="fbs-left">
+        <div class="fbs-metrics" aria-label="Estatísticas de moderação">
+          <div class="fbs-metric"><strong class="fbs-number" id="fbsTotal">—</strong><span class="fbs-metric-label">Registros na base</span></div>
+          <div class="fbs-metric"><strong class="fbs-number" id="fbsSemana">—</strong><span class="fbs-metric-label">Atualizados em 7 dias</span></div>
+          <div class="fbs-metric"><strong class="fbs-number" id="fbsSpam">—</strong><span class="fbs-metric-label">Sinalizações de spam</span></div>
+        </div>
+        <div class="fbs-card">
+          <div class="fbs-card-title">Panorama por categoria <span class="fbs-mini">Dados agregados</span></div>
+          <div id="fbsBars" aria-label="Distribuição dos registros"><span class="fbs-mini">Carregando informações...</span></div>
+        </div>
+      </div>
+      <div class="fbs-right">
+        <div class="fbs-card">
+          <div class="fbs-card-title">Movimentações recentes <span class="fbs-mini">Últimos 3 registros</span></div>
+          <div id="fbsEvents" class="fbs-events" aria-live="polite"><p class="fbs-mini">Consultando o histórico...</p></div>
+        </div>
       </div>
     </div>
-    <div class="pkh-visual" aria-hidden="true">
-      <div class="pkh-orb"></div>
-      <div class="pkh-orb-label">Adventure</div>
+    <div class="fbs-footer">
+      <p class="fbs-disclaimer">Os registros são sinalizações administrativas, não confirmação de infração. Identificadores, telefones e relatos livres não são divulgados.</p>
+      <a class="fbs-action" href="?comandos">Explorar proteções <span aria-hidden="true">↗</span></a>
     </div>
   </div>
 </section>
+<script id="fabi-shield-js">
+/* FABI SHIELD V15 — nenhum dado pessoal chega à página. */
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const fmt = new Intl.NumberFormat('pt-BR');
+  const rotulos = [
+    ['divulgacao', 'Divulgação e spam'],
+    ['pagamento', 'Mensagens de pagamento'],
+    ['ban_admin', 'Ações administrativas'],
+    ['pornografia', 'Conteúdo impróprio'],
+    ['outros', 'Outros registros']
+  ];
+  const tipIcon = { pagamento:'💳', divulgacao:'📢', ban_admin:'🛡️', pornografia:'⚠️', outros:'📋' };
+  const node = (tag, cls, content) => {
+    const el = document.createElement(tag);
+    if (cls) el.className = cls;
+    if (content != null) el.textContent = String(content);
+    return el;
+  };
+  const num = x => Number.isFinite(Number(x)) ? Math.max(0, Math.floor(Number(x))) : 0;
+  const setState = text => { const e = $('fbsState'); if (e) e.textContent = text; };
+  function render(d) {
+    $('fbsTotal').textContent = fmt.format(num(d.total));
+    $('fbsSemana').textContent = fmt.format(num(d.ultimos7dias));
+    $('fbsSpam').textContent = fmt.format(num(d.categorias?.divulgacao));
+    const bars = $('fbsBars'); bars.replaceChildren();
+    const top = Math.max(1, ...rotulos.map(([key]) => num(d.categorias?.[key])));
+    for (const [key, label] of rotulos) {
+      const count = num(d.categorias?.[key]);
+      const wrap = node('div', 'fbs-bar');
+      const lbl = node('div', 'fbs-bar-label');
+      lbl.append(node('span', '', label), node('strong','',fmt.format(count)));
+      const track = node('div','fbs-bar-track');
+      const fill = node('div','fbs-bar-fill');
+      fill.style.width = (count / top * 100).toFixed(1) + '%';
+      track.append(fill); wrap.append(lbl, track); bars.append(wrap);
+    }
+    const events = $('fbsEvents'); events.replaceChildren();
+    const recent = Array.isArray(d.recentes) ? d.recentes.slice(0,3) : [];
+    if (!recent.length) { events.append(node('p','fbs-mini','Nenhum registro recente disponível.')); return; }
+    recent.forEach((r,i) => {
+      const item = node('div','fbs-event');
+      item.append(node('span','fbs-event-icon',tipIcon[r.categoria] || '📋'));
+      const body = node('div','');
+      const title = node('div','fbs-event-title');
+      const date = new Date(r.data);
+      const time = node('time','',Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'short'}).format(date) : '');
+      if (Number.isFinite(date.getTime())) time.dateTime = date.toISOString();
+      title.append(node('span','','Registro '+(i+1)), time);
+      body.append(title, node('span','fbs-event-reason',rotulos.find(x=>x[0]===r.categoria)?.[1] || 'Outra ocorrência'));
+      item.append(body); events.append(item);
+    });
+  }
+  async function carregar() {
+    if (!$('fabiShieldHome')) return;
+    const path = '/api/banlist/public-stats';
+    const url = (typeof apiProxyUrl === 'function') ? apiProxyUrl(path)
+      : ((typeof API_URL !== 'undefined') ? API_URL.replace(/\/$/,'')+path : path);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    try {
+      const response = await fetch(url,{signal:controller.signal,cache:'no-store',credentials:'omit'});
+      if (!response.ok) throw new Error('HTTP '+response.status);
+      const data = await response.json();
+      if (!data || !Array.isArray(data.recentes) || !data.categorias) throw new Error('Formato inválido');
+      render(data); setState('● Dados atualizados');
+    } catch (err) {
+      console.warn('[Fabi Shield] Dados indisponíveis',err?.message || err);
+      setState('◌ Temporariamente indisponível');
+      const bars=$('fbsBars'),ev=$('fbsEvents');
+      if(bars) bars.textContent='As estatísticas não estão disponíveis no momento.';
+      if(ev) ev.textContent='Não foi possível consultar os registros recentes.';
+    } finally {clearTimeout(timeout);}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',carregar,{once:true});
+  else carregar();
+})();
+
+</script>
+
 
 
 <section class="fabi-adsense-editorial" aria-labelledby="fabiEditorialTitle">
