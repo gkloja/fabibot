@@ -1,28 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script>
+<script id="fabi-theme-safe-init">
 (function(){
-  try{
-    var t=localStorage.getItem("theme");
-    if(t!=="light"&&t!=="dark"){
-      var d=localStorage.getItem("darkMode");
-      if(d==="false") t="light";
-      else t="dark";
-    }
-    document.documentElement.setAttribute("data-theme",t);
-    document.documentElement.style.colorScheme=t==="light"?"light":"dark";
-    if(t==="light") document.documentElement.classList.add("light-mode");
-  }catch(_){
-    document.documentElement.setAttribute("data-theme","dark");
-    document.documentElement.style.colorScheme="dark";
-  }
+  try {
+    var t=localStorage.getItem('theme');
+    if (t!=='light'&&t!=='dark') t=localStorage.getItem('darkMode')==='false'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',t);
+    document.documentElement.style.colorScheme=t==='light'?'light':'dark';
+    if (t==='light') document.documentElement.classList.add('light-mode');
+  } catch (_) { document.documentElement.setAttribute('data-theme','dark'); }
 })();
 </script>
 <link rel="stylesheet" href="/assets/fabi-theme.css?v=20261011c">
-
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Conectar Fabi Bot no WhatsApp — Sessões, Pareamento e Grupos</title>
     <meta name="description" content="Conecte sua sessão à Fabi Bot, gere o pareamento do WhatsApp, acompanhe o status das conexões e gerencie seus grupos pelo painel.">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -182,7 +174,7 @@ function apiUrl(path) {
 </script>
 
     <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/vendor/bootstrap-5.3.6.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Toastr -->
@@ -2104,9 +2096,55 @@ body {
   });
 </script>
 
-    <link rel="stylesheet" href="/assets/conectar-v3.css?v=20261011c">
+    <link rel="stylesheet" href="/assets/conectar-v3.css?v=20261007">
+<style id="fabi-conectar-compat-v17">
+html,body {max-width:100%;overflow-x:clip;}
+*,*::before,*::after {box-sizing:border-box;}
+.main-container,.container,.container-fluid,.fb-tutorials-grid,.fb-page-hero,.fb-update-banner,.card-whatsapp { min-width:0; max-width:100%; }
+img,video { max-width:100%; height:auto; }
+@media (max-width:760px){
+  input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px!important;}
+  .main-container {width:100%;padding-inline:12px!important;}
+  .fb-page-hero {padding:22px 14px!important;}
+  .fb-page-hero h1 {font-size:clamp(1.45rem,7vw,2.15rem)!important;line-height:1.12!important;}
+  .fb-tutorials-grid {grid-template-columns:minmax(0,1fr)!important;}
+  .fb-video-body,.card-body {min-width:0;overflow-wrap:anywhere;}
+  .btn,button,a.fb-video-open,a.fb-video-direct {touch-action:manipulation;}
+  .fb-compat-alert {margin:12px;}
+}
+.fb-video-thumb {position:relative;isolation:isolate;overflow:hidden;background:#07140d;aspect-ratio:16/9;}
+.fb-video-direct {position:absolute;inset:0;display:flex;align-items:center;justify-content:center;isolation:isolate;overflow:hidden;text-decoration:none!important;color:#fff!important;background:linear-gradient(135deg,#102820,#0e1d33);}
+.fb-video-direct img {width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:.80;transition:transform .3s ease;}
+.fb-video-direct:hover img {transform:scale(1.035);}
+.fb-video-direct-shade {position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,12,16,.08),rgba(4,12,16,.2) 40%,rgba(4,12,16,.82));}
+.fb-video-direct-play {position:relative;display:grid;place-items:center;width:62px;height:62px;border-radius:21px;background:#ed143c;color:#fff;box-shadow:0 12px 32px rgba(0,0,0,.45);font:900 24px system-ui;padding-left:4px;transition:transform .15s;}
+.fb-video-direct:hover .fb-video-direct-play,.fb-video-direct:focus-visible .fb-video-direct-play {transform:scale(1.07);}
+.fb-video-direct-label {position:absolute;inset:auto 12px 12px;display:block;padding:8px 10px;background:rgba(6,17,24,.85);border:1px solid rgba(255,255,255,.17);border-radius:10px;text-align:center;font:750 12px/1.35 system-ui;color:#fff;backdrop-filter:blur(6px);}
+.fb-video-direct:focus-visible{outline:3px solid #34d399;outline-offset:-3px;}
+.fb-compat-alert {margin:12px auto;max-width:900px;padding:14px 17px;border-radius:16px;color:#fee2e2;background:linear-gradient(120deg,#402020,#252023);border:1px solid #fb718580;box-shadow:0 10px 28px #0004;font:14px/1.55 system-ui;}
+.fb-compat-alert p {margin:5px 0 9px;color:#fddcdc;}
+.fb-compat-alert a {display:inline-flex;align-items:center;min-height:40px;margin:4px 8px 3px 0;padding:8px 11px;border-radius:10px;background:#fff1;color:#fff!important;border:1px solid #fff3;font:700 12px system-ui;text-decoration:none;}
+.fb-compat-alert button {border:0;background:transparent;color:#fff;min-height:40px;padding:6px 11px;cursor:pointer;}
+.fb-compat-alert[hidden] {display:none!important;}
+@media(prefers-reduced-motion:reduce){.fb-video-direct img,.fb-video-direct-play{transition:none;}}
+</style>
+
 </head>
 <body>
+<noscript>
+  <div class="fb-compat-alert" role="alert"><strong>⚠️ O JavaScript está desativado neste navegador.</strong>
+    <p>Para conectar o WhatsApp, abra <strong>www.fabibot.com.br/conectar</strong> diretamente no Chrome ou Safari e ative o JavaScript nas configurações do navegador.</p>
+    <a href="https://www.fabibot.com.br/conectar">Abrir a página de conexão</a>
+    <a href="https://www.youtube.com/watch?v=0FcqWiIrB9o" target="_blank" rel="noopener noreferrer">Assistir tutorial no YouTube</a>
+  </div>
+</noscript>
+<div id="fbCompatAlert" class="fb-compat-alert" role="status" hidden>
+  <strong id="fbCompatTitle">Seu navegador pode limitar alguns recursos.</strong>
+  <p id="fbCompatText">Se os botões não responderem, abra esta página no Chrome ou Safari atualizado, fora do navegador interno de outro aplicativo.</p>
+  <div class="fb-compat-links"><a href="https://www.fabibot.com.br/conectar">Abrir no navegador</a><a href="https://www.youtube.com/watch?v=0FcqWiIrB9o" target="_blank" rel="noopener noreferrer">Tutorial no YouTube</a></div>
+  <button type="button" id="fbCompatDismiss" aria-label="Fechar aviso">Entendi</button>
+</div>
+
 
 <!--
   VERSÃO ESTÁTICA (HTML)
@@ -2203,14 +2241,12 @@ body {
             <article class="fb-video-card wa-card">
                 <span class="fb-video-step">1</span>
                 <div class="fb-video-thumb">
-                    <iframe
-                        src="https://www.youtube.com/embed/0FcqWiIrB9o?rel=0"
-                        title="Como conectar a robô ao WhatsApp"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen
-                        loading="lazy"
-                        referrerpolicy="strict-origin-when-cross-origin">
-                    </iframe>
+                    <a class="fb-video-direct" href="https://www.youtube.com/watch?v=0FcqWiIrB9o" target="_blank" rel="noopener noreferrer" aria-label="Abrir no YouTube: Como conectar a Fabi Bot ao WhatsApp">
+                        <img src="https://i.ytimg.com/vi/0FcqWiIrB9o/hqdefault.jpg" alt="Miniatura: Como conectar a Fabi Bot ao WhatsApp" loading="lazy" decoding="async" onerror="this.style.display='none'">
+                        <span class="fb-video-direct-shade" aria-hidden="true"></span>
+                        <span class="fb-video-direct-play" aria-hidden="true">▶</span>
+                        <span class="fb-video-direct-label">Abrir tutorial no YouTube <span aria-hidden="true">↗</span></span>
+                    </a>
                 </div>
                 <div class="fb-video-body">
                     <span class="fb-video-badge wa"><i class="fab fa-whatsapp"></i> Conectar</span>
@@ -2229,14 +2265,12 @@ body {
             <article class="fb-video-card">
                 <span class="fb-video-step">2</span>
                 <div class="fb-video-thumb">
-                    <iframe
-                        src="https://www.youtube.com/embed/5UsyLmYi9jQ?rel=0"
-                        title="Como configurar a robô"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen
-                        loading="lazy"
-                        referrerpolicy="strict-origin-when-cross-origin">
-                    </iframe>
+                    <a class="fb-video-direct" href="https://www.youtube.com/watch?v=5UsyLmYi9jQ" target="_blank" rel="noopener noreferrer" aria-label="Abrir no YouTube: Como configurar a Fabi Bot">
+                        <img src="https://i.ytimg.com/vi/5UsyLmYi9jQ/hqdefault.jpg" alt="Miniatura: Como configurar a Fabi Bot" loading="lazy" decoding="async" onerror="this.style.display='none'">
+                        <span class="fb-video-direct-shade" aria-hidden="true"></span>
+                        <span class="fb-video-direct-play" aria-hidden="true">▶</span>
+                        <span class="fb-video-direct-label">Abrir tutorial no YouTube <span aria-hidden="true">↗</span></span>
+                    </a>
                 </div>
                 <div class="fb-video-body">
                     <span class="fb-video-badge"><i class="fas fa-robot"></i> Configurar</span>
@@ -3007,9 +3041,23 @@ body {
 </div>
     
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/assets/vendor/bootstrap-5.3.6.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery-3.6.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script id="fabi-toast-rescue">
+(function(){
+ if (window.toastr) return;
+ function notify(msg, mode){
+   try {
+     var box=document.createElement('div'); box.setAttribute('role','status');
+     box.textContent=String(msg||'');
+     box.style.cssText='position:fixed;z-index:2147483000;left:12px;right:12px;bottom:88px;max-width:480px;margin:auto;padding:13px 18px;border-radius:12px;color:#fff;font:600 14px/1.5 system-ui;background:'+(mode==='error'?'#9f1239':'#164e3a')+';border:1px solid #ffffff44;box-shadow:0 12px 26px #0007;';
+     document.body.appendChild(box);setTimeout(function(){box.remove();},4800);
+   } catch(e){ console.warn('Aviso:',msg); }
+ }
+ window.toastr={options:{},success:function(m){notify(m,'success');},info:function(m){notify(m,'info');},warning:function(m){notify(m,'warning');},error:function(m){notify(m,'error');}};
+})();
+</script>
     
     <script>// ==============================================
 // FRONTEND - APENAS LEITURA DO JSON
@@ -5461,5 +5509,32 @@ $(document).ready(function() {
 })();
 </script>
 <script src="/assets/fabi-theme.js?v=20261011c" defer></script>
-<script src="/assets/news-push-preference.js?v=10" defer></script></body>
+<script src="/assets/news-push-preference.js?v=10" defer></script>
+<script id="fabi-conectar-diagnostico-v17">
+(function(){
+ function ready(){
+   var banner=document.getElementById('fbCompatAlert');
+   if (!banner) return;
+   var userAgent=navigator.userAgent||'';
+   var inApp=/(?:Instagram|FBAN|FBAV|FB_IAB|; wv\)|WhatsApp|TikTok)/i.test(userAgent);
+   var libs=typeof window.jQuery==='function' && !!(window.bootstrap&&window.bootstrap.Modal);
+   var msg=document.getElementById('fbCompatText');
+   var heading=document.getElementById('fbCompatTitle');
+   if (!libs){
+     heading.textContent='⚠️ O navegador não conseguiu carregar componentes da conexão.';
+     msg.textContent='Verifique a conexão com a internet e abra esta página no Chrome ou Safari atualizado. Se o problema persistir, envie esta informação ao suporte.';
+     banner.hidden=false;
+   } else if(inApp){
+     heading.textContent='Abra a conexão no navegador do celular';
+     msg.textContent='Navegadores internos de outros aplicativos podem bloquear o pareamento e os vídeos. Use o menu do aplicativo e escolha “Abrir no Chrome” ou “Abrir no navegador”.';
+     banner.hidden=false;
+   }
+   var close=document.getElementById('fbCompatDismiss');
+   if(close) close.addEventListener('click',function(){banner.hidden=true;});
+ }
+ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',ready,{once:true});
+ else ready();
+})();
+</script>
+</body>
 </html>

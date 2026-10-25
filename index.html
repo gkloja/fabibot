@@ -7351,32 +7351,58 @@ html, body { max-width:100%; overflow-x:clip; }
 .fz-intro-video, .fz-fabi-media { max-width:100%; height:auto; }
 img, video, iframe { max-width:100%; }
 @media(max-width:760px){ input:not([type="checkbox"]):not([type="radio"]), textarea, select { font-size:max(16px,1rem);} }
+/* Fabi Shield V17 — acabamento editorial compacto */
+.fbs-panel {background:
+  radial-gradient(ellipse at 100% -8%,rgba(16,185,129,.15),transparent 43%),
+  radial-gradient(ellipse at 0% 115%,rgba(37,99,235,.13),transparent 46%),
+  linear-gradient(145deg,#0a1018,#101b26 72%,#0c151d)!important;
+}
+.fbs-kicker{letter-spacing:.13em;}
+.fbs-card {box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 12px 26px rgba(0,0,0,.06);}
+.fbs-bar-label{font-size:12px;}
+.fbs-event {transition:transform .18s ease,border-color .18s ease;}
+.fbs-event:hover {transform:translateY(-2px);border-color:rgba(52,211,153,.36);}
+.fbs-event-phone {font-variant-numeric:tabular-nums;letter-spacing:.06em;}
+body.light-mode .fbs-panel{background:radial-gradient(ellipse at 95% 0%,rgba(16,185,129,.08),transparent 44%),linear-gradient(145deg,#fff,#f3f7fc)!important;}
+@media(max-width:760px){
+ .fbs-panel{padding:17px 13px!important;}
+ .fbs-head{gap:12px;}
+ .fbs-title{font-size:clamp(23px,7vw,29px);}
+ .fbs-metric-label{font-size:10px;}
+ .fbs-events{gap:8px;}
+ .fbs-event {padding:11px 12px;}
+ .fbs-card {padding:13px 12px;}
+ .fbs-bar{margin-bottom:10px;}
+ .fbs-bar-label{font-size:11px;}
+ .fbs-footer{padding-top:12px;}
+}
+@media(prefers-reduced-motion:reduce){.fbs-event{transition:none;}}
 </style>
 <section id="fabiShieldHome" class="fbs-shield" aria-labelledby="fabiShieldTitle">
   <div class="fbs-panel">
     <div class="fbs-head">
       <div>
-        <span class="fbs-kicker">Fabi Shield · Inteligência de moderação</span>
-        <h2 class="fbs-title" id="fabiShieldTitle">Panorama vivo da proteção global.</h2>
-        <p class="fbs-desc">Veja em tempo real como a Fabi Bot monitora padrões de risco. Estatísticas refinadas, categorias relevantes e movimentações recentes com telefones parcialmente mascarados.</p>
+        <span class="fbs-kicker">Fabi Shield · Inteligência global</span>
+        <h2 class="fbs-title" id="fabiShieldTitle">Proteção global, em números.</h2>
+        <p class="fbs-desc">Um panorama das sinalizações da comunidade, com categorias, dados atualizados e os três registros mais recentes — sem expor identidades.</p>
       </div>
       <span class="fbs-chip" id="fbsState">◉ Sincronizando painel</span>
     </div>
     <div class="fbs-main">
       <div class="fbs-left">
         <div class="fbs-metrics" aria-label="Estatísticas de moderação">
-          <div class="fbs-metric"><strong class="fbs-number" id="fbsTotal">—</strong><span class="fbs-metric-label">Registros protegidos na base</span></div>
-          <div class="fbs-metric"><strong class="fbs-number" id="fbsSemana">—</strong><span class="fbs-metric-label">Movimentações em 7 dias</span></div>
-          <div class="fbs-metric"><strong class="fbs-number" id="fbsSpam">—</strong><span class="fbs-metric-label">Alertas de spam</span></div>
+          <div class="fbs-metric"><strong class="fbs-number" id="fbsTotal">—</strong><span class="fbs-metric-label">Registros na base</span></div>
+          <div class="fbs-metric"><strong class="fbs-number" id="fbsSemana">—</strong><span class="fbs-metric-label">Últimos 7 dias</span></div>
+          <div class="fbs-metric"><strong class="fbs-number" id="fbsSpam">—</strong><span class="fbs-metric-label">Sinalizações de spam</span></div>
         </div>
         <div class="fbs-card">
-          <div class="fbs-card-title">Mapa de ocorrências <span class="fbs-mini">Leitura consolidada</span></div>
+          <div class="fbs-card-title">Distribuição por categoria <span class="fbs-mini">Leitura consolidada</span></div>
           <div id="fbsBars" aria-label="Distribuição dos registros"><span class="fbs-mini">Carregando informações...</span></div>
         </div>
       </div>
       <div class="fbs-right">
         <div class="fbs-card">
-          <div class="fbs-card-title">Últimas sinalizações <span class="fbs-mini">3 movimentos recentes</span></div>
+          <div class="fbs-card-title">Registros recentes <span class="fbs-mini">Últimas 3 ocorrências</span></div>
           <div id="fbsEvents" class="fbs-events" aria-live="polite"><p class="fbs-mini">Consultando o histórico...</p></div>
         </div>
       </div>
@@ -20901,7 +20927,12 @@ window.addEventListener('beforeunload', () => {
     });
 </script>
 <audio id="radioAudioPlayer" preload="none"></audio>
-<!-- ============ PASSO 3: HTML (cole dentro do <body>) ============ -->
+<!-- ============ PASSO 3: HTML (cole dentro do <body>
+<noscript><div class="fabi-nojs-v17" role="alert" style="margin:12px auto;padding:16px;max-width:1000px;border:1px solid #ea580c;border-radius:14px;background:#22170c;color:#fff;font:14px/1.55 system-ui">
+<strong>⚠️ Este navegador está com JavaScript desativado.</strong> Algumas áreas interativas não funcionarão. Abra o site no Chrome ou Safari com JavaScript ativado.
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:12px"><a style="color:#a7f3d0" href="/conectar">Conectar WhatsApp</a><a style="color:#a7f3d0" href="/login">Entrar na conta</a><a style="color:#a7f3d0" href="/noticias">Ler notícias</a></div>
+</div></noscript>
+) ============ -->
 
 <!-- Modal de Enviar Vaga -->
 <div id="enviarVagaModal" class="modal">
