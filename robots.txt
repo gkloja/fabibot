@@ -9,11 +9,11 @@ Disallow: /datab/
 Disallow: /public/database/
 Disallow: /tmp_video_fix/
 
-Sitemap: https://www.fabibot.com.br/sitemap.xml
-
+# Fabi Notícias em pausa: evita novas varreduras automáticas.
+Disallow: /noticias
+Disallow: /noticia/
+Disallow: /sites/
 Disallow: /noticias-admin
-Sitemap: https://www.fabibot.com.br/noticias/sitemap.xml
-
 Disallow: /noticias-master
-Disallow: /sites/*/noticias-admin
-Sitemap: https://www.fabibot.com.br/noticias/portais.xml
+
+Sitemap: https://www.fabibot.com.br/sitemap.xml

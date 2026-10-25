@@ -1,19 +1,30 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
-      "source": "/sites/:portal",
-      "destination": "/sites/:portal/noticias",
-      "permanent": true
-    },
-    {
-      "source": "/sites/:portal/",
-      "destination": "/sites/:portal/noticias",
-      "permanent": true
+      "source": "/noticias",
+      "destination": "/noticias-em-pausa.html",
+      "permanent": false
     },
     {
       "source": "/noticias/",
-      "destination": "/noticias",
-      "permanent": true
+      "destination": "/noticias-em-pausa.html",
+      "permanent": false
+    },
+    {
+      "source": "/noticias/:path*",
+      "destination": "/noticias-em-pausa.html",
+      "permanent": false
+    },
+    {
+      "source": "/noticia/:path*",
+      "destination": "/noticias-em-pausa.html",
+      "permanent": false
+    },
+    {
+      "source": "/sites/:path*",
+      "destination": "/noticias-em-pausa.html",
+      "permanent": false
     },
     {
       "source": "/pokemon/",
@@ -198,18 +209,6 @@
   ],
   "rewrites": [
     {
-      "source": "/sites/:path*",
-      "destination": "https://fabibotnews.gbscabral15.workers.dev/sites/:path*"
-    },
-    {
-      "source": "/noticias",
-      "destination": "https://fabibotnews.gbscabral15.workers.dev/noticias"
-    },
-    {
-      "source": "/noticias/:path*",
-      "destination": "https://fabibotnews.gbscabral15.workers.dev/noticias/:path*"
-    },
-    {
       "source": "/pokemon",
       "destination": "/pokemon.html"
     },
@@ -293,6 +292,19 @@
         {
           "key": "X-Frame-Options",
           "value": "SAMEORIGIN"
+        }
+      ]
+    },
+    {
+      "source": "/noticias-em-pausa.html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=120, s-maxage=600, stale-while-revalidate=300"
         }
       ]
     },
