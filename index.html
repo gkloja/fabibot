@@ -8683,6 +8683,11 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
                 <div class="fz31-permissoes-copy">
                     <strong id="fz31PermissoesTitulo">Conferindo suas permissões</strong>
                     <p id="fz31PermissoesDescricao">Verificando sua conta e as robôs conectadas.</p>
+                    <div class="fz34-check-steps" id="fz34CheckSteps" aria-label="Etapas de verificação" hidden>
+                        <span data-stage="0"><i class="fas fa-layer-group"></i> Catálogo</span>
+                        <span data-stage="1"><i class="fas fa-shield-halved"></i> Conta segura</span>
+                        <span data-stage="2"><i class="fas fa-robot"></i> Robôs administradoras</span>
+                    </div>
                     <div class="fz31-permissoes-acoes">
                         <button type="button" class="fz31-permissoes-btn" id="fz31PermissoesLogin" onclick="fz31EntrarNovamente()" hidden><i class="fas fa-right-to-bracket"></i> Entrar novamente</button>
                         <button type="button" class="fz31-permissoes-btn secundario" id="fz31PermissoesRecarregar" onclick="cfgPainelCarregarGrupos()" hidden><i class="fas fa-rotate"></i> Atualizar grupos</button>
@@ -8903,6 +8908,40 @@ body.light-mode .fz-cfg-not-admin { color: #6b7280; }
 .fz31-permissoes-acoes{display:flex;flex-wrap:wrap;gap:9px}.fz31-permissoes-btn{border:0;border-radius:10px;padding:10px 13px;background:#34d399;color:#032b1d;font:800 12px/1.3 system-ui;cursor:pointer}.fz31-permissoes-btn.secundario{background:transparent;border:1px solid #a7f3d077;color:#a7f3d0}
 body.light-mode .fz31-permissoes-aviso{background:#f0f9ff;color:#1e293b;border-color:#93c5fd}body.light-mode .fz31-permissoes-copy strong{color:#164e63}body.light-mode .fz31-permissoes-copy p{color:#475569}body.light-mode .fz31-permissoes-btn.secundario{color:#047857;border-color:#047857}
 </style>
+
+<style id="fz34-experience-style">
+/* Fabi V34 - experiência de carregamento e pódio em destaque */
+.fz34-community-leading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 12px;flex-wrap:wrap}
+.fz34-mini-label{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid rgba(244,194,80,.28);color:#f4d38a;background:rgba(210,151,46,.10);border-radius:30px;font:800 11px/1.25 system-ui;letter-spacing:.09em;text-transform:uppercase}
+.fz34-live-pill{display:inline-flex;align-items:center;gap:7px;color:#a6b9b4;font:700 11px/1.2 system-ui}
+.fz34-live-pill>span,.fz34-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#36d69a;box-shadow:0 0 0 4px rgba(52,211,153,.11);flex-shrink:0}
+#comunidadesContainer #podiumMedalhistasSection{margin:0 0 26px;padding:20px 18px 18px;border-color:rgba(224,171,59,.24);border-radius:22px;background:linear-gradient(160deg,rgba(233,182,83,.095),var(--card) 42%);box-shadow:0 10px 32px rgba(0,0,0,.09)}
+#comunidadesContainer #podiumMedalhistasSection .podium-title{font-size:clamp(18px,2.3vw,22px);font-weight:850;letter-spacing:-.025em}
+#comunidadesContainer .comunidades-header{margin-top:22px;border-top:1px solid var(--border);padding-top:22px}
+#comunidadesContainer .comunidades-title{font-size:clamp(21px,3vw,28px)!important}
+.fz34-community-meta{display:flex;align-items:center;gap:10px;min-height:33px;color:#a8bdb6;font:750 12px/1.3 system-ui;margin:-6px 0 13px}
+.fz34-community-meta.fz34-done{color:#8bdaaf}.fz34-community-meta.fz34-error{color:#fb9f9f}.fz34-community-meta.fz34-error .fz34-dot{background:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.12)}
+.fz34-skeleton-card{min-height:166px;padding:19px;overflow:hidden;border:1px solid var(--border);border-radius:20px;background:var(--card);position:relative}
+.fz34-skeleton-top{display:flex;align-items:center;gap:13px;margin-bottom:22px}
+.fz34-skeleton-avatar{width:44px;height:44px;border-radius:15px;flex-shrink:0}
+.fz34-skeleton-lines{flex:1;display:grid;gap:9px}
+.fz34-skeleton-line{height:12px;border-radius:20px}.fz34-skeleton-line.short{width:51%}.fz34-skeleton-line.medium{width:72%}
+.fz34-skeleton-avatar,.fz34-skeleton-line,.fz34-skeleton-button{background:linear-gradient(100deg,rgba(148,163,184,.11) 20%,rgba(148,163,184,.24) 42%,rgba(148,163,184,.11) 63%);background-size:240% 100%;animation:fz34-shimmer 1.65s ease-in-out infinite}
+.fz34-skeleton-button{height:36px;border-radius:11px;margin-top:20px}
+@keyframes fz34-shimmer{to{background-position-x:-190%}}
+.fz34-check-steps{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:13px 0 9px}.fz34-check-steps[hidden]{display:none!important}
+.fz34-check-steps span{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(148,163,184,.17);background:rgba(148,163,184,.06);border-radius:30px;padding:7px 10px;color:#8497a8;font:750 10.5px/1.15 system-ui;transition:color .2s,border-color .2s,background .2s}
+.fz34-check-steps span.fz34-current{border-color:rgba(52,211,153,.8);color:#abf6d9;background:rgba(16,185,129,.13)}
+.fz34-check-steps span.fz34-current i{animation:fz34-breathe 1.5s ease-in-out infinite}
+.fz34-check-steps span.fz34-done{color:#77eac5;border-color:rgba(52,211,153,.36)}
+@keyframes fz34-breathe{50%{opacity:.45}}
+.fz31-permissoes-aviso[data-kind="loading"]{background:linear-gradient(120deg,rgba(13,148,136,.16),rgba(59,130,246,.10));border-color:rgba(52,211,153,.4)}
+.fz31-permissoes-aviso[data-kind="loading"] .fz31-permissoes-icone{color:#9af5d2;background:rgba(16,185,129,.20)}
+body.light-mode .fz34-mini-label{color:#805610;background:#fff7e6;border-color:#f0d39d}
+body.light-mode .fz34-community-meta{color:#395950}body.light-mode .fz34-check-steps span{color:#65798a;border-color:#cbd5e1;background:#eef2f6}body.light-mode .fz34-check-steps span.fz34-current{color:#06654c;background:#dcfce7;border-color:#10b981}
+@media(max-width:600px){#comunidadesContainer #podiumMedalhistasSection{padding:17px 11px;margin-bottom:17px}.fz34-community-leading{margin:0 0 11px}.fz34-live-pill{font-size:10px}.fz34-check-steps{gap:5px}.fz34-check-steps span{font-size:10px;padding:6px 8px}.fz34-skeleton-card{min-height:146px}}
+@media(prefers-reduced-motion:reduce){.fz34-skeleton-avatar,.fz34-skeleton-line,.fz34-skeleton-button,.fz34-check-steps span.fz34-current i{animation:none!important}}
+</style>
 <script>
 // ==================== PAINEL "CONFIGURAR GRUPO" (portado do index.html) ====================
 let cfgGruposOriginais = [];   // lista completa da API
@@ -8915,6 +8954,27 @@ let cfgPainelJaInicializado = false;
 let fz31EstadoPermissoes = 'loading';  // loading | ready | expired | unavailable | offline | none
 let fz31UltimaConsultaPermissoes = 0;
 let fz31CarregamentoId = 0;
+function fz34LoaderCards(qtd=3) {
+    return Array.from({length:qtd},()=>'<div class="fz34-skeleton-card" aria-hidden="true"><div class="fz34-skeleton-top"><div class="fz34-skeleton-avatar"></div><div class="fz34-skeleton-lines"><div class="fz34-skeleton-line medium"></div><div class="fz34-skeleton-line short"></div></div></div><div class="fz34-skeleton-line"></div><div class="fz34-skeleton-button"></div></div>').join('');
+}
+function fz34AtualizarConferencia(etapa){
+    const lista=document.getElementById('fz34CheckSteps');
+    if(!lista)return;
+    lista.hidden=fz31EstadoPermissoes!=='loading';
+    for(const item of lista.querySelectorAll('[data-stage]')){
+        const n=Number(item.dataset.stage);
+        item.classList.toggle('fz34-done',n<etapa);
+        item.classList.toggle('fz34-current',n===etapa);
+    }
+}
+function fz34MostrarCarregamentoPermissoes(){
+    const grid=document.getElementById('cyberGrid');
+    if(!grid)return;
+    if(cfgFiltroAtual==='admin' || !cfgGruposOriginais.length){
+        grid.innerHTML=fz34LoaderCards(3);
+    }
+}
+
 function fz31UrlVoltar() {
     const grupo = typeof fz30GrupoDaUrl === 'function' ? fz30GrupoDaUrl() : '';
     return grupo ? ('/?grupo=' + encodeURIComponent(grupo)) : '/?configurar';
@@ -8937,6 +8997,8 @@ function fz31AvisarPermissao(kind, titulo='', descricao='') {
     const retry=document.getElementById('fz31PermissoesRecarregar');
     if(login)login.hidden=kind!=='expired';
     if(retry)retry.hidden=kind!=='unavailable' && kind!=='offline';
+    const steps=document.getElementById('fz34CheckSteps');
+    if(steps)steps.hidden=kind!=='loading';
 }
 // V33: renovação silenciosa, apenas com refresh emitido por login autenticado.
 // Não utiliza nome ou número enviados pelo navegador como autorização.
@@ -9400,7 +9462,9 @@ function cfgPainelObterGrupoSelecionado() {
 
 async function cfgPainelCarregarGrupos() {
     const carregamento = ++fz31CarregamentoId;
-    fz31AvisarPermissao('loading', 'Verificando acesso aos grupos', 'Conferindo sua conta, sessões conectadas e os grupos administrados pela robô.');
+    fz31AvisarPermissao('loading', 'Localizando seus grupos', 'Buscando os grupos da Fabi e conferindo seu acesso de maneira segura.');
+    fz34AtualizarConferencia(0);
+    fz34MostrarCarregamentoPermissoes();
     try {
         const resp = await fetch(API_URL + '/grupos.json', {cache:'no-store'});
         if (!resp.ok) throw new Error('Não foi possível carregar o catálogo de grupos (HTTP '+resp.status+').');
@@ -9409,7 +9473,11 @@ async function cfgPainelCarregarGrupos() {
         if (carregamento!==fz31CarregamentoId)return;
         cfgGruposOriginais = lista;
         cfgGruposAdmin = [];
+        fz34AtualizarConferencia(1);
+        fz31AvisarPermissao('loading','Verificando a conta','Validando sua conta com segurança, sem pedir login novamente.');
         await fz33AssegurarGrupoToken();
+        fz34AtualizarConferencia(2);
+        fz31AvisarPermissao('loading','Encontrando suas robôs administradoras','Verificando os grupos em que suas sessões conectadas podem configurar recursos.');
         const avisoTempoDeLogin = fz31TokenTemporarioExpirou();
         try {
             let respPerm = await fetch(API_URL + '/api/grupos/permissoes-conta', {
@@ -9516,7 +9584,9 @@ function cfgPainelRenderizarPagina() {
     const gruposPagina = cfgGruposFiltrados.slice(inicio, inicio + cfgPorPagina);
     const grupoSalvo = cfgPainelObterGrupoSelecionado();
 
-    if (gruposPagina.length === 0) {
+    if (fz31EstadoPermissoes==='loading' && (cfgFiltroAtual==='admin' || cfgGruposOriginais.length===0)) {
+        grid.innerHTML=fz34LoaderCards(3);
+    } else if (gruposPagina.length === 0) {
         const empty = document.createElement('p');
         empty.style.cssText = 'color:var(--text2,#94a3b8);grid-column:1/-1;text-align:center;padding:24px 8px;font:14px/1.6 system-ui';
         empty.textContent = ['expired','unavailable','offline','loading'].includes(fz31EstadoPermissoes)
@@ -11237,6 +11307,27 @@ function fzRenderAdminRank(infoGrupo, registro) {
     <!-- Container de Comunidades (Grupos WhatsApp) -->
 <div class="comunidades-container" id="comunidadesContainer" style="display: none;">
     <div class="container" style="max-width: 1280px; margin: 0 auto; padding: 20px 16px;">
+        <!-- Destaque dos melhores grupos acima da listagem -->
+        <div class="fz34-community-leading"><span class="fz34-mini-label"><i class="fas fa-trophy"></i> Comunidade Fabi Bot</span><span class="fz34-live-pill"><span></span> Ranking dos grupos</span></div>
+<!-- 🏅 PÓDIO DOS GRUPOS MAIS MEDALHISTAS -->
+<div class="podium-section" id="podiumMedalhistasSection">
+    <div class="podium-header">
+        <h3 class="podium-title">
+            <i class="fas fa-medal" style="color:#D89A2E;"></i>
+            <span class="gradient-text">Pódio dos Campeões</span>
+        </h3>
+        <p class="podium-subtitle">Os grupos que mais colecionaram medalhas nos rankings diários de Mais Ativos e Mais Golds</p>
+        <button type="button" class="podium-ranking-btn" onclick="event.preventDefault(); abrirRankingAoVivo(); return false;">
+            <i class="fas fa-arrow-up"></i> Ver Ranking Ao Vivo
+        </button>
+    </div>
+    <div class="podium-grid" id="podiumMedalhistasGrid">
+        <div class="podium-skeleton"></div>
+        <div class="podium-skeleton"></div>
+        <div class="podium-skeleton"></div>
+    </div>
+</div>
+
         <!-- Cabeçalho -->
         <div class="comunidades-header" style="margin-bottom: 24px;">
             <div class="comunidades-title-section">
@@ -11245,7 +11336,7 @@ function fzRenderAdminRank(infoGrupo, registro) {
                     <span class="gradient-text">Grupos</span>
                 </h2>
                 <p class="comunidades-subtitle" style="color: var(--text2); margin-top: 4px;">
-                    Encontre grupos de WhatsApp da sua região e conecte-se com pessoas que compartilham seus interesses
+                    Encontre sua próxima comunidade. Descubra grupos, explore assuntos e faça novas conexões.
                 </p>
             </div>
             <!-- Botão de divulgação -->
@@ -11340,6 +11431,7 @@ function fzRenderAdminRank(infoGrupo, registro) {
     </div>
 </div>
 <!-- Grid de Grupos -->
+<div class="fz34-community-meta" aria-live="polite" id="fz34CommunityMeta"><span class="fz34-dot"></span><span id="fz34CommunityMetaText">Preparando comunidades para você...</span></div>
 <div id="gruposGrid" class="grupos-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
     <!-- Skeletons melhorados -->
     <div class="skeleton-card" style="background: var(--card); border-radius: 20px; padding: 16px; height: 220px; animation: pulse 1.5s infinite;"></div>
@@ -11347,25 +11439,6 @@ function fzRenderAdminRank(infoGrupo, registro) {
     <div class="skeleton-card" style="background: var(--card); border-radius: 20px; padding: 16px; height: 220px; animation: pulse 1.5s infinite 0.4s;"></div>
     <div class="skeleton-card" style="background: var(--card); border-radius: 20px; padding: 16px; height: 220px; animation: pulse 1.5s infinite 0.6s;"></div>
 </div>
-<!-- 🏅 PÓDIO DOS GRUPOS MAIS MEDALHISTAS -->
-<div class="podium-section" id="podiumMedalhistasSection">
-    <div class="podium-header">
-        <h3 class="podium-title">
-            <i class="fas fa-medal" style="color:#D89A2E;"></i>
-            <span class="gradient-text">Pódio dos Campeões</span>
-        </h3>
-        <p class="podium-subtitle">Os grupos que mais colecionaram medalhas nos rankings diários de Mais Ativos e Mais Golds</p>
-        <button type="button" class="podium-ranking-btn" onclick="event.preventDefault(); abrirRankingAoVivo(); return false;">
-            <i class="fas fa-arrow-up"></i> Ver Ranking Ao Vivo
-        </button>
-    </div>
-    <div class="podium-grid" id="podiumMedalhistasGrid">
-        <div class="podium-skeleton"></div>
-        <div class="podium-skeleton"></div>
-        <div class="podium-skeleton"></div>
-    </div>
-</div>
-
 <!-- Modal de Detalhes do Grupo - VERSÃO PREMIUM -->
 <div id="grupoModal" class="modal">
     <div class="modal-content" style="max-width: 560px; border-radius: 26px; overflow: hidden; animation: modalSlideIn 0.3s ease; border: 1px solid var(--border);">
@@ -20779,6 +20852,9 @@ function atualizarBadgeComunidades() {
 async function carregarPodiumMedalhistas() {
     const grid = document.getElementById('podiumMedalhistasGrid');
     if (!grid) return;
+    if(fz34PodioCarregamento)return fz34PodioCarregamento;
+    if(window.__fabiPodioCarregado)return;
+    fz34PodioCarregamento=(async()=>{
 
     function safeEscapeHtmlPodium(str) {
         if (!str) return '';
@@ -20814,6 +20890,7 @@ async function carregarPodiumMedalhistas() {
                     <i class="fas fa-medal" style="font-size:24px;color:var(--text2);display:block;margin-bottom:8px;opacity:.6;"></i>
                     O pódio ainda está se formando — os primeiros grupos a subirem no ranking diário aparecem aqui.
                 </div>`;
+            window.__fabiPodioCarregado=true;
             return;
         }
 
@@ -20868,9 +20945,10 @@ async function carregarPodiumMedalhistas() {
                 </div>
             `;
         }).join('');
-
+        window.__fabiPodioCarregado=true;
     } catch (error) {
         console.error('Erro ao carregar pódio de medalhistas:', error);
+        window.__fabiPodioCarregado=false;
         grid.innerHTML = `
             <div class="podium-empty">
                 <i class="fas fa-plug-circle-exclamation" style="color:var(--text2);display:block;margin-bottom:8px;opacity:.6;"></i>
@@ -20879,6 +20957,8 @@ async function carregarPodiumMedalhistas() {
                 <button class="btn-primary" style="margin-top:10px;padding:6px 16px;" onclick="carregarPodiumMedalhistas()">Tentar novamente</button>
             </div>`;
     }
+    })();
+    try{return await fz34PodioCarregamento;}finally{fz34PodioCarregamento=null;}
 }
 
 // ==================== RANKING AO VIVO (setas de subida/descida) ====================
@@ -21006,18 +21086,39 @@ function renderizarRankingAoVivo() {
     }).join('');
 }
 
+let fz34GruposCarregamento=null;
+let fz34PodioCarregamento=null;
+function fz34MensagemComunidade(texto,tipo='loading'){
+    const linha=document.getElementById('fz34CommunityMeta');
+    const el=document.getElementById('fz34CommunityMetaText');
+    if(el)el.textContent=texto;
+    if(linha){linha.classList.toggle('fz34-done',tipo==='done');linha.classList.toggle('fz34-error',tipo==='error');}
+}
 async function carregarGruposMelhorado() {
     const container = document.getElementById('gruposGrid');
     if (!container) return;
-    
-    container.innerHTML = `<div class="skeleton-card" style="background: var(--card); border-radius: 20px; padding: 16px; height: 200px;"></div>`.repeat(3);
-    
-    try {
+    if(fz34GruposCarregamento)return fz34GruposCarregamento;
+    if(window.__fabiGruposCarregados)return;
+    fz34GruposCarregamento=(async()=>{
+      // Reutiliza dados desta aba. Evita transferir o catálogo em cada mudança de seção.
+      try {
+        const salvo=JSON.parse(sessionStorage.getItem('fabi_comunidades_v34')||'null');
+        if(salvo && Date.now()-salvo.at<8*60*1000 && Array.isArray(salvo.grupos)){
+            gruposDataCompleto=salvo.grupos;
+            window.__fabiGruposCarregados=true;
+            renderizarCategorias();renderizarGruposComFiltros();atualizarBadgeComunidades();
+            fz34MensagemComunidade(`${gruposDataCompleto.length} grupos disponíveis · lista pronta`,'done');
+            return;
+        }
+      }catch(_){}
+      fz34MensagemComunidade('Procurando comunidades que combinam com você...');
+      container.innerHTML=fz34LoaderCards(3);
+      try {
         const response = await fetch('https://orange-hill-2e61.gbscabral15.workers.dev/br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009/grupos.json');
         if (!response.ok) throw new Error('Erro ao carregar grupos');
         
         const data = await response.json();
-        
+        if(!Array.isArray(data))throw new Error('Resposta inválida da lista de grupos');
         gruposDataCompleto = data.filter(g => g.link && g.link.includes('chat.whatsapp.com')).map(g => ({
             ...g,
             categoria: g.categoria || 'Geral',
@@ -21034,11 +21135,17 @@ async function carregarGruposMelhorado() {
         
         // 🔥 ATUALIZAR BADGE DE COMUNIDADES
         atualizarBadgeComunidades();
-        
+        window.__fabiGruposCarregados=true;
+        try {sessionStorage.setItem('fabi_comunidades_v34',JSON.stringify({at:Date.now(),grupos:gruposDataCompleto}));}catch(_){}
+        fz34MensagemComunidade(`${gruposDataCompleto.length} grupos disponíveis · atualizado agora`,'done');
     } catch (error) {
-        console.error('Erro:', error);
-        container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;"><p>Erro ao carregar grupos</p><button class="btn-primary" onclick="carregarGruposMelhorado()">Tentar novamente</button></div>`;
+        console.error('Erro ao carregar grupos:', error);
+        window.__fabiGruposCarregados=false;
+        fz34MensagemComunidade('Não foi possível consultar os grupos. Tente novamente.','error');
+        container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;"><i class="fas fa-wifi" style="font-size:26px;opacity:.8;color:#fb7185"></i><h3 style="margin:12px 0 7px">Não conseguimos carregar os grupos</h3><p style="opacity:.7">Sua conexão ou o servidor podem estar indisponíveis.</p><button class="btn-primary" onclick="carregarGruposMelhorado()">Tentar novamente</button></div>`;
     }
+    })();
+    try{return await fz34GruposCarregamento;}finally{fz34GruposCarregamento=null;}
 }
 async function carregarGrupos() {
     const container = document.getElementById('gruposGrid');
@@ -21434,10 +21541,10 @@ function limparFiltrosGrupos() {
 function fecharModalGrupo() { document.getElementById('grupoModal').style.display = 'none'; }
 
 function initComunidades() {
-    if (window.__fabiComunidadesReady) return;
-    window.__fabiComunidadesReady = true;
-    initFiltrosBusca();
-    document.querySelectorAll('.sort-btn').forEach(btn => {
+    if (!window.__fabiComunidadesReady) {
+      window.__fabiComunidadesReady = true;
+      initFiltrosBusca();
+      document.querySelectorAll('.sort-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.sort-btn').forEach(b => {
                 b.classList.remove('active');
@@ -21448,10 +21555,24 @@ function initComunidades() {
             sortAtual = btn.dataset.sort;
             renderizarGruposComFiltros();
         });
-    });
-    carregarGruposMelhorado();
-    carregarPodiumMedalhistas();
+      });
+    }
+    if(!window.__fabiGruposCarregados)carregarGruposMelhorado();
+    if(!window.__fabiPodioCarregado)carregarPodiumMedalhistas();
 }
+
+// Pré-carregamento leve e único: aproveita o tempo ocioso depois da Home.
+// Em redes lentas/economia de dados, aguarda o clique para não aumentar tráfego desnecessário.
+function fz34PrecarregarComunidades(){
+    if(window.__fabiComunidadesReady || document.visibilityState!=='visible')return;
+    const conn=navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if(conn && (conn.saveData || /(^|-)2g$/.test(String(conn.effectiveType||''))))return;
+    initComunidades();
+}
+window.addEventListener('load',function(){
+    if(typeof requestIdleCallback==='function')requestIdleCallback(fz34PrecarregarComunidades,{timeout:4500});
+    else setTimeout(fz34PrecarregarComunidades,2500);
+},{once:true});
 
 // Sobrescrever mudarSecao para incluir 'comunidades'
 const mudarSecaoOriginal = mudarSecao;
