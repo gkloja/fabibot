@@ -7351,40 +7351,66 @@ html, body { max-width:100%; overflow-x:clip; }
 .fz-intro-video, .fz-fabi-media { max-width:100%; height:auto; }
 img, video, iframe { max-width:100%; }
 @media(max-width:760px){ input:not([type="checkbox"]):not([type="radio"]), textarea, select { font-size:max(16px,1rem);} }
-/* Fabi Shield V17 — acabamento editorial compacto */
-.fbs-panel {background:
-  radial-gradient(ellipse at 100% -8%,rgba(16,185,129,.15),transparent 43%),
-  radial-gradient(ellipse at 0% 115%,rgba(37,99,235,.13),transparent 46%),
-  linear-gradient(145deg,#0a1018,#101b26 72%,#0c151d)!important;
-}
-.fbs-kicker{letter-spacing:.13em;}
-.fbs-card {box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 12px 26px rgba(0,0,0,.06);}
-.fbs-bar-label{font-size:12px;}
-.fbs-event {transition:transform .18s ease,border-color .18s ease;}
-.fbs-event:hover {transform:translateY(-2px);border-color:rgba(52,211,153,.36);}
-.fbs-event-phone {font-variant-numeric:tabular-nums;letter-spacing:.06em;}
-body.light-mode .fbs-panel{background:radial-gradient(ellipse at 95% 0%,rgba(16,185,129,.08),transparent 44%),linear-gradient(145deg,#fff,#f3f7fc)!important;}
+/* Fabi Shield V18: home only, mobile-first and no overlapping grid children. */
+.fbs-shield{display:none;contain:layout style;}
+body[data-fabi-section="feed"] .fbs-shield:not([hidden]){display:block;}
+.fbs-shield[hidden]{display:none!important;}
+.fbs-main{align-items:start;}
+.fbs-left,.fbs-right{min-height:0;align-self:stretch;}
+.fbs-left>.fbs-card{height:auto;}
+.fbs-right>.fbs-card{height:100%;}
+.fbs-panel{padding:clamp(17px,2.4vw,25px);border:1px solid rgba(94,127,147,.28);background:radial-gradient(circle at 5% 0%,rgba(16,185,129,.13),transparent 32%),radial-gradient(circle at 98% 100%,rgba(59,130,246,.10),transparent 46%),linear-gradient(150deg,#091118,#111c27 90%)!important;border-radius:23px;}
+.fbs-panel::before{background:none;border-top:1px solid rgba(255,255,255,.04);}
+.fbs-title{font-size:clamp(23px,3.3vw,29px);}
+.fbs-kicker{letter-spacing:.085em;font-size:10px;}
+.fbs-metrics{gap:8px;margin-bottom:10px;}
+.fbs-metric{padding:13px 11px;border-radius:14px;}
+.fbs-number{font-size:clamp(23px,3.3vw,30px);}
+.fbs-metric-label{font-size:10.5px;margin-top:6px;}
+.fbs-card{padding:15px;border-radius:17px;min-width:0;}
+.fbs-card-title{font-size:13px;margin-bottom:12px;}
+.fbs-bar{margin-bottom:10px;}
+.fbs-bar-label{font-size:11px;margin-bottom:5px;}
+.fbs-bar-track{height:6px;}
+.fbs-events{gap:8px;}
+.fbs-event{padding:11px 12px;grid-template-columns:33px minmax(0,1fr);gap:10px;border-radius:13px;transition:border-color .2s ease;}
+.fbs-event:hover{border-color:rgba(52,211,153,.33);}
+.fbs-event-icon{width:33px;height:33px;font-size:14px;border-radius:10px;}
+.fbs-event-top{align-items:start;}
+.fbs-event-name strong{font-size:12px;}
+.fbs-event-reason{font-size:10.5px;margin-top:5px;}
+.fbs-event-phone{margin-top:6px;padding:4px 7px;font-size:10px;letter-spacing:.015em;}
+.fbs-badge{padding:3px 6px;font-size:9px;}
+.fbs-footer{padding-top:12px;margin-top:12px;}
+.fbs-disclaimer{font-size:10px;}
+body.light-mode .fbs-panel{background:radial-gradient(circle at 0% 0%,rgba(16,185,129,.08),transparent 36%),linear-gradient(145deg,#fff,#f4f8fc)!important;}
 @media(max-width:760px){
- .fbs-panel{padding:17px 13px!important;}
- .fbs-head{gap:12px;}
- .fbs-title{font-size:clamp(23px,7vw,29px);}
- .fbs-metric-label{font-size:10px;}
- .fbs-events{gap:8px;}
- .fbs-event {padding:11px 12px;}
- .fbs-card {padding:13px 12px;}
- .fbs-bar{margin-bottom:10px;}
- .fbs-bar-label{font-size:11px;}
- .fbs-footer{padding-top:12px;}
+  .fbs-shield{width:calc(100% - 16px);margin:10px auto 18px;}
+  .fbs-panel{padding:15px 12px;border-radius:19px;}
+  .fbs-main{display:flex;flex-direction:column;gap:10px;align-items:stretch;}
+  .fbs-left,.fbs-right{height:auto;min-height:0;width:100%;}
+  .fbs-left>.fbs-card,.fbs-right>.fbs-card{height:auto!important;min-height:0;}
+  .fbs-head{gap:10px;margin-bottom:14px;}
+  .fbs-title{font-size:clamp(22px,6vw,27px);}
+  .fbs-desc{font-size:11.5px;line-height:1.5;}
+  .fbs-card{padding:13px;}
+  .fbs-card-title{margin-bottom:10px;flex-wrap:wrap;gap:5px;}
+  .fbs-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .fbs-metric:last-child{grid-column:auto;}
+  .fbs-metric{padding:12px 9px;}
+  .fbs-metric-label{font-size:10px;}
+  .fbs-event{padding:10px;}
 }
+@media(max-width:355px){.fbs-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}.fbs-metric:last-child{grid-column:auto;}.fbs-number{font-size:21px;}.fbs-event-top{flex-wrap:wrap;}}
 @media(prefers-reduced-motion:reduce){.fbs-event{transition:none;}}
 </style>
-<section id="fabiShieldHome" class="fbs-shield" aria-labelledby="fabiShieldTitle">
+<section id="fabiShieldHome" class="fbs-shield" aria-labelledby="fabiShieldTitle" hidden>
   <div class="fbs-panel">
     <div class="fbs-head">
       <div>
         <span class="fbs-kicker">Fabi Shield · Inteligência global</span>
-        <h2 class="fbs-title" id="fabiShieldTitle">Proteção global, em números.</h2>
-        <p class="fbs-desc">Um panorama das sinalizações da comunidade, com categorias, dados atualizados e os três registros mais recentes — sem expor identidades.</p>
+        <h2 class="fbs-title" id="fabiShieldTitle">Um retrato da proteção global.</h2>
+        <p class="fbs-desc">Moderação em números: registros, categorias e três ocorrências recentes, com dados pessoais protegidos.</p>
       </div>
       <span class="fbs-chip" id="fbsState">◉ Sincronizando painel</span>
     </div>
@@ -7396,19 +7422,19 @@ body.light-mode .fbs-panel{background:radial-gradient(ellipse at 95% 0%,rgba(16,
           <div class="fbs-metric"><strong class="fbs-number" id="fbsSpam">—</strong><span class="fbs-metric-label">Sinalizações de spam</span></div>
         </div>
         <div class="fbs-card">
-          <div class="fbs-card-title">Distribuição por categoria <span class="fbs-mini">Leitura consolidada</span></div>
+          <div class="fbs-card-title">Motivos mais frequentes <span class="fbs-mini">Por categoria</span></div>
           <div id="fbsBars" aria-label="Distribuição dos registros"><span class="fbs-mini">Carregando informações...</span></div>
         </div>
       </div>
       <div class="fbs-right">
         <div class="fbs-card">
-          <div class="fbs-card-title">Registros recentes <span class="fbs-mini">Últimas 3 ocorrências</span></div>
+          <div class="fbs-card-title">Últimas sinalizações <span class="fbs-mini">3 registros</span></div>
           <div id="fbsEvents" class="fbs-events" aria-live="polite"><p class="fbs-mini">Consultando o histórico...</p></div>
         </div>
       </div>
     </div>
     <div class="fbs-footer">
-      <p class="fbs-disclaimer">Os números exibidos nesta vitrine são parcialmente mascarados para preservar a identidade. Registros representam sinalizações administrativas e podem passar por revisão.</p>
+      <p class="fbs-disclaimer">Telefones são mascarados. As sinalizações são administrativas e podem ser revisadas.</p>
     </div>
   </div>
 </section>
@@ -7463,7 +7489,7 @@ body.light-mode .fbs-panel{background:radial-gradient(ellipse at 95% 0%,rgba(16,
       const body = node('div', '');
       const topWrap = node('div', 'fbs-event-top');
       const nameWrap = node('div', 'fbs-event-name');
-      const title = node('strong', '', r.codigo || ('Registro ' + (i + 1)));
+      const title = node('strong', '', 'Ocorrência ' + String(i + 1).padStart(2, '0'));
       const badge = node('span', 'fbs-badge', badgeText[r.categoria] || 'Ocorrência');
       nameWrap.append(title, badge);
       const date = new Date(r.data);
@@ -7480,7 +7506,7 @@ body.light-mode .fbs-panel{background:radial-gradient(ellipse at 95% 0%,rgba(16,
     });
   }
   async function carregar() {
-    if (!$('fabiShieldHome')) return;
+    if (!$('fabiShieldHome') || (typeof fabiSecaoDaUrl === 'function' && fabiSecaoDaUrl() && fabiSecaoDaUrl() !== 'feed')) return;
     const path = '/api/banlist/public-stats';
     const url = (typeof apiProxyUrl === 'function') ? apiProxyUrl(path)
       : ((typeof API_URL !== 'undefined') ? API_URL.replace(/\/$/, '') + path : path);
@@ -7493,12 +7519,24 @@ body.light-mode .fbs-panel{background:radial-gradient(ellipse at 95% 0%,rgba(16,
       if (!data || !Array.isArray(data.recentes) || !data.categorias) throw new Error('Formato inválido');
       render(data);
       setState('● Painel atualizado');
+      try { sessionStorage.setItem('fabiShieldPublicSnapshotV18', JSON.stringify({ data, at: Date.now() })); } catch (_) {}
     } catch (err) {
       console.warn('[Fabi Shield] Dados indisponíveis', err?.message || err);
-      setState('◌ Painel indisponível');
       const bars = $('fbsBars'), ev = $('fbsEvents');
-      if (bars) bars.textContent = 'As estatísticas não estão disponíveis no momento.';
-      if (ev) ev.textContent = 'Não foi possível consultar os registros recentes.';
+      let restored = false;
+      try {
+        const snapshot = JSON.parse(sessionStorage.getItem('fabiShieldPublicSnapshotV18') || 'null');
+        if (snapshot && Date.now() - snapshot.at < 15 * 60 * 1000 && snapshot.data && Array.isArray(snapshot.data.recentes)) {
+          render(snapshot.data);
+          setState('◌ Últimos dados disponíveis');
+          restored = true;
+        }
+      } catch (_) {}
+      if (!restored) {
+        setState('◌ Painel indisponível');
+        if (bars) bars.textContent = 'As estatísticas não estão disponíveis no momento.';
+        if (ev) ev.textContent = 'Não foi possível consultar os registros recentes.';
+      }
     } finally {
       clearTimeout(timeout);
     }
@@ -19470,6 +19508,8 @@ function mudarSecao(section, options = {}) {
     fabiAplicarAriaNavegacao(section);
     currentSection = section;
     try { document.body.dataset.fabiSection = section; } catch (_) {}
+    const shield = document.getElementById('fabiShieldHome');
+    if (shield) shield.hidden = section !== 'feed';
     if (!window.__fabiComandosListenersBound) {
         document.getElementById('comandosSearchInput')?.addEventListener('input', renderizarComandos);
         document.getElementById('comandosPrefixoInput')?.addEventListener('input', renderizarComandos);
@@ -20852,32 +20892,31 @@ mudarSecao = function(section, options = {}) {
 
     function inicializar() {
     console.log('🚀 Inicializando Fabi Bot...');
-    carregarDestaquesFeed();
-    initTheme();
-    initRadio();
-    loadYouTubeAPI();
-    initComunidades();
-    initGrupoButton()
-    verificarFilmeDoMarujoFlix()
-    initCustomLinkButton()
-    initBuscaFilmes()
-    carregarContadorComandos()
-    carregarRelatosBugs()
-    initRelatosChips()
-    const sessaoRestaurada = restaurarSessao();
-    try { if (typeof atualizarIntroPorSessao === 'function') atualizarIntroPorSessao(); } catch(e) {}
-    
-    if (sessaoRestaurada) {
-        console.log('✅ Sessão restaurada!');
-    }
-    
-    initAuth();
-    
-    // Verificar se há sala na URL (watch party)
-    verificarSalaWatchNaUrl();
-    
-    // Verificar se há post na URL
-    verificarPostNaUrl();
+    const iniciarOpcional = (nome, fn) => {
+        try {
+            const r = fn();
+            if (r && typeof r.catch === 'function') r.catch(e => console.warn('[Fabi Inicialização] ' + nome, e?.message || e));
+        } catch(e) { console.warn('[Fabi Inicialização] ' + nome, e?.message || e); }
+    };
+    iniciarOpcional('Tema', () => initTheme());
+    iniciarOpcional('Rádio', () => initRadio());
+    iniciarOpcional('YouTube', () => loadYouTubeAPI());
+    iniciarOpcional('Botões', () => initGrupoButton());
+    iniciarOpcional('Marujo Flix', () => verificarFilmeDoMarujoFlix());
+    iniciarOpcional('Links', () => initCustomLinkButton());
+    iniciarOpcional('Busca', () => initBuscaFilmes());
+    iniciarOpcional('Contador', () => carregarContadorComandos());
+    iniciarOpcional('Relatos', () => carregarRelatosBugs());
+    iniciarOpcional('Chips', () => initRelatosChips());
+    let sessaoRestaurada = false;
+    try { sessaoRestaurada = !!restaurarSessao(); }
+    catch (e) { console.warn('[Fabi Inicialização] Restaurar sessão', e?.message || e); }
+    iniciarOpcional('Introdução', () => typeof atualizarIntroPorSessao === 'function' && atualizarIntroPorSessao());
+    if (sessaoRestaurada) console.log('✅ Sessão restaurada!');
+
+    iniciarOpcional('Autenticação', () => initAuth());
+    iniciarOpcional('Sala', () => verificarSalaWatchNaUrl());
+    iniciarOpcional('Post', () => verificarPostNaUrl());
     
     // Verificar se há notícia na URL (apenas se não for watch ou post)
     const urlParams = new URLSearchParams(window.location.search);
@@ -20889,12 +20928,9 @@ mudarSecao = function(section, options = {}) {
         setTimeout(abrirNoticiaPorLink, 1000);
     }
     
-    setTimeout(verificarNotificacoes, 2000);
+    setTimeout(() => iniciarOpcional('Notificações', () => verificarNotificacoes()), 2000);
     
-    if (!sessaoRestaurada) {
-        carregarPosts();
-    }
-    
+    // Feed social legado foi retirado da Home; não carregar posts em toda visita.
     console.log('✅ Sistema inicializado!');
 }
 // Avisar o servidor quando a pessoa (logada ou visitante) sai da página
@@ -20922,6 +20958,9 @@ window.addEventListener('beforeunload', () => {
             }
         } else {
             currentSection = 'feed';
+            document.body.dataset.fabiSection = 'feed';
+            const shield = document.getElementById('fabiShieldHome');
+            if (shield) shield.hidden = false;
             fabiAplicarAriaNavegacao('feed');
         }
     });
