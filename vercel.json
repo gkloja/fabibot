@@ -32,6 +32,16 @@
       "permanent": true
     },
     {
+      "source": "/pokemon-drops.html",
+      "destination": "/pokemon-drops",
+      "permanent": true
+    },
+    {
+      "source": "/pokemon-drops/",
+      "destination": "/pokemon-drops",
+      "permanent": true
+    },
+    {
       "source": "/pokemon.html",
       "destination": "/pokemon",
       "permanent": true
@@ -211,6 +221,10 @@
     {
       "source": "/pokemon",
       "destination": "/pokemon.html"
+    },
+    {
+      "source": "/pokemon-drops",
+      "destination": "/pokemon-drops.html"
     },
     {
       "source": "/pokemon-profile",
