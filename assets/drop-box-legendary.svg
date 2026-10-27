@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(256 180) rotate(90) scale(240)">
+      <stop stop-color="#FFF0B8"/>
+      <stop offset="0.45" stop-color="#F6B94C"/>
+      <stop offset="1" stop-color="#6A3A06"/>
+    </radialGradient>
+    <linearGradient id="box" x1="100" y1="120" x2="430" y2="390" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#301500"/>
+      <stop offset="0.5" stop-color="#8B4C08"/>
+      <stop offset="1" stop-color="#1D1200"/>
+    </linearGradient>
+    <linearGradient id="lid" x1="84" y1="82" x2="430" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE89F"/>
+      <stop offset="0.45" stop-color="#E9A93D"/>
+      <stop offset="1" stop-color="#844B0A"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="150" y1="190" x2="350" y2="325" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF8D6"/>
+      <stop offset="0.5" stop-color="#FFD671"/>
+      <stop offset="1" stop-color="#B56B0B"/>
+    </linearGradient>
+    <filter id="shadow" x="40" y="60" width="432" height="392" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+    <filter id="glow" x="72" y="52" width="368" height="368" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="22" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="120" fill="url(#bg)"/>
+  <circle cx="256" cy="170" r="128" fill="#FFF5D2" fill-opacity="0.25" filter="url(#glow)"/>
+
+  <g filter="url(#shadow)">
+    <path d="M92 214C92 201 101 190 114 190H398C411 190 420 201 420 214V334C420 352 405 367 387 367H125C107 367 92 352 92 334V214Z" fill="url(#box)" stroke="#F7D26A" stroke-width="12"/>
+    <path d="M76 172C76 155 89 142 106 142H406C423 142 436 155 436 172V214H76V172Z" fill="url(#lid)" stroke="#FFF2B4" stroke-width="12"/>
+    <path d="M76 214H436" stroke="#472100" stroke-width="10" stroke-opacity="0.55"/>
+    <path d="M132 142L162 104H350L380 142" stroke="#FFF2B4" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="214" y="190" width="84" height="134" rx="22" fill="#4E2500" stroke="#FFD978" stroke-width="10"/>
+    <path d="M256 215L270 244L302 249L279 271L285 303L256 288L227 303L233 271L210 249L242 244L256 215Z" fill="url(#metal)"/>
+    <path d="M148 192V365" stroke="#F0BF55" stroke-width="8" stroke-linecap="round" opacity="0.65"/>
+    <path d="M364 192V365" stroke="#F0BF55" stroke-width="8" stroke-linecap="round" opacity="0.65"/>
+    <path d="M92 286H420" stroke="#F0BF55" stroke-width="8" opacity="0.55"/>
+  </g>
+
+  <g fill="#FFF8D5" opacity="0.96">
+    <path d="M112 92L120 116L144 124L120 132L112 156L104 132L80 124L104 116L112 92Z"/>
+    <path d="M406 90L413 112L435 119L413 126L406 148L399 126L377 119L399 112L406 90Z"/>
+    <path d="M434 316L440 334L458 340L440 346L434 364L428 346L410 340L428 334L434 316Z"/>
+  </g>
+</svg>

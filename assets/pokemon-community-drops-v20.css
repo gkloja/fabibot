@@ -95,3 +95,38 @@ body.light .wallet-item img{background:#eef8f3}
 .catalog .paid-box .pool-unavailable{font-size:11px;border:1px solid #cc8f4255;color:#f0d4a8;border-radius:9px;padding:9px}
 @media(max-width:900px){.catalog{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:660px){.catalog{grid-template-columns:1fr;gap:12px}.catalog .paid-box{padding:14px}.catalog .paid-box .box-product-art{height:94px;min-height:94px}.catalog .paid-box .box-product-art .box-art{width:87px!important;height:87px!important}.catalog .paid-box .paid-pool-compact{grid-template-columns:1fr 1fr}.catalog .paid-box .paid-pool-row{padding:4px 5px}.catalog .paid-box .product-footer{grid-template-columns:1fr auto;display:grid;align-items:center}.catalog .paid-box .product-footer button{width:auto;min-width:120px}}
+
+/* V21 — quantidade, status de coleção e caixa lendária */
+.catalog .paid-box.dropBoxLegendary{border-color:#d6a45366;background:linear-gradient(180deg,#2a231a,#111c23)}
+.catalog .paid-box.dropBoxLegendary .box-product-art{background:radial-gradient(circle at 50% 50%,rgba(255,193,79,.18),transparent 66%),#18130d}
+.species-grid .species-thumb{position:relative;border:1px solid #4b6b6170;background:#14272b;border-radius:12px;padding:0;display:grid;place-items:center;height:48px}
+.species-grid .species-thumb img{width:34px;height:34px;object-fit:contain}
+.tiny-owned{position:absolute;right:4px;bottom:4px;width:10px;height:10px;border-radius:50%;background:#f0b55a;border:1px solid #fff6}
+.tiny-owned.yes{background:#84e287}
+.owned-badge{display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;padding:4px 7px;border-radius:999px;background:#1f3c2f;border:1px solid #5b9470;color:#dbf6df;white-space:nowrap}
+.owned-badge.no{background:#372e1f;border-color:#9f7d45;color:#ffe5b6}
+.species-chip{width:100%;display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--stroke);border-radius:12px;background:#10272155;color:var(--text);text-align:left}
+.species-chip img{width:40px;height:40px;object-fit:contain;flex:0 0 40px}
+.species-chip-info{display:grid;min-width:0;flex:1}
+.species-chip-info b,.species-chip-info small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.species-chip-info b{font-size:11px}.species-chip-info small{font-size:9px;color:var(--muted)}
+.species-chip strong{font-size:12px;color:var(--green)}
+.species-modal-top{display:flex;align-items:center;gap:13px}.species-modal-top img{width:78px;height:78px;object-fit:contain;flex:0 0 78px}
+.paid-mon-text{min-width:0;display:grid;flex:1}.paid-mon-text small{font-size:8px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qty-row{margin-top:4px}.qty-wrap{display:grid;gap:6px}.qty-wrap>span{font-size:10px;font-weight:800;color:var(--muted)}
+.qty-controls{display:grid;grid-template-columns:38px 1fr 38px;gap:8px}
+.qty-btn,.qty-input{height:38px;border:1px solid var(--stroke);border-radius:11px;background:#102027;color:var(--text)}
+.qty-btn{font-size:20px;font-weight:800}.qty-input{text-align:center;font-weight:800;padding:0 8px}
+.price-caption{display:block;font-size:10px;color:var(--muted);margin-top:2px}
+.modal-buy-panel{margin-top:12px;padding:12px;border:1px solid var(--stroke);border-radius:14px;background:#14292d60}
+.modal-buy-total{margin-top:9px;font-size:12px;color:var(--text)}
+.wallet-batch{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;margin-left:8px;padding:4px 7px;border-radius:999px;background:#22313a;color:#d9edf3;border:1px solid #40515b}
+body.light .species-grid .species-thumb{background:#eef8f4}
+body.light .species-chip{background:#eff8f4}
+body.light .owned-badge{background:#e5f5ea;color:#26663a;border-color:#a3d0ae}
+body.light .owned-badge.no{background:#f9efde;color:#805d1e;border-color:#d7c08b}
+body.light .modal-buy-panel{background:#eef8f4}
+@media(max-width:660px){
+ .species-modal-top img{width:66px;height:66px;flex-basis:66px}
+ .qty-controls{grid-template-columns:36px 1fr 36px}
+}
