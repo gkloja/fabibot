@@ -73,3 +73,25 @@ body.light .wallet-item img{background:#eef8f3}
   .modal-actions .btn{width:100%}
   .pix-code{min-height:122px}
 }
+
+/* V20 — cards compactos, chances visíveis e imagens estáveis */
+.catalog{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
+.catalog .paid-box{padding:15px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.catalog .paid-box .box-product-art{height:110px;min-height:110px;border-radius:14px;margin:0;overflow:hidden;background:radial-gradient(circle at 50% 50%,#9df7ac1d,transparent 66%),#0b1b1d}
+.catalog .paid-box .box-product-art .box-art{width:96px!important;height:96px!important;max-width:100%;object-fit:contain!important;display:block;filter:drop-shadow(0 10px 11px #0005)}
+.catalog .paid-box .paid-eyebrow{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--green)}
+.catalog .paid-box h3{font-size:16px;line-height:1.25;margin:4px 0}
+.catalog .paid-box .product-chips{margin:0 0 3px;display:flex;flex-wrap:wrap;gap:5px}
+.catalog .paid-box .product-chips span{font-size:9px;padding:4px 7px}
+.catalog .paid-box .paid-pool-label{font-size:10px;font-weight:800;color:var(--muted);margin:5px 0 1px}
+.catalog .paid-box .paid-pool-compact{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.catalog .paid-box .paid-pool-row{display:flex;align-items:center;gap:5px;min-width:0;border:1px solid #405e5755;background:#122b2880;border-radius:8px;padding:5px}
+.catalog .paid-box .paid-mon{flex:0 0 26px;width:26px;height:27px;display:grid;place-items:center;overflow:hidden}
+.catalog .paid-box .paid-mon img{width:25px!important;height:25px!important;max-width:25px!important;max-height:25px!important;object-fit:contain!important;filter:none!important}
+.catalog .paid-box .paid-mon-name{font-size:9px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.catalog .paid-box .paid-pool-row>b{font-size:9px;color:var(--green);white-space:nowrap}
+.catalog .paid-box .paid-detail{margin-top:auto;padding-top:8px}
+.catalog .paid-box .product-footer{margin-top:2px}
+.catalog .paid-box .pool-unavailable{font-size:11px;border:1px solid #cc8f4255;color:#f0d4a8;border-radius:9px;padding:9px}
+@media(max-width:900px){.catalog{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:660px){.catalog{grid-template-columns:1fr;gap:12px}.catalog .paid-box{padding:14px}.catalog .paid-box .box-product-art{height:94px;min-height:94px}.catalog .paid-box .box-product-art .box-art{width:87px!important;height:87px!important}.catalog .paid-box .paid-pool-compact{grid-template-columns:1fr 1fr}.catalog .paid-box .paid-pool-row{padding:4px 5px}.catalog .paid-box .product-footer{grid-template-columns:1fr auto;display:grid;align-items:center}.catalog .paid-box .product-footer button{width:auto;min-width:120px}}

@@ -1,4 +1,4 @@
-/* Fabi Pokémon Adventure V21 — quantidade de caixas, caixa lendária, detalhes dos Pokémon e status de coleção. */
+/* Fabi Pokémon Adventure V22 — caixa lendária premium, quantidade via modal PIX e catálogo visual refinado. */
 (()=>{
 'use strict';
 const PROXY='https://orange-hill-2e61.gbscabral15.workers.dev';
@@ -75,6 +75,12 @@ const PORTAL_CSS=`
 #modal.fabi-drops-portal .qty-btn{font-size:22px;font-weight:800}
 #modal.fabi-drops-portal .qty-input{padding:0 10px;font-size:16px;font-weight:800}
 #modal.fabi-drops-portal .modal-buy-total{margin-top:10px;font-size:13px;font-weight:700;color:#e2f8e8}
+#modal.fabi-drops-portal .purchase-hero{display:grid;grid-template-columns:88px 1fr;gap:12px;align-items:center;margin-bottom:10px}
+#modal.fabi-drops-portal .purchase-hero .box-art{width:88px;height:88px;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(255,214,82,.16))}
+#modal.fabi-drops-portal .purchase-summary{background:#102129;border:1px solid #30505a;border-radius:14px;padding:12px;margin-top:12px}
+#modal.fabi-drops-portal .purchase-summary b{display:block;font-size:15px;color:#fff;margin-bottom:4px}
+#modal.fabi-drops-portal .purchase-summary small{display:block;color:#a8c3cb;line-height:1.55}
+#modal.fabi-drops-portal .purchase-total-strong{display:block;margin-top:8px;font-size:14px;color:#dfffd0}
 @keyframes fabiSpin{to{transform:rotate(360deg)}}
 @media(max-width:650px){#modal.fabi-drops-portal{padding:8px!important}#modal.fabi-drops-portal .modal-panel{padding:13px 13px 20px;max-height:calc(100vh - 16px);max-height:calc(100dvh - 16px)}#modal.fabi-drops-portal .odds-list{grid-template-columns:1fr;max-height:43vh}#modal.fabi-drops-portal .modal-actions .btn{flex:1 1 100%}}
 `;
@@ -175,15 +181,20 @@ function renderProducts(){
  root.innerHTML=data.products.map(p=>{
   const pool=Array.isArray(p.possibleSpecies)?p.possibleSpecies:[];
   const miniature=pool.length?`<div class="paid-pool-compact">${pool.map(x=>`<button type="button" class="paid-pool-row" data-species="${Number(x.id)}" data-source-box="${esc(p.id)}" title="${esc(x.name)} · ${chanceLabel(x.chance)}"><span class="paid-mon">${speciesImage(x.id)}</span><span class="paid-mon-text"><span class="paid-mon-name">${esc(x.name||'Pokémon')}</span><small>${x.owned?'Já tenho':'Ainda não tenho'}</small></span><b>${Number(x.chance||0).toLocaleString('pt-BR',{maximumFractionDigits:2})}%</b></button>`).join('')}</div>`:'<div class="pool-unavailable">Catálogo de espécies indisponível. Atualize também o servidor Bronxy para a mesma versão.</div>';
-  return `<article class="product paid-box ${esc(p.id)}"><span class="paid-eyebrow">CAIXA COMUNITÁRIA · ${esc(p.tier||'CATÁLOGO')}</span><div class="product-art box-product-art">${boxImage(p.id,p.label)}</div><h3>${esc(p.label)}</h3><div class="product-chips"><span>${pool.length||'—'} espécies no catálogo</span><span>Rotação diária</span></div><div class="paid-pool-label">Pokémon possíveis e probabilidades de hoje</div>${miniature}<div class="paid-detail"><button class="btn secondary mini" type="button" data-paid-details="${esc(p.id)}" ${pool.length?'':'disabled'}>Ver todos os detalhes</button></div><div class="qty-row">${productQtyMarkup(p.id)}</div><div class="product-footer"><div><strong data-total-for="${esc(p.id)}">${money(p.price)}</strong><small class="price-caption">pagamento por caixa</small></div><button class="btn primary" type="button" data-buy="${esc(p.id)}" ${pool.length?'':'disabled'}>Gerar PIX</button></div></article>`;
+  return `<article class="product paid-box ${esc(p.id)}"><span class="paid-eyebrow">CAIXA COMUNITÁRIA · ${esc(p.tier||'CATÁLOGO')}</span><div class="product-art box-product-art">${boxImage(p.id,p.label)}</div><h3>${esc(p.label)}</h3><div class="product-chips"><span>${pool.length||'—'} espécies no catálogo</span><span>Rotação diária</span></div><div class="paid-pool-label">Pokémon possíveis e probabilidades de hoje</div>${miniature}<div class="paid-detail"><button class="btn secondary mini" type="button" data-paid-details="${esc(p.id)}" ${pool.length?'':'disabled'}>Ver todos os detalhes</button></div><div class="product-footer"><div><strong data-total-for="${esc(p.id)}">${money(p.price)}</strong><small class="price-caption">escolha a quantidade ao gerar o PIX</small></div><button class="btn primary" type="button" data-buy="${esc(p.id)}" ${pool.length?'':'disabled'}>Gerar PIX</button></div></article>`;
  }).join('');
  data.products.forEach(p=>syncQty(p.id,1));
 }
 function paidModal(id){
  const p=data.products.find(x=>x.id===id);if(!p)return toast('Caixa indisponível.',true);
  const pool=Array.isArray(p.possibleSpecies)?p.possibleSpecies:[];
- modal(`<div class="box-detail-top">${boxImage(p.id,p.label)}<div><span class="section-label">CAIXA PIX DO DIA</span><h3 id="modalTitle">${esc(p.label)}</h3><p>${esc(p.tier||'Caixa')} · ${money(p.price)} cada · catálogo válido até ${esc(shortDate(p.rotationEndsAt))}</p></div></div><p>Você está comprando a <strong>caixa</strong>, não um Pokémon garantido. Toque em uma espécie para ver os detalhes e descobrir se ela já está na sua coleção.</p><div class="odds-list">${pool.map(x=>speciesTile(x,p.id)).join('')}</div><p class="odds-total">Probabilidade total: 100% · ${pool.length} espécies possíveis hoje.</p><div class="modal-buy-panel">${productQtyMarkup(p.id)}<div class="modal-buy-total">Total: <b data-total-for="${esc(p.id)}">${money(p.price)}</b></div></div><div class="modal-actions"><button class="btn primary" data-buy="${esc(p.id)}" type="button">Gerar PIX</button><button class="btn secondary" type="button" data-close="1">Agora não</button></div>`);
- syncQty(p.id, currentQty(p.id));
+ modal(`<div class="box-detail-top">${boxImage(p.id,p.label)}<div><span class="section-label">CAIXA PIX DO DIA</span><h3 id="modalTitle">${esc(p.label)}</h3><p>${esc(p.tier||'Caixa')} · ${money(p.price)} por caixa · catálogo válido até ${esc(shortDate(p.rotationEndsAt))}</p></div></div><p>Você está comprando a <strong>caixa</strong>, não um Pokémon garantido. Toque em uma espécie para ver os detalhes, descobrir se ela já está na sua coleção e então escolher quantas caixas deseja gerar no PIX.</p><div class="odds-list">${pool.map(x=>speciesTile(x,p.id)).join('')}</div><p class="odds-total">Probabilidade total: 100% · ${pool.length} espécies possíveis hoje.</p><div class="modal-actions"><button class="btn primary" data-buy="${esc(p.id)}" type="button">Escolher quantidade e gerar PIX</button><button class="btn secondary" type="button" data-close="1">Agora não</button></div>`);
+}
+function purchaseModal(id,qty){
+ const p=data.products.find(x=>x.id===id);if(!p)return toast('Caixa indisponível.',true);
+ const total=Number(p.price||0)*normalizeQty(qty||1);
+ modal(`<div class="purchase-hero">${boxImage(p.id,p.label)}<div><span class="section-label">COMPRA PIX</span><h3 id="modalTitle">${esc(p.label)}</h3><p>${esc(p.description||'Escolha quantas caixas deseja comprar nesta cobrança PIX.')}</p></div></div><div class="purchase-summary"><b>${esc(p.tier||'Caixa comunitária')} · ${money(p.price)} por caixa</b><small>Você escolhe a quantidade agora. Depois do pagamento, cada caixa aparecerá separadamente na sua carteira para ser enviada ao grupo Pokémon que você quiser.</small>${productQtyMarkup(p.id)}<span class="purchase-total-strong">Total desta cobrança: <b data-total-for="${esc(p.id)}">${money(total)}</b></span></div><div class="modal-actions"><button class="btn primary" data-buy-confirm="${esc(p.id)}" type="button">Gerar cobrança PIX</button><button class="btn secondary" data-paid-details="${esc(p.id)}" type="button">Voltar aos detalhes</button></div>`);
+ syncQty(p.id, normalizeQty(qty||1));
 }
 function groupOptions(v){
  if(!data.groups.length)return '<option value="">Nenhum grupo com Pokémon automático ativo</option>';
@@ -255,7 +266,8 @@ function handleActionClick(e){
  const speciesBtn=e.target.closest('[data-species]');
  if(speciesBtn){e.preventDefault();speciesModal(speciesBtn.dataset.species,speciesBtn.dataset.sourceBox||'');return;}
  const b=e.target.closest('button');if(!b)return;
- if(b.hasAttribute('data-buy')){e.preventDefault();buy(b.dataset.buy,currentQty(b.dataset.buy,b.closest('.modal-panel')||document))}
+ if(b.hasAttribute('data-buy')){e.preventDefault();purchaseModal(b.dataset.buy,currentQty(b.dataset.buy,b.closest('.modal-panel')||document))}
+ else if(b.hasAttribute('data-buy-confirm')){e.preventDefault();buy(b.dataset.buyConfirm,currentQty(b.dataset.buyConfirm,b.closest('.modal-panel')||document))}
  else if(b.hasAttribute('data-paid-details'))paidModal(b.dataset.paidDetails);
  else if(b.hasAttribute('data-odds'))oddsModal(b.dataset.odds);
  else if(b.hasAttribute('data-free'))claimFree(b.dataset.free);
@@ -273,6 +285,6 @@ $('#themeToggle')?.addEventListener('click',()=>{document.body.classList.toggle(
 try{if(localStorage.getItem('theme')==='light'||localStorage.getItem('darkMode')==='false')document.body.classList.add('light')}catch(_){ }
 window.addEventListener('pagehide',()=>{if(portalModal){closeModal();portalModal.remove();portalModal=null;}});
 const qs=new URLSearchParams(location.search);
-load().then(()=>{const viewBox=qs.get('viewBox'),buyId=qs.get('buy');if(viewBox)paidModal(viewBox);else if(buyId)buy(buyId);});
+load().then(()=>{const viewBox=qs.get('viewBox'),buyId=qs.get('buy');if(viewBox)paidModal(viewBox);else if(buyId)purchaseModal(buyId);});
 setInterval(()=>{if(!document.hidden&&!$('#modal')?.classList.contains('open')&&isLogged())load(true)},30000);
 })();

@@ -449,3 +449,13 @@ html[data-theme="light"] .pk-page{color:#0a0f14}
 
 /* V17 — central de drops incorporada na aba do Pokemon Adventure */
 .pk-drop-hub{overflow:hidden;padding:18px!important}.pk-drop-frame{display:block;width:100%;height:1100px;min-height:580px;border:1px solid rgba(120,205,155,.25);border-radius:18px;background:#081a16;overflow:auto}.pk-drop-hub .pk-card-head{margin-bottom:18px}.pk-drop-hub h2{margin:0 0 6px;font-size:clamp(20px,3vw,28px)}@media(max-width:660px){.pk-drop-hub{padding:9px!important}.pk-drop-frame{border-radius:12px;height:1100px;min-height:520px}}
+
+/* V22 — ícones SVG premium no menu */
+.pk-nav-icon,.pk-more-icon,.pk-nav-btn{display:inline-flex;align-items:center;justify-content:center}
+.pk-nav-icon-img,.pk-more-icon-img,.pk-btn-icon-img{width:20px;height:20px;display:block;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(98,236,135,.18))}
+.pk-more-item{display:flex;align-items:center;gap:10px}
+.pk-more-icon{width:22px;height:22px;flex:0 0 22px;display:inline-flex;align-items:center;justify-content:center}
+.pk-nav-btn .pk-btn-icon-img{width:19px;height:19px}
+@media(max-width:640px){
+  .pk-nav-btn .pk-btn-icon-img{width:20px;height:20px}
+}
