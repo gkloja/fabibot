@@ -1,0 +1,144 @@
+/* Fabi Pokemon Adventure V34 — correção mobile-first exclusiva do Hall da Fama.
+   Carregada DEPOIS de pokemon-hall-v33.css. Nenhuma outra aba é afetada. */
+
+@media (max-width: 760px) {
+  .hv33-container {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 10px !important;
+    border-radius: 18px !important;
+    overflow: clip;
+  }
+  .hv33-hero { height: 190px; border-radius: 15px; }
+  .hv33-hero-art { object-position: 65% 50%; }
+  .hv33-hero:after { background: linear-gradient(90deg,rgba(2,17,15,.97) 0%,rgba(3,23,18,.86) 55%,rgba(3,25,19,.14) 100%); }
+  .hv33-hero-content { padding: 18px 16px; max-width: 74%; gap: 9px; }
+  .hv33-eyebrow { font-size: 9px; letter-spacing: .045em; padding: 6px 9px; line-height: 1.3; }
+  .hv33-hero h1 { font-size: clamp(27px, 7.7vw, 41px); line-height: 1.04; }
+  .hv33-hero-content p { font-size: 11px; line-height: 1.45; max-width: 260px; }
+  .hv33-hero-facts { gap: 5px; }
+  .hv33-hero-facts span { font-size: 9px; padding: 5px 7px; }
+  .hv33-hero-facts span:last-child { display: none; }
+  .hv33-intro,.hv33-explore-head { align-items: flex-start; margin: 19px 2px 13px; }
+  .hv33-intro h2,.hv33-explore-head h2 { font-size: 23px; line-height: 1.17; }
+  .hv33-intro p { margin-top: 6px; font-size: 12px; line-height: 1.5; }
+  .hv33-kicker { font-size: 10px; }
+  .hv33-refresh { width: 44px; height: 44px; padding: 0; flex: 0 0 44px; font-size: 0; }
+  .hv33-refresh span { font-size: 23px; }
+
+  /* Pódio de verdade no celular: campeão grande e demais lugares abaixo */
+  .hv33-podium {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    grid-template-areas: 'first first' 'second third';
+    gap: 11px;
+    align-items: stretch;
+    padding: 12px 2px 2px;
+  }
+  .hv33-podium-spot { width: 100%; min-width: 0; margin: 0; gap: 6px; padding: 30px 9px 13px; border-radius: 16px; }
+  .hv33-podium-spot.hv33-ouro {
+    grid-area: first;
+    min-height: 132px;
+    padding: 30px 16px 16px;
+    display: grid;
+    grid-template-columns: 77px minmax(0,1fr);
+    grid-template-rows: auto auto;
+    align-items: center;
+    justify-items: start;
+    text-align: left;
+    column-gap: 16px;
+    row-gap: 5px;
+    border-radius: 17px;
+    background: radial-gradient(ellipse at 0 45%,rgba(239,199,83,.20),transparent 60%),linear-gradient(113deg,#332619,#122820 78%);
+  }
+  .hv33-podium-spot.hv33-prata { grid-area: second; min-height: 179px; }
+  .hv33-podium-spot.hv33-bronze { grid-area: third; min-height: 179px; }
+  .hv33-podium-spot .hv33-avatar-ring { width: 67px; height: 67px; padding: 4px; }
+  .hv33-podium-spot.hv33-ouro .hv33-avatar-ring { grid-column: 1; grid-row: 1 / span 2; width: 77px; height: 77px; }
+  .hv33-podium-spot.hv33-ouro .hv33-podium-name { grid-column: 2; grid-row: 1; padding-right: 28px; font-size: 19px; }
+  .hv33-podium-spot.hv33-ouro .hv33-podium-score { grid-column: 2; grid-row: 2; font-size: 14px; }
+  .hv33-podium-spot.hv33-ouro .hv33-medal { top: 9px; left: auto; right: 11px; }
+  .hv33-podium-spot.hv33-prata .hv33-medal,.hv33-podium-spot.hv33-bronze .hv33-medal { top: -9px; }
+  .hv33-podium-spot .hv33-podium-name { font-size: 14px; line-height: 1.25; max-width: 100%; white-space: normal; overflow: visible; text-overflow: unset; overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; }
+  .hv33-podium-spot .hv33-podium-score { font-size: 12px; line-height: 1.35; overflow-wrap: anywhere; }
+
+  .hv33-updated { font-size: 10px; white-space: normal; text-align: right; max-width: 130px; line-height: 1.45; }
+  .hv33-mobile-selector { display: block !important; position: relative; padding: 11px 12px; border: 1px solid rgba(135,248,183,.33); background: linear-gradient(125deg,#0e3c2c,#09241d); border-radius: 13px; margin: 0 2px 12px; }
+  .hv33-mobile-selector span { display: block; margin-bottom: 5px; color: #baffce; letter-spacing: .09em; font-size: 10px; font-weight: 850; }
+  .hv33-mobile-selector select { display: block; width: 100%; min-height: 44px; color: #f3fff7; background: #09291e; border: 1px solid rgba(117,226,152,.23); padding: 9px 39px 9px 12px; border-radius: 10px; font-size: 15px; font-weight: 750; appearance: none; -webkit-appearance: none; }
+  .hv33-mobile-selector select:focus-visible { outline: 2px solid #b5ff9c; outline-offset: 2px; }
+  .hv33-mobile-selector:after { content: '⌄'; position: absolute; right: 26px; bottom: 19px; pointer-events: none; color: #baffb2; font-size: 21px; }
+  .hv33-filter-strip { display: none !important; }
+  .hv33-filter-wrap { margin-bottom: 11px; }
+
+  .hv33-card-grid { grid-template-columns: 1fr; gap: 13px; }
+  .hv33-category-card { border-radius: 16px; }
+  .hv33-category-head { padding: 12px; gap: 10px; }
+  .hv33-category-image { width: 49px; height: 49px; flex-basis: 49px; border-radius: 12px; }
+  .hv33-category-image img { width: 39px; height: 39px; }
+  .hv33-category-title h3 { font-size: 17px; line-height: 1.22; margin: 3px 0; }
+  .hv33-category-title p { font-size: 11px; line-height: 1.45; }
+  .hv33-category-title small { font-size: 9px; }
+  .hv33-category-trophy { display: none; }
+  .hv33-category-winner { display: grid; grid-template-columns: 22px 44px minmax(0,1fr); grid-template-rows: auto auto; align-items: center; justify-items: start; column-gap: 10px; row-gap: 4px; padding: 12px; }
+  .hv33-category-winner .hv33-crown { grid-column: 1; grid-row: 1 / span 2; }
+  .hv33-category-winner .hv33-winner-avatar { grid-column: 2; grid-row: 1 / span 2; }
+  .hv33-category-winner .hv33-winner-name { grid-column: 3; grid-row: 1; width: 100%; }
+  .hv33-category-winner .hv33-winner-name b { font-size: 14px; line-height: 1.3; overflow: visible; white-space: normal; text-overflow: unset; overflow-wrap: anywhere; }
+  .hv33-category-winner .hv33-winner-name small { font-size: 9px; }
+  .hv33-category-winner .hv33-winner-score { grid-column: 3; grid-row: 2; width: 100%; max-width: none; text-align: left; font-size: 12px; }
+  .hv33-winner-avatar .pk-player-avatar { width: 43px !important; height: 43px !important; min-width: 43px !important; }
+  .hv33-competitor { display: grid; grid-template-columns: 22px 34px minmax(0,1fr); grid-template-rows: auto auto; column-gap: 11px; row-gap: 4px; padding: 11px 12px; min-height: 66px; }
+  .hv33-competitor .hv33-row-position { grid-column: 1; grid-row: 1 / span 2; }
+  .hv33-competitor .hv33-row-avatar { grid-column: 2; grid-row: 1 / span 2; }
+  .hv33-competitor .hv33-row-name { grid-column: 3; grid-row: 1; font-size: 13px; white-space: normal; overflow: visible; text-overflow: unset; line-height: 1.3; overflow-wrap: anywhere; }
+  .hv33-competitor .hv33-row-metric { grid-column: 3; grid-row: 2; text-align: left; color: #ffdc86; font-size: 11px; }
+  .hv33-row-avatar .pk-player-avatar { width: 33px !important; height: 33px !important; min-width: 33px !important; }
+  .hv33-category-card:not(.hv34-expanded) .hv33-competitor:nth-child(n+3) { display: none; }
+  .hv33-more { min-height: 45px; font-size: 12px; }
+  .hv33-footer { padding: 14px; gap: 9px; }
+  .hv33-footer b { font-size: 13px; }
+  .hv33-footer p { font-size: 12px; }
+  .hv33-footer button { min-height: 46px; }
+}
+
+/* Seletor mobile não ocupa espaço no desktop. */
+@media (min-width: 761px) {
+  .hv33-mobile-selector { display: none !important; }
+}
+@media (max-width: 370px) {
+  .hv33-hero { height: 182px; }
+  .hv33-hero-content { padding: 13px; gap: 6px; max-width: 80%; }
+  .hv33-hero h1 { font-size: 29px; }
+  .hv33-hero-content p { font-size: 10px; }
+  .hv33-hero-facts span { font-size: 8px; }
+  .hv33-podium-spot.hv33-ouro { padding-left: 11px; grid-template-columns: 67px minmax(0,1fr); column-gap: 11px; }
+  .hv33-podium-spot.hv33-ouro .hv33-avatar-ring { width: 67px; height: 67px; }
+  .hv33-podium-spot.hv33-ouro .hv33-podium-name { font-size: 16px; }
+  .hv33-podium-spot.hv33-prata,.hv33-podium-spot.hv33-bronze { min-height: 174px; }
+  .hv33-podium-spot .hv33-avatar-ring { width: 55px; height: 55px; }
+}
+@media (max-width: 320px) {
+  .hv33-podium { grid-template-columns: 1fr; grid-template-areas: 'first' 'second' 'third'; }
+  .hv33-podium-spot.hv33-prata,.hv33-podium-spot.hv33-bronze {
+    display: grid; grid-template-columns: 61px minmax(0,1fr); grid-template-rows: auto auto;
+    min-height: 110px; align-items: center; justify-items: start; text-align: left;
+    padding: 21px 15px 13px; gap: 5px 12px;
+  }
+  .hv33-podium-spot.hv33-prata .hv33-avatar-ring,.hv33-podium-spot.hv33-bronze .hv33-avatar-ring {
+    width: 61px; height: 61px; grid-column: 1; grid-row: 1 / span 2;
+  }
+  .hv33-podium-spot.hv33-prata .hv33-podium-name,.hv33-podium-spot.hv33-bronze .hv33-podium-name {
+    grid-column: 2; grid-row: 1; font-size: 13px; text-align: left;
+  }
+  .hv33-podium-spot.hv33-prata .hv33-podium-score,.hv33-podium-spot.hv33-bronze .hv33-podium-score {
+    grid-column: 2; grid-row: 2; font-size: 11px; text-align: left;
+  }
+  .hv33-podium-spot.hv33-prata .hv33-medal,.hv33-podium-spot.hv33-bronze .hv33-medal {
+    position: absolute; top: -8px; right: 12px; left: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hv33-container * { scroll-behavior: auto !important; transition-duration: 0s !important; animation-duration: 0s !important; }
+}

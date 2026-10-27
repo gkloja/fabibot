@@ -325,7 +325,7 @@ function scrollToCapture(){
     const target=$('#pkCaptureControls')||$('.pk-panel.active');if(!target)return;
     target.focus({preventScroll:true});
     const offset=($('.pk-topnav')?.getBoundingClientRect().height||0)+16;
-    window.scrollTo({top:Math.max(0,window.scrollY+target.getBoundingClientRect().top-offset),behavior:'instant'});
+    window.scrollTo({top:Math.max(0,window.scrollY+target.getBoundingClientRect().top-offset),behavior:'auto'});
   }));
 }
 function returnToCapture(){
@@ -699,6 +699,19 @@ function hallPerson(r,content,cls=''){
   const url=hallProfileUrl(r);
   return url?`<a class="${cls}" href="${url}">${content}</a>`:`<div class="${cls}">${content}</div>`;
 }
+document.addEventListener('change',event=>{
+  const select=event.target;
+  if(select?.id!=='hv34CategorySelect')return;
+  const currentY=window.scrollY;
+  const currentTop=select.getBoundingClientRect().top;
+  state.hallFilter=select.value||'all';
+  render();
+  // Ao trocar categoria, mantenha a escolha visível sem saltar ao topo.
+  requestAnimationFrame(()=>{
+    const next=document.getElementById('hv34CategorySelect');
+    if(next){const delta=next.getBoundingClientRect().top-currentTop;window.scrollTo({top:Math.max(0,currentY+delta),behavior:'auto'});}
+  });
+});
 function hallMedal(n){return n===1?'ouro':n===2?'prata':n===3?'bronze':'participante'}
 function hallArt(key){const which=HALL_THEMES[key]?.art||'collection';return `<img src="/assets/hall-v33-${which}.svg" alt="" loading="lazy" width="40" height="40">`}
 function hallPodiumSpot(catKey,cat,r){
@@ -718,8 +731,8 @@ function hallCard(key,cat){
     const pos=Number(r.position||0);
     return hallPerson(r,`<span class="hv33-row-position hv33-rank-${pos<=3?pos:'rest'}">${pos<=3?['','Ⅰ','Ⅱ','Ⅲ'][pos]:pos+'º'}</span><span class="hv33-row-avatar">${playerAvatar(r.avatar,r.userName)}</span><span class="hv33-row-name">${esc(r.userName||'Treinador')}</span><strong class="hv33-row-metric">${hallValue(key,r)}</strong>`, 'hv33-competitor');
   }).join('');
-  const more=rows.length>5?`<button type="button" class="hv33-more" data-action="hall-expand" data-hall-expand="${esc(key)}" aria-expanded="${expanded}">${expanded?'Mostrar apenas top 5':`Ver top ${Math.min(rows.length,10)}`} <span aria-hidden="true">${expanded?'⌃':'⌄'}</span></button>`:'';
-  return `<article class="hv33-category-card hv33-theme-${palette}" id="hv33-category-${esc(key)}"><div class="hv33-category-head"><span class="hv33-category-image">${hallArt(key)}</span><div class="hv33-category-title"><small>GALERIA DE RECORDES</small><h3>${esc(cat.title||'Categoria')}</h3><p>${esc(cat.description||HALL_THEMES[key]?.hint||'')}</p></div><span class="hv33-category-trophy" aria-hidden="true">✦</span></div>${winner}<div class="hv33-competitor-list">${followers}</div>${more}</article>`;
+  const more=rows.length>3?`<button type="button" class="hv33-more" data-action="hall-expand" data-hall-expand="${esc(key)}" aria-expanded="${expanded}">${expanded?'Mostrar menos':`Ver classificação completa`} <span aria-hidden="true">${expanded?'⌃':'⌄'}</span></button>`:'';
+  return `<article class="hv33-category-card hv33-theme-${palette}${expanded?' hv34-expanded':''}" id="hv33-category-${esc(key)}"><div class="hv33-category-head"><span class="hv33-category-image">${hallArt(key)}</span><div class="hv33-category-title"><small>GALERIA DE RECORDES</small><h3>${esc(cat.title||'Categoria')}</h3><p>${esc(cat.description||HALL_THEMES[key]?.hint||'')}</p></div><span class="hv33-category-trophy" aria-hidden="true">✦</span></div>${winner}<div class="hv33-competitor-list">${followers}</div>${more}</article>`;
 }
 function hallHTML(){
  const categories=state.hall?.categories;
@@ -740,7 +753,7 @@ function hallHTML(){
    <div class="hv33-intro"><div><span class="hv33-kicker">DESTAQUES DA COMUNIDADE</span><h2>O pódio dos campeões</h2><p>Exibindo os líderes de <strong>${esc(focusCat?.title||'categoria')}</strong>. Escolha outra categoria abaixo para explorar seus recordes.</p></div><button class="hv33-refresh" type="button" data-action="hall-refresh" aria-label="Atualizar recordes"><span aria-hidden="true">↻</span> Atualizar</button></div>
    <div class="hv33-podium" aria-label="Três primeiros colocados de ${esc(focusCat?.title||'categoria')}">${[1,0,2].map(i=>hallPodiumSpot(focusKey,focusCat,focusRows[i])).join('')}${!focusRows.length?'<div class="hv33-category-empty">Ainda não há recordes nesta categoria.</div>':''}</div>
    <div class="hv33-explore-head"><div><span class="hv33-kicker">ARQUIVO DE LENDAS</span><h2>Todas as conquistas</h2></div><span class="hv33-updated"><span aria-hidden="true">●</span> Resultados ao vivo</span></div>
-   <div class="hv33-filter-wrap"><div class="hv33-filter-strip" aria-label="Filtrar categorias do Hall da Fama">${filterButtons.map(([key,title])=>`<button class="hv33-filter${active===key?' active':''}" type="button" data-action="hall-filter" data-hall-filter="${esc(key)}" aria-pressed="${active===key}">${key!=='all'?hallArt(key):'<span class="hv33-all-diamonds" aria-hidden="true">✥</span>'}<span>${esc(title)}</span></button>`).join('')}</div></div>
+   <div class="hv33-filter-wrap"><label class="hv33-mobile-selector" for="hv34CategorySelect"><span>ESCOLHER CATEGORIA</span><select id="hv34CategorySelect" aria-label="Selecionar categoria do Hall da Fama">${filterButtons.map(([key,title])=>`<option value="${esc(key)}" ${active===key?'selected':''}>${esc(title)}</option>`).join('')}</select></label><div class="hv33-filter-strip" aria-label="Filtrar categorias do Hall da Fama">${filterButtons.map(([key,title])=>`<button class="hv33-filter${active===key?' active':''}" type="button" data-action="hall-filter" data-hall-filter="${esc(key)}" aria-pressed="${active===key}">${key!=='all'?hallArt(key):'<span class="hv33-all-diamonds" aria-hidden="true">✥</span>'}<span>${esc(title)}</span></button>`).join('')}</div></div>
    <div class="hv33-card-grid">${cards.map(([key,cat])=>hallCard(key,cat)).join('')}</div>
    <footer class="hv33-footer"><span class="hv33-footer-art" aria-hidden="true">✦</span><div><b>Seu nome também pode estar aqui.</b><p>Explore, conquiste e supere novos recordes da comunidade Pokémon.</p></div><button type="button" data-action="tab" data-tab="world" class="pk-primary">Voltar à jornada</button></footer>
  </section>`;
