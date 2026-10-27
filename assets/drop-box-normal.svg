@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1c1917"/>
+      <stop offset="50%" stop-color="#292524"/>
+      <stop offset="100%" stop-color="#0c0a09"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="35%" r="55%">
+      <stop offset="0%" stop-color="#a8a29e" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#78716c" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#57534e" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bronze" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="40%" stop-color="#d6d3d1"/>
+      <stop offset="100%" stop-color="#78716c"/>
+    </linearGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#44403c"/>
+      <stop offset="100%" stop-color="#292524"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  
+  <circle cx="256" cy="220" r="160" fill="url(#halo)"/>
+  
+  <g filter="url(#glow)">
+    <path d="M150 190 L256 120 L362 190 L362 310 L256 380 L150 310 Z" fill="url(#face)" stroke="url(#bronze)" stroke-width="8"/>
+    <path d="M150 190 L256 120 L362 190 L256 260 Z" fill="#57534e" stroke="url(#bronze)" stroke-width="6" opacity="0.95"/>
+    <path d="M150 190 L256 260 L256 380 L150 310 Z" fill="#44403c" stroke="url(#bronze)" stroke-width="6"/>
+    <path d="M256 260 L362 190 L362 310 L256 380 Z" fill="#3f3f46" stroke="url(#bronze)" stroke-width="6"/>
+  </g>
+  
+  <!-- Simple lid detail -->
+  <g transform="translate(256 275)">
+    <rect x="-36" y="-20" width="72" height="40" rx="8" fill="#292524" stroke="url(#bronze)" stroke-width="5"/>
+    <rect x="-20" y="-8" width="40" height="16" rx="4" fill="#57534e"/>
+  </g>
+  
+  <g fill="#d6d3d1" opacity="0.6">
+    <circle cx="180" cy="150" r="2"/>
+    <circle cx="340" cy="160" r="1.5"/>
+    <circle cx="200" cy="350" r="1.5"/>
+  </g>
+</svg>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0c1929"/>
+      <stop offset="50%" stop-color="#0f2744"/>
+      <stop offset="100%" stop-color="#071422"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="35%" r="55%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.85"/>
+      <stop offset="40%" stop-color="#0ea5e9" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#0284c7" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="silver" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e0f2fe"/>
+      <stop offset="30%" stop-color="#7dd3fc"/>
+      <stop offset="70%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0c4a6e"/>
+      <stop offset="100%" stop-color="#082f49"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  
+  <circle cx="256" cy="220" r="175" fill="url(#halo)"/>
+  
+  <g filter="url(#glow)">
+    <path d="M145 185 L256 115 L367 185 L367 315 L256 385 L145 315 Z" fill="url(#face)" stroke="url(#silver)" stroke-width="9"/>
+    <path d="M145 185 L256 115 L367 185 L256 255 Z" fill="#0369a1" stroke="url(#silver)" stroke-width="7" opacity="0.95"/>
+    <path d="M145 185 L256 255 L256 385 L145 315 Z" fill="#0c4a6e" stroke="url(#silver)" stroke-width="7"/>
+    <path d="M256 255 L367 185 L367 315 L256 385 Z" fill="#075985" stroke="url(#silver)" stroke-width="7"/>
+  </g>
+  
+  <!-- Question mark / mystery -->
+  <g transform="translate(256 280)" filter="url(#glow)">
+    <circle r="42" fill="#0c4a6e" stroke="url(#silver)" stroke-width="7"/>
+    <text x="0" y="14" text-anchor="middle" font-family="system-ui,sans-serif" font-size="48" font-weight="800" fill="#e0f2fe">?</text>
+  </g>
+  
+  <g fill="#bae6fd" opacity="0.85">
+    <circle cx="175" cy="145" r="2.5"/>
+    <circle cx="345" cy="155" r="2"/>
+    <circle cx="190" cy="355" r="2"/>
+    <circle cx="330" cy="360" r="2.5"/>
+  </g>
+</svg>
