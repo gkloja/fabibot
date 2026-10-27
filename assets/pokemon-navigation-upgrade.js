@@ -2,7 +2,7 @@
 (()=>{
   'use strict';
   const primary=[['world','Mundo','🧭'],['collection','Pokédex','◉'],['arena','Arena','⚔']];
-  const groups=[['Sua jornada',[['missions','Missões','☷','Objetivos e recompensas'],['farm','Fazenda','❀','Plante e colha berries'],['season','Temporada','⚑','Seu passe e progresso'],['achievements','Conquistas','✦','Marcos da sua história']]],['Competir e negociar',[['hall','Hall da Fama','♜','Recordes e conquistas da comunidade'],['boss','World Boss','♜','Batalha da comunidade'],['ranking','Ranking','♛','Os melhores treinadores'],['market','Mercado','⇄','Trocas e leilões'],['shop','Loja','◇','Itens para sua jornada']]]];
+  const groups=[['Sua jornada',[['missions','Missões','☷','Objetivos e recompensas'],['farm','Fazenda','❀','Plante e colha berries'],['season','Temporada','⚑','Seu passe e progresso'],['achievements','Conquistas','✦','Marcos da sua história']]],['Competir e negociar',[['hall','Hall da Fama','♜','Recordes e conquistas da comunidade'],['boss','World Boss','♜','Batalha da comunidade'],['ranking','Ranking','♛','Os melhores treinadores'],['market','Mercado','⇄','Trocas e leilões'],['shop','Loja','◇','Itens para sua jornada'],['drops','Caixas & Drops','🎁','Caixas gratuitas e eventos no WhatsApp']]]];
   const $=s=>document.querySelector(s);
   function iconForTab(id){
     const paths={world:'<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5Z"/>',collection:'<path d="M12 5v15M3 4l9 2 9-2v15l-9 2-9-2Z"/>',arena:'<path d="m4 3 3 1 13 13-3 3L4 7Zm16 0-3 1-5 5M4 20l5-5M2 17l5 5m10-20-3 5"/>',hall:'<path d="m3 9 9-6 9 6ZM5 11v8m7-8v8m7-8v8M3 21h18"/>'};
