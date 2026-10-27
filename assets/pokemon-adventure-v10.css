@@ -459,3 +459,21 @@ html[data-theme="light"] .pk-page{color:#0a0f14}
 @media(max-width:640px){
   .pk-nav-btn .pk-btn-icon-img{width:20px;height:20px}
 }
+
+/* V23 · Biblioteca de ícones vetoriais do jogo */
+.pk-game-icon{display:inline-block;vertical-align:-.22em;width:1.35em;height:1.35em;object-fit:contain;flex:none;filter:drop-shadow(0 2px 6px rgba(80,215,168,.12))}
+.pk-card-head h3 .pk-game-icon,.pk-radar-top .pk-game-icon{width:1.45em;height:1.45em;vertical-align:-.3em;margin-right:4px}
+.pk-icon .pk-game-icon{width:34px;height:34px}
+.pk-chest-icon .pk-game-icon{width:58px;height:58px;display:block;margin:auto;filter:drop-shadow(0 5px 14px rgba(102,245,189,.16))}
+.pk-chest-anim .pk-game-icon{width:min(45vw,165px);height:min(45vw,165px);filter:drop-shadow(0 15px 30px rgba(255,219,115,.3))}
+.pk-ball strong{display:flex;align-items:center;justify-content:center;gap:8px}
+.pk-ball strong .pk-game-icon{width:32px;height:32px;vertical-align:middle}
+.pk-rarity-icon{width:1.5em;height:1.5em;vertical-align:-.35em}
+.pk-resource small .pk-game-icon{width:1.45em;height:1.45em}
+.pk-quick .pk-game-icon{width:28px;height:28px}
+.pk-reward-list .pk-game-icon{width:1.35em;height:1.35em}
+@media(max-width:560px){.pk-chest-icon .pk-game-icon{width:50px;height:50px}.pk-ball strong .pk-game-icon{width:29px;height:29px}}
+
+/* V24 — recompensa por repetição */
+.pk-duplicate-dust{border:1px solid #c8ad58a0!important;background:#4f391d77!important;color:#ffeba9!important;border-radius:999px;display:inline-flex!important;align-items:center;gap:6px;padding:7px 12px;font-size:12px;font-weight:800}
+.pk-duplicate-dust .pk-game-icon{width:17px;height:17px}
