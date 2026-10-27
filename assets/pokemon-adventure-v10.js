@@ -13,7 +13,7 @@ function proxyUrl(target){
 const CATALOG_URL='/assets/pokemons.json';
 let LOCAL_CATALOG=null;
 const APP_ID='6ba779b7-14c6-4a31-b955-0c8567a9039b';
-const state={profile:null,ranking:[],market:null,tradeTarget:null,notifications:[],boss:null,hall:null,unread:0,tab:'world',biome:'random',busy:false,query:'',rarity:'all',timer:null,rankTimer:null,notifTimer:null,bossTimer:null,hallTimer:null,rankMode:'global',pixWatch:null,focusAuction:null,bossPokemonUid:null,bossReadyAt:0};
+const state={profile:null,ranking:[],market:null,tradeTarget:null,notifications:[],boss:null,hall:null,unread:0,tab:'world',biome:'random',busy:false,query:'',rarity:'all',timer:null,rankTimer:null,notifTimer:null,bossTimer:null,hallTimer:null,rankMode:'global',pixWatch:null,focusAuction:null,bossPokemonUid:null,bossReadyAt:0,bossAuto:null};
 setInterval(()=>{if(document.hidden||state.tab!=='boss')return;const b=document.querySelector('[data-action="boss-quick"]');if(!b)return;const until=Math.max(state.bossReadyAt,Date.parse(state.boss?.active?.me?.nextAttackAt||0)||0),seconds=Math.max(0,Math.ceil((until-Date.now())/1000));b.textContent=seconds?`⏳ Próximo ataque em ${seconds}s`:'⚡ Ataque rápido · escolher por mim';b.disabled=state.busy||seconds>0||!(state.boss?.eligiblePokemon||[]).some(p=>p.available);document.querySelectorAll('[data-action="boss-attack"]').forEach(x=>{x.disabled=state.busy||seconds>0;});},1000);
 const TAB_IDS=['world','collection','farm','missions','arena','boss','season','ranking','hall','market','shop','achievements'];
 let modalVersion=0,modalReturnFocus=null,hallRequest=null;
@@ -591,7 +591,7 @@ function bossHTML(p){
         <div class="pk-boss-meta"><span>👥 ${fmt(b.participants)} participantes</span><span>💪 Comunidade ${fmt(b.community?.totalPower||0)}</span><span>⏳ ${active?bossCountdown(b.remainingMs):defeated?'Finalizado':`começa em ${bossCountdown(b.remainingMs)}`}</span></div>
         ${b.finalHitter?`<div class="pk-final-hit">🌟 Golpe final: <b>${esc(b.finalHitter.userName)}</b></div>`:''}
       </div></div>
-      ${active?`<div class="pk-boss-controls"><button class="pk-primary pk-boss-quick" data-action="boss-quick" ${!eligible.length||cooldown?'disabled':''}>${cooldown?`⏳ Próximo ataque em ${cooldown}s`:'⚡ Ataque rápido · escolher por mim'}</button><p class="pk-safe-note">Um clique, um ataque. Usamos o Pokémon disponível de maior CP e recomendamos o golpe. Sem gastar itens de recuperação.</p><label>Seu Pokémon</label><select id="pkBossPokemon" data-field="bossPokemon">${eligible.map(x=>`<option value="${esc(x.uid)}" ${x.uid===state.bossPokemonUid?'selected':''}>${x.shiny?'✨ ':''}${esc(x.name)} · CP ${fmt(x.cp)} · HP ${fmt(x.raidHp)}/${fmt(x.raidMaxHp)}</option>`).join('')}</select>
+      ${active?`<div class="pk-boss-controls"><button class="pk-primary pk-boss-quick" data-action="boss-quick" ${!eligible.length||cooldown?'disabled':''}>${cooldown?`⏳ Próximo ataque em ${cooldown}s`:'⚡ Ataque rápido · escolher por mim'}</button><div class="pk-autoboss" aria-label="Controle automático"><div><b>🔁 Autoataque do Boss</b><small>${state.bossAuto?.enabled?'ATIVO — a Fabi está lutando por você · '+fmt(state.bossAuto.attacks||0)+' golpes automáticos':'Ative uma vez e a Fabi lutará por você por até 45 minutos.'}</small></div><button type="button" class="pk-autoboss-toggle" data-action="boss-auto" data-enabled="${state.bossAuto?.enabled?'0':'1'}">${state.bossAuto?.enabled?'🛑 Parar':'▶️ Ativar autoataque'}</button></div><p class="pk-safe-note">Ataque rápido = um golpe. Autoataque = golpes periódicos com cooldown, até o fim do Boss ou se não houver Pokémon disponíveis. Sem gastar itens para recuperar.</p><label>Seu Pokémon</label><select id="pkBossPokemon" data-field="bossPokemon">${eligible.map(x=>`<option value="${esc(x.uid)}" ${x.uid===state.bossPokemonUid?'selected':''}>${x.shiny?'✨ ':''}${esc(x.name)} · CP ${fmt(x.cp)} · HP ${fmt(x.raidHp)}/${fmt(x.raidMaxHp)}</option>`).join('')}</select>
         ${mon?`<div class="pk-boss-moves">${(mon.moves||[]).map((m,i)=>`<button data-action="boss-attack" data-move="${i}" ${cooldown?'disabled':''}><b>${esc(m.name)}</b><small>${esc(TYPE_PT[m.type]||m.type)} · Poder ${fmt(m.power)} · ${Math.round(Number(m.accuracy||0)*100)}%</small></button>`).join('')}</div>`:'<div class="pk-empty"><b>Nenhum Pokémon disponível</b>Use outro Pokémon da coleção ou acelere uma recuperação com Pó Estelar.</div>'}
       </div>`:`<div class="pk-safe-note">${defeated?'A comunidade venceu esta incursão. As recompensas são processadas automaticamente.':'O Boss ainda não chegou. Você receberá aviso 15 minutos antes e no início da incursão.'}</div>`}
       ${active&&b.me?`<div class="pk-boss-me"><span>Seu dano <b>${fmt(b.me.damage)}</b></span><span>Posição <b>#${fmt(b.me.rank)}</b></span><span>Melhor golpe <b>${fmt(b.me.bestHit)}</b></span></div>`:''}
@@ -626,7 +626,7 @@ function hallHTML(){
 async function loadBoss(silent=false){
   if(bossLoading)return null;bossLoading=true;
   try{
-    const d=await api('/api/pokemon-adventure/boss');state.boss=d;if(d.profile)state.profile=d.profile;
+    const d=await api('/api/pokemon-adventure/boss');state.boss=d;if(d.profile)state.profile=d.profile;try{const auto=await api('/api/pokemon-adventure/boss/auto');state.bossAuto=auto.auto||null}catch(_){}
     syncBossBeacon();if(state.tab==='boss')render();return d;
   }catch(e){if(!silent)toast(e.message,'err');const b=$('#pkBossBeacon');if(b)b.hidden=true;return null}finally{bossLoading=false}
 }
@@ -757,6 +757,11 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el||el.di
   if(act==='quick-hunt'){try{const d=await action('/api/pokemon-adventure/hunt',{biome:'random'},()=>{});await huntCinematic(d)}catch(_){}return}
   if(act==='hunt-biome'){try{const d=await action('/api/pokemon-adventure/hunt',{biome:el.dataset.biome||'random'},()=>{});await huntCinematic(d)}catch(_){}return}
   if(act==='rank-mode'){state.rankMode=el.dataset.mode||'global';state.ranking=[];await loadRanking(true);render();return}
+  if(act==='boss-auto'){
+    const enabled=el.dataset.enabled==='1';
+    try{const result=await action('/api/pokemon-adventure/boss/auto',{enabled},()=>{});state.bossAuto=result.auto||null;toast(enabled?'Autoataque ligado: até 45 minutos por incursão.':'Autoataque parado.');await loadBoss(true);render();}
+    catch(e){toast(e.message,'err');}return;
+  }
   if(act==='boss-attack'||act==='boss-quick'){
     const uid=state.bossPokemonUid||$('#pkBossPokemon')?.value;
     if(act==='boss-attack'&&!uid){toast('Escolha um Pokémon disponível.','err');return}

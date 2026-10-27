@@ -443,3 +443,6 @@ html[data-theme="light"] progress{accent-color:#166534}
 
 /* Ensure page base */
 html[data-theme="light"] .pk-page{color:#0a0f14}
+
+/* V15 — botão de autoataque com estado e explicação visíveis */
+.pk-autoboss{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;border:1px solid rgba(120,213,151,.35);border-radius:15px;background:linear-gradient(120deg,rgba(36,101,69,.22),rgba(29,47,54,.22));margin-top:12px}.pk-autoboss b,.pk-autoboss small{display:block}.pk-autoboss b{font-size:.79rem}.pk-autoboss small{font-size:.62rem;color:var(--muted);line-height:1.5;margin-top:4px}.pk-autoboss-toggle{white-space:nowrap;cursor:pointer;border:1px solid rgba(154,235,171,.45);border-radius:11px;padding:11px 13px;color:#ecffe8;background:rgba(39,135,70,.4);font-weight:800;font-size:.68rem}.pk-autoboss-toggle[data-enabled="0"]{background:rgba(165,56,61,.23);border-color:rgba(244,137,137,.45)}@media(max-width:620px){.pk-autoboss{flex-direction:column;align-items:stretch}.pk-autoboss-toggle{width:100%}}
