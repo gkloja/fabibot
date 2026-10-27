@@ -1,71 +1,182 @@
+/* Fabi Pokémon Adventure V18 — rotação diária gratuita, PIX visível no jogo, detalhes com chances. */
 (()=>{
 'use strict';
-const PROXY='https://orange-hill-2e61.gbscabral15.workers.dev', BACKEND='http://br2.bronxyshost.com:4009', BASE='/api/pokemon-adventure/';
-const $=sel=>document.querySelector(sel);
+const PROXY='https://orange-hill-2e61.gbscabral15.workers.dev';
+const BACKEND='http://br2.bronxyshost.com:4009';
+const BASE='/api/pokemon-adventure/';
+const $=(sel,root=document)=>root.querySelector(sel);
 const esc=v=>String(v??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
 const money=v=>'R$ '+Number(v||0).toFixed(2).replace('.',',');
 const dates=v=>v?new Date(v).toLocaleString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'';
-const storage=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'null')||{}}catch(_){return {}}};
-let data={products:[],groups:[],vouchers:[],boxes:[]},busy=false,poll=null;
-function current(){const a=storage('fabi_session'),b=storage('neconecta_user_session'),p=storage('pk_player_session');const u={...a,...b};const numero=String(u.numero||u.telefone||u.phone||'').replace(/\D/g,'');return {numero,nome:String(u.nome||u.username||u.name||'Treinador').slice(0,80),token:String(p.token||''),guest:p.guest===true};}
-function proxy(path){return PROXY+'/br2.bronxyshost.com:4009/proxy?url='+encodeURIComponent(BACKEND+path)}
-function media(speciesId){return proxy('/pokemon/images/artwork_'+Number(speciesId)+'.png')}
-function toast(message,bad=false){const el=$('#toast');el.hidden=false;el.style.borderColor=bad?'#ff8a86':'var(--green)';el.textContent=message;clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.hidden=true,5500)}
-async function api(path,body){const user=current();const url=new URL(BACKEND+BASE+path);
-  if(body===undefined){url.searchParams.set('playerToken',user.token);url.searchParams.set('numero',user.numero);url.searchParams.set('nome',user.nome)}
-  const dest=PROXY+'/br2.bronxyshost.com:4009/proxy?url='+encodeURIComponent(url.toString());
-  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),18000);
-  try{const res=await fetch(dest,{method:body===undefined?'GET':'POST',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify({playerToken:user.token,contaNumero:user.numero,nomeUsuario:user.nome,nomeConta:user.nome,...body}),signal:ctl.signal});let parsed;try{parsed=await res.json()}catch(_){throw Error('O servidor respondeu em formato inesperado.')};if(!res.ok||parsed.success===false)throw Error(parsed.error||parsed.message||'Falha ao acessar a Fabi.');return parsed;}finally{clearTimeout(timer)}
+const shortDate=v=>v?new Date(v).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+const storage=key=>{try{return JSON.parse(localStorage.getItem(key)||'null')||{}}catch(_){return {}}};
+let data={products:[],groups:[],vouchers:[],boxes:[]};
+let busy=false,poll=null,activeTx=null;
+function current(){
+ const a=storage('fabi_session'),b=storage('neconecta_user_session'),p=storage('pk_player_session');
+ const u={...a,...b};
+ return {numero:String(u.numero||u.telefone||u.phone||'').replace(/\D/g,''),nome:String(u.nome||u.username||u.name||'Treinador').slice(0,80),token:String(p.token||''),guest:p.guest===true};
 }
-function isLogged(){const u=current();return !!u.token&&!u.guest&&!!u.numero}
-function modal(html){$('#modalContent').innerHTML=html;$('#modal').classList.add('open');$('#modal').setAttribute('aria-hidden','false');$('#modal .modal-close').focus()}
-function closeModal(){$('#modal').classList.remove('open');$('#modal').setAttribute('aria-hidden','true');clearInterval(poll);poll=null}
-function renderProducts(){const root=$('#catalog');if(!data.products.length){root.innerHTML='<div class="empty">As caixas comunitárias ainda não estão disponíveis. As caixas gratuitas continuam ativas.</div>';return}
- root.innerHTML=data.products.map(p=>`<article class="product"><small>${esc(p.icon||'🎁')} · ${esc(p.tier||'EVENTO')} · CONTEÚDO GARANTIDO</small><div class="product-art" aria-hidden="true">${p.speciesId?`<img loading="lazy" src="${esc(media(p.speciesId))}" onerror="this.style.display='none';this.parentElement.textContent='${esc(p.icon||'🎁')}'" alt="">`:esc(p.icon||'📦')}</div><h3>${esc(p.label)}</h3><p>${esc(p.description)}</p><div class="product-footer"><strong>${money(p.price)}</strong><button class="btn primary" data-buy="${esc(p.id)}">Comprar caixa PIX</button></div></article>`).join('');
+const isLogged=()=>{const u=current();return !!u.token&&!u.guest&&!!u.numero};
+const proxy=path=>PROXY+'/br2.bronxyshost.com:4009/proxy?url='+encodeURIComponent(BACKEND+path);
+const media=id=>proxy('/pokemon/images/artwork_'+Number(id)+'.png');
+function embeddedView(){
+ try{return window.parent!==window && window.frameElement && window.parent.location.origin===location.origin?window.frameElement:null}catch(_){return null}
 }
+function visibleTop(){
+ const frame=embeddedView();if(!frame)return null;
+ try{return Math.max(10,Math.round(-frame.getBoundingClientRect().top+10))}catch(_){return null}
+}
+function fitOverlay(){
+ const top=visibleTop();if(top===null)return;
+ const m=$('#modal'),t=$('#toast');
+ const frame=embeddedView();const height=Math.max(300,Math.min(window.parent.innerHeight-20,frame.getBoundingClientRect().height-top));
+ m.style.position='absolute';m.style.inset='auto 0 auto 0';m.style.top=top+'px';m.style.height=height+'px';
+ t.style.position='absolute';t.style.bottom='auto';t.style.top=(top+14)+'px';
+}
+function toast(message,bad=false){
+ const el=$('#toast');fitOverlay();el.hidden=false;el.style.borderColor=bad?'#ff8a86':'var(--green)';el.textContent=message;
+ clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.hidden=true,6500);
+}
+function modal(html){
+ $('#modalContent').innerHTML=html;
+ const m=$('#modal');fitOverlay();m.classList.add('open');m.setAttribute('aria-hidden','false');
+ const close=$('#modal .modal-close');close?.focus({preventScroll:true});
+}
+function closeModal(){
+ const m=$('#modal');m.classList.remove('open');m.setAttribute('aria-hidden','true');
+ clearInterval(poll);poll=null;activeTx=null;
+}
+function errorModal(title,message){modal(`<div class="checkout-state fail"><span class="checkout-symbol">⚠️</span><h3 id="modalTitle">${esc(title)}</h3><p>${esc(message)}</p><p class="checkout-tip">Confira se a conta está vinculada e se o servidor está funcionando. Nenhum pagamento será criado se a operação falhar.</p><button class="btn secondary" data-close="1" type="button">Fechar</button></div>`)}
+function loginModal(){modal('<div class="checkout-state"><span class="checkout-symbol">🔐</span><h3 id="modalTitle">Entre na sua conta Fabi</h3><p>Para resgatar caixas ou abrir o PIX, conecte sua conta no Pokémon Adventure. O modo visitante não habilita compras.</p><a class="btn primary" href="/pokemon?tab=world" target="_top">Abrir Pokémon Adventure</a></div>')}
+async function api(path,body){
+ const u=current(),url=new URL(BACKEND+BASE+path);
+ if(body===undefined){url.searchParams.set('playerToken',u.token);url.searchParams.set('numero',u.numero);url.searchParams.set('nome',u.nome)}
+ const dest=PROXY+'/br2.bronxyshost.com:4009/proxy?url='+encodeURIComponent(url.toString());
+ const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),20000);
+ try{
+  const r=await fetch(dest,{method:body===undefined?'GET':'POST',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify({playerToken:u.token,contaNumero:u.numero,nomeUsuario:u.nome,nomeConta:u.nome,...body}),signal:ctl.signal});
+  let j;try{j=await r.json()}catch(_){throw Error('O servidor respondeu em formato inesperado. Tente novamente ou confira os logs.')}
+  if(!r.ok||j.success===false)throw Error(j.error||j.message||('Servidor retornou HTTP '+r.status));
+  return j;
+ }catch(e){if(e.name==='AbortError')throw Error('O servidor demorou mais de 20 segundos. Confira a conexão e o backend.');throw e}finally{clearTimeout(timer)}
+}
+const speciesImage=id=>`<img loading="lazy" src="${esc(media(id))}" alt="" onerror="this.style.display='none'">`;
 const nextDate=ms=>new Date(ms).toLocaleString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-function renderFreeBoxes(){const root=$('#freeBoxes');if(!root)return;
- if(!data.boxes.length){root.innerHTML='<div class="empty">Entre na sua conta de treinador para consultar as caixas gratuitas.</div>';return;}
- root.innerHTML=data.boxes.map(box=>{const lvl=Number(box.playerLevel)||1,locked=lvl<box.minLevel,waiting=box.nextAt>Date.now();
-  const status=locked?`🔒 Nível ${box.minLevel} necessário`:waiting?`⏳ Disponível ${nextDate(box.nextAt)}`:'✅ Disponível agora';
-  const pool=(box.possibleSpecies||[]).map(x=>String(x.name||'Pokémon')+' (#'+String(x.id||x).padStart(3,'0')+', '+String(x.rarity||box.tier)+')').join(' · ');
-  return `<article class="free-box"><div class="free-box-top"><span class="free-box-icon">${esc(box.icon)}</span><div><b>${esc(box.label)}</b><small>${esc(box.tier)} · Nível ${box.minLevel}+</small></div></div><div class="free-box-meta"><span>${box.cooldownHours}h de intervalo</span><span>${(box.possibleSpecies||[]).length} espécies possíveis</span></div><details><summary>Ver espécies e probabilidades</summary><p>Espécies disponíveis: ${esc(pool)}.</p><p>Chance por espécie: aproximadamente ${Number(box.chancePerSpecies).toLocaleString('pt-BR')}% (distribuição uniforme). Não há Pokémon garantido antes do resgate.</p></details><div class="free-box-footer"><small>${status}</small><button class="btn primary mini" data-free="${esc(box.id)}" ${locked||waiting||!isLogged()?'disabled':''}>🎁 Resgatar grátis</button></div></article>`;}).join('');
+function renderFreeBoxes(){
+ const root=$('#freeBoxes');if(!root)return;
+ if(!data.boxes.length){root.innerHTML='<div class="empty">Entre na sua conta de treinador para consultar o catálogo gratuito de hoje.</div>';return}
+ root.innerHTML=data.boxes.map(box=>{
+  const lvl=Number(box.playerLevel)||1,locked=lvl<box.minLevel,waiting=Number(box.nextAt)>Date.now();
+  const pool=Array.isArray(box.possibleSpecies)?box.possibleSpecies:[];
+  const status=locked?`🔒 Desbloqueia no nível ${box.minLevel}`:waiting?`⏳ Próximo resgate: ${nextDate(box.nextAt)}`:'✅ Pronta para resgatar';
+  return `<article class="free-box daily-tier ${esc(box.id)}"><div class="free-box-top"><span class="free-box-icon" aria-hidden="true">${esc(box.icon)}</span><div><b>${esc(box.label)}</b><small>${esc(box.tier)} · Nível ${Number(box.minLevel)}</small></div></div>
+  <div class="daily-art"><div class="chest-glow">${esc(box.icon)}</div><span class="daily-label">CATÁLOGO DE HOJE</span></div>
+  <div class="free-box-meta"><span>${pool.length} espécies nesta rotação</span><span>Até ${shortDate(box.rotationEndsAt)}</span><span>${box.cooldownHours}h entre resgates</span></div>
+  <div class="daily-mini-pool">${pool.slice(0,4).map(x=>`<div title="${esc(x.name)}">${speciesImage(x.id)}</div>`).join('')}<span>+${Math.max(0,pool.length-4)}</span></div>
+  <button class="btn secondary mini box-info" data-odds="${esc(box.id)}" type="button">🔎 Ver Pokémon e probabilidades</button>
+  <div class="free-box-footer"><small>${status}</small><button class="btn primary mini" data-free="${esc(box.id)}" type="button" ${locked||waiting||!isLogged()?'disabled':''}>🎁 Resgatar gratuitamente</button></div></article>`;
+ }).join('');
 }
-
-function groupOptions(v){if(!data.groups.length)return '<option value="">Nenhum grupo com Pokémon automático ativo</option>';return '<option value="">Escolha um grupo com Pokémon ativo…</option>'+data.groups.map(g=>`<option value="${esc(g.id)}" ${v?.groupId===g.id?'selected':''}>${esc(g.label)} · …${esc(g.id.split('@')[0].slice(-6))}</option>`).join('')}
+function oddsModal(boxId){
+ const box=data.boxes.find(x=>x.id===boxId);if(!box)return toast('Atualize o catálogo antes de consultar a caixa.',true);
+ const pool=box.possibleSpecies||[];
+ const list=pool.map(x=>`<div class="odds-item">${speciesImage(x.id)}<div><b>${esc(x.name||'Pokémon')}</b><small>#${String(x.id).padStart(3,'0')} · ${esc(x.rarity||box.tier)}</small></div><strong>${Number(x.chance??box.chancePerSpecies).toLocaleString('pt-BR',{maximumFractionDigits:3})}%</strong></div>`).join('');
+ modal(`<div class="box-detail-top"><span class="detail-emoji">${esc(box.icon)}</span><div><span class="section-label">CATÁLOGO GRATUITO DO DIA</span><h3 id="modalTitle">${esc(box.label)}</h3><p>${esc(box.tier)} · Nível ${box.minLevel}+ · Resgate a cada ${box.cooldownHours}h</p></div></div>
+ <div class="rotation-info">🔄 Próxima rotação: ${esc(shortDate(box.rotationEndsAt))} (Brasília)</div>
+ <p>Esses são os Pokémon que podem aparecer <strong>hoje</strong>. Cada espécie tem a probabilidade informada abaixo. A seleção muda diariamente, mas a chance só é aplicada quando você resgata a caixa gratuita.</p>
+ <div class="odds-list">${list}</div><p class="odds-total">Probabilidade total: 100% · ${pool.length} espécies equiprováveis. Não há pagamento para abrir esta caixa.</p>
+ <button data-free="${esc(box.id)}" class="btn primary" type="button" ${!box.available||!isLogged()?'disabled':''}>🎁 Resgatar gratuitamente</button>`);
+}
+function renderProducts(){
+ const root=$('#catalog');if(!root)return;
+ if(!data.products.length){root.innerHTML='<div class="empty">Entre na conta do Pokémon Adventure para consultar eventos PIX. As caixas-surpresa diárias são gratuitas.</div>';return}
+ root.innerHTML=data.products.map(p=>`<article class="product paid-box"><small>${esc(p.icon||'🎁')} · EVENTO COM CONTEÚDO DEFINIDO</small><div class="product-art"><span class="paid-chest">${esc(p.icon||'📦')}</span></div><h3>${esc(p.label)}</h3><p>Um evento de figurinha para seu grupo. Confira os detalhes antes de solicitar PIX.</p><div class="paid-detail"><button class="btn secondary mini" type="button" data-paid-details="${esc(p.id)}">Ver conteúdo exato</button></div><div class="product-footer"><strong>${money(p.price)}</strong><button class="btn primary" type="button" data-buy="${esc(p.id)}">Gerar PIX</button></div></article>`).join('');
+}
+function paidModal(id){
+ const p=data.products.find(x=>x.id===id);if(!p)return toast('Caixa indisponível.',true);
+ modal(`<span class="section-label">EVENTO COM CONTEÚDO DEFINIDO</span><h3 id="modalTitle">${esc(p.label)}</h3><div class="paid-content-preview">${p.speciesId?speciesImage(p.speciesId):'<span>🎁</span>'}<p>${esc(p.description||'Evento com conteúdo definido.')}</p></div><p>Essa modalidade PIX não sorteia Pokémon. O conteúdo mostrado acima é conhecido antes da compra. A captura do evento é aberta ao grupo.</p><div class="modal-actions"><button class="btn primary" data-buy="${esc(p.id)}" type="button">Gerar PIX de ${money(p.price)}</button><button class="btn secondary" type="button" data-close="1">Agora não</button></div>`);
+}
+function groupOptions(v){
+ if(!data.groups.length)return '<option value="">Nenhum grupo com Pokémon automático ativo</option>';
+ return '<option value="">Escolha um grupo com Pokémon ativo…</option>'+data.groups.map(g=>`<option value="${esc(g.id)}" ${v?.groupId===g.id?'selected':''}>${esc(g.label)} · …${esc(g.id.split('@')[0].slice(-6))}</option>`).join('');
+}
 const STATUS={available:'Disponível',queued:'Na fila',processing:'Enviando',sent:'Entregue',review:'Em revisão'};
-function renderWallet(){const root=$('#wallet');$('#loginNote').hidden=isLogged();if(!isLogged()){root.innerHTML='';return}
-  if(!data.vouchers.length){root.innerHTML='<div class="empty"><b>Sua carteira está vazia.</b><p>Comece com uma caixa surpresa GRATUITA acima. Depois, escolha um grupo com Pokémon automático ativo e envie a figurinha.</p></div>';return}
-  root.innerHTML=data.vouchers.map(v=>`<article class="wallet-item"><img loading="lazy" src="${esc(v.speciesId?media(v.speciesId):'/flogo.jpg')}" alt=""><div><b>${esc(v.label)}</b><small>Pedido ${esc(v.id.slice(-9))} · ${esc(dates(v.createdAt))}</small>${v.groupId?`<p>Grupo: …${esc(v.groupId.split('@')[0].slice(-8))}</p>`:''}${v.lastError?`<p>${esc(v.lastError)}</p>`:''}</div><div class="action"><span class="status ${esc(v.status)}">${esc(STATUS[v.status]||v.status)}</span>${v.status==='available'?`<select aria-label="Grupo para ${esc(v.label)}" class="group-select" data-group="${esc(v.id)}">${groupOptions(v)}</select><button class="btn primary mini" data-dispatch="${esc(v.id)}" ${data.groups.length?'':'disabled'}>Enviar ao grupo ↗</button>`:''}${v.status==='queued'?`<button class="btn secondary mini" data-cancel="${esc(v.id)}">Cancelar envio</button>`:''}${v.status==='review'?'<small>Suporte verificará o envio.</small>':''}</div></article>`).join('');
+function renderWallet(){
+ const root=$('#wallet');$('#loginNote').hidden=isLogged();if(!isLogged()){root.innerHTML='';return}
+ if(!data.vouchers.length){root.innerHTML='<div class="empty"><b>Sua carteira está vazia.</b><p>Resgate uma caixa gratuita acima e escolha um grupo com Pokémon automático ativo para enviar.</p></div>';return}
+ root.innerHTML=data.vouchers.map(v=>`<article class="wallet-item"><img loading="lazy" src="${esc(v.speciesId?media(v.speciesId):'/flogo.jpg')}" alt=""><div><b>${esc(v.label)}</b><small>Evento ${esc(v.id.slice(-9))} · ${esc(dates(v.createdAt))}</small>${v.groupId?`<p>Grupo: …${esc(v.groupId.split('@')[0].slice(-8))}</p>`:''}${v.lastError?`<p>${esc(v.lastError)}</p>`:''}</div><div class="action"><span class="status ${esc(v.status)}">${esc(STATUS[v.status]||v.status)}</span>${v.status==='available'?`<select aria-label="Grupo para ${esc(v.label)}" class="group-select" data-group="${esc(v.id)}">${groupOptions(v)}</select><button type="button" class="btn primary mini" data-dispatch="${esc(v.id)}" ${data.groups.length?'':'disabled'}>Enviar ao grupo ↗</button>`:''}${v.status==='queued'?`<button type="button" class="btn secondary mini" data-cancel="${esc(v.id)}">Cancelar envio</button>`:''}</div></article>`).join('');
 }
-async function load(silent=false){try{
- const u=current();if(!u.token||u.guest||!u.numero){$('#loginNote').hidden=false;data.products=[];data.boxes=[];renderProducts();renderFreeBoxes();renderWallet();return}
- data=await api('community-drops');renderProducts();renderFreeBoxes();renderWallet();const el=$('#freeNote');if(el)el.textContent=`${data.groups.length} grupo(s) com Pokémon automático ativo disponíveis para drops. Caixas surpresa grátis; caixas PIX com conteúdo garantido.`;
-
- }catch(e){if(!silent)toast(e.message,true);if(!data.products.length){data.products=[];renderProducts()}renderFreeBoxes();renderWallet()}}
-async function buy(id){if(!isLogged()){toast('Primeiro entre em uma conta Fabi no Pokémon Adventure.',true);return}if(busy)return;busy=true;
- try{const result=await api('shop/pix/create',{productId:id}),tx=result.transactionId,product=result.product;
-  const qr=String(result.qrCode||''),safeQR=/^(?:data:image\/(?:png|jpeg);base64,[a-zA-Z0-9+/=]+|https:\/\/[^\s]+)$/i.test(qr)?qr:'';
-  modal(`<span class="section-label">PIX · CAIXA COMUNITÁRIA DE CONTEÚDO GARANTIDO</span><h3 id="modalTitle">${esc(product.label)}</h3><p>Pagamento de <b>${money(product.price)}</b>. Após a aprovação, a caixa fica na sua carteira. Você escolhe um grupo com Pokémon automático ativo para publicar o evento. A espécie indicada acima é garantida; não é sorteio pago.</p>${safeQR?`<img class="qr" src="${esc(safeQR)}" alt="QR Code PIX">`:''}<label class="muted" for="pixInput">PIX copia e cola</label><textarea class="pix-code" id="pixInput" readonly></textarea><div class="modal-actions"><button type="button" class="btn primary" id="copyPix">Copiar código PIX</button><button type="button" class="btn secondary" id="checkPix">Verificar pagamento</button></div><div class="modal-status" id="paymentStatus">Aguardando confirmação do Mercado Pago.</div>`);
-  $('#pixInput').value=String(result.copyPaste||'');
-  $('#copyPix').onclick=async()=>{try{await navigator.clipboard.writeText($('#pixInput').value);toast('Código PIX copiado.')}catch(_){$('#pixInput').select();document.execCommand('copy');toast('Código selecionado.')}};
+async function load(silent=false){
+ const u=current();
+ if(!u.token||u.guest||!u.numero){data={products:[],groups:[],vouchers:[],boxes:[]};renderProducts();renderFreeBoxes();renderWallet();if(!silent)toast('Faça login na sua conta Fabi para acessar o catálogo e os drops.');return}
+ try{
+  const got=await api('community-drops');data={products:got.products||[],groups:got.groups||[],vouchers:got.vouchers||[],boxes:got.boxes||[]};
+  renderProducts();renderFreeBoxes();renderWallet();
+  const note=$('#freeNote');if(note)note.textContent=`🔄 Espécies do catálogo gratuito atualizadas diariamente (horário de Brasília). ${data.groups.length} grupo(s) com Pokémon automático ativo.`;
+ }catch(e){if(!silent)toast(e.message,true);$('#freeNote').textContent='Não foi possível carregar as caixas: '+e.message;renderProducts();renderFreeBoxes();renderWallet()}
+}
+async function buy(id){
+ if(!isLogged())return loginModal();
+ if(busy)return toast('Já existe uma solicitação em andamento.');
+ const product=data.products.find(p=>p.id===id);if(!product)return toast('Evento não encontrado. Atualize o catálogo.',true);
+ busy=true;
+ // Exibir feedback ANTES da chamada à rede, inclusive quando embutido num iframe alto.
+ modal(`<div class="checkout-state"><div class="checkout-loader" aria-label="Carregando"></div><h3 id="modalTitle">Gerando seu PIX</h3><p>Conectando ao Mercado Pago para <b>${esc(product.label)}</b> (${money(product.price)}).</p><small>O pagamento ainda não foi realizado.</small></div>`);
+ try{
+  const r=await api('shop/pix/create',{productId:id});
+  if(!r.transactionId||!r.copyPaste)throw Error('O pagamento foi iniciado, mas o servidor não enviou o código PIX. Verifique antes de criar outra cobrança.');
+  const tx=r.transactionId,qr=String(r.qrCode||'');activeTx=tx;
+  const safeQR=/^(?:data:image\/(?:png|jpeg);base64,[a-zA-Z0-9+/=]+|https:\/\/[^\s]+)$/i.test(qr)?qr:'';
+  modal(`<span class="section-label">PIX · PAGAMENTO MERCADO PAGO</span><h3 id="modalTitle">${esc(r.product?.label||product.label)}</h3><p>Valor: <b>${money(r.product?.price||product.price)}</b>. Após a confirmação, seu evento aparecerá na carteira de drops, para envio a um grupo com Pokémon automático ativo.</p>${safeQR?`<img class="qr" src="${esc(safeQR)}" alt="QR Code PIX">`:''}<label class="muted" for="pixInput">PIX copia e cola</label><textarea class="pix-code" id="pixInput" readonly></textarea><div class="modal-actions"><button type="button" class="btn primary" id="copyPix">Copiar código PIX</button><button type="button" class="btn secondary" id="checkPix">Verificar pagamento</button></div><div class="modal-status" id="paymentStatus">Aguardando confirmação do Mercado Pago.</div><small class="payment-expires">Válido até ${shortDate(r.expiresAt)}.</small>`);
+  $('#pixInput').value=String(r.copyPaste);
+  $('#copyPix').onclick=async()=>{try{await navigator.clipboard.writeText($('#pixInput').value);toast('Código PIX copiado!')}catch(_){$('#pixInput').select();try{document.execCommand('copy');toast('Código PIX selecionado.')}catch(_){toast('Selecione e copie o código PIX manualmente.')}}};
   $('#checkPix').onclick=()=>checkPayment(tx);
-  clearInterval(poll);poll=setInterval(()=>checkPayment(tx,true),5000);
- }catch(e){toast(e.message,true)}finally{busy=false}}
-async function checkPayment(tx,silent=false){try{const d=await api('shop/pix/'+encodeURIComponent(tx));const status=d.transaction?.status||'pending';const el=$('#paymentStatus');if(el)el.textContent=status==='approved'?'✅ Pagamento aprovado! Caixa liberada na carteira de drops.':status==='pending'?'Aguardando pagamento…':'Status: '+status;if(status==='approved'){closeModal();toast('Caixa liberada! Escolha um grupo na carteira de drops.');await load(true);}else if(['expired','rejected','cancelled'].includes(status)){clearInterval(poll);poll=null}}catch(e){if(!silent)toast(e.message,true)}}
-async function dispatch(id){const sel=Array.from(document.querySelectorAll('[data-group]')).find(el=>el.dataset.group===id);const groupId=sel?.value;if(!groupId){toast('Escolha primeiro um grupo com Pokémon automático ativo.',true);return}const group=data.groups.find(g=>g.id===groupId);if(!group)return toast('Grupo inválido.',true);
- if(!confirm(`Confirmar o drop em ${group.label}? ${data.vouchers.find(v=>v.id===id)?.productId==='freeMystery'?'O Pokémon será revelado ao grupo.':'Este crédito anterior é de espécie definida.'}`))return;
- if(busy)return;busy=true;try{await api('community-drops/dispatch',{voucherId:id,groupId});toast('Evento agendado! A Fabi fará a entrega no grupo.');await load(true)}catch(e){toast(e.message,true)}finally{busy=false}}
-async function cancel(id){if(!confirm('Cancelar a solicitação? O crédito voltará à carteira para você usar depois.'))return;if(busy)return;busy=true;try{await api('community-drops/cancel',{voucherId:id});toast('Solicitação cancelada. O crédito está disponível novamente.');await load(true)}catch(e){toast(e.message,true)}finally{busy=false}}
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-buy'))buy(b.dataset.buy);if(b.hasAttribute('data-free'))claimFree(b.dataset.free);if(b.hasAttribute('data-dispatch'))dispatch(b.dataset.dispatch);if(b.hasAttribute('data-cancel'))cancel(b.dataset.cancel);if(b.hasAttribute('data-close'))closeModal()});
-async function claimFree(tier='freeMystery'){if(!isLogged()){toast('Para resgatar caixas grátis, entre primeiro na conta Fabi.',true);return;}if(busy)return;busy=true;
- try{const d=await api('community-drops/free',{tier:String(tier)});toast(d.message||'Caixa gratuita disponível na carteira!');await load(true);document.getElementById('minhacarteira')?.scrollIntoView({behavior:'smooth',block:'start'});}
- catch(e){toast(e.message,true)}finally{busy=false}}
-$('#claimFree').onclick=()=>claimFree('freeMystery');
-$('#refresh').onclick=()=>load(false);
-$('#modal').addEventListener('click',e=>{if(e.target.hasAttribute('data-close'))closeModal()});
+  clearInterval(poll);poll=setInterval(()=>{if(activeTx===tx)checkPayment(tx,true)},6500);
+ }catch(e){errorModal('Não foi possível gerar o PIX',e.message);toast('Erro ao criar PIX: '+e.message,true)}finally{busy=false}
+}
+async function checkPayment(tx,silent=false){
+ if(!tx)return;
+ try{
+  const d=await api('shop/pix/'+encodeURIComponent(tx)),status=d.transaction?.status||'pending';
+  const el=$('#paymentStatus');if(el)el.textContent=status==='approved'?'✅ Pagamento aprovado! Evento liberado na sua carteira.':status==='pending'?'Aguardando aprovação do Mercado Pago…':'Pagamento: '+status;
+  if(status==='approved'){closeModal();toast('Pagamento aprovado! Escolha o grupo na carteira.');await load(true)}
+  else if(['expired','rejected','cancelled'].includes(status)){clearInterval(poll);poll=null}
+ }catch(e){if(!silent)toast('Não foi possível consultar: '+e.message,true)}
+}
+async function claimFree(tier){
+ if(!isLogged())return loginModal();if(busy)return;
+ busy=true;try{const d=await api('community-drops/free',{tier:String(tier||'freeMystery')});closeModal();toast(d.message||'Caixa gratuita disponível na carteira!');await load(true);$('#minhacarteira')?.scrollIntoView({behavior:'smooth',block:'start'})}catch(e){toast(e.message,true)}finally{busy=false}
+}
+async function dispatch(id){
+ const sel=[...document.querySelectorAll('[data-group]')].find(x=>x.dataset.group===id),groupId=sel?.value;
+ if(!groupId)return toast('Escolha um grupo com Pokémon automático ativo.',true);
+ const group=data.groups.find(g=>g.id===groupId);if(!group)return toast('Este grupo não está disponível.',true);
+ if(!confirm(`Enviar evento para ${group.label}? O Pokémon da caixa gratuita será revelado no grupo.`))return;
+ if(busy)return;busy=true;
+ try{await api('community-drops/dispatch',{voucherId:id,groupId});toast('Evento colocado na fila!');await load(true)}catch(e){toast(e.message,true)}finally{busy=false}
+}
+async function cancel(id){
+ if(!confirm('Cancelar o envio? O crédito volta à sua carteira.'))return;if(busy)return;busy=true;
+ try{await api('community-drops/cancel',{voucherId:id});toast('Evento devolvido à carteira.');await load(true)}catch(e){toast(e.message,true)}finally{busy=false}
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.hasAttribute('data-buy')){e.preventDefault();buy(b.dataset.buy)}
+ else if(b.hasAttribute('data-paid-details'))paidModal(b.dataset.paidDetails);
+ else if(b.hasAttribute('data-odds'))oddsModal(b.dataset.odds);
+ else if(b.hasAttribute('data-free'))claimFree(b.dataset.free);
+ else if(b.hasAttribute('data-dispatch'))dispatch(b.dataset.dispatch);
+ else if(b.hasAttribute('data-cancel'))cancel(b.dataset.cancel);
+ else if(b.hasAttribute('data-close'))closeModal();
+});
+$('#refresh')?.addEventListener('click',()=>load(false));
+$('#claimFree')?.addEventListener('click',()=>claimFree('freeMystery'));
+$('#modal')?.addEventListener('click',e=>{if(e.target.hasAttribute('data-close'))closeModal()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
-$('#themeToggle').onclick=()=>{document.body.classList.toggle('light');try{localStorage.setItem('theme',document.body.classList.contains('light')?'light':'dark')}catch(_){}};
+$('#themeToggle')?.addEventListener('click',()=>{document.body.classList.toggle('light');try{localStorage.setItem('theme',document.body.classList.contains('light')?'light':'dark')}catch(_){}});
 try{if(localStorage.getItem('theme')==='light'||localStorage.getItem('darkMode')==='false')document.body.classList.add('light')}catch(_){}
-load();setInterval(()=>{if(!document.hidden&&!$('#modal').classList.contains('open')&&isLogged())load(true)},30000);
+window.addEventListener('resize',()=>{if($('#modal')?.classList.contains('open'))fitOverlay()});
+window.parent!==window&&window.parent.addEventListener('scroll',()=>{if($('#modal')?.classList.contains('open'))fitOverlay()},{passive:true});
+load();setInterval(()=>{if(!document.hidden&&!$('#modal')?.classList.contains('open')&&isLogged())load(true)},30000);
 })();

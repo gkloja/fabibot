@@ -10,3 +10,39 @@
 body.light .free-box{background:#fff;border-color:#b6dbbc}body.light .free-box-top small,body.light .free-box-footer small{color:#477159}body.light .free-box-meta span{background:#dcf2e2;color:#286947}
 @media(max-width:1180px){.free-drop{grid-template-columns:110px 1fr}.free-boxes{grid-template-columns:1fr 1fr}}
 @media(max-width:660px){.free-boxes{grid-template-columns:1fr}.free-box{padding:16px}.free-drop{grid-template-columns:1fr}.free-glow{min-height:85px}}
+
+/* V18 — catálogo diário, chances individuais e estados reais do PIX */
+.daily-tier{border-color:#4d866e80;position:relative;overflow:hidden}
+.daily-tier.freeMystery{--tier-glow:#7cbdff}
+.daily-tier.freeExplorer{--tier-glow:#c2abff}
+.daily-tier.freeElite{--tier-glow:#ffd36e}
+.daily-art{height:130px;border-radius:15px;display:grid;place-items:center;background:radial-gradient(circle at 50% 60%,color-mix(in srgb,var(--tier-glow) 25%,transparent),transparent 68%),linear-gradient(145deg,#10272b,#06191d);position:relative;overflow:hidden}
+.chest-glow{font-size:65px;filter:drop-shadow(0 10px 25px var(--tier-glow));animation:floatGift 3s ease-in-out infinite}
+.daily-label{position:absolute;top:9px;left:10px;padding:5px 8px;font-size:9px;font-weight:900;letter-spacing:.08em;border-radius:8px;background:#f3fff217;color:#ddffeb}
+.daily-mini-pool{display:flex;align-items:center;gap:5px;min-height:51px}
+.daily-mini-pool>div{flex:0 0 43px;height:43px;border:1px solid #91bda638;border-radius:10px;background:#152d304d;display:grid;place-items:center}
+.daily-mini-pool img{height:36px;width:36px;object-fit:contain}
+.daily-mini-pool span{color:var(--green);font-weight:900;font-size:11px}
+.free-box .box-info{width:100%;border-color:#5e97806b}
+.box-detail-top{display:flex;align-items:center;gap:13px}.detail-emoji{font-size:50px;filter:drop-shadow(0 0 17px #8eed8655)}
+.box-detail-top h3{margin:3px 0;font-size:23px}.box-detail-top p{margin:0}
+.rotation-info{background:#2e68452b;border:1px solid #83d3964b;border-radius:12px;padding:11px 12px;color:#c9fdd5;margin:16px 0;font-size:12px;font-weight:800}
+.odds-list{margin:17px 0;display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:min(46vh,330px);overflow:auto;scrollbar-width:thin;padding:3px}
+.odds-item{display:flex;gap:7px;align-items:center;padding:9px;border:1px solid var(--stroke);border-radius:12px;background:#10272155;min-width:0}
+.odds-item img{width:39px;height:39px;object-fit:contain;flex-shrink:0}
+.odds-item>div{flex:1;min-width:0}.odds-item b,.odds-item small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.odds-item b{font-size:11px}.odds-item small{font-size:9px;color:var(--muted)}.odds-item strong{font-size:12px;color:var(--green)}
+.odds-total{border-top:1px solid var(--stroke);padding-top:9px}
+.checkout-state{text-align:center;display:grid;justify-items:center;gap:11px;padding:18px 0}
+.checkout-state h3{margin:0}.checkout-state p{margin:0}.checkout-symbol{font-size:52px}
+.checkout-loader{width:58px;height:58px;border:5px solid #adcfc950;border-top-color:var(--green);border-radius:50%;animation:spinner .7s linear infinite}
+@keyframes spinner{to{transform:rotate(360deg)}}
+.checkout-state small,.checkout-tip{font-size:11px;color:var(--muted)}
+.checkout-state.fail .checkout-symbol{filter:drop-shadow(0 0 18px #ff565633)}
+.paid-box .paid-chest{font-size:80px;line-height:1;filter:drop-shadow(0 15px 27px #abdaec34)}
+.paid-box .paid-detail{margin-top:8px}.paid-box .paid-detail .btn{width:100%}
+.paid-content-preview{display:flex;gap:10px;align-items:center;background:#16302b77;border:1px solid var(--stroke);border-radius:15px;padding:10px;margin:13px 0}
+.paid-content-preview img{width:85px;height:85px;object-fit:contain}.paid-content-preview p{flex:1;margin:0}
+.payment-expires{display:block;color:var(--muted);margin-top:11px;font-size:10px}
+body.light .daily-art{background:linear-gradient(145deg,#deeee6,#eff8f2)}
+body.light .daily-label{background:#c4e5d0;color:#1b5734}body.light .rotation-info{color:#236438;background:#e8f9ef}body.light .odds-item{background:#eff8f4}
+@media(max-width:580px){.odds-list{grid-template-columns:1fr}.odds-item{padding:7px 10px}.daily-art{height:114px}.product p{min-height:auto}.paid-box .product-footer{margin-top:12px}}
