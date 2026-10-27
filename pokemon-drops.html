@@ -1,71 +1,445 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover">
-<title>Caixas diárias e Drops | Pokémon Adventure — Fabi Bot</title>
-<meta name="description" content="Resgate caixas gratuitas Básica, Explorador e Especial. Veja todos os Pokémon possíveis na caixa grátis, as chances individuais e o catálogo atualizado diariamente.">
-<meta name="theme-color" content="#07141a"><meta name="referrer" content="no-referrer"><meta name="robots" content="index,follow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Caixas & Drops | Pokémon Adventure — Fabi Bot</title>
+<meta name="description" content="Abra caixas, receba drops e envie Pokémon para os grupos. Loja da Jornada com itens e melhorias.">
+<meta name="theme-color" content="#070f0c">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="index,follow">
 <link rel="canonical" href="https://www.fabibot.com.br/pokemon-drops">
-<link rel="icon" href="/favicon-32x32.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="/favicon-32x32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/pokemon-community-drops-v20.css?v=29.0">
-<script defer src="/assets/pokemon-community-drops-v20.js?v=29.0"></script>
-<style>
-html.pk-embedded,html.pk-embedded body{min-height:0!important;height:auto!important;background:#071713!important}
-html.pk-embedded .topbar,html.pk-embedded footer,html.pk-embedded .faq,html.pk-embedded .ambient,html.pk-embedded .drops-open-full{display:none!important}
-html.pk-embedded .wrap{width:calc(100% - 8px);max-width:none;margin:0 auto}
-html.pk-embedded #minhacarteira{margin:0!important}
-html.pk-embedded .drop-discovery{margin:0!important}
-html.pk-embedded .free-drop{grid-template-columns:1fr;padding:13px;margin:12px 0}
-html.pk-embedded .free-glow{display:none}
-html.pk-embedded .section{margin:0 0 10px!important}
-html.pk-embedded #eventos{margin:12px 0!important}
-html.pk-embedded .wallet-stats{margin-top:8px}
-html.pk-embedded .wallet-main{padding:0;border:0;background:transparent}
-html.pk-embedded .wallet-surface{display:block}
-@media(max-width:650px){html.pk-embedded .wrap{width:calc(100% - 4px)}}
-</style>
-<script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('pk-embedded');</script>
+<link rel="stylesheet" href="/assets/pokemon-community-drops-v30.css?v=30.0">
+<script>
+  if (new URLSearchParams(location.search).get('embed') === '1') {
+    document.documentElement.classList.add('pk-embedded');
+  }
+</script>
 </head>
 <body>
 <div class="ambient" aria-hidden="true"></div>
+
 <div class="wrap">
-<header class="topbar">
-  <a href="/pokemon" class="brand"><img src="/flogo.jpg" alt="" width="45" height="45"><span><strong>Fabi Adventure</strong><small>Central de Drops</small></span></a>
-  <nav aria-label="Navegação"><a href="/pokemon">Voltar ao jogo</a><a href="/pokemon-guia.html">Guia</a><button id="themeToggle" class="theme-toggle" type="button" aria-label="Alternar tema">◐</button></nav>
-</header>
-<section id="minhacarteira" class="section drops-dashboard" aria-labelledby="walletTitle">
-  <div class="section-heading drops-title-row">
-    <div><span class="section-label">CENTRAL DA COMUNIDADE</span><h2 id="walletTitle">Meus Drops</h2></div>
-    <div class="drops-header-actions"><button id="refresh" type="button" class="btn secondary mini" title="Atualizar carteira">↻ Atualizar</button><a class="btn secondary mini drops-open-full" href="/pokemon-drops" target="_top">Tela completa</a></div>
-  </div>
-  <div id="loginNote" class="login-note" hidden>Entre na sua conta Fabi pelo <a href="/pokemon">Pokémon Adventure</a> para acessar seus drops.</div>
-  <div id="walletStats" class="wallet-stats" aria-live="polite">
-    <div class="wallet-stat"><small>Disponíveis</small><b>—</b></div><div class="wallet-stat"><small>Em andamento</small><b>—</b></div><div class="wallet-stat"><small>Entregues</small><b>—</b></div><div class="wallet-stat"><small>Grupos ativos</small><b>—</b></div>
-  </div>
-  <div class="wallet-surface">
-    <div class="wallet-main">
-      <div class="wallet-list-toolbar"><div class="wallet-filters" aria-label="Filtrar drops"><button type="button" class="active" data-wallet-view="active" aria-pressed="true">Para usar</button><button type="button" data-wallet-view="history" aria-pressed="false">Histórico</button></div><span id="walletCount" class="wallet-count" aria-live="polite">Carregando sua carteira…</span></div>
-      <div id="wallet" class="wallet"><div class="skeleton wide"></div></div>
-      <div class="wallet-browse-actions"><button type="button" id="browseDrops" class="btn primary" aria-controls="discoverDrops" aria-expanded="false">Ver caixas disponíveis</button><button type="button" class="btn secondary" data-open-catalog="free">Caixas grátis</button><button type="button" class="btn secondary" data-open-catalog="paid">Pacotes da comunidade</button></div>
-    </div>
-  </div>
-</section>
-<div id="discoverDrops" class="drop-discovery" hidden>
-<section class="free-drop" id="caixaGratis" aria-labelledby="freeDropTitle">
- <div class="free-glow" aria-hidden="true">🎁</div>
- <div class="free-copy"><span class="section-label">PRESENTE DA COMUNIDADE · 100% GRÁTIS</span><h2 id="freeDropTitle">Escolha sua caixa gratuita</h2><p>Grátis, com rotação diária e chances individuais por raridade. Toque na caixa para conferir as espécies antes de resgatar.</p><div class="free-badges"><span>📊 Chance de cada espécie</span><span>🔄 Catálogo novo todos os dias</span><span>👥 Apenas grupos com Pokémon automático ativo</span></div><div id="freeBoxes" class="free-boxes" aria-live="polite"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div><button id="claimFree" class="btn secondary mini" type="button" hidden>Resgatar caixa Básica</button><p class="free-note" id="freeNote" aria-live="polite">Entre na sua conta Fabi para conferir suas caixas e níveis.</p></div>
- </section>
+  <!-- Top bar (hidden when embedded) -->
+  <header class="topbar">
+    <a href="/pokemon" class="brand">
+      <img src="/flogo.jpg" alt="Fabi" width="40" height="40">
+      <span>
+        <strong>Caixas & Drops</strong>
+        <small>Abra caixas, receba drops e envie para os grupos.</small>
+      </span>
+    </a>
+    <nav aria-label="Navegação">
+      <a href="/pokemon">Voltar ao jogo</a>
+      <a href="/pokemon-guia.html">Guia</a>
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Alternar tema">◐</button>
+    </nav>
+  </header>
 
-<section id="eventos" class="section"><div class="section-heading"><div><span class="section-label">CATÁLOGO</span><h2>Caixas comunitárias PIX</h2><p>Espécies definidas e mostradas antes do PIX; todas as indicadas estão incluídas.</p></div><span class="section-chip">Mercado Pago · PIX</span></div>
-<div id="catalog" class="catalog"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></section>
+  <!-- ========== 3-COLUMN LAYOUT ========== -->
+  <div class="drops-grid">
 
-</div><!-- /discoverDrops -->
+    <!-- ===== PAINEL 1: CAIXAS ===== -->
+    <section class="panel panel-caixas" aria-labelledby="caixasTitle">
+      <div class="panel-header">
+        <div class="icon" style="background:linear-gradient(135deg,#4ade80,#166534);color:#052e16;">🎁</div>
+        <div>
+          <h2 id="caixasTitle">Caixas & Drops</h2>
+          <p>Abra caixas, receba drops e envie para os grupos.</p>
+        </div>
+      </div>
 
-<section class="faq"><div><span class="section-label">GRUPOS DO WHATSAPP</span><h2>Somente grupos com Pokémon ativo.</h2><p>Somente grupos com /pokeauto ligar (Pokémon automático ativo) aparecem na carteira. O administrador pode bloquear com <code>/pokedrops desativar</code> e liberar com <code>/pokedrops ativar</code>. A Fabi precisa participar do grupo.</p></div><div class="faq-panel"><b>Boas práticas</b><span>✓ Um evento de cada vez por grupo</span><span>✓ Intervalo mínimo de 60 minutos</span><span>✓ Crédito não é consumido se o envio não acontecer</span><span>✓ Todos podem participar gratuitamente da captura</span></div></section>
-<footer><a href="/pokemon">Pokémon Adventure</a><span>Fabi Bot · Comunidade e aventura</span><a href="/termos.html">Termos de uso</a></footer>
-</div>
-<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-<div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-backdrop" data-close="1"></div><div class="modal-panel"><button type="button" class="modal-close" data-close="1" aria-label="Fechar">×</button><div id="modalContent"></div></div></div>
+      <div class="tabs" role="tablist">
+        <button class="tab" data-tab="gratis" role="tab">Caixas</button>
+        <button class="tab active" data-tab="comunitarias" role="tab">Comunitárias</button>
+        <button class="tab" data-tab="historico" role="tab">Histórico</button>
+      </div>
+
+      <div class="panel-body">
+        <!-- Featured Special Box -->
+        <article class="box-featured" id="featuredBox">
+          <div class="box-featured-top">
+            <div class="box-art-wrap">
+              <img src="/assets/drop-box-special.svg" alt="Caixa Comunitária Especial" width="110" height="110">
+            </div>
+            <div class="box-featured-info">
+              <span class="box-label">✦ CAIXA COMUNITÁRIA</span>
+              <h3>Especial</h3>
+              <span class="rarity-badge epica">Épica</span>
+              <div class="box-price">
+                <span>📦</span> R$ 5,90
+              </div>
+              <p class="box-desc">1 Pokémon aleatório por caixa. Todas as espécies abaixo podem ser obtidas com as porcentagens indicadas.</p>
+            </div>
+          </div>
+
+          <div class="poke-grid-title">
+            <span>Pokémon possíveis nesta caixa</span>
+            <span>12 espécies</span>
+          </div>
+
+          <div class="poke-grid" id="pokeGrid">
+            <!-- Filled by JS or static fallback -->
+            <div class="poke-card">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/149.png" alt="Dragonite" width="48" height="48" loading="lazy">
+              <div class="name">Dragonite</div>
+              <div class="rate">8.00%</div>
+              <span class="tag epico">Épico</span>
+            </div>
+            <div class="poke-card">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/130.png" alt="Gyarados" width="48" height="48" loading="lazy">
+              <div class="name">Gyarados</div>
+              <div class="rate">10.00%</div>
+              <span class="tag raro">Raro</span>
+            </div>
+            <div class="poke-card">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png" alt="Gengar" width="48" height="48" loading="lazy">
+              <div class="name">Gengar</div>
+              <div class="rate">12.00%</div>
+              <span class="tag raro">Raro</span>
+            </div>
+            <div class="poke-card">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/248.png" alt="Tyranitar" width="48" height="48" loading="lazy">
+              <div class="name">Tyranitar</div>
+              <div class="rate">10.00%</div>
+              <span class="tag epico">Épico</span>
+            </div>
+            <div class="poke-card">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/376.png" alt="Metagross" width="48" height="48" loading="lazy">
+              <div class="name">Metagross</div>
+              <div class="rate">10.00%</div>
+              <span class="tag epico">Épico</span>
+            </div>
+            <div class="poke-card">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/373.png" alt="Salamence" width="48" height="48" loading="lazy">
+              <div class="name">Salamence</div>
+              <div class="rate">8.00%</div>
+              <span class="tag epico">Épico</span>
+            </div>
+            <div class="poke-card">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/282.png" alt="Gardevoir" width="48" height="48" loading="lazy">
+              <div class="name">Gardevoir</div>
+              <div class="rate">12.00%</div>
+              <span class="tag raro">Raro</span>
+            </div>
+            <div class="poke-card">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png" alt="Lucario" width="48" height="48" loading="lazy">
+              <div class="name">Lucario</div>
+              <div class="rate">10.00%</div>
+              <span class="tag raro">Raro</span>
+            </div>
+            <div class="poke-card">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/445.png" alt="Garchomp" width="48" height="48" loading="lazy">
+              <div class="name">Garchomp</div>
+              <div class="rate">8.00%</div>
+              <span class="tag epico">Épico</span>
+            </div>
+            <div class="poke-card">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/350.png" alt="Milotic" width="48" height="48" loading="lazy">
+              <div class="name">Milotic</div>
+              <div class="rate">10.00%</div>
+              <span class="tag raro">Raro</span>
+            </div>
+            <div class="poke-card">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/700.png" alt="Sylveon" width="48" height="48" loading="lazy">
+              <div class="name">Sylveon</div>
+              <div class="rate">10.00%</div>
+              <span class="tag raro">Raro</span>
+            </div>
+            <div class="poke-card">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/143.png" alt="Snorlax" width="48" height="48" loading="lazy">
+              <div class="name">Snorlax</div>
+              <div class="rate">12.00%</div>
+              <span class="tag raro">Raro</span>
+            </div>
+          </div>
+
+          <div class="buy-row">
+            <div class="qty-control">
+              <button type="button" id="qtyMinus" aria-label="Diminuir">−</button>
+              <span id="qtyValue">1</span>
+              <button type="button" id="qtyPlus" aria-label="Aumentar">+</button>
+            </div>
+            <button type="button" class="btn-pix" id="btnGerarPix">
+              <span>✦</span> Gerar PIX · R$ <span id="pixTotal">5,90</span>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== PAINEL 2: MEUS DROPS ===== -->
+    <section class="panel panel-meus" aria-labelledby="meusTitle">
+      <div class="panel-header">
+        <div class="icon" style="background:linear-gradient(135deg,#38bdf8,#0c4a6e);color:#e0f2fe;">🎒</div>
+        <div>
+          <h2 id="meusTitle">Meus Drops</h2>
+          <p>Aqui estão todas as suas caixas e Pokémon recebidos.</p>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-view="disponiveis" role="tab">Disponíveis <span class="badge" id="badgeDisp">4</span></button>
+        <button class="tab" data-view="fila" role="tab">Na fila</button>
+        <button class="tab" data-view="entregues" role="tab">Entregues</button>
+        <button class="tab" data-view="todos" role="tab">Todos</button>
+      </div>
+
+      <div class="panel-body">
+        <div class="stats-row" id="walletStats">
+          <div class="stat"><small>Disponíveis</small><b id="statDisp">4</b></div>
+          <div class="stat"><small>Na fila</small><b id="statFila">0</b></div>
+          <div class="stat"><small>Entregues</small><b id="statEnt">12</b></div>
+          <div class="stat"><small>Grupos</small><b id="statGrupos">3</b></div>
+        </div>
+
+        <div class="group-select-wrap">
+          <label for="groupSelect">Selecionar grupo para enviar</label>
+          <select id="groupSelect" class="group-select">
+            <option value="">Grupo da Fabi · Pokémon automático ativo</option>
+          </select>
+        </div>
+
+        <div id="walletList">
+          <!-- Drop items -->
+          <div class="drop-item">
+            <div class="thumb">
+              <img src="/assets/drop-box-special.svg" alt="Caixa Especial" width="40" height="40">
+              <span class="qty">x2</span>
+            </div>
+            <div class="info">
+              <b>Caixa Comunitária Especial</b>
+              <small>1 Pokémon aleatório</small>
+              <span class="tag" style="background:#5b21b6;color:#e9d5ff;">Épica</span>
+            </div>
+            <button type="button" class="btn-action primary">Abrir/Enviar</button>
+          </div>
+
+          <div class="drop-item">
+            <div class="thumb">
+              <img src="/assets/drop-box-rare.svg" alt="Caixa Rara" width="40" height="40">
+              <span class="qty">x1</span>
+            </div>
+            <div class="info">
+              <b>Caixa Comunitária Rara</b>
+              <small>1 Pokémon aleatório</small>
+              <span class="tag" style="background:#0c4a6e;color:#bae6fd;">Raro</span>
+            </div>
+            <button type="button" class="btn-action primary">Abrir/Enviar</button>
+          </div>
+
+          <div class="drop-item">
+            <div class="thumb">
+              <img src="/assets/drop-box-normal.svg" alt="Caixa Normal" width="40" height="40">
+              <span class="qty">x1</span>
+            </div>
+            <div class="info">
+              <b>Caixa Comunitária Normal</b>
+              <small>1 Pokémon aleatório</small>
+              <span class="tag" style="background:#3f3f46;color:#d4d4d8;">Comum</span>
+            </div>
+            <button type="button" class="btn-action primary">Abrir/Enviar</button>
+          </div>
+
+          <div class="drop-item">
+            <div class="thumb">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/149.png" alt="Dragonite" width="40" height="40">
+            </div>
+            <div class="info">
+              <b>Dragonite</b>
+              <small>Lv.32 · CP 2.148 · Épico</small>
+              <small style="display:block;margin-top:2px;">Recebido em 12/01/2025</small>
+            </div>
+            <button type="button" class="btn-action secondary">Enviar para grupo</button>
+          </div>
+        </div>
+
+        <div class="pagination">
+          <button type="button" aria-label="Anterior">‹</button>
+          <span>1</span>
+          <button type="button" aria-label="Próximo">›</button>
+        </div>
+
+        <div class="how-it-works">
+          <div class="q">?</div>
+          <div>
+            <strong style="color:var(--text);">Como funciona?</strong><br>
+            Escolha um grupo, clique em Enviar e o bot entrega automaticamente.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PAINEL 3: LOJA DA JORNADA ===== -->
+    <section class="panel panel-loja" aria-labelledby="lojaTitle">
+      <div class="panel-header">
+        <div class="icon" style="background:linear-gradient(135deg,#a5b4fc,#4338ca);color:#e0e7ff;">🛒</div>
+        <div>
+          <h2 id="lojaTitle">Loja da Jornada</h2>
+          <p>Use seu Pó Estelar para itens e melhorias.</p>
+        </div>
+        <div class="crystal-balance" title="Pó Estelar">
+          <span>💎</span> 2.850
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-shop="itens">Itens</button>
+        <button class="tab" data-shop="pesquisas">Pesquisas</button>
+        <button class="tab" data-shop="melhorias">Melhorias</button>
+      </div>
+
+      <div class="panel-body">
+        <div class="shop-filters">
+          <button class="shop-filter active">Todos</button>
+          <button class="shop-filter">Treino</button>
+          <button class="shop-filter">Evolução</button>
+          <button class="shop-filter">Recursos</button>
+          <button class="shop-filter">Especiais</button>
+        </div>
+
+        <!-- Shop items -->
+        <div class="shop-item">
+          <div class="icon-wrap">🎫</div>
+          <div class="info">
+            <b>Ticket de Treino</b>
+            <small>Use para treinar atributos do seu Pokémon.</small>
+            <span class="limit">Diário · 2 por dia</span>
+            <div class="progress-bar"><span style="width:0%"></span></div>
+            <small style="font-size:10px;margin-top:2px;">Compras hoje 0/2</small>
+          </div>
+          <div class="buy-side">
+            <div class="shop-price">💎 420</div>
+            <div class="shop-qty">
+              <button type="button">−</button>
+              <span>1</span>
+              <button type="button">+</button>
+            </div>
+            <button type="button" class="btn-comprar">Comprar</button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div class="icon-wrap">🍬</div>
+          <div class="info">
+            <b>Super Doce</b>
+            <small>Aumenta 1 nível do Pokémon.</small>
+          </div>
+          <div class="buy-side">
+            <div class="shop-price">💎 250</div>
+            <div class="shop-qty">
+              <button type="button">−</button>
+              <span>1</span>
+              <button type="button">+</button>
+            </div>
+            <button type="button" class="btn-comprar">Comprar</button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div class="icon-wrap">🍭</div>
+          <div class="info">
+            <b>Doce Raro</b>
+            <small>Aumenta +5 níveis do Pokémon.</small>
+          </div>
+          <div class="buy-side">
+            <div class="shop-price">💎 1.200</div>
+            <div class="shop-qty">
+              <button type="button">−</button>
+              <span>1</span>
+              <button type="button">+</button>
+            </div>
+            <button type="button" class="btn-comprar">Comprar</button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div class="icon-wrap">🧪</div>
+          <div class="info">
+            <b>Potencializador de XP</b>
+            <small>Dobra o XP de batalhas por 1 hora.</small>
+          </div>
+          <div class="buy-side">
+            <div class="shop-price">💎 1.000</div>
+            <div class="shop-qty">
+              <button type="button">−</button>
+              <span>1</span>
+              <button type="button">+</button>
+            </div>
+            <button type="button" class="btn-comprar">Comprar</button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div class="icon-wrap">📡</div>
+          <div class="info">
+            <b>Radar de Exploração</b>
+            <small>Revela mais Pokémon raros por 2 horas.</small>
+          </div>
+          <div class="buy-side">
+            <div class="shop-price">💎 800</div>
+            <div class="shop-qty">
+              <button type="button">−</button>
+              <span>1</span>
+              <button type="button">+</button>
+            </div>
+            <button type="button" class="btn-comprar">Comprar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /.drops-grid -->
+</div><!-- /.wrap -->
+
+<script>
+// Minimal interactive layer (quantity + tabs)
+(function () {
+  'use strict';
+  const qtyEl = document.getElementById('qtyValue');
+  const totalEl = document.getElementById('pixTotal');
+  const price = 5.90;
+  let qty = 1;
+
+  function update() {
+    qtyEl.textContent = qty;
+    totalEl.textContent = (price * qty).toFixed(2).replace('.', ',');
+  }
+
+  document.getElementById('qtyMinus')?.addEventListener('click', () => {
+    if (qty > 1) { qty--; update(); }
+  });
+  document.getElementById('qtyPlus')?.addEventListener('click', () => {
+    if (qty < 20) { qty++; update(); }
+  });
+
+  // Tab switching (visual only)
+  document.querySelectorAll('.tabs .tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const parent = tab.closest('.tabs');
+      parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.shop-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.shop-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+})();
+</script>
+
+<!-- 
+  NOTA: Este HTML é a camada visual completa no estilo das fotos.
+  Para conectar com o backend real (abrir caixas, PIX, enviar pro grupo),
+  você pode reutilizar a lógica do pokemon-community-drops-v20.js
+  ou me pedir a versão JS completa integrada.
+-->
 </body>
 </html>
