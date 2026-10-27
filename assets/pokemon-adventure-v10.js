@@ -13,7 +13,7 @@ function proxyUrl(target){
 const CATALOG_URL='/assets/pokemons.json';
 let LOCAL_CATALOG=null;
 const APP_ID='6ba779b7-14c6-4a31-b955-0c8567a9039b';
-const state={profile:null,ranking:[],market:null,tradeTarget:null,notifications:[],boss:null,hall:null,unread:0,tab:'world',biome:'random',busy:false,query:'',rarity:'all',timer:null,rankTimer:null,notifTimer:null,bossTimer:null,hallTimer:null,rankMode:'global',pixWatch:null,focusAuction:null,bossPokemonUid:null,bossReadyAt:0,bossAuto:null};
+const state={profile:null,ranking:[],market:null,tradeTarget:null,notifications:[],boss:null,hall:null,unread:0,tab:'world',biome:'random',busy:false,query:'',rarity:'all',timer:null,rankTimer:null,notifTimer:null,bossTimer:null,hallTimer:null,rankMode:'global',hallFilter:'all',hallExpanded:[],pixWatch:null,focusAuction:null,bossPokemonUid:null,bossReadyAt:0,bossAuto:null};
 setInterval(()=>{if(document.hidden||state.tab!=='boss')return;const b=document.querySelector('[data-action="boss-quick"]');if(!b)return;const until=Math.max(state.bossReadyAt,Date.parse(state.boss?.active?.me?.nextAttackAt||0)||0),seconds=Math.max(0,Math.ceil((until-Date.now())/1000));b.textContent=seconds?`⏳ Próximo ataque em ${seconds}s`:'⚡ Ataque rápido · escolher por mim';b.disabled=state.busy||seconds>0||!(state.boss?.eligiblePokemon||[]).some(p=>p.available);document.querySelectorAll('[data-action="boss-attack"]').forEach(x=>{x.disabled=state.busy||seconds>0;});},1000);
 const TAB_IDS=['world','collection','farm','missions','arena','boss','season','ranking','hall','market','shop','achievements','drops','training'];
 let modalVersion=0,modalReturnFocus=null,hallRequest=null;
@@ -684,13 +684,66 @@ function hallValue(cat,row){
   if(cat==='finalHits')return `${fmt(row.bossFinalHits)} golpes finais`;
   return fmt(row.score||0)
 }
+const HALL_THEMES={
+ collection:{art:'collection',color:'mint',hint:'Reúna o maior número de Pokémon'},
+ pokedex:{art:'pokedex',color:'azure',hint:'Descubra novas espécies'},
+ stardust:{art:'stardust',color:'violet',hint:'Acumule Pó Estelar'},
+ strongest:{art:'strongest',color:'amber',hint:'Alcance os maiores valores de CP'},
+ achievements:{art:'achievements',color:'rose',hint:'Desbloqueie conquistas especiais'},
+ arena:{art:'arena',color:'cyan',hint:'Conquiste vitórias competitivas'},
+ boss:{art:'boss',color:'ruby',hint:'Destaque-se contra os chefes'},
+ finalHits:{art:'finalHits',color:'gold',hint:'Acerte o golpe final nos bosses'}
+};
+function hallProfileUrl(r){return r?.slug?'/pokemon-profile.html?p='+encodeURIComponent(String(r.slug)) : ''}
+function hallPerson(r,content,cls=''){
+  const url=hallProfileUrl(r);
+  return url?`<a class="${cls}" href="${url}">${content}</a>`:`<div class="${cls}">${content}</div>`;
+}
+function hallMedal(n){return n===1?'ouro':n===2?'prata':n===3?'bronze':'participante'}
+function hallArt(key){const which=HALL_THEMES[key]?.art||'collection';return `<img src="/assets/hall-v33-${which}.svg" alt="" loading="lazy" width="40" height="40">`}
+function hallPodiumSpot(catKey,cat,r){
+  if(!r)return '';
+  const pos=Number(r.position||0);
+  const medal=hallMedal(pos);
+  return hallPerson(r,`<span class="hv33-medal hv33-medal-${medal}" aria-label="${pos}º lugar">${pos}º</span><span class="hv33-avatar-ring">${playerAvatar(r.avatar,r.userName)}</span><span class="hv33-podium-name">${esc(r.userName||'Treinador')}</span><span class="hv33-podium-score">${hallValue(catKey,r)}</span>`, `hv33-podium-spot hv33-${medal}`);
+}
+function hallCard(key,cat){
+  const rows=Array.isArray(cat?.rows)?cat.rows:[];
+  const leader=rows[0]||null;
+  const expanded=state.hallExpanded.includes(key);
+  const n=expanded?Math.min(rows.length,10):Math.min(rows.length,5);
+  const palette=HALL_THEMES[key]?.color||'mint';
+  const winner=leader?hallPerson(leader,`<span class="hv33-crown" aria-hidden="true">♛</span><span class="hv33-winner-avatar">${playerAvatar(leader.avatar,leader.userName)}</span><span class="hv33-winner-name"><small>LÍDER DA CATEGORIA</small><b>${esc(leader.userName||'Treinador')}</b></span><strong class="hv33-winner-score">${hallValue(key,leader)}</strong>`, 'hv33-category-winner'):'<div class="hv33-category-empty">Nenhum recorde nesta categoria ainda.</div>';
+  const followers=rows.slice(1,n).map(r=>{
+    const pos=Number(r.position||0);
+    return hallPerson(r,`<span class="hv33-row-position hv33-rank-${pos<=3?pos:'rest'}">${pos<=3?['','Ⅰ','Ⅱ','Ⅲ'][pos]:pos+'º'}</span><span class="hv33-row-avatar">${playerAvatar(r.avatar,r.userName)}</span><span class="hv33-row-name">${esc(r.userName||'Treinador')}</span><strong class="hv33-row-metric">${hallValue(key,r)}</strong>`, 'hv33-competitor');
+  }).join('');
+  const more=rows.length>5?`<button type="button" class="hv33-more" data-action="hall-expand" data-hall-expand="${esc(key)}" aria-expanded="${expanded}">${expanded?'Mostrar apenas top 5':`Ver top ${Math.min(rows.length,10)}`} <span aria-hidden="true">${expanded?'⌃':'⌄'}</span></button>`:'';
+  return `<article class="hv33-category-card hv33-theme-${palette}" id="hv33-category-${esc(key)}"><div class="hv33-category-head"><span class="hv33-category-image">${hallArt(key)}</span><div class="hv33-category-title"><small>GALERIA DE RECORDES</small><h3>${esc(cat.title||'Categoria')}</h3><p>${esc(cat.description||HALL_THEMES[key]?.hint||'')}</p></div><span class="hv33-category-trophy" aria-hidden="true">✦</span></div>${winner}<div class="hv33-competitor-list">${followers}</div>${more}</article>`;
+}
 function hallHTML(){
-  const h=state.hall?.categories;
-  if(!h&&state.hallError)return `<section class="pk-card pk-load-error"><span aria-hidden="true">🏛️</span><h3>O Hall ainda não carregou</h3><p>Não foi possível buscar os recordes. Você pode tentar novamente.</p><button class="pk-primary" data-action="hall-refresh">Tentar novamente</button></section>`;
-  if(!h)return `<section class="pk-card"><div class="pk-card-head"><div><h3>🏛️ Hall da Fama</h3><p>Carregando os maiores recordes do Pokémon Adventure…</p></div><div class="pk-icon">🏛️</div></div></section>`;
-  return `<section class="pk-card pk-hall-shell pk-v32-section"><div class="pk-v32-banner"><img src="/assets/v32-hall-hero.svg" alt="Hall da Fama" loading="lazy"></div><div class="pk-card-head"><div><div class="pk-live">● RECORDES AO VIVO</div><h3>🏛️ Hall da Fama</h3><p>Não existe um único jeito de ser lendário. Cada categoria celebra uma parte diferente da jornada.</p></div><button class="pk-ghost" data-action="hall-refresh">Atualizar</button></div>
-    <div class="pk-hall-grid">${Object.entries(h).map(([key,cat])=>`<article class="pk-hall-card"><header><span>${cat.icon}</span><div><b>${esc(cat.title)}</b><small>${esc(cat.description)}</small></div></header><div>${(cat.rows||[]).slice(0,5).map(r=>`<a href="${r.slug?`/pokemon-profile.html?p=${encodeURIComponent(r.slug)}`:'#'}" class="pk-hall-row"><span>${r.position===1?'🥇':r.position===2?'🥈':r.position===3?'🥉':r.position+'.'}</span><b class="pk-rank-person">${playerAvatar(r.avatar,r.userName)}${esc(r.userName)}</b><strong>${hallValue(key,r)}</strong></a>`).join('')}</div></article>`).join('')}</div>
-  </section>`
+ const categories=state.hall?.categories;
+ const entries=categories?Object.entries(categories).filter(([,cat])=>cat&&typeof cat==='object'):[];
+ if(!entries.length){
+   if(state.hallError)return `<section class="pk-card hv33-container"><div class="hv33-error"><img src="/assets/hall-v33-temple.svg" alt="" width="180" height="110"><h2>O Hall está indisponível</h2><p>Não foi possível buscar os recordes agora. Sua coleção não foi afetada.</p><button class="pk-primary" data-action="hall-refresh">Tentar novamente</button></div></section>`;
+   return `<section class="pk-card hv33-container"><div class="hv33-loading" aria-live="polite"><div class="hv33-loading-ring"></div><h2>Abrindo o Hall da Fama…</h2><p>Preparando a galeria de campeões.</p></div></section>`;
+ }
+ const active=state.hallFilter!=='all'&&categories[state.hallFilter]?state.hallFilter:'all';
+ const focusKey=active==='all'?((entries.find(([,cat])=>cat.rows?.length)||entries[0])[0]):active;
+ const focusCat=categories[focusKey];
+ const focusRows=[...(focusCat?.rows||[])].sort((x,y)=>(Number(x.position||999)-Number(y.position||999))).slice(0,3);
+ const cards=entries.filter(([key])=>active==='all'||key===active);
+ const leadersCount=entries.filter(([,cat])=>cat.rows?.length).length;
+ const filterButtons=[['all','Todas as categorias'],...entries.map(([key,cat])=>[key,cat.title||key])];
+ return `<section class="pk-card pk-hall-shell pk-v32-section hv33-container">
+   <div class="hv33-hero"><img class="hv33-hero-art" src="/assets/hall-v33-temple.svg" alt="" fetchpriority="high"><div class="hv33-hero-content"><span class="hv33-eyebrow"><span class="hv33-live-dot"></span> GALERIA DOS MAIORES TREINADORES</span><h1>Hall da <em>Fama</em></h1><p>As maiores conquistas da comunidade, registradas em cada categoria.</p><div class="hv33-hero-facts"><span>${entries.length} categorias</span><span>${leadersCount} com recordes</span><span>Atualização automática</span></div></div></div>
+   <div class="hv33-intro"><div><span class="hv33-kicker">DESTAQUES DA COMUNIDADE</span><h2>O pódio dos campeões</h2><p>Exibindo os líderes de <strong>${esc(focusCat?.title||'categoria')}</strong>. Escolha outra categoria abaixo para explorar seus recordes.</p></div><button class="hv33-refresh" type="button" data-action="hall-refresh" aria-label="Atualizar recordes"><span aria-hidden="true">↻</span> Atualizar</button></div>
+   <div class="hv33-podium" aria-label="Três primeiros colocados de ${esc(focusCat?.title||'categoria')}">${[1,0,2].map(i=>hallPodiumSpot(focusKey,focusCat,focusRows[i])).join('')}${!focusRows.length?'<div class="hv33-category-empty">Ainda não há recordes nesta categoria.</div>':''}</div>
+   <div class="hv33-explore-head"><div><span class="hv33-kicker">ARQUIVO DE LENDAS</span><h2>Todas as conquistas</h2></div><span class="hv33-updated"><span aria-hidden="true">●</span> Resultados ao vivo</span></div>
+   <div class="hv33-filter-wrap"><div class="hv33-filter-strip" aria-label="Filtrar categorias do Hall da Fama">${filterButtons.map(([key,title])=>`<button class="hv33-filter${active===key?' active':''}" type="button" data-action="hall-filter" data-hall-filter="${esc(key)}" aria-pressed="${active===key}">${key!=='all'?hallArt(key):'<span class="hv33-all-diamonds" aria-hidden="true">✥</span>'}<span>${esc(title)}</span></button>`).join('')}</div></div>
+   <div class="hv33-card-grid">${cards.map(([key,cat])=>hallCard(key,cat)).join('')}</div>
+   <footer class="hv33-footer"><span class="hv33-footer-art" aria-hidden="true">✦</span><div><b>Seu nome também pode estar aqui.</b><p>Explore, conquiste e supere novos recordes da comunidade Pokémon.</p></div><button type="button" data-action="tab" data-tab="world" class="pk-primary">Voltar à jornada</button></footer>
+ </section>`;
 }
 async function loadBoss(silent=false){
   if(bossLoading)return null;bossLoading=true;
@@ -826,6 +879,8 @@ async function click(e){const el=e.target.closest('[data-action]');if(!el||el.di
   if(act==='biome'){state.biome=el.dataset.biome;render();return}
   if(act==='quick-hunt'){try{const d=await action('/api/pokemon-adventure/hunt',{biome:'random'},()=>{});await huntCinematic(d)}catch(_){}return}
   if(act==='hunt-biome'){try{const d=await action('/api/pokemon-adventure/hunt',{biome:el.dataset.biome||'random'},()=>{});await huntCinematic(d)}catch(_){}return}
+  if(act==='hall-filter'){state.hallFilter=el.dataset.hallFilter||'all';render();return}
+  if(act==='hall-expand'){const k=el.dataset.hallExpand;if(k){const list=state.hallExpanded||[];state.hallExpanded=list.includes(k)?list.filter(x=>x!==k):[...list,k];render()}return}
   if(act==='rank-mode'){state.rankMode=el.dataset.mode||'global';state.ranking=[];await loadRanking(true);render();return}
   if(act==='boss-auto'){
     const enabled=el.dataset.enabled==='1';

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 520" role="img" aria-label="Templo das lendas com troféu dourado e cristais verdes">
+<defs>
+<linearGradient id="sky" x2="0.9" y2="1"><stop stop-color="#031a19"/><stop offset=".45" stop-color="#062722"/><stop offset="1" stop-color="#070e17"/></linearGradient>
+<radialGradient id="glow"><stop stop-color="#9afe97" stop-opacity=".72"/><stop offset=".45" stop-color="#1a9d72" stop-opacity=".18"/><stop offset="1" stop-color="#001f14" stop-opacity="0"/></radialGradient>
+<radialGradient id="goldglow"><stop stop-color="#ffe49c" stop-opacity=".52"/><stop offset="1" stop-color="#c1a24e" stop-opacity="0"/></radialGradient>
+<linearGradient id="gold" x2="0.8" y2="1"><stop stop-color="#fff1bd"/><stop offset=".23" stop-color="#ffcf6b"/><stop offset=".57" stop-color="#aa7329"/><stop offset=".84" stop-color="#e8b755"/><stop offset="1" stop-color="#fff0b0"/></linearGradient>
+<linearGradient id="emerald" x2="0.7" y2="1"><stop stop-color="#afff9e"/><stop offset=".5" stop-color="#20d381"/><stop offset="1" stop-color="#047d64"/></linearGradient>
+<linearGradient id="pillar" x2="1" y2="0"><stop stop-color="#0c4439"/><stop offset=".5" stop-color="#0e5949"/><stop offset="1" stop-color="#032a27"/></linearGradient>
+<pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0H0V60" fill="none" stroke="#54d598" stroke-opacity=".045"/></pattern>
+<filter id="soft"><feGaussianBlur stdDeviation="25"/></filter><filter id="glowf"><feGaussianBlur stdDeviation="6"/></filter>
+</defs>
+<rect width="1440" height="520" fill="url(#sky)"/><rect width="1440" height="520" fill="url(#grid)"/>
+<circle cx="1067" cy="254" r="330" fill="url(#glow)"/><circle cx="1120" cy="232" r="255" fill="url(#goldglow)"/>
+<g opacity=".3" fill="none" stroke="#4fe4a5" stroke-width="3"><path d="M0 417Q330 350 660 420T1440 390"/><path d="M0 455Q320 390 660 460T1440 422"/></g>
+<g opacity=".6" fill="#08372e"><path d="M450 465 600 235l83 113 91-154 120 215 103-90 108 148Z"/><path d="M800 490 1020 180l130 205 170-160 180 265Z"/></g>
+<g transform="translate(900 62)">
+<path d="M-30 415H370" stroke="url(#gold)" stroke-width="19" stroke-linecap="round"/>
+<path d="M20 345H330L360 416H-15Z" fill="#073b34" stroke="url(#gold)" stroke-width="9"/>
+<path d="M20 105 180 18 342 105V131H20Z" fill="#052d28" stroke="url(#gold)" stroke-width="12"/>
+<path d="M49 132H92V344H49Zm132 0h43v212h-43Zm102 0h43v212h-43Z" fill="url(#pillar)" stroke="url(#gold)" stroke-width="8"/>
+<path d="M30 344H338" stroke="url(#gold)" stroke-width="15" stroke-linecap="round"/>
+<g transform="translate(92 160)"><circle cx="82" cy="69" r="99" fill="url(#goldglow)"/>
+<path d="M44 18H124V70Q124 113 84 120Q44 113 44 70Z" fill="url(#gold)" stroke="#fff2bc" stroke-width="6"/>
+<path d="M45 35H20C8 35 12 96 51 96M124 35h25c12 0 8 61-31 61" fill="none" stroke="url(#gold)" stroke-width="13"/>
+<path d="M84 122v28m-35 8h70" stroke="#ffdc88" stroke-width="12" stroke-linecap="round"/>
+<path d="m84 31 11 22 25 3-18 17 5 25-23-12-22 12 4-25-18-17 25-3z" fill="url(#emerald)" stroke="#f5edb5" stroke-width="4"/>
+</g></g>
+<g fill="none" stroke="#43e8b0" stroke-opacity=".24" stroke-width="2"><circle cx="1068" cy="251" r="212"/><circle cx="1068" cy="251" r="238"/></g>
+<g fill="#bcffbb"><circle cx="805" cy="100" r="4"/><circle cx="1380" cy="180" r="6"/><circle cx="760" cy="260" r="3"/><circle cx="1320" cy="88" r="4"/><circle cx="1020" cy="42" r="3"/><circle cx="1420" cy="385" r="5"/></g>
+<g fill="#fff4ae" opacity=".9"><path d="m850 150 6 15 15 6-15 6-6 15-6-15-15-6 15-6z"/><path d="m1320 330 5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/></g>
+<rect x="3" y="3" width="1434" height="514" rx="26" fill="none" stroke="#e0c270" stroke-opacity=".38" stroke-width="6"/>
+</svg>
