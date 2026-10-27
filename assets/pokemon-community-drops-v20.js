@@ -23,7 +23,7 @@ function current(){
 const isLogged=()=>{const u=current();return !!u.token&&!u.guest&&!!u.numero};
 const proxy=path=>PROXY+'/br2.bronxyshost.com:4009/proxy?url='+encodeURIComponent(BACKEND+path);
 const media=id=>proxy('/pokemon/images/artwork_'+Number(id)+'.png');
-const BOX_ART={freeMystery:'/assets/drop-box-basic.svg',freeExplorer:'/assets/drop-box-explorer.svg',freeElite:'/assets/drop-box-special.svg',dropBoxBasic:'/assets/drop-box-basic.svg',dropBoxExplorer:'/assets/drop-box-explorer.svg',dropBoxSpecial:'/assets/drop-box-special.svg',dropBoxLegendary:'/assets/drop-box-legendary.svg',basic:'/assets/drop-box-basic.svg',explorer:'/assets/drop-box-explorer.svg',special:'/assets/drop-box-special.svg',legendary:'/assets/drop-box-legendary.svg'};
+const BOX_ART={freeMystery:'/assets/neon-box-free-basic.svg',freeExplorer:'/assets/neon-box-free-explorer.svg',freeElite:'/assets/neon-box-free-elite.svg',dropBoxBasic:'/assets/drop-box-basic.svg',dropBoxExplorer:'/assets/drop-box-explorer.svg',dropBoxSpecial:'/assets/drop-box-special.svg',dropBoxLegendary:'/assets/drop-box-legendary.svg',basic:'/assets/drop-box-basic.svg',explorer:'/assets/drop-box-explorer.svg',special:'/assets/drop-box-special.svg',legendary:'/assets/drop-box-legendary.svg'};
 const boxArt=id=>BOX_ART[String(id||'')]||'/assets/drop-box-basic.svg';
 const boxImage=(id,label='Caixa')=>`<img class="box-art" loading="lazy" src="${esc(boxArt(id))}" alt="${esc(label)}">`;
 const speciesImage=id=>`<img loading="lazy" src="${esc(media(id))}" alt="" onerror="this.style.display='none'">`;
@@ -81,6 +81,15 @@ const PORTAL_CSS=`
 #modal.fabi-drops-portal .purchase-summary b{display:block;font-size:15px;color:#fff;margin-bottom:4px}
 #modal.fabi-drops-portal .purchase-summary small{display:block;color:#a8c3cb;line-height:1.55}
 #modal.fabi-drops-portal .purchase-total-strong{display:block;margin-top:8px;font-size:14px;color:#dfffd0}
+/* V30 visual refinado para a janela incorporada */
+#modal.fabi-drops-portal .modal-panel{background:radial-gradient(ellipse 70% 28% at 100% 0%,rgba(33,166,107,.13),transparent 90%),linear-gradient(160deg,#0b2722,#071717);border-color:rgba(95,244,162,.48);border-radius:20px;box-shadow:0 35px 105px #000c}
+#modal.fabi-drops-portal .modal-close{background:#143f32;border-color:rgba(138,249,175,.25)}
+#modal.fabi-drops-portal .odds-list{max-height:min(48vh,440px)}
+#modal.fabi-drops-portal .species-chip{background:linear-gradient(145deg,#113a2d,#082421);border-color:rgba(100,232,165,.3);border-radius:12px}
+#modal.fabi-drops-portal .species-chip strong{color:#ffe593}
+#modal.fabi-drops-portal .section-label{color:#abffab}
+#modal.fabi-drops-portal .btn.secondary{background:#143b30;border-color:#376f5b}
+#modal.fabi-drops-portal .rotation-info{background:#154130;border-color:#357956}
 @keyframes fabiSpin{to{transform:rotate(360deg)}}
 @media(max-width:650px){#modal.fabi-drops-portal{padding:8px!important}#modal.fabi-drops-portal .modal-panel{padding:13px 13px 20px;max-height:calc(100vh - 16px);max-height:calc(100dvh - 16px)}#modal.fabi-drops-portal .odds-list{grid-template-columns:1fr;max-height:43vh}#modal.fabi-drops-portal .modal-actions .btn{flex:1 1 100%}}
 `;
@@ -175,7 +184,7 @@ function renderFreeBoxes(){
   const lvl=Number(box.playerLevel)||1,locked=lvl<box.minLevel,waiting=Number(box.nextAt)>Date.now();
   const pool=Array.isArray(box.possibleSpecies)?box.possibleSpecies:[];
   const status=locked?`🔒 Desbloqueia no nível ${box.minLevel}`:waiting?`⏳ Próximo resgate: ${nextDate(box.nextAt)}`:'✅ Pronta para resgatar';
-  return `<article class="free-box daily-tier ${esc(box.id)}"><div class="free-box-top box-head">${boxImage(box.id,box.label)}<div><b>${esc(box.label)}</b><small>${esc(box.tier)} · Nível ${Number(box.minLevel)}</small></div></div><div class="free-box-meta"><span>${pool.length} espécies hoje</span><span>Até ${shortDate(box.rotationEndsAt)}</span><span>${box.cooldownHours}h entre resgates</span></div><div class="daily-mini-pool compact species-grid all-species-grid">${pool.map(x=>`<button type="button" class="species-thumb" data-species="${Number(x.id)}" data-source-box="${esc(box.id)}" title="${esc(x.name)} · chance ${chanceLabel(x.chance)}">${speciesImage(x.id)}<small>${esc(x.name)}</small><strong>${chanceLabel(x.chance)}</strong><span class="tiny-owned ${x.owned?'yes':'no'}" title="${x.owned?'Já tenho':'Ainda não tenho'}"></span></button>`).join('')}</div><button class="btn secondary mini box-info" data-odds="${esc(box.id)}" type="button">Ver todos os Pokémon e chances</button><div class="free-box-footer"><small>${status}</small><button class="btn primary mini" data-free="${esc(box.id)}" type="button" ${locked||waiting||!isLogged()?'disabled':''}>Resgatar gratuitamente</button></div></article>`;
+  return `<article class="free-box daily-tier ${esc(box.id)}"><div class="free-box-top box-head">${boxImage(box.id,box.label)}<div><b>${esc(box.label)}</b><small>${esc(box.tier)} · Nível ${Number(box.minLevel)}</small></div></div><div class="free-box-meta"><span>${pool.length} espécies possíveis</span><span>Até ${shortDate(box.rotationEndsAt)}</span><span>${box.cooldownHours}h entre resgates</span></div><div class="daily-mini-pool compact species-grid all-species-grid">${pool.map(x=>`<button type="button" class="species-thumb" data-species="${Number(x.id)}" data-source-box="${esc(box.id)}" title="${esc(x.name)} · chance ${chanceLabel(x.chance)}">${speciesImage(x.id)}<small>${esc(x.name)}</small><strong>${chanceLabel(x.chance)}</strong><span class="tiny-owned ${x.owned?'yes':'no'}" title="${x.owned?'Já tenho':'Ainda não tenho'}"></span></button>`).join('')}</div><button class="btn secondary mini box-info" data-odds="${esc(box.id)}" type="button">Ver catálogo completo de chances</button><div class="free-box-footer"><small>${status}</small><button class="btn primary mini" data-free="${esc(box.id)}" type="button" ${locked||waiting||!isLogged()?'disabled':''}>Resgatar gratuitamente</button></div></article>`;
  }).join('');
 }
 function oddsModal(boxId){
