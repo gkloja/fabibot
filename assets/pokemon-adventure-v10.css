@@ -546,3 +546,33 @@ html[data-theme="light"] .pk-page{color:#0a0f14}
 .pk-shop-panel,.pk-shop-research{background:linear-gradient(180deg,rgba(14,22,18,.98),rgba(7,12,10,.98))}.pk-shop-side{background:linear-gradient(180deg,rgba(13,22,25,.98),rgba(7,13,10,.98))}
 @media(max-width:900px){.pk-shop-hero{grid-template-columns:1fr}.pk-shop-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:660px){.pk-drop-hub{padding:9px!important}.pk-drop-frame{border-radius:12px;height:1100px;min-height:520px}.pk-shop-metrics{grid-template-columns:1fr}.pk-drops-badges{grid-template-columns:1fr}.pk-drops-intro,.pk-shop-side{order:1}.pk-drop-hub,.pk-shop-panel,.pk-shop-research{order:2}}
+
+/* V27 — acabamento visual, foco acessível e responsividade */
+.pk-shop-hero,.pk-drops-intro,.pk-drop-hub,.pk-shop-panel,.pk-shop-research,.pk-shop-side{position:relative;isolation:isolate;transition:border-color .22s ease,box-shadow .22s ease}
+.pk-shop-hero{border-color:rgba(106,192,255,.26)!important;background:radial-gradient(ellipse 60% 100% at 100% 0%,rgba(77,135,218,.16),transparent 75%),linear-gradient(135deg,#142824,#0b1616)!important;overflow:hidden}
+.pk-shop-hero::before{content:'';position:absolute;right:-55px;top:-105px;width:300px;height:300px;border:1px solid rgba(134,193,255,.12);border-radius:50%;pointer-events:none}
+.pk-shop-hero .pk-eyebrow{color:#99d5ff}.pk-shop-hero h2{font-size:clamp(1.6rem,3vw,2.35rem);letter-spacing:-.04em;line-height:1.1}
+.pk-shop-hero-copy>p{max-width:610px;font-size:.8rem;line-height:1.8;color:var(--muted)}
+.pk-shop-metrics span{min-width:0;overflow-wrap:anywhere;background:linear-gradient(145deg,rgba(88,143,198,.11),rgba(27,50,56,.12));box-shadow:inset 0 1px rgba(255,255,255,.035)}
+.pk-shop-metrics b{font-size:clamp(1.25rem,2vw,1.8rem);letter-spacing:-.04em}
+.pk-shop-panel .pk-shop-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pk-shop-panel .pk-shop-item{min-width:0;min-height:96px;border-radius:16px;padding:13px;grid-template-columns:40px minmax(0,1fr);grid-template-rows:1fr auto;align-items:start;transition:transform .2s ease,border-color .2s ease}
+.pk-shop-panel .pk-shop-item>i{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:rgba(63,196,124,.09)}
+.pk-shop-panel .pk-shop-item>button{grid-column:1/-1;min-height:36px;font-size:.71rem}
+.pk-shop-panel .pk-shop-item b{font-size:.78rem}.pk-shop-panel .pk-shop-item span{font-size:.67rem;line-height:1.6}
+.pk-shop-panel .pk-shop-item:hover,.pk-research:hover{transform:translateY(-2px);border-color:rgba(85,222,149,.35)}
+.pk-shop-research .pk-research{padding:15px 10px;border-radius:17px;transition:transform .2s ease,border-color .2s ease}
+.pk-shop-research .pk-research img{max-width:100%;filter:drop-shadow(0 10px 14px rgba(0,0,0,.2))}
+.pk-shop-research .pk-research button{min-height:36px;min-width:95px;font-size:.7rem}
+.pk-shop-side .pk-primary{width:100%}
+.pk-drops-intro{border-color:rgba(82,202,135,.28)!important;background:radial-gradient(ellipse at 0% 0%,rgba(61,158,93,.14),transparent 75%),linear-gradient(145deg,#142b20,#0a1714)!important}
+.pk-drops-intro .pk-drops-steps>div{border-left:3px solid rgba(94,227,143,.5)}
+.pk-drop-hub{border-color:rgba(97,191,150,.23)!important}
+.pk-drop-frame{width:100%;max-width:100%;border-radius:17px;box-shadow:0 15px 40px rgba(0,0,0,.18)}
+.pk-shop-hero :is(button,a),.pk-drops-intro :is(button,a){transition:transform .18s ease,filter .18s ease}
+.pk-shop-hero :is(button,a):hover,.pk-drops-intro :is(button,a):hover{transform:translateY(-2px);filter:brightness(1.08)}
+:is(.pk-shop-hero,.pk-drops-intro,.pk-shop-panel,.pk-shop-research,.pk-drop-hub) :is(button,a):focus-visible{outline:3px solid #99d5ff;outline-offset:3px}
+@media(max-width:1100px){.pk-shop-panel .pk-shop-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.pk-shop-hero{grid-template-columns:minmax(0,1fr)}.pk-shop-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.pk-shop-panel .pk-shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.pk-shop-hero{padding:18px}.pk-shop-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.pk-shop-metrics span:first-child{grid-column:1/-1}.pk-shop-panel .pk-shop-grid{grid-template-columns:1fr}.pk-shop-research .pk-research-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pk-drops-intro .pk-actions a{width:100%}}
+@media(prefers-reduced-motion:reduce){.pk-shop-hero *,.pk-drops-intro *,.pk-shop-item,.pk-research{transition:none!important;animation:none!important}}
