@@ -1,0 +1,52 @@
+/* Fabi Pokemon V37 — correção isolada do pódio mobile.
+   V36 tentava usar classes hv33-rank-2 e hv33-rank-3 inexistentes;
+   os três cards eram posicionados na mesma célula. */
+@media (max-width: 760px) {
+  .hv33-container .hv33-podium {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-areas: "first first" "second third" !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+    padding: 15px 2px 6px !important;
+    width: 100%;
+    min-width: 0;
+  }
+  /* Neutraliza a regra anterior que colocava os três na mesma posição. */
+  .hv33-container .hv33-podium > .hv33-podium-spot {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    overflow: visible !important; /* medalhas ficam acima do card */
+    box-sizing: border-box;
+  }
+  .hv33-container .hv33-podium > .hv33-ouro {
+    grid-area: first !important;
+    min-height: 132px;
+  }
+  .hv33-container .hv33-podium > .hv33-prata {
+    grid-area: second !important;
+    min-height: 170px;
+  }
+  .hv33-container .hv33-podium > .hv33-bronze {
+    grid-area: third !important;
+    min-height: 170px;
+  }
+  .hv33-container .hv33-podium .hv33-podium-name,
+  .hv33-container .hv33-podium .hv33-podium-score {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+  .hv33-container .hv33-podium .hv33-medal { z-index: 2; }
+}
+@media (max-width: 320px) {
+  .hv33-container .hv33-podium {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas: "first" "second" "third" !important;
+  }
+}
