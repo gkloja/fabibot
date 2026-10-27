@@ -46,3 +46,30 @@ body.light .free-box{background:#fff;border-color:#b6dbbc}body.light .free-box-t
 body.light .daily-art{background:linear-gradient(145deg,#deeee6,#eff8f2)}
 body.light .daily-label{background:#c4e5d0;color:#1b5734}body.light .rotation-info{color:#236438;background:#e8f9ef}body.light .odds-item{background:#eff8f4}
 @media(max-width:580px){.odds-list{grid-template-columns:1fr}.odds-item{padding:7px 10px}.daily-art{height:114px}.product p{min-height:auto}.paid-box .product-footer{margin-top:12px}}
+
+
+/* V19 — caixas com artes dedicadas, previews menores e checkout melhor no mobile */
+.box-art{display:block;width:104px;height:104px;object-fit:contain;filter:drop-shadow(0 12px 20px rgba(0,0,0,.25))}
+.box-head .box-art{width:72px;height:72px;flex:0 0 72px}
+.box-head{align-items:center}
+.box-product-art{height:150px;background:radial-gradient(circle at 50% 45%,rgba(176,246,109,.16),transparent 64%),linear-gradient(145deg,#10272b,#0b1a21)}
+.product-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.product-chips span{font-size:10px;font-weight:800;letter-spacing:.04em;padding:6px 9px;border-radius:999px;background:#21413655;border:1px solid #51796866;color:#dff8ea}
+.daily-mini-pool.compact{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;align-items:center}
+.daily-mini-pool.compact>div{flex:auto;width:100%;height:48px}
+.daily-mini-pool.compact img{width:34px;height:34px}
+.box-detail-top .box-art{width:72px;height:72px;flex:0 0 72px}
+.modal-panel{width:min(560px,100%)}
+.wallet-item img{border-radius:12px;background:#0d1820;padding:4px}
+body.light .wallet-item img{background:#eef8f3}
+@media(max-width:660px){
+  .box-art{width:88px;height:88px}
+  .box-head .box-art,.box-detail-top .box-art{width:64px;height:64px;flex-basis:64px}
+  .daily-mini-pool.compact{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .daily-mini-pool.compact>div{height:46px}
+  .product-chips span{font-size:9px}
+  .modal{padding:10px}
+  .modal-panel{padding:18px;border-radius:18px;max-height:94vh}
+  .modal-actions .btn{width:100%}
+  .pix-code{min-height:122px}
+}

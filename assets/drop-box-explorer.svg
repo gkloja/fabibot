@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Caixa Explorador">
+  <defs>
+    <radialGradient id="bg2" cx="50%" cy="38%" r="60%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#dce4ef"/>
+    </radialGradient>
+    <linearGradient id="top2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#39a6ff"/>
+      <stop offset="100%" stop-color="#1c63d6"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="210" fill="url(#bg2)" stroke="#1c1c1c" stroke-width="18"/>
+  <path d="M46 256a210 210 0 0 1 420 0H46z" fill="url(#top2)"/>
+  <path d="M112 80l72 64-34 38-88-46c13-22 30-41 50-56zm288 56-88 46-34-38 72-64c20 15 37 34 50 56z" fill="#ef3333" stroke="#9d1111" stroke-width="6"/>
+  <rect x="46" y="242" width="420" height="28" fill="#1c1c1c"/>
+  <circle cx="256" cy="256" r="54" fill="#f7f7f7" stroke="#1c1c1c" stroke-width="18"/>
+  <circle cx="256" cy="256" r="23" fill="#cfcfcf"/>
+  <ellipse cx="210" cy="132" rx="78" ry="42" fill="#ffffff" opacity=".18"/>
+</svg>

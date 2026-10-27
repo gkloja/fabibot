@@ -20,6 +20,9 @@ function current(){
 const isLogged=()=>{const u=current();return !!u.token&&!u.guest&&!!u.numero};
 const proxy=path=>PROXY+'/br2.bronxyshost.com:4009/proxy?url='+encodeURIComponent(BACKEND+path);
 const media=id=>proxy('/pokemon/images/artwork_'+Number(id)+'.png');
+const BOX_ART={freeMystery:'/assets/drop-box-basic.svg',freeExplorer:'/assets/drop-box-explorer.svg',freeElite:'/assets/drop-box-special.svg',dropBoxBasic:'/assets/drop-box-basic.svg',dropBoxExplorer:'/assets/drop-box-explorer.svg',dropBoxSpecial:'/assets/drop-box-special.svg',basic:'/assets/drop-box-basic.svg',explorer:'/assets/drop-box-explorer.svg',special:'/assets/drop-box-special.svg'};
+const boxArt=id=>BOX_ART[String(id||'')]||'/assets/drop-box-basic.svg';
+const boxImage=(id,label='Caixa')=>`<img class="box-art" loading="lazy" src="${esc(boxArt(id))}" alt="${esc(label)}">`;
 function embeddedView(){
  try{return window.parent!==window && window.frameElement && window.parent.location.origin===location.origin?window.frameElement:null}catch(_){return null}
 }
@@ -70,11 +73,10 @@ function renderFreeBoxes(){
   const lvl=Number(box.playerLevel)||1,locked=lvl<box.minLevel,waiting=Number(box.nextAt)>Date.now();
   const pool=Array.isArray(box.possibleSpecies)?box.possibleSpecies:[];
   const status=locked?`🔒 Desbloqueia no nível ${box.minLevel}`:waiting?`⏳ Próximo resgate: ${nextDate(box.nextAt)}`:'✅ Pronta para resgatar';
-  return `<article class="free-box daily-tier ${esc(box.id)}"><div class="free-box-top"><span class="free-box-icon" aria-hidden="true">${esc(box.icon)}</span><div><b>${esc(box.label)}</b><small>${esc(box.tier)} · Nível ${Number(box.minLevel)}</small></div></div>
-  <div class="daily-art"><div class="chest-glow">${esc(box.icon)}</div><span class="daily-label">CATÁLOGO DE HOJE</span></div>
-  <div class="free-box-meta"><span>${pool.length} espécies nesta rotação</span><span>Até ${shortDate(box.rotationEndsAt)}</span><span>${box.cooldownHours}h entre resgates</span></div>
-  <div class="daily-mini-pool">${pool.slice(0,4).map(x=>`<div title="${esc(x.name)}">${speciesImage(x.id)}</div>`).join('')}<span>+${Math.max(0,pool.length-4)}</span></div>
-  <button class="btn secondary mini box-info" data-odds="${esc(box.id)}" type="button">🔎 Ver Pokémon e probabilidades</button>
+  return `<article class="free-box daily-tier ${esc(box.id)}"><div class="free-box-top box-head">${boxImage(box.id,box.label)}<div><b>${esc(box.label)}</b><small>${esc(box.tier)} · Nível ${Number(box.minLevel)}</small></div></div>
+  <div class="free-box-meta"><span>${pool.length} espécies hoje</span><span>Até ${shortDate(box.rotationEndsAt)}</span><span>${box.cooldownHours}h entre resgates</span></div>
+  <div class="daily-mini-pool compact">${pool.slice(0,6).map(x=>`<div title="${esc(x.name)}">${speciesImage(x.id)}</div>`).join('')}${pool.length>6?`<span>+${Math.max(0,pool.length-6)}</span>`:''}</div>
+  <button class="btn secondary mini box-info" data-odds="${esc(box.id)}" type="button">🔎 Ver espécies e probabilidades</button>
   <div class="free-box-footer"><small>${status}</small><button class="btn primary mini" data-free="${esc(box.id)}" type="button" ${locked||waiting||!isLogged()?'disabled':''}>🎁 Resgatar gratuitamente</button></div></article>`;
  }).join('');
 }
@@ -82,7 +84,7 @@ function oddsModal(boxId){
  const box=data.boxes.find(x=>x.id===boxId);if(!box)return toast('Atualize o catálogo antes de consultar a caixa.',true);
  const pool=box.possibleSpecies||[];
  const list=pool.map(x=>`<div class="odds-item">${speciesImage(x.id)}<div><b>${esc(x.name||'Pokémon')}</b><small>#${String(x.id).padStart(3,'0')} · ${esc(x.rarity||box.tier)}</small></div><strong>${Number(x.chance??box.chancePerSpecies).toLocaleString('pt-BR',{maximumFractionDigits:3})}%</strong></div>`).join('');
- modal(`<div class="box-detail-top"><span class="detail-emoji">${esc(box.icon)}</span><div><span class="section-label">CATÁLOGO GRATUITO DO DIA</span><h3 id="modalTitle">${esc(box.label)}</h3><p>${esc(box.tier)} · Nível ${box.minLevel}+ · Resgate a cada ${box.cooldownHours}h</p></div></div>
+ modal(`<div class="box-detail-top">${boxImage(box.id,box.label)}<div><span class="section-label">CATÁLOGO GRATUITO DO DIA</span><h3 id="modalTitle">${esc(box.label)}</h3><p>${esc(box.tier)} · Nível ${box.minLevel}+ · Resgate a cada ${box.cooldownHours}h</p></div></div>
  <div class="rotation-info">🔄 Próxima rotação: ${esc(shortDate(box.rotationEndsAt))} (Brasília)</div>
  <p>Esses são os Pokémon que podem aparecer <strong>hoje</strong>. Cada espécie tem a probabilidade informada abaixo. A seleção muda diariamente, mas a chance só é aplicada quando você resgata a caixa gratuita.</p>
  <div class="odds-list">${list}</div><p class="odds-total">Probabilidade total: 100% · ${pool.length} espécies equiprováveis. Não há pagamento para abrir esta caixa.</p>
@@ -90,12 +92,17 @@ function oddsModal(boxId){
 }
 function renderProducts(){
  const root=$('#catalog');if(!root)return;
- if(!data.products.length){root.innerHTML='<div class="empty">Entre na conta do Pokémon Adventure para consultar eventos PIX. As caixas-surpresa diárias são gratuitas.</div>';return}
- root.innerHTML=data.products.map(p=>`<article class="product paid-box"><small>${esc(p.icon||'🎁')} · EVENTO COM CONTEÚDO DEFINIDO</small><div class="product-art"><span class="paid-chest">${esc(p.icon||'📦')}</span></div><h3>${esc(p.label)}</h3><p>Um evento de figurinha para seu grupo. Confira os detalhes antes de solicitar PIX.</p><div class="paid-detail"><button class="btn secondary mini" type="button" data-paid-details="${esc(p.id)}">Ver conteúdo exato</button></div><div class="product-footer"><strong>${money(p.price)}</strong><button class="btn primary" type="button" data-buy="${esc(p.id)}">Gerar PIX</button></div></article>`).join('');
+ if(!data.products.length){root.innerHTML='<div class="empty">Entre na conta do Pokémon Adventure para consultar caixas PIX da comunidade.</div>';return}
+ root.innerHTML=data.products.map(p=>{
+  const pool=Array.isArray(p.possibleSpecies)?p.possibleSpecies:[];
+  return `<article class="product paid-box"><small>📦 CAIXA PIX · CATÁLOGO DO DIA</small><div class="product-art box-product-art">${boxImage(p.id,p.label)}</div><h3>${esc(p.label)}</h3><p>${esc(p.description||'Caixa comunitária com Pokémon aleatório.')}</p><div class="product-chips"><span>${pool.length} espécies hoje</span><span>${esc(p.tier||'Caixa')}</span></div><div class="paid-detail"><button class="btn secondary mini" type="button" data-paid-details="${esc(p.id)}">Ver espécies e chances</button></div><div class="product-footer"><strong>${money(p.price)}</strong><button class="btn primary" type="button" data-buy="${esc(p.id)}">Gerar PIX</button></div></article>`;
+ }).join('');
 }
 function paidModal(id){
  const p=data.products.find(x=>x.id===id);if(!p)return toast('Caixa indisponível.',true);
- modal(`<span class="section-label">EVENTO COM CONTEÚDO DEFINIDO</span><h3 id="modalTitle">${esc(p.label)}</h3><div class="paid-content-preview">${p.speciesId?speciesImage(p.speciesId):'<span>🎁</span>'}<p>${esc(p.description||'Evento com conteúdo definido.')}</p></div><p>Essa modalidade PIX não sorteia Pokémon. O conteúdo mostrado acima é conhecido antes da compra. A captura do evento é aberta ao grupo.</p><div class="modal-actions"><button class="btn primary" data-buy="${esc(p.id)}" type="button">Gerar PIX de ${money(p.price)}</button><button class="btn secondary" type="button" data-close="1">Agora não</button></div>`);
+ const pool=Array.isArray(p.possibleSpecies)?p.possibleSpecies:[];
+ const list=pool.map(x=>`<div class="odds-item">${speciesImage(x.id)}<div><b>${esc(x.name||'Pokémon')}</b><small>#${String(x.id).padStart(3,'0')} · ${esc(x.rarity||p.tier||'Caixa')}</small></div><strong>${Number(x.chance||0).toLocaleString('pt-BR',{maximumFractionDigits:3})}%</strong></div>`).join('');
+ modal(`<div class="box-detail-top">${boxImage(p.id,p.label)}<div><span class="section-label">CAIXA PIX DO DIA</span><h3 id="modalTitle">${esc(p.label)}</h3><p>${esc(p.tier||'Caixa')} · ${money(p.price)} · catálogo válido até ${esc(shortDate(p.rotationEndsAt))}</p></div></div><p>Você está comprando a <strong>caixa</strong>, não um Pokémon garantido. Quando o pagamento for aprovado, a Fabi reserva aleatoriamente uma espécie dentro deste catálogo do dia e depois você escolhe em qual grupo com Pokémon automático ativo deseja dropar.</p><div class="odds-list">${list}</div><p class="odds-total">Probabilidade total: 100% · ${pool.length} espécies possíveis hoje.</p><div class="modal-actions"><button class="btn primary" data-buy="${esc(p.id)}" type="button">Gerar PIX de ${money(p.price)}</button><button class="btn secondary" type="button" data-close="1">Agora não</button></div>`);
 }
 function groupOptions(v){
  if(!data.groups.length)return '<option value="">Nenhum grupo com Pokémon automático ativo</option>';
@@ -104,8 +111,8 @@ function groupOptions(v){
 const STATUS={available:'Disponível',queued:'Na fila',processing:'Enviando',sent:'Entregue',review:'Em revisão'};
 function renderWallet(){
  const root=$('#wallet');$('#loginNote').hidden=isLogged();if(!isLogged()){root.innerHTML='';return}
- if(!data.vouchers.length){root.innerHTML='<div class="empty"><b>Sua carteira está vazia.</b><p>Resgate uma caixa gratuita acima e escolha um grupo com Pokémon automático ativo para enviar.</p></div>';return}
- root.innerHTML=data.vouchers.map(v=>`<article class="wallet-item"><img loading="lazy" src="${esc(v.speciesId?media(v.speciesId):'/flogo.jpg')}" alt=""><div><b>${esc(v.label)}</b><small>Evento ${esc(v.id.slice(-9))} · ${esc(dates(v.createdAt))}</small>${v.groupId?`<p>Grupo: …${esc(v.groupId.split('@')[0].slice(-8))}</p>`:''}${v.lastError?`<p>${esc(v.lastError)}</p>`:''}</div><div class="action"><span class="status ${esc(v.status)}">${esc(STATUS[v.status]||v.status)}</span>${v.status==='available'?`<select aria-label="Grupo para ${esc(v.label)}" class="group-select" data-group="${esc(v.id)}">${groupOptions(v)}</select><button type="button" class="btn primary mini" data-dispatch="${esc(v.id)}" ${data.groups.length?'':'disabled'}>Enviar ao grupo ↗</button>`:''}${v.status==='queued'?`<button type="button" class="btn secondary mini" data-cancel="${esc(v.id)}">Cancelar envio</button>`:''}</div></article>`).join('');
+ if(!data.vouchers.length){root.innerHTML='<div class="empty"><b>Sua carteira está vazia.</b><p>Resgate uma caixa gratuita ou compre uma caixa PIX acima e depois escolha um grupo com Pokémon automático ativo para enviar.</p></div>';return}
+ root.innerHTML=data.vouchers.map(v=>`<article class="wallet-item"><img loading="lazy" src="${esc(v.speciesId?media(v.speciesId):boxArt(v.productId))}" alt=""><div><b>${esc(v.label)}</b><small>${v.speciesId?'Pokémon revelado':'Espécie oculta'} · ${esc(dates(v.createdAt))}</small>${v.groupId?`<p>Grupo: …${esc(v.groupId.split('@')[0].slice(-8))}</p>`:''}${v.lastError?`<p>${esc(v.lastError)}</p>`:''}</div><div class="action"><span class="status ${esc(v.status)}">${esc(STATUS[v.status]||v.status)}</span>${v.status==='available'?`<select aria-label="Grupo para ${esc(v.label)}" class="group-select" data-group="${esc(v.id)}">${groupOptions(v)}</select><button type="button" class="btn primary mini" data-dispatch="${esc(v.id)}" ${data.groups.length?'':'disabled'}>Enviar ao grupo ↗</button>`:''}${v.status==='queued'?`<button type="button" class="btn secondary mini" data-cancel="${esc(v.id)}">Cancelar envio</button>`:''}</div></article>`).join('');
 }
 async function load(silent=false){
  const u=current();
@@ -117,6 +124,9 @@ async function load(silent=false){
  }catch(e){if(!silent)toast(e.message,true);$('#freeNote').textContent='Não foi possível carregar as caixas: '+e.message;renderProducts();renderFreeBoxes();renderWallet()}
 }
 async function buy(id){
+ if(embeddedView() && ((window.parent&&window.parent.innerWidth<960)||window.innerWidth<760)){
+  try{window.top.location='/pokemon-drops?buy='+encodeURIComponent(id);return;}catch(_){}
+ }
  if(!isLogged())return loginModal();
  if(busy)return toast('Já existe uma solicitação em andamento.');
  const product=data.products.find(p=>p.id===id);if(!product)return toast('Evento não encontrado. Atualize o catálogo.',true);
@@ -128,7 +138,7 @@ async function buy(id){
   if(!r.transactionId||!r.copyPaste)throw Error('O pagamento foi iniciado, mas o servidor não enviou o código PIX. Verifique antes de criar outra cobrança.');
   const tx=r.transactionId,qr=String(r.qrCode||'');activeTx=tx;
   const safeQR=/^(?:data:image\/(?:png|jpeg);base64,[a-zA-Z0-9+/=]+|https:\/\/[^\s]+)$/i.test(qr)?qr:'';
-  modal(`<span class="section-label">PIX · PAGAMENTO MERCADO PAGO</span><h3 id="modalTitle">${esc(r.product?.label||product.label)}</h3><p>Valor: <b>${money(r.product?.price||product.price)}</b>. Após a confirmação, seu evento aparecerá na carteira de drops, para envio a um grupo com Pokémon automático ativo.</p>${safeQR?`<img class="qr" src="${esc(safeQR)}" alt="QR Code PIX">`:''}<label class="muted" for="pixInput">PIX copia e cola</label><textarea class="pix-code" id="pixInput" readonly></textarea><div class="modal-actions"><button type="button" class="btn primary" id="copyPix">Copiar código PIX</button><button type="button" class="btn secondary" id="checkPix">Verificar pagamento</button></div><div class="modal-status" id="paymentStatus">Aguardando confirmação do Mercado Pago.</div><small class="payment-expires">Válido até ${shortDate(r.expiresAt)}.</small>`);
+  modal(`<span class="section-label">PIX · PAGAMENTO MERCADO PAGO</span><h3 id="modalTitle">${esc(r.product?.label||product.label)}</h3><p>Valor: <b>${money(r.product?.price||product.price)}</b>. Após a confirmação, sua caixa aparecerá na carteira de drops. A espécie sorteada permanece oculta até o envio ao grupo com Pokémon automático ativo.</p>${safeQR?`<img class="qr" src="${esc(safeQR)}" alt="QR Code PIX">`:''}<label class="muted" for="pixInput">PIX copia e cola</label><textarea class="pix-code" id="pixInput" readonly></textarea><div class="modal-actions"><button type="button" class="btn primary" id="copyPix">Copiar código PIX</button><button type="button" class="btn secondary" id="checkPix">Verificar pagamento</button></div><div class="modal-status" id="paymentStatus">Aguardando confirmação do Mercado Pago.</div><small class="payment-expires">Válido até ${shortDate(r.expiresAt)}.</small>`);
   $('#pixInput').value=String(r.copyPaste);
   $('#copyPix').onclick=async()=>{try{await navigator.clipboard.writeText($('#pixInput').value);toast('Código PIX copiado!')}catch(_){$('#pixInput').select();try{document.execCommand('copy');toast('Código PIX selecionado.')}catch(_){toast('Selecione e copie o código PIX manualmente.')}}};
   $('#checkPix').onclick=()=>checkPayment(tx);
@@ -178,5 +188,7 @@ $('#themeToggle')?.addEventListener('click',()=>{document.body.classList.toggle(
 try{if(localStorage.getItem('theme')==='light'||localStorage.getItem('darkMode')==='false')document.body.classList.add('light')}catch(_){}
 window.addEventListener('resize',()=>{if($('#modal')?.classList.contains('open'))fitOverlay()});
 window.parent!==window&&window.parent.addEventListener('scroll',()=>{if($('#modal')?.classList.contains('open'))fitOverlay()},{passive:true});
-load();setInterval(()=>{if(!document.hidden&&!$('#modal')?.classList.contains('open')&&isLogged())load(true)},30000);
+const qs=new URLSearchParams(location.search);
+load().then(()=>{const viewBox=qs.get('viewBox'),buyId=qs.get('buy');if(viewBox)paidModal(viewBox);else if(buyId)buy(buyId);});
+setInterval(()=>{if(!document.hidden&&!$('#modal')?.classList.contains('open')&&isLogged())load(true)},30000);
 })();
