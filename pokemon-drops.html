@@ -8,21 +8,22 @@
 <link rel="canonical" href="https://www.fabibot.com.br/pokemon-drops">
 <link rel="icon" href="/favicon-32x32.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/pokemon-community-drops-v20.css?v=27.0">
-<script defer src="/assets/pokemon-community-drops-v20.js?v=27.0"></script>
+<link rel="stylesheet" href="/assets/pokemon-community-drops-v20.css?v=28.0">
+<script defer src="/assets/pokemon-community-drops-v20.js?v=28.0"></script>
 <style>
-html.pk-embedded body{background:#071713!important}
-html.pk-embedded .topbar,html.pk-embedded footer,html.pk-embedded .faq,html.pk-embedded .hero-art{display:none!important}
-html.pk-embedded .wrap{width:calc(100% - 14px);max-width:1300px;margin:0 auto}
-html.pk-embedded .hero{grid-template-columns:1fr;min-height:0;padding:14px 0 8px}
-html.pk-embedded .hero h1{font-size:clamp(25px,3vw,39px);line-height:1.13}
-html.pk-embedded .hero-stats{display:none}
-html.pk-embedded .step-section{margin:18px 0}
-html.pk-embedded .steps{grid-template-columns:repeat(3,minmax(0,1fr))}
-html.pk-embedded .section{margin-top:30px}
-html.pk-embedded .free-drop{margin:16px 0 25px;grid-template-columns:1fr;padding:18px}
+html.pk-embedded,html.pk-embedded body{min-height:0!important;height:auto!important;background:#071713!important}
+html.pk-embedded .topbar,html.pk-embedded footer,html.pk-embedded .faq,html.pk-embedded .ambient,html.pk-embedded .drops-open-full{display:none!important}
+html.pk-embedded .wrap{width:calc(100% - 8px);max-width:none;margin:0 auto}
+html.pk-embedded #minhacarteira{margin:0!important}
+html.pk-embedded .drop-discovery{margin:0!important}
+html.pk-embedded .free-drop{grid-template-columns:1fr;padding:13px;margin:12px 0}
 html.pk-embedded .free-glow{display:none}
-@media(max-width:650px){html.pk-embedded .steps{grid-template-columns:1fr}html.pk-embedded .hero h1{font-size:28px}}
+html.pk-embedded .section{margin:0 0 10px!important}
+html.pk-embedded #eventos{margin:12px 0!important}
+html.pk-embedded .wallet-stats{margin-top:8px}
+html.pk-embedded .wallet-main{padding:0;border:0;background:transparent}
+html.pk-embedded .wallet-surface{display:block}
+@media(max-width:650px){html.pk-embedded .wrap{width:calc(100% - 4px)}}
 </style>
 <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('pk-embedded');</script>
 </head>
@@ -33,24 +34,30 @@ html.pk-embedded .free-glow{display:none}
   <a href="/pokemon" class="brand"><img src="/flogo.jpg" alt="" width="45" height="45"><span><strong>Fabi Adventure</strong><small>Central de Drops</small></span></a>
   <nav aria-label="Navegação"><a href="/pokemon">Voltar ao jogo</a><a href="/pokemon-guia.html">Guia</a><button id="themeToggle" class="theme-toggle" type="button" aria-label="Alternar tema">◐</button></nav>
 </header>
-<section class="hero">
-  <div class="hero-copy"><span class="eyebrow"><span class="live-dot"></span> CAIXAS & EVENTOS · V27</span>
-    <h1>Caixas para sua comunidade.<br><span>Os grupos participam da aventura.</span></h1>
-    <p>Explore as <b>caixas-surpresa gratuitas com catálogo renovado diariamente e chances por raridade</b> e os <b>pacotes comunitários PIX com todas as espécies incluídas e reveladas antes do pagamento</b>. Consulte todos os detalhes antes de prosseguir. Escolha um grupo com <b>Pokémon automático ativo</b> e a Fabi envia o drop.</p>
-    <div class="hero-actions"><button class="btn primary" type="button" data-open-catalog="free">Caixas gratuitas</button><button class="btn secondary" type="button" data-open-catalog="paid">Pacotes comunitários</button><a class="btn secondary" href="#minhacarteira">Meus Drops</a></div>
-    <div class="hero-stats"><div><b>24h</b><span>caixa Básica</span></div><div><b>1h</b><span>intervalo entre drops</span></div><div><b>Pokémon</b><span>sem ativar /pokedrops</span></div></div>
+<section id="minhacarteira" class="section drops-dashboard" aria-labelledby="walletTitle">
+  <div class="section-heading drops-title-row">
+    <div><span class="section-label">CENTRAL DA COMUNIDADE</span><h2 id="walletTitle">Meus Drops</h2></div>
+    <div class="drops-header-actions"><button id="refresh" type="button" class="btn secondary mini" title="Atualizar carteira">↻ Atualizar</button><a class="btn secondary mini drops-open-full" href="/pokemon-drops" target="_top">Tela completa</a></div>
   </div>
-  <div class="hero-art" aria-label="Ilustração dos eventos Pokémon"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="hero-ball">◓</div><span class="float-icon one">⚡</span><span class="float-icon two">🔥</span><span class="float-icon three">💧</span><div class="floating-card"><span class="dot"></span><small>O próximo evento</small><b>Você escolhe o grupo</b></div></div>
+  <div id="loginNote" class="login-note" hidden>Entre na sua conta Fabi pelo <a href="/pokemon">Pokémon Adventure</a> para acessar seus drops.</div>
+  <div id="walletStats" class="wallet-stats" aria-live="polite">
+    <div class="wallet-stat"><small>Disponíveis</small><b>—</b></div><div class="wallet-stat"><small>Em andamento</small><b>—</b></div><div class="wallet-stat"><small>Entregues</small><b>—</b></div><div class="wallet-stat"><small>Grupos ativos</small><b>—</b></div>
+  </div>
+  <div class="wallet-surface">
+    <div class="wallet-main">
+      <div class="wallet-list-toolbar"><div class="wallet-filters" aria-label="Filtrar drops"><button type="button" class="active" data-wallet-view="active" aria-pressed="true">Para usar</button><button type="button" data-wallet-view="history" aria-pressed="false">Histórico</button></div><span id="walletCount" class="wallet-count" aria-live="polite">Carregando sua carteira…</span></div>
+      <div id="wallet" class="wallet"><div class="skeleton wide"></div></div>
+      <div class="wallet-browse-actions"><button type="button" id="browseDrops" class="btn primary" aria-controls="discoverDrops" aria-expanded="false">Ver caixas disponíveis</button><button type="button" class="btn secondary" data-open-catalog="free">Caixas grátis</button><button type="button" class="btn secondary" data-open-catalog="paid">Pacotes da comunidade</button></div>
+    </div>
+  </div>
 </section>
-<section class="notice"><span aria-hidden="true">🛡️</span><div><b>Caixas gratuitas com sorteio por raridade; eventos PIX com conteúdo previamente definido.</b><p>O site mostra somente grupos com o Pokémon automático habilitado. Toque em “Ver Pokémon e probabilidades” para conferir o catálogo de hoje. As caixas gratuitas sorteiam uma das espécies exibidas, com menor chance para as raridades mais altas, e renovam sua seleção à meia-noite de Brasília. Os pacotes PIX entregam todas as espécies indicadas antes do pagamento, sem sorteio após a compra. O envio ao grupo não garante a captura a quem pagou.</p></div></section>
-<nav class="drop-section-nav" aria-label="Áreas da central"><a href="#minhacarteira">◈ Minha carteira</a><button type="button" data-open-catalog="free">🎁 Caixas gratuitas</button><button type="button" data-open-catalog="paid">📦 Pacotes comunitários</button></nav><div class="wallet-first-banner"><span class="section-label">SUA ÁREA PRINCIPAL</span><b>Seus Drops, em um só lugar.</b><small>Antes de abrir novas caixas, veja se você já possui drops prontos para enviar.</small></div><section id="minhacarteira" class="section"><div class="section-heading"><div><span class="section-label">MINHA JORNADA</span><h2>Meus Drops</h2><p>Acompanhe o status, selecione um grupo válido e envie cada evento em poucos passos.</p></div><button id="refresh" type="button" class="btn secondary mini">↻ Atualizar</button></div><div id="loginNote" class="login-note" hidden>Entre na sua conta Fabi pelo <a href="/pokemon">Pokémon Adventure</a> para usar os eventos da comunidade.</div><div class="wallet-stats" id="walletStats" aria-live="polite"><div class="wallet-stat"><small>Disponíveis</small><b>—</b><span>Aguardando login</span></div><div class="wallet-stat"><small>Na fila</small><b>—</b><span>Envios em andamento</span></div><div class="wallet-stat"><small>Entregues</small><b>—</b><span>Histórico recente</span></div><div class="wallet-stat"><small>Grupos válidos</small><b>—</b><span>Pokémon automático ativo</span></div></div><div class="wallet-surface"><div class="wallet-main"><div class="wallet-guide"><span><b>1. Selecione o drop</b><small>Gratuito ou pacote já resgatado</small></span><span><b>2. Escolha o grupo</b><small>Precisa estar com Pokémon automático ativo</small></span><span><b>3. Envie e acompanhe</b><small>O grupo recebe o evento; os participantes podem capturar</small></span></div><div class="wallet-actions"><button type="button" id="browseDrops" class="btn primary" aria-controls="discoverDrops" aria-expanded="false">Explorar caixas e obter novos drops</button><span id="walletCount" class="wallet-count" aria-live="polite">Verificando a carteira...</span></div><div id="wallet" class="wallet"><div class="skeleton wide"></div></div></div><aside class="wallet-sidekick"><span class="section-label">FLUXO RÁPIDO</span><h3>Como usar seus drops</h3><p>Se tiver um drop disponível, basta escolher o grupo e tocar em enviar. Se não tiver, use o botão acima para abrir o catálogo gratuito ou os pacotes comunitários.</p><div class="wallet-side-steps"><span>🎯 Veja o status de cada drop</span><span>👥 Escolha um grupo válido</span><span>📦 Use o catálogo só quando precisar de novos eventos</span></div></aside></div></section>
 <div id="discoverDrops" class="drop-discovery" hidden>
 <section class="free-drop" id="caixaGratis" aria-labelledby="freeDropTitle">
  <div class="free-glow" aria-hidden="true">🎁</div>
- <div class="free-copy"><span class="section-label">PRESENTE DA COMUNIDADE · 100% GRÁTIS</span><h2 id="freeDropTitle">Escolha sua caixa gratuita</h2><p>Todas as opções gratuitas mostram a lista completa de Pokémon possíveis e suas probabilidades. A caixa Básica está disponível a cada 24 horas. Outras caixas gratuitas são liberadas conforme seu nível e possuem intervalos maiores. As espécies possíveis mudam diariamente à meia-noite de Brasília. Abra os detalhes de cada caixa para ver os Pokémon, suas raridades e as porcentagens individuais calculadas a partir dos pesos de cada raridade. Depois, escolha um grupo com Pokémon automático ativo e a Fabi publicará a figurinha para captura coletiva.</p><div class="free-badges"><span>📊 Chance de cada espécie</span><span>🔄 Catálogo novo todos os dias</span><span>👥 Apenas grupos com Pokémon automático ativo</span></div><div id="freeBoxes" class="free-boxes" aria-live="polite"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div><button id="claimFree" class="btn secondary mini" type="button" hidden>Resgatar caixa Básica</button><p class="free-note" id="freeNote" aria-live="polite">Entre na sua conta Fabi para conferir suas caixas e níveis.</p></div>
+ <div class="free-copy"><span class="section-label">PRESENTE DA COMUNIDADE · 100% GRÁTIS</span><h2 id="freeDropTitle">Escolha sua caixa gratuita</h2><p>Grátis, com rotação diária e chances individuais por raridade. Toque na caixa para conferir as espécies antes de resgatar.</p><div class="free-badges"><span>📊 Chance de cada espécie</span><span>🔄 Catálogo novo todos os dias</span><span>👥 Apenas grupos com Pokémon automático ativo</span></div><div id="freeBoxes" class="free-boxes" aria-live="polite"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div><button id="claimFree" class="btn secondary mini" type="button" hidden>Resgatar caixa Básica</button><p class="free-note" id="freeNote" aria-live="polite">Entre na sua conta Fabi para conferir suas caixas e níveis.</p></div>
  </section>
-<section class="step-section"><div class="section-label">COMO FUNCIONA</div><div class="steps"><div><span class="step-number">01</span><h3>Resgate ou escolha</h3><p>Escolha uma caixa gratuita ou um pacote de espécies garantidas; confira todo o conteúdo antes de prosseguir.</p></div><div><span class="step-number">02</span><h3>Escolha um grupo com Pokémon automático ativo</h3><p>A lista apresenta somente grupos com Pokémon automático ligado e drops permitidos. Nenhum comando de ativação extra.</p></div><div><span class="step-number">03</span><h3>A Fabi faz o drop</h3><p>O bot publica o Pokémon sorteado da caixa gratuita. Quem responder primeiro pode capturar gratuitamente.</p></div></div></section>
-<section id="eventos" class="section"><div class="section-heading"><div><span class="section-label">CATÁLOGO</span><h2>Caixas comunitárias PIX</h2><p>Os pacotes PIX desta área incluem todos os Pokémon exibidos, de forma garantida e sem sorteio após a compra. Escolha a quantidade na próxima etapa; os sorteios por raridade ficam exclusivamente nas caixas gratuitas.</p></div><span class="section-chip">Mercado Pago · PIX</span></div>
+
+<section id="eventos" class="section"><div class="section-heading"><div><span class="section-label">CATÁLOGO</span><h2>Caixas comunitárias PIX</h2><p>Espécies definidas e mostradas antes do PIX; todas as indicadas estão incluídas.</p></div><span class="section-chip">Mercado Pago · PIX</span></div>
 <div id="catalog" class="catalog"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></section>
 
 </div><!-- /discoverDrops -->
