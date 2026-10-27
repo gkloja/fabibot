@@ -146,6 +146,38 @@ async function api(path,body){
 const ownedSet=()=>new Set((data.ownedSpecies||[]).map(x=>Number(x)).filter(Boolean));
 const speciesOwned=id=>ownedSet().has(Number(id));
 const chanceLabel=v=>Number(v||0).toLocaleString('pt-BR',{maximumFractionDigits:3})+'%';
+const RARITY_CHANCE_WEIGHT={common:30,uncommon:22,rare:14,epic:8,legendary:4,mythical:2};
+function chanceNumber(v){const n=Number(v);return Number.isFinite(n)&&n>0?n:null;}
+function rarityWeight(r){return RARITY_CHANCE_WEIGHT[String(r||'').toLowerCase()]||10;}
+function normalizeSpeciesPool(pool){
+ const arr=Array.isArray(pool)?pool.map(x=>({...x})):[];
+ if(!arr.length)return arr;
+ const hasValid=arr.some(x=>chanceNumber(x.chance)!=null);
+ const raw=arr.map(x=>chanceNumber(x.chance)??0);
+ const rawSum=raw.reduce((a,b)=>a+b,0);
+ const allHundred=arr.length>1&&arr.every(x=>Math.abs(Number(x.chance||0)-100)<0.001);
+ const looksBroken=!hasValid||allHundred||rawSum<=0||rawSum>100.5;
+ let weights;
+ if(looksBroken){
+   weights=arr.map(x=>rarityWeight(x.rarity));
+ }else{
+   weights=raw;
+ }
+ const total=weights.reduce((a,b)=>a+b,0)||1;
+ let rest=100;
+ arr.forEach((x,i)=>{
+   const val=i===arr.length-1?rest:Math.max(0,Math.round((weights[i]/total)*1000)/10);
+   x.chance=val;
+   rest=Math.round((rest-val)*10)/10;
+   x.owned=x.owned===true || speciesOwned(x.id);
+ });
+ return arr.sort((a,b)=>Number(b.chance||0)-Number(a.chance||0)||String(a.name||'').localeCompare(String(b.name||'')));
+}
+function decorateDataCollections(){
+ data.boxes=(Array.isArray(data.boxes)?data.boxes:[]).map(box=>({...box,possibleSpecies:normalizeSpeciesPool(box.possibleSpecies)}));
+ data.products=(Array.isArray(data.products)?data.products:[]).map(box=>({...box,possibleSpecies:normalizeSpeciesPool(box.possibleSpecies)}));
+}
+
 function speciesMeta(id){
  const source=[...(data.boxes||[]),...(data.products||[])];
  for(const box of source){
@@ -197,15 +229,16 @@ function renderProducts(){
  if(!data.products.length){root.innerHTML='<div class="empty">Entre na sua conta Pokémon para consultar o catálogo de caixas.</div>';return}
  root.innerHTML=data.products.map(p=>{
   const pool=Array.isArray(p.possibleSpecies)?p.possibleSpecies:[];
-  const miniature=pool.length?`<div class="paid-pool-compact">${pool.map(x=>`<button type="button" class="paid-pool-row" data-species="${Number(x.id)}" data-source-box="${esc(p.id)}" title="${esc(x.name)} · chance ${chanceLabel(x.chance)}"><span class="paid-mon">${speciesImage(x.id)}</span><span class="paid-mon-text"><span class="paid-mon-name">${esc(x.name||'Pokémon')}</span><small>${x.owned?'Já tenho':'Ainda não tenho'}</small></span><b>${chanceLabel(x.chance)}</b></button>`).join('')}</div>`:'<div class="pool-unavailable">Catálogo de espécies indisponível. Atualize também o servidor Bronxy para a mesma versão.</div>';
-  return `<article class="product paid-box ${esc(p.id)}"><span class="paid-eyebrow">CAIXA COMUNITÁRIA · ${esc(p.tier||'CATÁLOGO')}</span><div class="product-art box-product-art">${boxImage(p.id,p.label)}</div><h3>${esc(p.label)}</h3><div class="product-chips"><span>${pool.length||'—'} Pokémon possíveis</span><span>1 drop aleatório por caixa</span></div><div class="paid-pool-label">Pokémon possíveis nesta caixa</div>${miniature}<div class="paid-detail"><button class="btn secondary mini" type="button" data-paid-details="${esc(p.id)}" ${pool.length?'':'disabled'}>Ver todos os Pokémon e chances</button></div><div class="product-footer"><div><strong data-total-for="${esc(p.id)}">${money(p.price)}</strong><small class="price-caption">escolha a quantidade ao gerar o PIX</small></div><button class="btn primary" type="button" data-buy="${esc(p.id)}" ${pool.length?'':'disabled'}>Gerar PIX</button></div></article>`;
+  const topChance=pool.length?chanceLabel(pool[0].chance):'—';
+  const poolGrid=pool.length?`<div class="paid-pool-compact all-species-grid">${pool.map(x=>`<button type="button" class="paid-pool-row species-thumb paid-species-thumb" data-species="${Number(x.id)}" data-source-box="${esc(p.id)}" title="${esc(x.name)} · chance ${chanceLabel(x.chance)}"><span class="paid-mon">${speciesImage(x.id)}</span><span class="paid-mon-text"><span class="paid-mon-name">${esc(x.name||'Pokémon')}</span><small>${esc(String(x.rarity||'').replace(/^./,m=>m.toUpperCase()))} · ${x.owned?'Já tenho':'Ainda não tenho'}</small></span><b>${chanceLabel(x.chance)}</b></button>`).join('')}</div>`:'<div class="pool-unavailable">Catálogo de espécies indisponível. Atualize também o servidor Bronxy para a mesma versão.</div>';
+  return `<article class="free-box paid-box daily-tier ${esc(p.id)}"><div class="free-box-top paid-box-top">${boxImage(p.id,p.label)}<div><small>CAIXA COMUNITÁRIA · ${esc(p.tier||'CATÁLOGO')}</small><b>${esc(p.label)}</b><div class="paid-box-copy">${esc(p.description||'Caixa com sorteio real entre todas as espécies exibidas abaixo.')}</div></div></div><div class="free-box-meta paid-box-meta"><span>${pool.length||'—'} Pokémon possíveis</span><span>Maior chance: ${topChance}</span><span>1 drop aleatório por caixa</span></div><div class="paid-pool-label">Todos os Pokémon possíveis desta caixa</div>${poolGrid}<button class="btn secondary mini box-info" type="button" data-paid-details="${esc(p.id)}" ${pool.length?'':'disabled'}>Ver catálogo completo e gerar PIX</button><div class="free-box-footer paid-box-footer"><small>Sorteio real · nenhuma espécie é garantida. As probabilidades acima valem para cada caixa aberta.</small><div class="paid-price-block"><strong data-total-for="${esc(p.id)}">${money(p.price)}</strong><small class="price-caption">escolha a quantidade ao gerar o PIX</small></div><button class="btn primary" type="button" data-buy="${esc(p.id)}" ${pool.length?'':'disabled'}>Gerar PIX</button></div></article>`;
  }).join('');
  data.products.forEach(p=>syncQty(p.id,1));
 }
 function paidModal(id){
  const p=data.products.find(x=>x.id===id);if(!p)return toast('Caixa indisponível.',true);
  const pool=Array.isArray(p.possibleSpecies)?p.possibleSpecies:[];
- modal(`<div class="box-detail-top">${boxImage(p.id,p.label)}<div><span class="section-label">CAIXA PIX</span><h3 id="modalTitle">${esc(p.label)}</h3><p>${esc(p.tier||'Caixa')} · ${money(p.price)} por caixa · chances visíveis antes do PIX</p></div></div><p>Cada caixa gera <strong>1 drop aleatório</strong> dentre as espécies exibidas abaixo. Toque no Pokémon para ver os detalhes, conferir a chance e saber se você já possui a espécie.</p><div class="odds-list">${pool.map(x=>speciesTile(x,p.id)).join('')}</div><p class="odds-total">Sorteio real · ${pool.length} Pokémon possíveis nesta caixa. As chances somam 100% para cada caixa comprada.</p><div class="modal-actions"><button class="btn primary" data-buy="${esc(p.id)}" type="button">Escolher quantidade e gerar PIX</button><button class="btn secondary" type="button" data-close="1">Agora não</button></div>`);
+ modal(`<div class="box-detail-top">${boxImage(p.id,p.label)}<div><span class="section-label">CAIXA PIX</span><h3 id="modalTitle">${esc(p.label)}</h3><p>${esc(p.tier||'Caixa')} · ${money(p.price)} por caixa · chances visíveis antes do PIX</p></div></div><p>Cada caixa gera <strong>1 drop aleatório</strong> dentre as espécies exibidas abaixo. Nenhum Pokémon é garantido: o resultado depende da sorte e respeita exatamente a porcentagem mostrada para cada espécie. Toque no Pokémon para abrir a ficha, ver os detalhes e saber se você já possui a espécie.</p><div class="odds-list">${pool.map(x=>speciesTile(x,p.id)).join('')}</div><p class="odds-total">Sorteio real · ${pool.length} Pokémon possíveis nesta caixa. As chances individuais abaixo somam 100% para cada caixa comprada.</p><div class="modal-actions"><button class="btn primary" data-buy="${esc(p.id)}" type="button">Escolher quantidade e gerar PIX</button><button class="btn secondary" type="button" data-close="1">Agora não</button></div>`);
 }
 function purchaseModal(id,qty){
  const p=data.products.find(x=>x.id===id);if(!p)return toast('Caixa indisponível.',true);
@@ -255,7 +288,7 @@ async function load(silent=false){
  if(!u.token||u.guest||!u.numero){data={products:[],groups:[],vouchers:[],boxes:[],ownedSpecies:[]};renderProducts();renderFreeBoxes();renderWallet();if(!silent)toast('Faça login na sua conta Fabi para acessar o catálogo e os drops.');return}
  try{
   const got=await api('community-drops');
-  data={products:got.products||[],groups:got.groups||[],vouchers:got.vouchers||[],boxes:got.boxes||[],ownedSpecies:got.ownedSpecies||[]};
+  data={products:got.products||[],groups:got.groups||[],vouchers:got.vouchers||[],boxes:got.boxes||[],ownedSpecies:got.ownedSpecies||[]};decorateDataCollections();
   renderProducts();renderFreeBoxes();renderWallet();
   const note=$('#freeNote');if(note)note.textContent=`🔄 Espécies das caixas gratuitas atualizadas diariamente (horário de Brasília). ${data.groups.length} grupo(s) com Pokémon automático ativo.`;
  }catch(e){if(!silent)toast(e.message,true);$('#freeNote').textContent='Não foi possível carregar as caixas: '+e.message;renderProducts();renderFreeBoxes();renderWallet()}

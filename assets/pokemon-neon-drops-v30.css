@@ -135,3 +135,51 @@ body.light .wallet-stat b{color:#25744b}body.light .wallet-filters,body.light .w
 /* Leitura confortável mesmo quando fontes web estiverem indisponíveis. */
 .drops-title-row h2,.free-drop .free-copy>h2,#eventos .section-heading h2,.faq h2{font-family:"Space Grotesk",Inter,system-ui,sans-serif;letter-spacing:-.045em}
 @media(max-width:700px){.wallet-stat small{font-size:.62rem}.wallet-body small{font-size:.7rem}.wallet-item-head b{font-size:.81rem}.wallet-browse-actions .btn{font-size:.75rem}}
+
+
+/* V31 — caixas comunitárias no mesmo visual premium das caixas grátis */
+#eventos .catalog{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#eventos .catalog .paid-box{--tier-accent:#7cf4a3;--tier-fill:rgba(28,158,88,.16);display:flex;flex-direction:column;gap:13px;min-width:0;padding:13px;border-radius:19px;border:1px solid color-mix(in srgb,var(--tier-accent),transparent 55%);background:linear-gradient(160deg,#061a17,#061415);overflow:hidden;box-shadow:0 14px 35px rgba(0,0,0,.13)}
+#eventos .catalog .paid-box.dropBoxExplorer,#eventos .catalog .paid-box.explorer{--tier-accent:#7ed8ff;--tier-fill:rgba(40,141,226,.14)}
+#eventos .catalog .paid-box.dropBoxSpecial,#eventos .catalog .paid-box.special{--tier-accent:#ffd36a;--tier-fill:rgba(255,196,88,.15)}
+#eventos .catalog .paid-box.dropBoxLegendary,#eventos .catalog .paid-box.legendary{--tier-accent:#ce92ff;--tier-fill:rgba(174,64,238,.16)}
+#eventos .catalog .paid-box .paid-box-top{min-height:140px;display:flex;gap:18px;align-items:center;padding:12px 15px;border-radius:15px;position:relative;background:radial-gradient(ellipse 50% 120% at 21% 50%,var(--tier-fill),transparent 95%),linear-gradient(140deg,#0a2430,#090f20);border:1px solid color-mix(in srgb,var(--tier-accent),transparent 70%);isolation:isolate;overflow:hidden}
+#eventos .catalog .paid-box .paid-box-top:after{content:"";position:absolute;inset:0;background:linear-gradient(117deg,transparent 15%,rgba(255,255,255,.03) 48%,transparent 54%),repeating-linear-gradient(149deg,transparent 0 35px,rgba(255,255,255,.013) 36px 37px);pointer-events:none;z-index:-1}
+#eventos .catalog .paid-box .paid-box-top img.box-art{display:block;width:145px!important;height:145px!important;max-width:145px!important;max-height:145px!important;flex:0 0 145px!important;object-fit:contain!important;filter:drop-shadow(0 13px 21px color-mix(in srgb,var(--tier-accent),transparent 63%))}
+#eventos .catalog .paid-box .paid-box-top>div{min-width:0;display:grid;gap:8px}
+#eventos .catalog .paid-box .paid-box-top small{font-size:.78rem;color:var(--tier-accent);font-weight:750;letter-spacing:.03em}
+#eventos .catalog .paid-box .paid-box-top b{font-family:"Space Grotesk",sans-serif;font-size:clamp(1.2rem,2.5vw,1.7rem);line-height:1.13;letter-spacing:-.04em;color:#f5fff9;white-space:normal}
+#eventos .catalog .paid-box .paid-box-copy{font-size:.78rem;line-height:1.55;color:#c4e5d2}
+#eventos .catalog .paid-box .paid-box-meta{display:flex;flex-wrap:wrap;gap:6px}
+#eventos .catalog .paid-box .paid-box-meta span{padding:6px 9px;border-radius:10px;font-size:.67rem;background:var(--tier-fill);border:1px solid color-mix(in srgb,var(--tier-accent),transparent 77%);color:#c6e8d7}
+#eventos .catalog .paid-box .paid-pool-label{font-size:.75rem;font-weight:800;color:#d9f5e1;margin:2px 0 0}
+#eventos .catalog .paid-box .paid-pool-compact{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#eventos .catalog .paid-box .paid-pool-row{display:flex;align-items:center;gap:7px;min-width:0;border:1px solid rgba(111,207,157,.28);background:linear-gradient(145deg,#113a2d,#082421);border-radius:11px;padding:7px;box-shadow:none;text-align:left}
+#eventos .catalog .paid-box .paid-mon{flex:0 0 38px;width:38px;height:38px;display:grid;place-items:center;overflow:hidden}
+#eventos .catalog .paid-box .paid-mon img{width:34px!important;height:34px!important;max-width:34px!important;max-height:34px!important;object-fit:contain!important;filter:none!important}
+#eventos .catalog .paid-box .paid-mon-text{display:grid;min-width:0;flex:1}
+#eventos .catalog .paid-box .paid-mon-name{font-size:.73rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;color:#f0fff7}
+#eventos .catalog .paid-box .paid-mon-text small{font-size:.58rem;color:#a9cdb8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#eventos .catalog .paid-box .paid-pool-row>b{font-size:.72rem;color:#ffe593;white-space:nowrap}
+#eventos .catalog .paid-box .box-info{margin-top:auto;width:100%;min-height:40px;border-radius:11px;color:var(--tier-accent);background:var(--tier-fill);border:1px solid color-mix(in srgb,var(--tier-accent),transparent 65%);font-size:.72rem}
+#eventos .catalog .paid-box .paid-box-footer{display:grid;grid-template-columns:1fr auto;align-items:end;gap:11px}
+#eventos .catalog .paid-box .paid-box-footer>small{grid-column:1/-1;min-width:0;font-size:.69rem;line-height:1.5;color:#b7dfca}
+#eventos .catalog .paid-box .paid-price-block{display:grid;gap:2px}
+#eventos .catalog .paid-box .paid-price-block strong{font-size:1.25rem;letter-spacing:-.04em;color:#fff}
+#eventos .catalog .paid-box .paid-price-block .price-caption{font-size:.63rem;color:#a8cabc}
+#eventos .catalog .paid-box .paid-box-footer button{width:auto;min-width:145px;min-height:43px;border-radius:12px;background:linear-gradient(115deg,#60f2a0,#a3ff84);color:#072217;border:1px solid #affea0;font-size:.73rem}
+#eventos .catalog .paid-box .paid-box-footer button:disabled{filter:saturate(.5);opacity:.65}
+@media(max-width:960px){#eventos .catalog{grid-template-columns:1fr}}
+@media(max-width:600px){
+ #eventos .catalog .paid-box{padding:10px}
+ #eventos .catalog .paid-box .paid-box-top{min-height:112px;gap:10px;padding:9px}
+ #eventos .catalog .paid-box .paid-box-top img.box-art{width:102px!important;height:102px!important;max-width:102px!important;max-height:102px!important;flex-basis:102px!important}
+ #eventos .catalog .paid-box .paid-box-top b{font-size:1.12rem}
+ #eventos .catalog .paid-box .paid-box-top small{font-size:.65rem}
+ #eventos .catalog .paid-box .paid-pool-compact{grid-template-columns:1fr}
+ #eventos .catalog .paid-box .paid-box-footer{grid-template-columns:1fr}
+ #eventos .catalog .paid-box .paid-box-footer button{width:100%;min-width:0}
+}
+
+/* V32: Carteira */
+.pk-v32-wallet-banner{margin:0 0 12px;overflow:hidden;border:1px solid rgba(149,255,177,.3);border-radius:16px;background:#0a1c20}.pk-v32-wallet-banner img{display:block;width:100%;height:auto;aspect-ratio:1000/270;object-fit:cover}@media(max-width:600px){.pk-v32-wallet-banner{border-radius:12px}}
