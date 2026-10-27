@@ -1,0 +1,15 @@
+/* Fabi Pokémon Emerald — home redesign */
+body{background-color:#03120e!important;background-image:linear-gradient(180deg,rgba(1,18,13,.28),#03120e 1200px),url('/assets/v35-emerald-world.png')!important;background-repeat:no-repeat!important;background-position:center top!important;background-size:100% 1200px,cover!important}
+.pk-hero{position:relative;isolation:isolate;overflow:hidden!important;background:linear-gradient(90deg,rgba(2,24,18,.93),rgba(2,26,20,.67)),url('/assets/v35-emerald-world.png') center 34%/cover no-repeat!important;border:1px solid rgba(130,255,175,.48)!important;box-shadow:0 15px 48px rgba(0,0,0,.28),inset 0 0 45px rgba(40,255,130,.045)!important}
+.pk-hero:before{content:"";position:absolute;inset:0;background:url('/assets/v35-hud.svg') center/cover no-repeat;z-index:-1;pointer-events:none}
+.pk-hero .pk-hero-grid{position:relative;z-index:1;gap:22px}
+.pk-hero .pk-title{font-weight:900;letter-spacing:-.045em;text-shadow:0 3px 25px rgba(0,0,0,.45)}
+.pk-hero .pk-title span{color:#adff93;text-shadow:0 0 25px rgba(110,255,160,.22)}
+.pk-hero .pk-eyebrow{color:#a3ffc0;letter-spacing:.13em;font-weight:800}
+.pk-hero .pk-subtitle{color:#c4e8d6;max-width:600px}
+.pk-hero .pk-champion{background:linear-gradient(145deg,rgba(8,49,35,.85),rgba(2,23,19,.82))!important;border:1px solid rgba(135,255,176,.35)!important;box-shadow:0 12px 28px rgba(0,0,0,.17)!important}
+.pk-hero .pk-pill{background:rgba(2,24,19,.65)!important;border-color:rgba(134,251,182,.25)!important}
+.pk-grid>.pk-card{background:linear-gradient(150deg,rgba(6,39,29,.96),rgba(3,23,19,.98))!important;border-color:rgba(113,231,160,.24)!important}
+.pk-grid>.pk-card:first-child:before{content:"";display:block;height:110px;margin:-14px -14px 18px;background:linear-gradient(0deg,rgba(4,31,24,.99),rgba(4,31,24,.15)),url('/assets/v35-emerald-world.png') center 30%/cover no-repeat;border-radius:14px 14px 0 0}
+@media(min-width:1000px){.pk-hero{min-height:320px}.pk-grid>.pk-card:first-child:before{height:145px}}
+@media(max-width:700px){body{background-size:100% 1100px,auto 1100px!important}.pk-hero{padding:18px!important;background-position:62% center!important}.pk-hero .pk-hero-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:15px!important}.pk-hero .pk-title{font-size:clamp(1.8rem,7vw,2.6rem)!important;line-height:1.1!important}.pk-hero .pk-subtitle{font-size:.86rem;line-height:1.6}.pk-hero .pk-champion{width:100%;max-width:100%;min-width:0}.pk-grid>.pk-card:first-child:before{height:74px}}
