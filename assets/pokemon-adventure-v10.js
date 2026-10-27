@@ -451,17 +451,30 @@ function render(){
   const need=xpNeed(p.trainer.level),xpPct=Math.min(100,(p.trainer.xp/need)*100);
   const panels={training:trainingHTML,drops:dropsHTML,world:worldHTML,collection:collectionHTML,farm:farmHTML,missions:missionsHTML,arena:arenaHTML,boss:bossHTML,season:seasonHTML,ranking:rankingHTML,hall:hallHTML,market:marketHTML,shop:shopHTML,achievements:achievementsHTML};
   const content=(panels[state.tab]||worldHTML)(p);
-  a.innerHTML=`${state.tab==='world'?heroHTML(p,xpPct)+welcomeHTML(p)+(p.identity?.guest?registerCTA():''):''}${resourcesHTML(p)}${state.tab==='world'?quickHTML(p):''}<div class="pk-panel active" id="pkActivePanel" data-panel="${state.tab}">${content}</div>`;
+  a.innerHTML=`${state.tab==='world'?heroHTML(p,xpPct)+welcomeHTML(p)+(p.identity?.guest?registerCTA():''):''}${['drops','shop'].includes(state.tab)?'':resourcesHTML(p)}${state.tab==='world'?quickHTML(p):''}<div class="pk-panel active" id="pkActivePanel" data-panel="${state.tab}">${content}</div>`;
   bindFallbacks();
-  // Central de drops cresce com o conteúdo e usa a rolagem normal do Pokémon Adventure.
-  if(['drops','shop'].includes(state.tab)){
+  // V28: mede a área de CONTEÚDO do iframe, não documentElement.scrollHeight.
+  // O último inclui o próprio viewport do iframe, provocando crescimento +24px sem fim.
+  if(state.tab==='drops'){
     const iframe=$('#pkApp .pk-drop-frame');
     iframe?.addEventListener('load',()=>{
       try{
-        const doc=iframe.contentDocument;
-        const resize=()=>{if(!iframe.isConnected)return;iframe.style.height=Math.min(7000,Math.max(650,doc.documentElement.scrollHeight+24))+'px'};
-        resize();if(window.ResizeObserver)new ResizeObserver(resize).observe(doc.body);
-      }catch(_){/* A página separada permanece acessível caso o navegador bloqueie autoajuste. */}
+        const inner=iframe.contentDocument;
+        const content=inner.querySelector('.wrap');
+        if(!content)return;
+        let queued=false;
+        const resize=()=>{
+          if(!iframe.isConnected){observer?.disconnect();return}
+          const natural=Math.ceil(content.getBoundingClientRect().height);
+          const height=Math.max(360,Math.min(2200,natural+12));
+          const current=parseFloat(iframe.style.height)||iframe.getBoundingClientRect().height;
+          if(Math.abs(current-height)>3)iframe.style.height=height+'px';
+        };
+        const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;resize()})};
+        const observer=window.ResizeObserver?new ResizeObserver(schedule):null;
+        observer?.observe(content);
+        resize();
+      }catch(_){/* Sem acesso ao frame, a página continua navegável por link direto. */}
     },{once:true});
   }
   if(state.busy)setBusy(true);
@@ -536,13 +549,12 @@ function trainingGuideHTML(x,p){
  <button class="pk-secondary" type="button" data-action="train-confirm" data-mode="intensive" data-uid="${esc(x.uid)}" ${recovering||!intense||dust<160?'disabled':''}>Intensivo · 160 Pó Estelar</button></div>
  <div class="pk-training-tip"><p>Hoje: ${normal} normal(is) grátis, ${ticket} ticket(s), ${intense} intensivo(s). Saldo: ${fmt(dust)} de Pó Estelar.</p></div>`;
 }
-function dropsHTML(){return `<div class="pk-grid"><section class="pk-card pk-col-4 pk-drops-intro"><div class="pk-card-head"><div><div class="pk-eyebrow">${gameIcon('gift')} CENTRAL DE DROPS</div><h2>Caixas & Drops</h2><p>Acompanhe seus eventos disponíveis, escolha um grupo e explore as caixas gratuitas. Tudo em um espaço próprio, sem misturar com a Loja.</p></div><div class="pk-icon">${gameIcon('gift')}</div></div><div class="pk-drops-badges"><span>Somente grupos com Pokémon automático ativo</span><span>Caixas grátis com rotação diária</span><span>Pacotes PIX com conteúdo definido</span></div><div class="pk-drops-steps"><div><b>1. Veja sua carteira</b><small>Antes de comprar, confirme se já tem algum drop pronto.</small></div><div><b>2. Escolha o grupo</b><small>O envio fica restrito aos grupos Pokémon válidos.</small></div><div><b>3. A Fabi publica o evento</b><small>O grupo recebe a figurinha e pode participar da captura.</small></div></div><div class="pk-actions"><a class="pk-primary pk-link-btn" href="/pokemon-drops">Abrir central completa</a><a class="pk-secondary pk-link-btn" href="/pokemon-drops#minhacarteira">Ir para Meus Drops</a></div></section><section class="pk-card pk-col-8 pk-drop-hub"><div class="pk-card-head"><div><div class="pk-eyebrow">VISÃO RÁPIDA</div><h2>Sua central de eventos</h2><p>Visualize sua carteira e o catálogo no próprio jogo. Se preferir uma experiência maior, abra a página completa.</p></div><div class="pk-icon">${gameIcon('chest-daily')}</div></div><iframe class="pk-drop-frame" title="Central de Caixas Pokémon" loading="lazy" src="/pokemon-drops?embed=1&v=27"></iframe></section></div>`;}
+function dropsHTML(){return `<section class="pk-drops-native" aria-label="Minha carteira de drops"><iframe class="pk-drop-frame" title="Carteira de drops e caixas da comunidade" loading="eager" src="/pokemon-drops?embed=1&v=28"></iframe></section>`;}
 function shopHTML(p){const sh=p.shop||{};
- return `<div class="pk-grid">
- <section class="pk-card pk-col-12 pk-shop-hero"><div class="pk-shop-hero-copy"><div class="pk-eyebrow">${gameIcon('shop')} LOJA DA JORNADA</div><h2>Sua Loja Pokémon</h2><p>Prepare sua próxima aventura com itens, pesquisas e recursos da jornada. Para resgatar ou enviar eventos aos grupos, visite a central exclusiva de <b>Caixas & Drops</b>.</p><div class="pk-actions"><button class="pk-primary" data-action="tab" data-tab="drops">${gameIcon('gift')} Ir para Caixas & Drops</button><a class="pk-ghost pk-link-btn" href="/pokemon-drops">Abrir central externa</a></div></div><div class="pk-shop-metrics"><span><small>Saldo atual</small><b>${fmt(p.resources.stardust)}</b><em>${gameIcon('stardust')} Pó Estelar</em></span><span><small>Itens disponíveis</small><b>${(sh.stardustItems||[]).length}</b><em>compras imediatas</em></span><span><small>Pesquisas de hoje</small><b>${(sh.researchOffers||[]).length}</b><em>Pokémon garantido</em></span></div></section>
- <section class="pk-card pk-col-8 pk-shop-panel"><div class="pk-card-head"><div><h3>${gameIcon('stardust')} Loja de Pó Estelar</h3><p>Itens e recursos para acelerar a jornada sem misturar com os eventos da comunidade.</p></div><div class="pk-balance">${fmt(p.resources.stardust)} ${gameIcon('stardust')}</div></div><div class="pk-shop-grid">${(sh.stardustItems||[]).map(i=>`<article class="pk-shop-item"><i>${esc(i.icon)}</i><div><b>${esc(i.label)}</b><span>${esc(i.description)}</span></div><button data-action="dust-buy" data-item="${esc(i.id)}">${fmt(i.cost)} ${gameIcon('stardust')}</button></article>`).join('')}</div></section>
- <aside class="pk-card pk-col-4 pk-shop-side"><div class="pk-card-head"><div><h3>${gameIcon('gift')} Caixas & Drops</h3><p>Quer comprar ou enviar eventos para os grupos? Agora essa jornada fica em uma central própria.</p></div><div class="pk-icon">${gameIcon('gift')}</div></div><ul class="pk-help-list"><li>🎁 Carteira de drops e status de envio</li><li>🆓 Caixas gratuitas com rotação diária</li><li>💳 Pacotes comunitários com PIX</li><li>👥 Seleção de grupos com Pokémon ativo</li></ul><button class="pk-primary" data-action="tab" data-tab="drops">Abrir Caixas & Drops</button></aside>
- <section class="pk-card pk-col-12 pk-shop-research"><div class="pk-card-head"><div><h3>${gameIcon('map')} Pesquisa do Dia</h3><p>Pokémon específico e garantido; ofertas renovadas diariamente para quem quer foco em coleção.</p></div></div><div class="pk-research-grid">${(sh.researchOffers||[]).map(o=>`<article class="pk-research"><img src="${imageUrl(o.species)}" data-fallback="${esc(fallback(o.species))}"><div><small>${esc(rarityLabel(o.rarity))}</small><b>${esc(o.species.name)}</b><span>${fmt(o.cost)} Pó Estelar</span></div><button data-action="research-buy" data-offer="${esc(o.id)}">Resgatar</button></article>`).join('')}</div></section>
+ return `<div class="pk-grid pk-shop-v28">
+  <section class="pk-card pk-col-12 pk-shop-hero"><div class="pk-shop-hero-copy"><div class="pk-eyebrow">${gameIcon('stardust')} SUA LOJA</div><h2>Loja de Pó Estelar</h2><p>Itens e Pokémon garantidos, usando apenas o Pó Estelar conquistado na aventura.</p></div><div class="pk-shop-metrics"><span><small>Seu saldo</small><b>${fmt(p.resources.stardust)}</b><em>${gameIcon('stardust')} Pó Estelar</em></span><span><small>Itens</small><b>${(sh.stardustItems||[]).length}</b><em>para sua jornada</em></span><span><small>Pesquisas</small><b>${(sh.researchOffers||[]).length}</b><em>disponíveis hoje</em></span></div></section>
+  <section class="pk-card pk-col-12 pk-shop-panel"><div class="pk-card-head"><div><h3>${gameIcon('stardust')} Itens da jornada</h3><p>Escolha o item e resgate diretamente com seu saldo.</p></div><div class="pk-balance">${fmt(p.resources.stardust)} ${gameIcon('stardust')}</div></div><div class="pk-shop-grid">${(sh.stardustItems||[]).map(i=>`<article class="pk-shop-item"><i>${esc(i.icon)}</i><div><b>${esc(i.label)}</b><span>${esc(i.description)}</span></div><button data-action="dust-buy" data-item="${esc(i.id)}" aria-label="Comprar ${esc(i.label)} com ${fmt(i.cost)} de Pó Estelar">${fmt(i.cost)} ${gameIcon('stardust')}</button></article>`).join('')||'<p class="pk-safe-note">Nenhum item disponível agora.</p>'}</div></section>
+  <section class="pk-card pk-col-12 pk-shop-research"><div class="pk-card-head"><div><h3>${gameIcon('map')} Pesquisa do dia</h3><p>Saiba exatamente qual Pokémon receberá antes de resgatar.</p></div></div><div class="pk-research-grid">${(sh.researchOffers||[]).map(o=>`<article class="pk-research"><img src="${imageUrl(o.species)}" data-fallback="${esc(fallback(o.species))}" alt="${esc(o.species.name)}"><div><small>${esc(rarityLabel(o.rarity))}</small><b>${esc(o.species.name)}</b><span>${fmt(o.cost)} Pó Estelar</span></div><button data-action="research-buy" data-offer="${esc(o.id)}">Resgatar</button></article>`).join('')||'<p class="pk-safe-note">Volte mais tarde para conferir novas pesquisas.</p>'}</div></section>
  </div>`;
 }
 

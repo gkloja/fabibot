@@ -208,27 +208,29 @@ function groupOptions(v){
  if(!data.groups.length)return '<option value="">Nenhum grupo com Pokémon automático ativo</option>';
  return '<option value="">Escolha um grupo com Pokémon ativo…</option>'+data.groups.map(g=>`<option value="${esc(g.id)}" ${v?.groupId===g.id?'selected':''}>${esc(g.label)} · …${esc(g.id.split('@')[0].slice(-6))}</option>`).join('');
 }
+let walletView='active',walletLimit=6;
 function renderWallet(){
- const root=$('#wallet');
- const count=$('#walletCount');
- const stats=$('#walletStats');
- const vouchers=data.vouchers||[];
+ const root=$('#wallet'),count=$('#walletCount'),stats=$('#walletStats');
+ const vouchers=Array.isArray(data.vouchers)?data.vouchers:[];
  const available=vouchers.filter(v=>v.status==='available').length;
- const queued=vouchers.filter(v=>v.status==='queued'||v.status==='processing').length;
+ const queued=vouchers.filter(v=>['queued','processing','review'].includes(v.status)).length;
  const sent=vouchers.filter(v=>v.status==='sent').length;
- if(stats)stats.innerHTML=`<div class="wallet-stat"><small>Disponíveis</small><b>${isLogged()?available:'—'}</b><span>Prontos para enviar</span></div><div class="wallet-stat"><small>Na fila</small><b>${isLogged()?queued:'—'}</b><span>Envios em andamento</span></div><div class="wallet-stat"><small>Entregues</small><b>${isLogged()?sent:'—'}</b><span>Histórico recente</span></div><div class="wallet-stat"><small>Grupos válidos</small><b>${isLogged()?data.groups.length:'—'}</b><span>Pokémon automático ativo</span></div>`;
- if(count)count.textContent=isLogged()?`${available} pronto(s) · ${queued} em fila · ${vouchers.length} no total`:'Entre na conta para ver seus drops';
- $('#loginNote').hidden=isLogged();
- if(!isLogged()){root.innerHTML='';return}
- if(!vouchers.length){root.innerHTML='<div class="empty"><b>Sua carteira está vazia.</b><p>Você ainda não tem nenhum drop. Toque em “Explorar caixas e obter novos drops” para abrir as caixas gratuitas e os pacotes comunitários.</p></div>';return}
- root.innerHTML=vouchers.map(v=>{
-   const product=data.products.find(p=>p.id===v.productId);
-   const speciesName=v.speciesId?(product?.possibleSpecies?.find(x=>Number(x.id)===Number(v.speciesId))?.name||('Pokémon #'+v.speciesId)):'Espécie surpresa gratuita';
-   const contentType=v.speciesId?'Conteúdo definido':'Caixa gratuita';
-   const status=STATUS[v.status]||v.status;
-   const groupShort=v.groupId?`…${String(v.groupId).split('@')[0].slice(-8)}`:'';
-   return `<article class="wallet-item ${v.status==='available'?'ready':''}"><div class="wallet-media"><img loading="lazy" src="${esc(v.speciesId?media(v.speciesId):boxArt(v.productId))}" alt=""></div><div class="wallet-body"><div class="wallet-item-head"><b>${esc(v.label)}${v.purchaseQuantity>1?` <span class="wallet-batch">${v.purchaseIndex}/${v.purchaseQuantity}</span>`:''}</b><span class="status ${esc(v.status)}">${esc(status)}</span></div><small>${esc(speciesName)} · ${esc(contentType)}</small><div class="wallet-meta"><span class="wallet-pill">Criado em ${esc(dates(v.createdAt))}</span>${groupShort?`<span class="wallet-pill">Último grupo ${esc(groupShort)}</span>`:''}${v.speciesId?'<span class="wallet-pill yes">Espécie visível</span>':'<span class="wallet-pill">Sorteio gratuito</span>'}</div>${v.lastError?`<p>${esc(v.lastError)}</p>`:''}</div><div class="action">${v.status==='available'?`<select aria-label="Grupo para ${esc(v.label)}" class="group-select" data-group="${esc(v.id)}">${groupOptions(v)}</select><button type="button" class="btn primary mini" data-dispatch="${esc(v.id)}" ${data.groups.length?'':'disabled'}>Enviar drop</button>`:''}${v.status==='queued'?`<div class="wallet-action-note">Aguardando publicação no grupo.</div><button type="button" class="btn secondary mini" data-cancel="${esc(v.id)}">Cancelar envio</button>`:''}${v.status==='sent'?`<div class="wallet-action-note">Drop já enviado com sucesso.</div>`:''}${!['available','queued','sent'].includes(String(v.status))?`<div class="wallet-action-note">Acompanhe o status acima.</div>`:''}</div></article>`;
- }).join('');
+ if(stats)stats.innerHTML=`<div class="wallet-stat"><small>Disponíveis</small><b>${isLogged()?available:'—'}</b></div><div class="wallet-stat"><small>Em andamento</small><b>${isLogged()?queued:'—'}</b></div><div class="wallet-stat"><small>Entregues</small><b>${isLogged()?sent:'—'}</b></div><div class="wallet-stat"><small>Grupos ativos</small><b>${isLogged()?data.groups.length:'—'}</b></div>`;
+ if(count)count.textContent=isLogged()?`${available} pronto(s) · ${queued} em andamento`:'Entre na conta para ver os drops';
+ const note=$('#loginNote');if(note)note.hidden=isLogged();
+ document.querySelectorAll('[data-wallet-view]').forEach(btn=>{const selected=btn.dataset.walletView===walletView;btn.classList.toggle('active',selected);btn.setAttribute('aria-pressed',String(selected));});
+ if(!root)return;
+ if(!isLogged()){root.innerHTML='<div class="drops-empty"><b>Entre para consultar seus Drops</b><p>Use sua conta Fabi para consultar sua carteira e os grupos disponíveis.</p></div>';return;}
+ const filtered=vouchers.filter(v=>walletView==='history'?v.status==='sent':v.status!=='sent');
+ const weight={available:0,queued:1,processing:2,review:3};
+ filtered.sort((a,b)=>(weight[a.status]??4)-(weight[b.status]??4)||String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+ if(!filtered.length){root.innerHTML=walletView==='history'?'<div class="drops-empty"><b>Nenhum Drop entregue ainda</b><p>Quando os eventos forem publicados nos grupos, o histórico aparecerá aqui.</p></div>':'<div class="drops-empty"><b>Nenhum Drop pronto para usar</b><p>Abra as caixas gratuitas para começar ou consulte seus eventos já enviados no Histórico.</p></div>';return;}
+ root.innerHTML=filtered.slice(0,walletLimit).map(v=>{
+  const product=data.products.find(p=>p.id===v.productId);
+  const mon=v.speciesId?(product?.possibleSpecies?.find(x=>Number(x.id)===Number(v.speciesId))?.name||('Pokémon #'+v.speciesId)):'Pokémon surpresa';
+  const status=STATUS[v.status]||v.status;
+  return `<article class="wallet-item ${v.status==='available'?'ready':''}"><div class="wallet-media"><img loading="lazy" src="${esc(v.speciesId?media(v.speciesId):boxArt(v.productId))}" alt=""></div><div class="wallet-body"><div class="wallet-item-head"><b>${esc(v.label)}${v.purchaseQuantity>1?` <span class="wallet-batch">${v.purchaseIndex}/${v.purchaseQuantity}</span>`:''}</b><span class="status ${esc(v.status)}">${esc(status)}</span></div><small>${esc(mon)}</small><div class="wallet-meta"><span class="wallet-pill">${esc(dates(v.createdAt))}</span>${v.speciesId?'<span class="wallet-pill yes">Conteúdo definido</span>':'<span class="wallet-pill">Caixa grátis</span>'}</div>${v.lastError?`<p>${esc(v.lastError)}</p>`:''}</div><div class="action">${v.status==='available'?`<select class="group-select" aria-label="Grupo para ${esc(v.label)}" data-group="${esc(v.id)}">${groupOptions(v)}</select><button type="button" class="btn primary mini" data-dispatch="${esc(v.id)}" ${data.groups.length?'':'disabled'}>Enviar drop</button>`:''}${v.status==='queued'?`<span class="wallet-action-note">Na fila para envio ao grupo</span><button type="button" class="btn secondary mini" data-cancel="${esc(v.id)}">Cancelar envio</button>`:''}${v.status==='sent'?'<span class="wallet-action-note">Drop entregue ao grupo.</span>':''}${!['available','queued','sent'].includes(v.status)?'<span class="wallet-action-note">Acompanhe a atualização do status.</span>':''}</div></article>`;
+ }).join('')+(filtered.length>walletLimit?`<button class="btn secondary wallet-load-more" type="button" data-wallet-more="1">Mostrar mais ${Math.min(6,filtered.length-walletLimit)} de ${filtered.length} drops</button>`:'');
 }
 function setCatalogOpen(open,section='free'){
  const region=$('#discoverDrops'),btn=$('#browseDrops');if(!region)return;
@@ -237,6 +239,7 @@ function setCatalogOpen(open,section='free'){
  if(open){const target=section==='paid'?'#eventos':'#caixaGratis';requestAnimationFrame(()=>document.querySelector(target)?.scrollIntoView({behavior:'smooth',block:'start'}));}
 }
 $('#browseDrops')?.addEventListener('click',()=>setCatalogOpen($('#discoverDrops')?.hidden));
+document.addEventListener('click',e=>{const tab=e.target.closest('[data-wallet-view]');if(tab){walletView=tab.dataset.walletView==='history'?'history':'active';walletLimit=6;renderWallet();return;}if(e.target.closest('[data-wallet-more]')){walletLimit+=6;renderWallet();}});
 document.addEventListener('click',e=>{const btn=e.target.closest('[data-open-catalog]');if(btn){e.preventDefault();setCatalogOpen(true,btn.dataset.openCatalog)}});
 async function load(silent=false){
  const u=current();
