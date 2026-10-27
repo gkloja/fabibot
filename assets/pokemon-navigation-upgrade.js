@@ -1,12 +1,12 @@
 /*! Fabi Pokémon · Navegação única V22 */
 (()=>{
   'use strict';
-  const icon=id=>`/assets/nav-${id}.svg`;
-  const primary=[['world','Mundo'],['pokedex','Pokédex'],['arena','Arena']];
+  const icon=id=>`/assets/nav-${id==='collection'?'pokedex':id}.svg`;
+  const primary=[['world','Mundo'],['collection','Pokédex'],['arena','Arena']];
   const groups=[
     ['Sua jornada',[
       ['missions','Missões','Objetivos e recompensas'],
-      ['farm','Fazenda','Plante e colha berries'],
+      ['training','Centro de Treino','Treine a equipe, normal ou intensivo'],['farm','Fazenda','Plante e colha berries'],
       ['season','Temporada','Seu passe e progresso'],
       ['achievements','Conquistas','Marcos da sua história']
     ]],
@@ -19,7 +19,7 @@
       ['drops','Caixas & Drops','Caixas grátis renovadas todos os dias']
     ]]
   ];
-  const tabMap={collection:'pokedex'};
+  const tabMap={};
   const $=s=>document.querySelector(s);
   const iconImg=(id,label,cls='pk-nav-icon-img')=>`<img class="${cls}" src="${icon(id)}" alt="" aria-hidden="true" decoding="async" loading="eager">`;
   function boot(){

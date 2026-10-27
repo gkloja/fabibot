@@ -130,3 +130,24 @@ body.light .modal-buy-panel{background:#eef8f4}
  .species-modal-top img{width:66px;height:66px;flex-basis:66px}
  .qty-controls{grid-template-columns:36px 1fr 36px}
 }
+
+/* V25: carteira em primeiro lugar, catálogo expansível, espécies completas */
+.drop-discovery[hidden]{display:none!important}
+.wallet-first-banner{display:grid;gap:4px;margin:24px 0 13px;padding:17px 20px;border-radius:18px;border:1px solid #6dba8f6b;background:linear-gradient(110deg,rgba(19,72,45,.54),rgba(17,34,44,.68))}
+.wallet-first-banner b{font-size:1.05rem}.wallet-first-banner small{font-size:.77rem;color:var(--muted)}
+#minhacarteira{margin-bottom:26px;scroll-margin-top:26px}
+.wallet-guide{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.wallet-guide span{display:grid;gap:5px;padding:12px;border:1px solid var(--stroke);border-radius:14px;background:rgba(63,128,97,.08)}
+.wallet-guide b{font-size:.73rem}.wallet-guide small{font-size:.66rem;line-height:1.45;color:var(--muted)}
+.wallet-actions{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:18px 0}
+.wallet-count{font-size:.75rem;color:var(--muted);font-weight:700}
+.wallet-item.ready{border-color:#48996678;background:linear-gradient(130deg,rgba(65,138,93,.09),var(--card))}
+.all-species-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+.all-species-grid .species-thumb{width:100%!important;height:unset!important;min-height:86px!important;padding:8px 5px!important;display:grid!important;grid-template-rows:34px auto auto!important;gap:2px!important;min-width:0;justify-items:center;align-content:center}
+.all-species-grid .species-thumb img{width:34px!important;height:34px!important;max-height:34px;object-fit:contain}
+.all-species-grid .species-thumb small{max-width:100%;font-size:.62rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.all-species-grid .species-thumb strong{color:var(--green);font-size:.63rem}
+.catalog .paid-box .paid-pool-row b{font-size:.67rem;color:#baf5d0}
+.catalog .paid-box .paid-pool-compact{grid-template-columns:repeat(2,minmax(0,1fr))}
+.catalog .paid-box .paid-mon-text small{font-size:.58rem}
+@media(max-width:650px){.wallet-guide{grid-template-columns:1fr}.wallet-guide span{padding:10px 12px}.wallet-actions .btn{width:100%}.wallet-count{width:100%;text-align:center}.all-species-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}

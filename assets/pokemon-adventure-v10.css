@@ -477,3 +477,61 @@ html[data-theme="light"] .pk-page{color:#0a0f14}
 /* V24 — recompensa por repetição */
 .pk-duplicate-dust{border:1px solid #c8ad58a0!important;background:#4f391d77!important;color:#ffeba9!important;border-radius:999px;display:inline-flex!important;align-items:center;gap:6px;padding:7px 12px;font-size:12px;font-weight:800}
 .pk-duplicate-dust .pk-game-icon{width:17px;height:17px}
+
+
+/* V25 | Tamanho de ícones SVG isolado da arte principal de Pokémon */
+.pk-encounter .pk-game-icon,.pk-encounter img.pk-game-icon,
+.pk-encounter .pk-wild-hint img.pk-game-icon,
+.pk-encounter .pk-wild-warning img.pk-game-icon,
+.pk-encounter .pk-weakened img.pk-game-icon,
+.pk-encounter .pk-rarity img.pk-game-icon,
+.pk-encounter .pk-actions img.pk-game-icon,
+.pk-encounter .pk-ball img.pk-game-icon{
+ width:22px!important;height:22px!important;max-width:22px!important;max-height:22px!important;
+ object-fit:contain!important;display:inline-block!important;vertical-align:middle!important;
+ margin:0 5px 0 0!important;filter:none!important;flex:0 0 22px!important;
+}
+.pk-encounter .pk-ball img.pk-game-icon{width:27px!important;height:27px!important;max-width:27px!important;max-height:27px!important;flex-basis:27px!important}
+.pk-encounter .pk-rarity{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:10px}
+.pk-encounter .pk-wild-hint,.pk-encounter .pk-weakened,.pk-encounter .pk-wild-warning{
+ display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;padding:12px 14px;
+}
+.pk-encounter .pk-actions .pk-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;max-width:100%;min-height:45px}
+.pk-encounter .pk-ball strong{display:flex;gap:5px;align-items:center;justify-content:center;flex-wrap:wrap}
+.pk-encounter > img:not(.pk-game-icon){display:block;width:min(220px,65vw);height:min(210px,55vw);margin:8px auto 10px;object-fit:contain}
+.pk-reward-list .pk-game-icon,.pk-cine-stage .pk-game-icon,.pk-cine-stage img.pk-game-icon{width:21px!important;height:21px!important;max-width:21px!important;max-height:21px!important;object-fit:contain!important;vertical-align:middle!important}
+.pk-cine-stage .pk-chest-anim img.pk-game-icon{width:min(32vw,120px)!important;height:min(32vw,120px)!important;max-width:120px!important;max-height:120px!important}
+@media(max-width:640px){.pk-encounter{padding:15px 12px}.pk-encounter .pk-ball-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.pk-encounter .pk-ball{padding:10px 3px}}
+/* Centro de treino: nova aba e atalho */
+.pk-training-center h2{font-size:1.6rem;margin:5px 0 7px}.pk-training-center .pk-eyebrow,.pk-training-guide .pk-eyebrow{display:flex;align-items:center;gap:6px}
+.pk-training-center .pk-eyebrow .pk-game-icon,.pk-training-cta .pk-game-icon{width:23px!important;height:23px!important;vertical-align:middle}
+.pk-training-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:16px 0}
+.pk-training-metrics span{border:1px solid var(--line);padding:12px;border-radius:14px;background:rgba(101,232,132,.045);font-size:.7rem;color:var(--muted)}
+.pk-training-metrics b{display:block;color:var(--text);font-size:1.3rem;margin-bottom:2px}
+.pk-training-tip{padding:13px 15px;border:1px solid rgba(107,192,157,.19);border-radius:14px;background:rgba(61,134,96,.08);margin:10px 0}
+.pk-training-tip b{font-size:.78rem}.pk-training-tip p{font-size:.72rem;color:var(--muted);line-height:1.6;margin:4px 0 0}
+.pk-training-team{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:14px}
+.pk-training-mon{display:flex;align-items:center;gap:12px;text-align:left;padding:10px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025);color:var(--text);min-width:0;cursor:pointer}
+.pk-training-mon:hover{border-color:rgba(69,220,122,.42);background:rgba(53,210,123,.09)}
+.pk-training-mon:disabled{opacity:.45;cursor:not-allowed}.pk-training-mon img{width:62px;height:62px;object-fit:contain;flex:none}
+.pk-training-mon span{display:grid;min-width:0;flex:1}.pk-training-mon b{font-size:.81rem;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.pk-training-mon small{font-size:.63rem;color:var(--muted);line-height:1.6}.pk-training-mon em{font-size:.62rem;color:var(--green);font-style:normal;margin-top:3px}
+.pk-training-mon strong{font-size:1.3rem;color:var(--green)}
+.pk-training-selected{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:15px;margin:12px 0}
+.pk-training-selected img{width:80px;height:80px;object-fit:contain}.pk-training-selected div{display:grid;gap:4px}.pk-training-selected b{font-size:1rem}.pk-training-selected span,.pk-training-selected small{font-size:.7rem;color:var(--muted)}
+.pk-training-focus-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.pk-training-focus{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:12px;cursor:pointer}
+.pk-training-focus:has(input:checked){border-color:rgba(88,238,145,.62);background:rgba(42,171,99,.1)}
+.pk-training-focus input{accent-color:var(--green);width:17px;height:17px;flex:none}
+.pk-training-focus span{display:grid;gap:3px}.pk-training-focus b{font-size:.77rem}.pk-training-focus small{color:var(--muted);font-size:.65rem}
+.pk-training-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:15px 0}.pk-training-actions button{min-height:46px}
+.pk-training-cta{display:grid;gap:6px;margin:15px 0 0}.pk-training-cta button{display:flex;align-items:center;gap:8px;justify-content:center}
+.pk-training-cta small{font-size:.67rem;color:var(--muted)}
+.pk-drops-shortcut{display:flex;align-items:center;justify-content:space-between;gap:12px;background:radial-gradient(240px 130px at 100% 0,rgba(88,238,144,.17),transparent 85%),rgba(17,61,41,.32);border:1px solid rgba(88,238,144,.25);border-radius:15px;padding:17px}
+.pk-drops-shortcut-copy{display:grid;gap:6px;max-width:60%}.pk-drops-shortcut-copy b{font-size:1rem}.pk-drops-shortcut-copy span{font-size:.76rem;line-height:1.5;color:var(--muted)}
+.pk-drops-shortcut button{display:flex;gap:8px;align-items:center}.pk-drops-shortcut .pk-game-icon{width:20px;height:20px}
+@media(max-width:680px){.pk-training-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.pk-training-team{grid-template-columns:1fr}.pk-training-actions{grid-template-columns:1fr}.pk-drops-shortcut{flex-direction:column;align-items:stretch}.pk-drops-shortcut-copy{max-width:100%}.pk-drops-shortcut button{justify-content:center}}
+
+.pk-training-banner{margin:0 0 12px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 17px;border:1px solid rgba(75,210,133,.42);border-radius:16px;background:linear-gradient(120deg,rgba(42,112,76,.3),rgba(10,25,23,.9))}
+.pk-training-banner>div{display:grid;gap:4px}.pk-training-banner b{font-size:.92rem}.pk-training-banner span{font-size:.74rem;color:var(--muted);line-height:1.5}.pk-training-banner button{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}.pk-training-banner .pk-game-icon{width:21px!important;height:21px!important;max-width:21px!important;max-height:21px!important}
+@media(max-width:650px){.pk-training-banner{flex-direction:column;align-items:stretch}.pk-training-banner button{justify-content:center}}
