@@ -1,0 +1,56 @@
+/* V36 - Emerald Across The Adventure. Added after existing themes. */
+:root{--v36-line:rgba(117,246,172,.25);--v36-text:#d3f6e6}
+.pk-v36-feature{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:175px;margin:0 0 15px;padding:20px 25px;overflow:hidden;isolation:isolate;border:1px solid rgba(122,246,183,.38);border-radius:21px;background:linear-gradient(94deg,rgba(5,31,28,.96) 0%,rgba(8,43,38,.88) 52%,rgba(8,35,40,.74) 100%),url("/assets/v35-emerald-world.png") center/cover;box-shadow:inset 0 1px rgba(255,255,255,.04),0 18px 35px rgba(0,0,0,.18)}
+.pk-v36-feature:before{content:"";position:absolute;inset:0;background:url("/assets/v35-hud.svg") right center/auto 100% no-repeat;opacity:.35;pointer-events:none;z-index:-1}
+.pk-v36-feature-copy{position:relative;z-index:1;min-width:0;flex:1}
+.pk-v36-feature-copy span{font-size:.7rem;font-weight:800;letter-spacing:.16em;color:#a4ffae}
+.pk-v36-feature-copy h2{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(1.5rem,3.5vw,2.5rem);letter-spacing:-.05em;line-height:1.1;margin:12px 0 8px;color:#f3fff9}
+.pk-v36-feature-copy p{font-size:.88rem;line-height:1.5;color:#bbded0;margin:0;max-width:350px}
+.pk-v36-feature>img{width:min(34%,220px);height:150px;object-fit:contain;flex:0 0 auto;filter:drop-shadow(0 12px 24px rgba(68,255,170,.16))}
+.pk-v36-arena{border-color:rgba(224,165,255,.42);background:linear-gradient(90deg,rgba(21,19,43,.95),rgba(23,29,45,.76)),url("/assets/v35-emerald-world.png") center/cover}
+.pk-v36-arena .pk-v36-feature-copy span{color:#e9bdff}
+.pk-v36-arena>img{filter:drop-shadow(0 10px 25px rgba(219,135,255,.18))}
+.pk-v36-feature+.pk-card,.pk-v36-feature+.pk-training-banner{border-color:var(--v36-line)}
+.pk-v36-feature~.pk-card{background:linear-gradient(165deg,rgba(7,35,29,.97),rgba(4,22,23,.96));border-color:var(--v36-line)}
+.pk-v36-feature~.pk-card .pk-mon-card,.pk-v36-feature~.pk-card .pk-collection>*{border-color:rgba(133,239,176,.2)}
+.pk-arena-board{background:radial-gradient(ellipse at 50% 50%,rgba(120,78,178,.13),transparent 70%),rgba(3,22,25,.66)!important;border:1px solid rgba(159,129,242,.26);border-radius:18px}
+.pk-fighter{min-width:0}
+.pk-fighter img{max-width:100%;object-fit:contain}
+.pk-v36-feature~.pk-card .pk-search-row{gap:10px}
+.pk-hall-shell.hv33-container{position:relative;overflow:hidden!important;background:linear-gradient(160deg,rgba(7,36,29,.96),rgba(5,21,25,.97))!important;border:1px solid rgba(122,230,165,.27)!important}
+.hv33-container .hv33-hero{background:linear-gradient(90deg,rgba(3,23,21,.88),rgba(7,24,27,.54)),url("/assets/v36-hall-sky.svg") center/cover!important}
+.hv33-container .hv33-card-grid{min-width:0}
+.hv33-container .hv33-category-card,.hv33-container .hv33-podium-spot{min-width:0;overflow:hidden}
+.hv33-container .hv33-row-name,.hv33-container .hv33-winner-name,.hv33-container .hv33-podium-name{overflow-wrap:anywhere}
+.hv33-container .hv33-row-metric,.hv33-container .hv33-winner-score{min-width:0;overflow-wrap:anywhere}
+@media(max-width:700px){
+ .pk-v36-feature{min-height:130px;padding:13px 14px;border-radius:15px;margin-bottom:12px}
+ .pk-v36-feature-copy span{font-size:.57rem;letter-spacing:.1em}
+ .pk-v36-feature-copy h2{font-size:clamp(1.35rem,6vw,1.9rem);margin:7px 0}
+ .pk-v36-feature-copy p{font-size:.73rem}
+ .pk-v36-feature>img{width:32%;max-width:130px;height:112px}
+ .hv33-container,.hv33-container *{box-sizing:border-box}
+ .hv33-container{max-width:100%;min-width:0}
+ .hv33-container .hv33-hero{min-width:0}
+ .hv33-container .hv33-hero-content{min-width:0}
+ .hv33-container .hv33-hero h1{font-size:clamp(1.8rem,7.5vw,2.9rem)!important;line-height:1.1}
+ .hv33-container .hv33-hero p{font-size:.82rem;line-height:1.5}
+ .hv33-container .hv33-podium{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ .hv33-container .hv33-podium-spot{width:auto!important;max-width:100%!important;margin:0!important}
+ .hv33-container .hv33-podium-spot:not(.hv33-rank-2):not(.hv33-rank-3){grid-column:1/-1;grid-row:1}
+ .hv33-container .hv33-card-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
+ .hv33-container .hv33-category-card{width:100%;max-width:100%}
+ .hv33-container .hv33-filter-strip{max-width:100%;overflow-x:auto}
+ .hv33-container .hv33-filter{max-width:100%}
+ .hv33-container .hv33-mobile-selector{max-width:100%}
+ .hv33-container .hv33-mobile-selector select{max-width:100%;min-width:0}
+ .hv33-container .hv33-category-head{min-width:0}
+ .hv33-container .hv33-category-title{min-width:0}
+ .hv33-container .hv33-competitor{min-width:0}
+ .hv33-container .hv33-competitor-list{min-width:0}
+ .hv33-container .hv33-row-name{font-size:.78rem}
+ .hv33-container .hv33-row-metric{font-size:.73rem}
+ .hv33-container .hv33-footer{flex-wrap:wrap}
+}
+@media(max-width:360px){.pk-v36-feature>img{width:27%;height:90px}.pk-v36-feature-copy h2{font-size:1.35rem}.hv33-container .hv33-podium{gap:6px!important}}
+@media(prefers-reduced-motion:reduce){.pk-v36-feature *{animation:none!important;transition:none!important}}
