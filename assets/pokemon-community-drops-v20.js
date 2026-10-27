@@ -1,4 +1,4 @@
-/* Fabi Pokémon Adventure V25 — caixa lendária premium, quantidade via modal PIX e catálogo visual refinado. */
+/* Fabi Pokémon Adventure V26 — caixa lendária premium, quantidade via modal PIX e catálogo visual refinado. */
 (()=>{
 'use strict';
 const PROXY='https://orange-hill-2e61.gbscabral15.workers.dev';
@@ -210,10 +210,25 @@ function groupOptions(v){
 }
 function renderWallet(){
  const root=$('#wallet');
- const count=$('#walletCount');const available=(data.vouchers||[]).filter(v=>v.status==='available').length;
- if(count)count.textContent=isLogged()?`${available} drop(s) pronto(s) · ${data.vouchers.length} registro(s) na carteira`:'Entre na conta para ver seus drops';$('#loginNote').hidden=isLogged();if(!isLogged()){root.innerHTML='';return}
- if(!data.vouchers.length){root.innerHTML='<div class="empty"><b>Sua carteira está vazia.</b><p>Você ainda não tem nenhum drop. Toque em “Explorar caixas e obter novos drops” acima para ver as opções gratuitas e os pacotes de conteúdo garantido.</p></div>';return}
- root.innerHTML=data.vouchers.map(v=>`<article class="wallet-item ${v.status==='available'?'ready':''}"><img loading="lazy" src="${esc(v.speciesId?media(v.speciesId):boxArt(v.productId))}" alt=""><div><b>${esc(v.label)}${v.purchaseQuantity>1?` <span class="wallet-batch">${v.purchaseIndex}/${v.purchaseQuantity}</span>`:''}</b><small>${v.speciesId?`${esc(data.products.find(p=>p.id===v.productId)?.possibleSpecies?.find(x=>Number(x.id)===Number(v.speciesId))?.name||('Pokémon #'+v.speciesId))} · conteúdo definido`:'Espécie surpresa gratuita'} · ${esc(dates(v.createdAt))}</small>${v.groupId?`<p>Grupo: …${esc(v.groupId.split('@')[0].slice(-8))}</p>`:''}${v.lastError?`<p>${esc(v.lastError)}</p>`:''}</div><div class="action"><span class="status ${esc(v.status)}">${esc(STATUS[v.status]||v.status)}</span>${v.status==='available'?`<select aria-label="Grupo para ${esc(v.label)}" class="group-select" data-group="${esc(v.id)}">${groupOptions(v)}</select><button type="button" class="btn primary mini" data-dispatch="${esc(v.id)}" ${data.groups.length?'':'disabled'}>Enviar este drop</button>`:''}${v.status==='queued'?`<button type="button" class="btn secondary mini" data-cancel="${esc(v.id)}">Cancelar envio</button>`:''}</div></article>`).join('');
+ const count=$('#walletCount');
+ const stats=$('#walletStats');
+ const vouchers=data.vouchers||[];
+ const available=vouchers.filter(v=>v.status==='available').length;
+ const queued=vouchers.filter(v=>v.status==='queued'||v.status==='processing').length;
+ const sent=vouchers.filter(v=>v.status==='sent').length;
+ if(stats)stats.innerHTML=`<div class="wallet-stat"><small>Disponíveis</small><b>${isLogged()?available:'—'}</b><span>Prontos para enviar</span></div><div class="wallet-stat"><small>Na fila</small><b>${isLogged()?queued:'—'}</b><span>Envios em andamento</span></div><div class="wallet-stat"><small>Entregues</small><b>${isLogged()?sent:'—'}</b><span>Histórico recente</span></div><div class="wallet-stat"><small>Grupos válidos</small><b>${isLogged()?data.groups.length:'—'}</b><span>Pokémon automático ativo</span></div>`;
+ if(count)count.textContent=isLogged()?`${available} pronto(s) · ${queued} em fila · ${vouchers.length} no total`:'Entre na conta para ver seus drops';
+ $('#loginNote').hidden=isLogged();
+ if(!isLogged()){root.innerHTML='';return}
+ if(!vouchers.length){root.innerHTML='<div class="empty"><b>Sua carteira está vazia.</b><p>Você ainda não tem nenhum drop. Toque em “Explorar caixas e obter novos drops” para abrir as caixas gratuitas e os pacotes comunitários.</p></div>';return}
+ root.innerHTML=vouchers.map(v=>{
+   const product=data.products.find(p=>p.id===v.productId);
+   const speciesName=v.speciesId?(product?.possibleSpecies?.find(x=>Number(x.id)===Number(v.speciesId))?.name||('Pokémon #'+v.speciesId)):'Espécie surpresa gratuita';
+   const contentType=v.speciesId?'Conteúdo definido':'Caixa gratuita';
+   const status=STATUS[v.status]||v.status;
+   const groupShort=v.groupId?`…${String(v.groupId).split('@')[0].slice(-8)}`:'';
+   return `<article class="wallet-item ${v.status==='available'?'ready':''}"><div class="wallet-media"><img loading="lazy" src="${esc(v.speciesId?media(v.speciesId):boxArt(v.productId))}" alt=""></div><div class="wallet-body"><div class="wallet-item-head"><b>${esc(v.label)}${v.purchaseQuantity>1?` <span class="wallet-batch">${v.purchaseIndex}/${v.purchaseQuantity}</span>`:''}</b><span class="status ${esc(v.status)}">${esc(status)}</span></div><small>${esc(speciesName)} · ${esc(contentType)}</small><div class="wallet-meta"><span class="wallet-pill">Criado em ${esc(dates(v.createdAt))}</span>${groupShort?`<span class="wallet-pill">Último grupo ${esc(groupShort)}</span>`:''}${v.speciesId?'<span class="wallet-pill yes">Espécie visível</span>':'<span class="wallet-pill">Sorteio gratuito</span>'}</div>${v.lastError?`<p>${esc(v.lastError)}</p>`:''}</div><div class="action">${v.status==='available'?`<select aria-label="Grupo para ${esc(v.label)}" class="group-select" data-group="${esc(v.id)}">${groupOptions(v)}</select><button type="button" class="btn primary mini" data-dispatch="${esc(v.id)}" ${data.groups.length?'':'disabled'}>Enviar drop</button>`:''}${v.status==='queued'?`<div class="wallet-action-note">Aguardando publicação no grupo.</div><button type="button" class="btn secondary mini" data-cancel="${esc(v.id)}">Cancelar envio</button>`:''}${v.status==='sent'?`<div class="wallet-action-note">Drop já enviado com sucesso.</div>`:''}${!['available','queued','sent'].includes(String(v.status))?`<div class="wallet-action-note">Acompanhe o status acima.</div>`:''}</div></article>`;
+ }).join('');
 }
 function setCatalogOpen(open,section='free'){
  const region=$('#discoverDrops'),btn=$('#browseDrops');if(!region)return;
