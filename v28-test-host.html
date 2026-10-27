@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#06130e;color:#e5fff1;font-family:Arial}header{height:80px;position:sticky;top:0;background:#05120d;z-index:5}.pk-drop-frame{display:block;width:100%;height:500px;border:0}footer{height:200px}</style></head><body><header>FABI POKÉMON — Drops</header><iframe class="pk-drop-frame" title="Caixas e Drops"></iframe><footer>Fim da página</footer><script>const state={tab:'drops'},$=s=>document.querySelector(s);  if(state.tab==='drops'){
+    const iframe=$('#pkApp .pk-drop-frame');
+    iframe?.addEventListener('load',()=>{
+      try{
+        const inner=iframe.contentDocument;
+        const content=inner.querySelector('.wrap');
+        if(!content)return;
+        let queued=false;
+        const resize=()=>{
+          if(!iframe.isConnected){observer?.disconnect();return}
+          const natural=Math.ceil(content.getBoundingClientRect().height);
+          const height=Math.max(360,Math.min(2200,natural+12));
+          const current=parseFloat(iframe.style.height)||iframe.getBoundingClientRect().height;
+          if(Math.abs(current-height)>3)iframe.style.height=height+'px';
+        };
+        const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;resize()})};
+        const observer=window.ResizeObserver?new ResizeObserver(schedule):null;
+        observer?.observe(content);
+        resize();
+      }catch(_){/* Sem acesso ao frame, a página continua navegável por link direto. */}
+    },{once:true});
+  }
+document.querySelector('iframe').src='/pokemon-drops.html?embed=1&v=29';</script></body></html>
