@@ -2,14 +2,14 @@
 <html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover">
-<title>Central de Drops | Pokémon Adventure — Fabi Bot</title>
-<meta name="description" content="Organize eventos Pokémon para grupos autorizados do WhatsApp. Escolha a espécie com antecedência, acompanhe a entrega e participe da comunidade Fabi Bot.">
+<title>Caixas Pokémon e Drops | Pokémon Adventure — Fabi Bot</title>
+<meta name="description" content="Resgate uma caixa misteriosa gratuita a cada 24 horas ou organize eventos de espécie definida. Escolha um grupo com RPG ativo e acompanhe a entrega no WhatsApp.">
 <meta name="theme-color" content="#07141a"><meta name="referrer" content="no-referrer"><meta name="robots" content="index,follow">
 <link rel="canonical" href="https://www.fabibot.com.br/pokemon-drops">
 <link rel="icon" href="/favicon-32x32.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/pokemon-community-drops-v14.css?v=14.1">
-<script defer src="/assets/pokemon-community-drops-v14.js?v=14.1"></script>
+<link rel="stylesheet" href="/assets/pokemon-community-drops-v14.css?v=15.0">
+<script defer src="/assets/pokemon-community-drops-v14.js?v=15.0"></script>
 </head>
 <body>
 <div class="ambient" aria-hidden="true"></div>
@@ -19,20 +19,24 @@
   <nav aria-label="Navegação"><a href="/pokemon">Voltar ao jogo</a><a href="/pokemon-guia.html">Guia</a><button id="themeToggle" class="theme-toggle" type="button" aria-label="Alternar tema">◐</button></nav>
 </header>
 <section class="hero">
-  <div class="hero-copy"><span class="eyebrow"><span class="live-dot"></span> EVENTOS DA COMUNIDADE · V14</span>
-    <h1>Seu grupo.<br><span>Uma nova aventura.</span></h1>
-    <p>Patrocine um evento com Pokémon <b>escolhido antecipadamente</b>. A Fabi publica a figurinha no grupo autorizado, e os participantes podem capturar gratuitamente.</p>
-    <div class="hero-actions"><a class="btn primary" href="#eventos">Explorar eventos <span>↗</span></a><a class="btn secondary" href="#minhacarteira">Minha carteira</a></div>
-    <div class="hero-stats"><div><b>4</b><span>eventos disponíveis</span></div><div><b>1h</b><span>intervalo por grupo</span></div><div><b>0</b><span>surpresas na compra</span></div></div>
+  <div class="hero-copy"><span class="eyebrow"><span class="live-dot"></span> CAIXAS & EVENTOS · V15</span>
+    <h1>Uma caixa surpresa.<br><span>Um grupo inteiro jogando.</span></h1>
+    <p>Resgate uma <b>caixa misteriosa gratuita a cada 24h</b> e envie um Pokémon surpresa para um grupo com RPG. Também há eventos de espécie definida; todos podem disputar a captura grátis.</p>
+    <div class="hero-actions"><a class="btn primary" href="#caixaGratis">🎁 Abrir caixa grátis</a><a class="btn secondary" href="#eventos">Ver eventos fixos</a><a class="btn secondary" href="#minhacarteira">Meus drops</a></div>
+    <div class="hero-stats"><div><b>24h</b><span>para cada caixa grátis</span></div><div><b>1h</b><span>intervalo por grupo</span></div><div><b>RPG</b><span>sem ativar /pokedrops</span></div></div>
   </div>
   <div class="hero-art" aria-label="Ilustração dos eventos Pokémon"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="hero-ball">◓</div><span class="float-icon one">⚡</span><span class="float-icon two">🔥</span><span class="float-icon three">💧</span><div class="floating-card"><span class="dot"></span><small>O próximo evento</small><b>Você escolhe o grupo</b></div></div>
 </section>
-<section class="notice"><span aria-hidden="true">🛡️</span><div><b>Eventos transparentes, sem sorteios pagos.</b><p>Cada compra corresponde a um evento com espécie conhecida. O patrocinador não recebe o Pokémon automaticamente. Os drops aleatórios normais continuam gratuitos no jogo.</p></div></section>
-<section class="step-section"><div class="section-label">COMO FUNCIONA</div><div class="steps"><div><span class="step-number">01</span><h3>Escolha a espécie</h3><p>Veja o conteúdo exato e o preço do evento antes de pagar.</p></div><div><span class="step-number">02</span><h3>Selecione o grupo</h3><p>Apenas grupos com RPG e eventos autorizados pelo administrador aparecem.</p></div><div><span class="step-number">03</span><h3>A Fabi faz o drop</h3><p>O bot publica uma figurinha. Quem responder primeiro pode capturar gratuitamente.</p></div></div></section>
-<section id="eventos" class="section"><div class="section-heading"><div><span class="section-label">CATÁLOGO</span><h2>Eventos disponíveis</h2><p>Espécie certa, valor fixo. Sem baús-surpresa.</p></div><span class="section-chip">Disponível via PIX</span></div>
+<section class="notice"><span aria-hidden="true">🛡️</span><div><b>A surpresa é gratuita. As compras têm conteúdo definido.</b><p>Você não precisa ativar drops no grupo: basta que o RPG já esteja funcionando e o administrador não tenha bloqueado eventos. Os Pokémon sorteados vêm somente das caixas gratuitas, sem pagamento.</p></div></section>
+<section class="free-drop" id="caixaGratis" aria-labelledby="freeDropTitle">
+ <div class="free-glow" aria-hidden="true">🎁</div>
+ <div class="free-copy"><span class="section-label">PRESENTE DA COMUNIDADE · 100% GRÁTIS</span><h2 id="freeDropTitle">Sua caixa surpresa do dia</h2><p>Resgate uma caixa a cada 24 horas, sem PIX nem Golds. A Fabi seleciona um Pokémon surpresa no servidor e envia como figurinha ao grupo que você escolher. Todos no grupo podem capturar gratuitamente; o patrocinador não recebe o Pokémon automaticamente.</p><div class="free-badges"><span>🎲 Espécie surpresa</span><span>⏱ 1 resgate/24h</span><span>👥 Escolha um grupo com RPG</span></div><button id="claimFree" class="btn primary" type="button">🎁 Resgatar minha caixa grátis</button><p class="free-note" id="freeNote" aria-live="polite">Entre com sua conta Fabi para resgatar e usar a caixa.</p></div>
+ </section>
+<section class="step-section"><div class="section-label">COMO FUNCIONA</div><div class="steps"><div><span class="step-number">01</span><h3>Resgate ou escolha</h3><p>Caixa grátis: surpresa. Evento PIX: a espécie é definida antes da compra.</p></div><div><span class="step-number">02</span><h3>Escolha qualquer grupo com RPG</h3><p>Sem comando de ativação de drops. Grupos com RPG aparecem automaticamente, salvo bloqueio do admin.</p></div><div><span class="step-number">03</span><h3>A Fabi faz o drop</h3><p>O bot publica uma figurinha. Quem responder primeiro pode capturar gratuitamente.</p></div></div></section>
+<section id="eventos" class="section"><div class="section-heading"><div><span class="section-label">CATÁLOGO</span><h2>Eventos com espécie definida</h2><p>Para quem quer escolher qual Pokémon vai aparecer no grupo. A caixa aleatória acima é totalmente grátis.</p></div><span class="section-chip">Disponível via PIX</span></div>
 <div id="catalog" class="catalog"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></section>
-<section id="minhacarteira" class="section"><div class="section-heading"><div><span class="section-label">MINHA JORNADA</span><h2>Meus eventos</h2><p>Compre, organize, acompanhe e confirme suas entregas.</p></div><button id="refresh" type="button" class="btn secondary mini">↻ Atualizar</button></div><div id="loginNote" class="login-note" hidden>Entre na sua conta Fabi pelo <a href="/pokemon">Pokémon Adventure</a> para usar os eventos da comunidade.</div><div id="wallet" class="wallet"><div class="skeleton wide"></div></div></section>
-<section class="faq"><div><span class="section-label">CONTROLE DOS GRUPOS</span><h2>O administrador decide.</h2><p>Para aparecer na seleção de grupos, um administrador precisa ativar o RPG e enviar <code>/pokedrops ativar</code>. Pode desativar a autorização a qualquer momento com <code>/pokedrops desativar</code>.</p></div><div class="faq-panel"><b>Boas práticas</b><span>✓ Um evento de cada vez por grupo</span><span>✓ Intervalo mínimo de 60 minutos</span><span>✓ Crédito não é consumido se o envio não acontecer</span><span>✓ Cada figurinha mantém a captura original do bot</span></div></section>
+<section id="minhacarteira" class="section"><div class="section-heading"><div><span class="section-label">MINHA JORNADA</span><h2>Meus drops</h2><p>Caixas gratuitas e eventos: escolha o grupo, acompanhe a fila e a entrega.</p></div><button id="refresh" type="button" class="btn secondary mini">↻ Atualizar</button></div><div id="loginNote" class="login-note" hidden>Entre na sua conta Fabi pelo <a href="/pokemon">Pokémon Adventure</a> para usar os eventos da comunidade.</div><div id="wallet" class="wallet"><div class="skeleton wide"></div></div></section>
+<section class="faq"><div><span class="section-label">GRUPOS DO WHATSAPP</span><h2>Sem precisar ativar drops.</h2><p>Os grupos com RPG ativo aparecem automaticamente. O administrador pode bloquear com <code>/pokedrops desativar</code> e liberar com <code>/pokedrops ativar</code>. A Fabi precisa participar do grupo.</p></div><div class="faq-panel"><b>Boas práticas</b><span>✓ Um evento de cada vez por grupo</span><span>✓ Intervalo mínimo de 60 minutos</span><span>✓ Crédito não é consumido se o envio não acontecer</span><span>✓ Todos podem participar gratuitamente da captura</span></div></section>
 <footer><a href="/pokemon">Pokémon Adventure</a><span>Fabi Bot · Comunidade e aventura</span><a href="/termos.html">Termos de uso</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
