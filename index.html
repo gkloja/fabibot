@@ -7102,6 +7102,15 @@ body.light-mode .command-badge-mobile {
     }, true);
   })();
 </script>
+<style id="fabiV55FreeStyles">
+.fabi-v55-plan-banner{padding:18px 20px;border-radius:17px;font-weight:750;line-height:1.55;margin:10px 0 18px;border:1px solid rgba(118,101,220,.3);background:rgba(103,69,221,.08);color:var(--text-color,inherit)}
+.fabi-v55-plan-banner.free{border-color:rgba(45,212,191,.33);background:linear-gradient(115deg,rgba(16,185,129,.11),rgba(59,130,246,.06))}
+.fabi-v55-pro-only{opacity:.55!important;position:relative}.fabi-v55-pro-only .config-checkbox{cursor:not-allowed!important}
+.fabi-v55-pro-label{font:bold 10px/1.4 system-ui;letter-spacing:.06em;color:#b29aff;display:inline-block;border:1px solid currentColor;border-radius:7px;padding:3px 7px;margin-left:5px}
+.fabi-v55-chip{display:inline-flex;border-radius:99px;padding:5px 10px;font:750 11px system-ui;margin-top:6px;border:1px solid rgba(100,116,139,.27)}
+.fabi-v55-chip.free{color:#10b981;background:rgba(16,185,129,.09)}.fabi-v55-chip.pro{color:#a78bfa;background:rgba(139,92,246,.11)}
+body.light-mode .fabi-v55-pro-label{color:#603ad4}
+</style>
 </head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
 <body class="dark-mode">
@@ -8962,6 +8971,8 @@ body.light-mode .fz34-community-meta{color:#395950}body.light-mode .fz34-check-s
 // ==================== PAINEL "CONFIGURAR GRUPO" (portado do index.html) ====================
 let cfgGruposOriginais = [];   // lista completa da API
 let cfgGruposAdmin = [];       // só onde o número logado é admin
+let cfgPlanoAtualV55 = 'pro';
+const CFG_FREE_V55 = new Set(['sistemGold','antinotas','x9','soinsta','soadm','visuUnica','soinstaface','antistatus','antiimg','antivideo','antisticker','antidoc','antictt','antiloc','antilinkgp','level','antilinkhard','antifake','antispam','nsfw']);
 let cfgGruposFiltrados = [];
 let cfgPaginaAtual = 1;
 let cfgFiltroAtual = 'todos';  // 'todos' | 'admin'
@@ -9188,6 +9199,24 @@ const CFG_ORDEM = (function () {
   });
 })();
 
+function cfgAplicarPlanoV55(plano){
+ cfgPlanoAtualV55=plano==='free'?'free':'pro';
+ const area=document.getElementById('areaAdmin');if(!area)return;
+ let banner=document.getElementById('fabiV55PlanoAviso');
+ if(!banner){banner=document.createElement('div');banner.id='fabiV55PlanoAviso';banner.setAttribute('role','status');area.prepend(banner)}
+ const isFree=cfgPlanoAtualV55==='free';area.classList.toggle('fabi-v55-free',isFree);
+ banner.className='fabi-v55-plan-banner '+(isFree?'free':'pro');
+ banner.textContent=isFree?'🛡️ Fabi Free · 20 controles de moderação + programação de horários. Recursos Pro aparecem bloqueados. Downloads automáticos indisponíveis.':'💎 Fabi Pro · Todos os controles disponíveis conforme as permissões da sua assinatura.';
+ for(const id of ['fzPalavrasCard','g1EstadosCard']){
+  const node=document.getElementById(id);if(!node)continue;
+  node.classList.toggle('fabi-v55-pro-only',isFree);
+  for(const control of node.querySelectorAll('input,select,button,textarea'))control.disabled=isFree;
+  if(isFree && !node.querySelector('.fabi-v55-pro-label')){
+   const tip=document.createElement('div');tip.className='fabi-v55-pro-label';tip.textContent='🔒 Exclusivo da Fabi Pro';node.insertBefore(tip,node.children[1]||null);
+  }
+  const tip=node.querySelector('.fabi-v55-pro-label');if(tip)tip.hidden=!isFree;
+ }
+}
 function cfgRenderizarOpcoes(cfg0) {
   cfg0 = cfg0 || {};
   const grid = document.getElementById("checkboxGrid");
@@ -9195,42 +9224,43 @@ function cfgRenderizarOpcoes(cfg0) {
   const wellcome = Array.isArray(cfg0.wellcome) ? cfg0.wellcome : [{}, {}];
   let html = "";
   CFG_ORDEM.forEach(config => {
-    const on = !!cfg0[config];
+    const freeLocked=cfgPlanoAtualV55==='free' && !CFG_FREE_V55.has(config);
+    const on = !freeLocked && !!cfg0[config];
     const badge = CFG_BADGES[config] === "hot" ? '<span class="fz-cfg-badge fz-cfg-badge-hot">🔥 Hot</span>' :
                   CFG_BADGES[config] === "novo" ? '<span class="fz-cfg-badge fz-cfg-badge-novo">🆕 Novo</span>' : "";
     const help = config === 'pokemonAuto' ? '<small class="fabi-pokeauto-hint">👹 Avisos de Boss e 🎴 figurinhas automáticas. Desligado por padrão; requer RPG ativo. Admins: /pokeauto ligar ou /pokeauto desligar.</small>' : '';
-    html += `<div class="fz-cfg-item" id="group-${config}">
-      <label for="${config}">${CFG_NOMES[config] || config} ${badge}</label>
+    html += `<div class="fz-cfg-item ${freeLocked?'fabi-v55-pro-only':''}" id="group-${config}">
+      <label for="${config}">${CFG_NOMES[config] || config} ${badge} ${freeLocked?'<span class="fabi-v55-pro-label">PRO</span>':''}</label>
       ${help}
       <div class="fz-cfg-item-row">
         <label class="fz-cfg-switch">
           <input type="checkbox" name="${config}" id="${config}" class="config-checkbox"
-            data-config-name="${config}" data-friendly-name="${CFG_NOMES[config] || config}" ${on ? "checked" : ""} />
+            data-config-name="${config}" data-friendly-name="${CFG_NOMES[config] || config}" ${on ? "checked" : ""} ${freeLocked?'disabled title="Disponível somente na Fabi Pro"':''} />
           <span class="fz-cfg-slider"></span>
         </label>
         <span id="status-${config}" class="fz-cfg-status ${on ? "on" : "off"}">${on ? "Ativo" : "Inativo"}</span>
       </div>
     </div>`;
   });
-  const bv1 = !!(wellcome[0] && wellcome[0].bemvindo1);
-  const bv2 = !!(wellcome[1] && wellcome[1].bemvindo2);
-  html += `<div class="fz-cfg-item" id="group-bemvindo1">
+  const bv1 = cfgPlanoAtualV55!=='free' && !!(wellcome[0] && wellcome[0].bemvindo1);
+  const bv2 = cfgPlanoAtualV55!=='free' && !!(wellcome[1] && wellcome[1].bemvindo2);
+  html += `<div class="fz-cfg-item ${cfgPlanoAtualV55==='free'?'fabi-v55-pro-only':''}" id="group-bemvindo1">
     <label for="bemvindo1">🎶 Boas-Vindas com Áudio</label>
     <div class="fz-cfg-item-row">
       <label class="fz-cfg-switch">
         <input type="checkbox" name="bemvindo1" id="bemvindo1" class="config-checkbox"
-          data-config-name="bemvindo1" data-friendly-name="Boas-Vindas com Áudio" ${bv1 ? "checked" : ""} />
+          data-config-name="bemvindo1" data-friendly-name="Boas-Vindas com Áudio" ${bv1 ? "checked" : ""} ${cfgPlanoAtualV55==='free'?'disabled':''} />
         <span class="fz-cfg-slider"></span>
       </label>
       <span id="status-bemvindo1" class="fz-cfg-status ${bv1 ? "on" : "off"}">${bv1 ? "Ativo" : "Inativo"}</span>
     </div>
   </div>
-  <div class="fz-cfg-item" id="group-bemvindo2">
+  <div class="fz-cfg-item ${cfgPlanoAtualV55==='free'?'fabi-v55-pro-only':''}" id="group-bemvindo2">
     <label for="bemvindo2">📝 Boas-Vindas com Texto e Imagem</label>
     <div class="fz-cfg-item-row">
       <label class="fz-cfg-switch">
         <input type="checkbox" name="bemvindo2" id="bemvindo2" class="config-checkbox"
-          data-config-name="bemvindo2" data-friendly-name="Boas-Vindas com Texto e Imagem" ${bv2 ? "checked" : ""} />
+          data-config-name="bemvindo2" data-friendly-name="Boas-Vindas com Texto e Imagem" ${bv2 ? "checked" : ""} ${cfgPlanoAtualV55==='free'?'disabled':''} />
         <span class="fz-cfg-slider"></span>
       </label>
       <span id="status-bemvindo2" class="fz-cfg-status ${bv2 ? "on" : "off"}">${bv2 ? "Ativo" : "Inativo"}</span>
@@ -9261,6 +9291,10 @@ function cfgRenderizarOpcoes(cfg0) {
   <button type="button" id="saveButton" onclick="cfgSalvarTodas()"><i class="fas fa-floppy-disk"></i> Salvar Alterações</button>
   <input type="hidden" id="grupoIDInput" name="grupoID" value="">`;
   grid.innerHTML = html;
+  if (cfgPlanoAtualV55==='free') {
+    for(const element of grid.querySelectorAll('.fz-cfg-text-options input'))element.disabled=true;
+    grid.querySelector('.fz-cfg-text-options')?.classList.add('fabi-v55-pro-only');
+  }
   cfgPainelIniciarListeners();
 }
 
@@ -9320,6 +9354,8 @@ async function cfgCarregarConfigGrupo(grupoID) {
     const url = API_URL + "/api/grupo-config/" + encodeURIComponent(grupoID);
     const resp = await fetch(url);
     const data = await resp.json();
+    if(!resp.ok||!data.success)throw new Error(data.message||'Falha ao carregar plano.');
+    cfgAplicarPlanoV55(data.plan);
     const cfg = (data && data.config && (data.config[0] || data.config)) || {};
     cfgRenderizarOpcoes(cfg);
     try {
@@ -9330,6 +9366,8 @@ async function cfgCarregarConfigGrupo(grupoID) {
     if (input) input.value = grupoID;
   } catch (e) {
     console.error("cfgCarregarConfigGrupo", e);
+    // Não renderizar toggles Pro como editáveis quando plano não pôde ser confirmado.
+    cfgAplicarPlanoV55('free');
     cfgRenderizarOpcoes({});
   }
 }
@@ -9360,10 +9398,10 @@ async function cfgSalvarTodas() {
     return;
   }
   const body = { grupoID, ...cfgAuthBody() };
-  document.querySelectorAll("#checkboxGrid .config-checkbox").forEach(cb => {
+  document.querySelectorAll("#checkboxGrid .config-checkbox:not(:disabled)").forEach(cb => {
     body[cb.dataset.configName] = cb.checked ? "on" : "off";
   });
-  ["legendabv","legendasaiu","legendabv2","legendasaiu2"].forEach(id => {
+  if (cfgPlanoAtualV55!=='free') ["legendabv","legendasaiu","legendabv2","legendasaiu2"].forEach(id => {
     const el = document.getElementById(id);
     if (el) body[id] = el.value;
   });
@@ -9621,6 +9659,11 @@ function cfgPainelRenderizarPagina() {
         card.innerHTML = '<div class="cyber-number"></div><div class="cyber-name"></div><div class="cyber-id">ID do grupo: <b></b></div>';
         card.querySelector('.cyber-number').textContent = String(inicio + idx + 1);
         card.querySelector('.cyber-name').textContent = '🔹 ' + (g.nome || 'Grupo sem nome');
+        const statusPlano = (cfgGruposAdmin.find(x=>String(x.grupoID||x.groupId||x.id)===String(g.grupoID))||g).plano;
+        if(statusPlano==='free'||statusPlano==='pro'){
+          const tag=document.createElement('span');tag.className='fabi-v55-chip '+statusPlano;tag.textContent=statusPlano==='free'?'🛡️ Fabi Free':'💎 Fabi Pro';
+          card.appendChild(tag);
+        }
         card.querySelector('.cyber-id b').textContent = String(g.grupoID || '');
         const autorizado = cfgGruposAdmin.find(x => String(x.grupoID || x.groupId || x.id || '') === String(g.grupoID));
         if (autorizado) {
@@ -9856,6 +9899,9 @@ function cfgPainelIniciarListeners() {
     document.querySelectorAll('#configForm .config-checkbox').forEach(checkbox => {
         checkbox.addEventListener('change', async function () {
             const configName = this.dataset.configName;
+            if (this.disabled || (cfgPlanoAtualV55==='free' && !CFG_FREE_V55.has(configName))) {
+                this.checked=false;return;
+            }
             const friendlyName = this.dataset.friendlyName;
             const isChecked = this.checked;
             const grupoID = cfgPainelObterGrupoSelecionado();
