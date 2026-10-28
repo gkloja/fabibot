@@ -22006,13 +22006,42 @@ body.light-mode #fabiEstudioV69 .fes-connection[data-status=error],html[data-the
 body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV69 .fes-banner{background:#fff1f0;color:#842d25;border-color:#edb4ad;}
 @media(max-width:420px){#fabiEstudioV69 .fes-header-badges{align-items:flex-start;}}
 
+/* V72 — identidade da sessão, com contraste legível em temas claro e escuro. */
+#fabiEstudioV69 .fes-identity{margin-top:20px;padding:16px;border:1px solid var(--fes-border);border-radius:19px;background:var(--fes-tile);}
+#fabiEstudioV69 .fes-identity-heading{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;}
+#fabiEstudioV69 .fes-identity-symbol{flex-shrink:0;display:grid;place-items:center;width:43px;height:43px;background:#166a5430;border:1px solid #1b986553;color:#58dda6;border-radius:13px;font-size:19px;}
+#fabiEstudioV69 .fes-identity-kicker{font-size:10px;letter-spacing:1px;color:#38c995;font-weight:800;}
+#fabiEstudioV69 .fes-identity h4{color:var(--fes-text);font-size:clamp(15px,3.2vw,19px);margin:4px 0 6px;}
+#fabiEstudioV69 .fes-identity-heading p{color:var(--fes-muted);font-size:11px;line-height:1.6;margin:0;}
+#fabiEstudioV69 .fes-identity-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+#fabiEstudioV69 .fes-identity-fields label{display:flex;flex-direction:column;gap:8px;min-width:0;color:var(--fes-text);font-size:12px;font-weight:800;}
+#fabiEstudioV69 .fes-identity-fields label i{margin-right:5px;color:#42c69c;}
+#fabiEstudioV69 .fes-identity-fields input{width:100%;min-width:0;border-radius:11px;padding:13px;border:1px solid var(--fes-border);background:var(--fes-bg);color:var(--fes-text);outline:none;font:600 13px 'Plus Jakarta Sans',system-ui;box-shadow:none;}
+#fabiEstudioV69 .fes-identity-fields input:focus{border-color:#32ba88;box-shadow:0 0 0 3px #2ed99b25;}
+#fabiEstudioV69 .fes-identity-fields input:disabled{opacity:.65;cursor:not-allowed;}
+#fabiEstudioV69 .fes-identity-preview{border-radius:14px;margin-top:14px;padding:12px 14px;background:linear-gradient(135deg,#14544626,#3473e717);border:1px solid var(--fes-border);}
+#fabiEstudioV69 .fes-id-preview-label{font-size:10px;font-weight:850;letter-spacing:.3px;color:var(--fes-muted);}
+#fabiEstudioV69 .fes-identity-message{margin-top:10px;display:inline-flex;flex-direction:column;gap:5px;max-width:100%;padding:12px 14px;background:#d9fdd3;border-radius:13px 13px 4px 13px;color:#15372b;font-size:13px;overflow-wrap:anywhere;}
+#fabiEstudioV69 .fes-identity-message small{color:#416254;font-size:11px;}
+#fabiEstudioV69 .fes-identity-bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:15px;}
+#fabiEstudioV69 .fes-identity-bottom>small{font-size:10px;color:var(--fes-muted);}
+#fabiEstudioV69 .fes-identity-actions{display:flex;gap:8px;flex-wrap:wrap;}
+#fabiEstudioV69 .fes-identity-status{font-size:11px;line-height:1.5;color:var(--fes-muted);margin:12px 0 0;}
+#fabiEstudioV69 .fes-identity-status[data-kind=error]{color:#fda4af;}
+#fabiEstudioV69 .fes-identity-status[data-kind=success]{color:#46daa6;}
+body.light-mode #fabiEstudioV69 .fes-identity-symbol,html[data-theme=light] #fabiEstudioV69 .fes-identity-symbol{background:#e3f9ee;color:#08754e;border-color:#bdebd3;}
+body.light-mode #fabiEstudioV69 .fes-identity-kicker,html[data-theme=light] #fabiEstudioV69 .fes-identity-kicker{color:#08754e;}
+body.light-mode #fabiEstudioV69 .fes-identity-fields input,html[data-theme=light] #fabiEstudioV69 .fes-identity-fields input{background:#f7fbfe;color:#17273b;border-color:#cadce7;}
+body.light-mode #fabiEstudioV69 .fes-identity-status[data-kind=error],html[data-theme=light] #fabiEstudioV69 .fes-identity-status[data-kind=error]{color:#b91c1c;}
+body.light-mode #fabiEstudioV69 .fes-identity-status[data-kind=success],html[data-theme=light] #fabiEstudioV69 .fes-identity-status[data-kind=success]{color:#047857;}
+@media(max-width:640px){#fabiEstudioV69 .fes-identity-fields{grid-template-columns:1fr;}#fabiEstudioV69 .fes-identity{padding:13px;}#fabiEstudioV69 .fes-identity-actions{width:100%;}#fabiEstudioV69 .fes-identity-actions .fes-btn{flex:1 1 44%;}}
 </style>
-<script id="fabi-v71-studio">
-/* Fabi Estúdio V71 - integrado ao index.html; comunicação com o backend via proxy existente. */
+<script id="fabi-v72-studio">
+/* Fabi Estúdio V72 - integrado ao index.html; comunicação com o backend via proxy existente. */
 (()=>{
  'use strict';
  const rootId='fabiEstudioV69', types=['menu','bemvindo'];
- const state={key:'', seq:0, ok:false, pending:false, files:{}, objectUrls:{}, version:{}};
+ const state={key:'', seq:0, ok:false, pending:false, files:{}, objectUrls:{}, version:{}, identityLoaded:false, identity:{}};
  const $=(selector,base=document)=>base.querySelector(selector);
  const group=()=>typeof cfgPainelObterGrupoSelecionado==='function' ? String(cfgPainelObterGrupoSelecionado()||'') : '';
  const session=()=>typeof fzSessaoControleAtual!=='undefined' ? String(fzSessaoControleAtual||'') : '';
@@ -22061,6 +22090,7 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
  function allowSave(ok){
    state.ok=!!ok;
    document.querySelectorAll('#'+rootId+' [data-save],#'+rootId+' [data-restore]').forEach(el=>{el.disabled=!state.ok||state.pending});
+   document.querySelectorAll('#'+rootId+' [data-identity-save],#'+rootId+' [data-identity-reset],#'+rootId+' [data-identity-input]').forEach(el=>{el.disabled=!state.ok||state.pending||!state.identityLoaded});
  }
  function describeError(j,status){
    const raw=String(j?.message||j?.erro||j?.error||'');
@@ -22123,10 +22153,10 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
  // Todos os pedidos autenticados do Estúdio são POST JSON, inclusive consultas.
  // Assim o Worker não precisa encaminhar X-Fabi-Grupo-Token para que o backend
  // verifique a assinatura; GET legado continua disponível para versões antigas.
- async function studioJson(acao,tipo,imagem){
+ async function studioJson(acao,tipo,imagem,extra={}){
    for(let attempt=0;attempt<2;attempt++){
      const authorization=await ensureToken(attempt>0);
-     const data={grupoID:group(),sessao:session(),acao,...authorization};
+     const data={grupoID:group(),sessao:session(),acao,...extra,...authorization};
      if(tipo)data.tipo=tipo;
      if(imagem)data.imagem=imagem;
      try{
@@ -22169,11 +22199,15 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
    const gid=group(),sess=session(),key=current();
    if(!gid||!sess){allowSave(false);msg('Selecione um grupo e uma sessão conectada à sua conta.');return;}
    const seq=++state.seq;state.key=key;
-   allowSave(false);msg('Conferindo sua sessão e carregando as imagens…','loading');
+   state.identityLoaded=false;
+   allowSave(false);msg('Conferindo sua sessão e carregando o Estúdio…','loading');
    types.forEach(type=>{if(!state.files[type]){setImage(type,'','loading');note(type,'Verificando imagem atual…')}});
    try{
      const j=await studioJson('consultar');
      if(seq!==state.seq||current()!==key)return;
+     state.identityLoaded=!!(j.identidade&&typeof j.identidade.nomeBot==='string'&&typeof j.identidade.nomeDono==='string');
+     if(state.identityLoaded)renderIdentity(j.identidade);
+     else identityMessage('Atualize o connect.js para a V72 para editar os nomes da sessão.','error');
      allowSave(true);
      for(const type of types){
        const info=j.imagens?.[type];state.version[type]=!!info?.personalizado;
@@ -22189,7 +22223,9 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
      msg('Estúdio disponível. Só a conta proprietária da sessão pode salvar alterações.','success');
    }catch(e){
      if(seq!==state.seq||current()!==key)return;
+     state.identityLoaded=false;
      allowSave(false);
+     identityMessage('Não foi possível carregar os nomes da sessão.','error');
      types.forEach(type=>{if(!state.files[type]){setImage(type,'','default');note(type,'Prévia local • não foi possível consultar o servidor')}});
      msg(e.message||'O Estúdio não pôde ser carregado.','error');
    }
@@ -22254,6 +22290,58 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
      state.pending=false;await load();msg(j.message||'Personalização atualizada.','success');
    }catch(e){state.pending=false;allowSave(true);msg(e.message||'Não foi possível salvar.','error');}
  }
+ // FABI V72: nomes são alterados na sessão inteira; os fundos continuam por grupo.
+ const identityInput=key=>$('#fes-v72-'+key);
+ const identityMessage=(text,kind='info')=>{
+   const node=$('#fes-v72-identity-status');if(!node)return;
+   node.textContent=text;node.dataset.kind=kind;
+ };
+ function identityPreview(){
+   const bot=identityInput('bot'),dono=identityInput('dono');
+   const previewBot=$('#fes-v72-preview-bot'),previewDono=$('#fes-v72-preview-dono');
+   if(previewBot)previewBot.textContent=(bot?.value||'Fabi Bot').trim()||'Fabi Bot';
+   if(previewDono)previewDono.textContent=(dono?.value||'Dono').trim()||'Dono';
+   const counter=$('#fes-v72-counter');
+   if(counter&&bot&&dono)counter.textContent=Array.from(bot.value).length+'/40 • '+Array.from(dono.value).length+'/40';
+ }
+ function renderIdentity(value){
+   if(!value)return;
+   state.identity=value;
+   const bot=identityInput('bot'),dono=identityInput('dono');
+   if(bot)bot.value=value.nomeBot||'';
+   if(dono)dono.value=value.nomeDono||'';
+   identityPreview();
+   identityMessage(value.nomeBotPersonalizado||value.nomeDonoPersonalizado
+     ?'Nomes personalizados nesta sessão, válidos em todos os grupos.'
+     :'Esta sessão está usando os nomes padrão.');
+ }
+ async function saveIdentity(restore=false){
+   if(!state.ok||!state.identityLoaded||state.pending||state.key!==current())return identityMessage('Selecione uma sessão autorizada antes de continuar.','error');
+   const sessaoAtual=session();
+   if(restore){
+     if(typeof Swal!=='undefined'){
+       const answer=await Swal.fire({title:'Restaurar nomes padrão?',text:'Isso será aplicado a todos os grupos desta sessão, sem alterar as imagens.',icon:'question',showCancelButton:true,confirmButtonText:'Restaurar nomes',cancelButtonText:'Cancelar'});
+       if(!answer.isConfirmed)return;
+     }else if(!confirm('Restaurar os nomes padrão desta sessão?'))return;
+   }
+   const nomeBot=(identityInput('bot')?.value||'').trim().replace(/\s+/g,' ');
+   const nomeDono=(identityInput('dono')?.value||'').trim().replace(/\s+/g,' ');
+   if(!restore){
+     if([nomeBot,nomeDono].some(t=>Array.from(t).length<2||Array.from(t).length>40))
+       return identityMessage('Os dois nomes precisam ter de 2 a 40 caracteres.','error');
+   }
+   state.pending=true;allowSave(false);
+   identityMessage(restore?'Restaurando os nomes padrão…':'Salvando identidade da sessão…','loading');
+   try{
+     const j=await studioJson(restore?'restaurar-identidade':'salvar-identidade',null,null,
+       restore?{}:{nomeBot,nomeDono});
+     if(state.key!==current()||sessaoAtual!==session())return;
+     renderIdentity(j.identidade);
+     identityMessage(j.message||'Nomes atualizados.','success');
+     msg('Identidade da robô atualizada com sucesso.','success');
+   }catch(e){identityMessage(e.message||'Não foi possível salvar os nomes.','error');}
+   finally{state.pending=false;allowSave(state.ok);}
+ }
  function mount(){
    if($('#'+rootId))return;
    const sw=$('#fzBotAtivo');if(!sw)return;
@@ -22263,12 +22351,16 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
    section.innerHTML=`<header class="fes-header"><div><span class="fes-eyebrow">IDENTIDADE VISUAL DO GRUPO</span><h3>🎨 Estúdio Fabi</h3><p class="fes-description">Seu grupo, sua identidade. Escolha o fundo do menu e a arte de boas-vindas. Veja como fica antes de publicar.</p></div><div class="fes-header-badges"><span class="fes-pro">👑 Exclusivo Pro</span><span class="fes-connection" id="fes-v70-connection" data-status="loading">Conectando…</span></div></header>
    <p class="fes-banner" id="fes-v70-banner" role="alert" hidden></p>
    <div class="fes-grid">${[['menu','Imagem do menu','fa-palette'],['bemvindo','Boas-vindas','fa-sun']].map(([t,title,icon])=>`<article id="fes-v69-${t}" class="fes-card"><div class="fes-card-title"><span class="fes-icon"><i class="fas ${icon}"></i></span>${title}</div><div class="fes-preview" data-frame data-tipo="${t}" data-state="default"><div class="fes-preview-inner"><i class="fas ${icon}"></i><b>Visual padrão da Fabi</b><small>Selecione uma foto para pré-visualizar</small></div><img alt="Prévia da imagem do grupo" /></div><p class="fes-image-label"><i class="fas fa-circle"></i><span id="fes-v69-note-${t}">Imagem padrão da Fabi Bot</span></p><div class="fes-actions"><label class="fes-pick"><i class="fas fa-image"></i> Escolher foto<input type="file" accept="image/jpeg,image/png,image/webp" data-file="${t}"></label><button type="button" class="fes-btn fes-save" data-save="${t}" disabled><i class="fas fa-floppy-disk"></i> Salvar</button><button type="button" class="fes-btn fes-reset" data-restore="${t}" disabled><i class="fas fa-rotate-left"></i> Padrão</button></div></article>`).join('')}</div>
+   <section class="fes-identity" aria-labelledby="fes-v72-identity-title"><div class="fes-identity-heading"><span class="fes-identity-symbol"><i class="fas fa-robot"></i></span><div><span class="fes-identity-kicker">IDENTIDADE DA SESSÃO</span><h4 id="fes-v72-identity-title">Nome da robô e do dono</h4><p>Personalize como a Fabi se apresenta no WhatsApp. Vale para <strong>todos os grupos desta sessão</strong>, não apenas o grupo selecionado.</p></div></div><div class="fes-identity-fields"><label><span><i class="fas fa-robot"></i> Nome da robô</span><input type="text" id="fes-v72-bot" data-identity-input maxlength="80" placeholder="Ex.: Fabi Bot" autocomplete="off" disabled></label><label><span><i class="fas fa-crown"></i> Nome do dono</span><input type="text" id="fes-v72-dono" data-identity-input maxlength="80" placeholder="Ex.: Meu nome" autocomplete="off" disabled></label></div><div class="fes-identity-preview"><span class="fes-id-preview-label"><i class="fas fa-eye"></i> Prévia no WhatsApp</span><div class="fes-identity-message"><div>🤖 <strong id="fes-v72-preview-bot">Fabi Bot</strong></div><small>👑 Por <strong id="fes-v72-preview-dono">Dono</strong></small></div></div><div class="fes-identity-bottom"><small id="fes-v72-counter">0/40 • 0/40</small><div class="fes-identity-actions"><button type="button" class="fes-btn fes-save" data-identity-save disabled><i class="fas fa-check"></i> Salvar nomes</button><button type="button" class="fes-btn fes-reset" data-identity-reset disabled><i class="fas fa-rotate-left"></i> Restaurar padrão</button></div></div><p class="fes-identity-status" id="fes-v72-identity-status" role="status">Carregando identidade…</p></section>
    <p class="fes-limit">Aceita JPG, PNG e WebP até 10 MB. Otimização automática antes do envio. A imagem salva é individual de cada grupo.</p><div class="fes-foot"><p class="fes-status" id="fes-v69-status" role="status"><i class="fas fa-circle-info"></i><span>Preparando o Estúdio…</span></p><button type="button" class="fes-btn fes-reload" data-retry><i class="fas fa-rotate"></i> Atualizar</button></div>`;
    parent.insertAdjacentElement('afterend',section);
    section.querySelectorAll('input[data-file]').forEach(input=>input.addEventListener('change',()=>choose(input.dataset.file,input.files?.[0])));
    section.querySelectorAll('button[data-save]').forEach(btn=>btn.addEventListener('click',()=>save(btn.dataset.save)));
    section.querySelectorAll('button[data-restore]').forEach(btn=>btn.addEventListener('click',()=>save(btn.dataset.restore,true)));
    $('[data-retry]',section).addEventListener('click',load);
+   section.querySelectorAll('[data-identity-input]').forEach(el=>el.addEventListener('input',identityPreview));
+   $('[data-identity-save]',section).addEventListener('click',()=>saveIdentity(false));
+   $('[data-identity-reset]',section).addEventListener('click',()=>saveIdentity(true));
  }
  let prev='';
  function onUpdate(){
