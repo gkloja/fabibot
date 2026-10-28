@@ -21920,8 +21920,8 @@ function ready(){if(read('fabi-bot-push-choice')==='on'&&window.Notification?.pe
 document.addEventListener('fabi-bot-push-ready',ready);if(window.fabiBotPushReady)ready();
 })();
 </script>
-<!-- FABI ESTÚDIO V69: estilos de alto contraste e prévia integrada -->
-<style id="fabi-v69-theme">
+<!-- FABI ESTÚDIO V70: conexão Cloudflare e prévia integrada -->
+<style id="fabi-v70-theme">
 /* Fabi Estúdio V69: interface responsiva com contrastes próprios dos dois temas. */
 #fabiEstudioV69 { --fes-bg:#101b27; --fes-tile:#182536; --fes-border:#304459; --fes-text:#f0f8ff; --fes-muted:#b4c5d6; --fes-blue:#2871ea; position:relative; isolation:isolate; margin:22px 0 2px; padding:18px; border:1px solid var(--fes-border); border-radius:22px; background:var(--fes-bg); color:var(--fes-text); box-shadow:0 14px 30px #06111b16; font-family:'Plus Jakarta Sans',system-ui,sans-serif; }
 #fabiEstudioV69 * { box-sizing:border-box; }
@@ -21993,9 +21993,22 @@ body.light-mode #fzAluguelStatus[style*="93c5fd"],html[data-theme="light"] #fzAl
 body.light-mode #fzAluguelStatus[style*="34d399"],html[data-theme="light"] #fzAluguelStatus[style*="34d399"]{color:#047857!important;}
 body.light-mode #fzAluguelStatus[style*="f87171"],html[data-theme="light"] #fzAluguelStatus[style*="f87171"]{color:#b91c1c!important;}
 
+/* V70: diagnóstico na parte superior: o usuário não precisa rolar até o rodapé. */
+#fabiEstudioV69 .fes-header-badges{display:flex;flex-direction:column;align-items:flex-end;gap:7px;}
+#fabiEstudioV69 .fes-connection{display:inline-flex;align-items:center;gap:5px;border-radius:30px;padding:5px 10px;font-size:10px;font-weight:800;background:#1f3142;color:#d4e0ea;border:1px solid #3e536a;}
+#fabiEstudioV69 .fes-connection[data-status=success]{background:#064d3b;color:#d5ffec;border-color:#1fa773;}
+#fabiEstudioV69 .fes-connection[data-status=error]{background:#7e2626;color:#fff0ed;border-color:#dc6565;}
+#fabiEstudioV69 .fes-banner{padding:12px 14px;margin:0 0 14px;background:#612327;color:#fff0ee;border:1px solid #d46c70;border-radius:12px;font-size:12px;font-weight:650;line-height:1.6;overflow-wrap:anywhere;}
+#fabiEstudioV69 .fes-banner[hidden]{display:none!important;}
+body.light-mode #fabiEstudioV69 .fes-connection,html[data-theme=light] #fabiEstudioV69 .fes-connection{background:#e4ebf2;color:#2d4357;border-color:#c6d5e2;}
+body.light-mode #fabiEstudioV69 .fes-connection[data-status=success],html[data-theme=light] #fabiEstudioV69 .fes-connection[data-status=success]{background:#dcfce7;color:#065f46;border-color:#86efac;}
+body.light-mode #fabiEstudioV69 .fes-connection[data-status=error],html[data-theme=light] #fabiEstudioV69 .fes-connection[data-status=error]{background:#fff0ec;color:#932c2c;border-color:#f1b0aa;}
+body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV69 .fes-banner{background:#fff1f0;color:#842d25;border-color:#edb4ad;}
+@media(max-width:420px){#fabiEstudioV69 .fes-header-badges{align-items:flex-start;}}
+
 </style>
-<script id="fabi-v69-studio">
-/* Fabi Estúdio V69 - integrado ao index.html; comunicação com o backend via proxy existente. */
+<script id="fabi-v70-studio">
+/* Fabi Estúdio V70 - integrado ao index.html; comunicação com o backend via proxy existente. */
 (()=>{
  'use strict';
  const rootId='fabiEstudioV69', types=['menu','bemvindo'];
@@ -22004,7 +22017,15 @@ body.light-mode #fzAluguelStatus[style*="f87171"],html[data-theme="light"] #fzAl
  const group=()=>typeof cfgPainelObterGrupoSelecionado==='function' ? String(cfgPainelObterGrupoSelecionado()||'') : '';
  const session=()=>typeof fzSessaoControleAtual!=='undefined' ? String(fzSessaoControleAtual||'') : '';
  const current=()=>group()+'|'+session();
- const api=path=>typeof fzApi==='function'?fzApi(path):typeof apiProxyUrl==='function'?apiProxyUrl(path):path;
+ // A rota /?url= foi informada pelo proprietário; o caminho anterior fica como alternativa.
+ // As credenciais continuam APENAS nos cabeçalhos da requisição (nunca na URL).
+ const worker='https://orange-hill-2e61.gbscabral15.workers.dev';
+ const upstream='http://br2.bronxyshost.com:4009';
+ const gateways=[
+   {label:'Worker /?url=',url:path=>worker+'/?url='+encodeURIComponent(upstream+path)},
+   {label:'Worker antigo',url:path=>typeof fzApi==='function'?fzApi(path):typeof apiProxyUrl==='function'?apiProxyUrl(path):worker+'/?url='+encodeURIComponent(upstream+path)}
+ ];
+ state.gateway=null;
  const headers=()=>typeof fzAuthHeaders==='function'?fzAuthHeaders():{'Content-Type':'application/json'};
  const msg=(text,kind='info')=>{
    const box=$('#fes-v69-status');if(!box)return;
@@ -22014,6 +22035,16 @@ body.light-mode #fzAluguelStatus[style*="f87171"],html[data-theme="light"] #fzAl
    const icon=document.createElement('i');icon.className='fas '+(icons[kind]||icons.info);
    const span=document.createElement('span');span.textContent=text;
    box.append(icon,span);
+   const banner=$('#fes-v70-banner');
+   if(banner){
+     banner.hidden=kind!=='error';
+     banner.textContent=kind==='error'?text:'';
+   }
+   const indicator=$('#fes-v70-connection');
+   if(indicator){
+     indicator.dataset.status=kind;
+     indicator.textContent=kind==='error'?'Conexão indisponível':kind==='success'?'Conectado':kind==='loading'?'Conectando…':'Estúdio Pro';
+   }
  };
  const tile=type=>$('#fes-v69-'+type);
  const note=(type,text)=>{const n=$('#fes-v69-note-'+type);if(n)n.textContent=text};
@@ -22040,11 +22071,43 @@ body.light-mode #fzAluguelStatus[style*="f87171"],html[data-theme="light"] #fzAl
    if(status===413)return 'A imagem enviada ficou grande demais. Escolha outra foto.';
    return raw||'Não foi possível consultar o servidor. Confira a conexão e tente novamente.';
  }
- async function jsonRequest(path,options){
-   const r=await fetch(api(path),{cache:'no-store',...options});
-   const j=await r.json().catch(()=>null);
-   if(!r.ok||!j?.success)throw Object.assign(new Error(describeError(j,r.status)),{status:r.status});
-   return j;
+ async function jsonRequest(path,options={}){
+   const isWrite=/^(POST|PATCH|PUT|DELETE)$/i.test(String(options.method||'GET'));
+   const order=state.gateway===null ? [0,1] : [state.gateway,...[0,1].filter(n=>n!==state.gateway)];
+   // Não reenviar POST a outro proxy automaticamente: evita duplicação após perda de resposta.
+   const indices=isWrite?order.slice(0,1):order;
+   const errors=[];
+   for(const i of indices){
+     const gate=gateways[i];
+     try{
+       const response=await fetch(gate.url(path),{cache:'no-store',...options});
+       const raw=await response.text();
+       let data=null;
+       try{data=JSON.parse(raw)}catch(_){ /* Página de erro HTML do Worker, não uma resposta da API. */ }
+       if(response.ok && data?.success===true){
+         state.gateway=i;
+         return data;
+       }
+       if(response.ok && !data){
+         errors.push({mode:gate.label,code:response.status,message:'O proxy respondeu com HTML/texto, não JSON da API.'});
+       }else{
+         errors.push({mode:gate.label,code:response.status,message:describeError(data,response.status)});
+       }
+     }catch(e){
+       errors.push({mode:gate.label,code:0,message:'Falha de rede ou CORS ao acessar o Worker.'});
+     }
+   }
+   const meaningful=errors.find(e=>e.code===403&&/free|pro|conta|sessão|proprietári/i.test(e.message)) ||
+     errors.find(e=>e.code===401) ||
+     errors.find(e=>e.code===400) ||
+     errors.find(e=>e.code===403) || errors.find(e=>e.code===413);
+   let message;
+   if(meaningful)message=meaningful.message;
+   else if(errors.every(e=>e.code===404))message='A rota /api/grupo/estudio não foi encontrada. Atualize e reinicie o connect.js no servidor.';
+   else if(errors.every(e=>e.code===0))message='O navegador não conseguiu acessar nenhum dos dois endereços do Cloudflare (rede/CORS).';
+   else message=errors.find(e=>e.code!==0)?.message || 'A API não respondeu corretamente.';
+   const detail=errors.map(e=>e.mode+': '+(e.code?'HTTP '+e.code:'rede/CORS')).join(' • ');
+   throw Object.assign(new Error(message+' ['+detail+']'),{status:meaningful?.code||errors[0]?.code||0,attempts:errors});
  }
  async function ensureToken(){
    if(typeof fz33AssegurarGrupoToken==='function'){
@@ -22070,10 +22133,28 @@ body.light-mode #fzAluguelStatus[style*="f87171"],html[data-theme="light"] #fzAl
        if(state.files[type]){setImage(type,state.files[type].preview,'draft');note(type,'Imagem escolhida, ainda não salva');continue}
        if(!info?.personalizado){setImage(type,'','default');note(type,'Imagem padrão da Fabi Bot');continue}
        try{
-         const response=await fetch(api('/api/grupo/estudio/imagem?'+new URLSearchParams({grupoID:gid,sessao:sess,tipo:type})),{headers:headers(),cache:'no-store'});
-         if(!response.ok)throw Error('Imagem não encontrada');
-         const blob=await response.blob();
-         if(!blob.type.startsWith('image/')||blob.size<100)throw Error('Resposta não é imagem');
+         const imagePath='/api/grupo/estudio/imagem?'+new URLSearchParams({grupoID:gid,sessao:sess,tipo:type});
+         const attempts=state.gateway===null?[0,1]:[state.gateway,...[0,1].filter(n=>n!==state.gateway)];
+         let blob=null;
+         for(const candidate of attempts){
+           try{
+             const response=await fetch(gateways[candidate].url(imagePath),{headers:headers(),cache:'no-store'});
+             if(!response.ok)continue;
+             const candidateBlob=await response.blob();
+             if(candidateBlob.size<100)continue;
+             // Alguns Workers devolvem imagens como application/octet-stream.
+             // Confirma os bytes do arquivo em vez de depender apenas do MIME.
+             const magic=new Uint8Array(await candidateBlob.slice(0,12).arrayBuffer());
+             const jpeg=magic[0]===255&&magic[1]===216&&magic[2]===255;
+             const png=magic[0]===137&&magic[1]===80&&magic[2]===78&&magic[3]===71;
+             const webp=String.fromCharCode(...magic.slice(0,4))==='RIFF'&&String.fromCharCode(...magic.slice(8,12))==='WEBP';
+             if(jpeg||png||webp){
+               blob=new Blob([candidateBlob],{type:jpeg?'image/jpeg':png?'image/png':'image/webp'});
+               break;
+             }
+           }catch(_){/* Testa o outro formato do Worker. */}
+         }
+         if(!blob)throw Error('Imagem não encontrada no servidor.');
          if(seq!==state.seq||current()!==key)return;
          setImage(type,URL.createObjectURL(blob),'custom');note(type,'Imagem atual do grupo');
        }catch(e){setImage(type,'','default');note(type,'Não foi possível carregar a imagem salva');}
@@ -22082,7 +22163,7 @@ body.light-mode #fzAluguelStatus[style*="f87171"],html[data-theme="light"] #fzAl
    }catch(e){
      if(seq!==state.seq||current()!==key)return;
      allowSave(false);
-     types.forEach(type=>{if(!state.files[type]){setImage(type,'','default');note(type,'Prévia padrão • sem conexão com o Estúdio')}});
+     types.forEach(type=>{if(!state.files[type]){setImage(type,'','default');note(type,'Prévia local • não foi possível consultar o servidor')}});
      msg(e.message||'O Estúdio não pôde ser carregado.','error');
    }
  }
@@ -22154,7 +22235,8 @@ body.light-mode #fzAluguelStatus[style*="f87171"],html[data-theme="light"] #fzAl
    const parent=sw.closest('.fz-horario-toggle-row')?.parentElement;
    if(!parent||!parent.closest('#fzSessaoOwnerCard'))return;
    const section=document.createElement('section');section.id=rootId;
-   section.innerHTML=`<header class="fes-header"><div><span class="fes-eyebrow">IDENTIDADE VISUAL DO GRUPO</span><h3>🎨 Estúdio Fabi</h3><p class="fes-description">Seu grupo, sua identidade. Escolha o fundo do menu e a arte de boas-vindas. Veja como fica antes de publicar.</p></div><span class="fes-pro">👑 Exclusivo Pro</span></header>
+   section.innerHTML=`<header class="fes-header"><div><span class="fes-eyebrow">IDENTIDADE VISUAL DO GRUPO</span><h3>🎨 Estúdio Fabi</h3><p class="fes-description">Seu grupo, sua identidade. Escolha o fundo do menu e a arte de boas-vindas. Veja como fica antes de publicar.</p></div><div class="fes-header-badges"><span class="fes-pro">👑 Exclusivo Pro</span><span class="fes-connection" id="fes-v70-connection" data-status="loading">Conectando…</span></div></header>
+   <p class="fes-banner" id="fes-v70-banner" role="alert" hidden></p>
    <div class="fes-grid">${[['menu','Imagem do menu','fa-palette'],['bemvindo','Boas-vindas','fa-sun']].map(([t,title,icon])=>`<article id="fes-v69-${t}" class="fes-card"><div class="fes-card-title"><span class="fes-icon"><i class="fas ${icon}"></i></span>${title}</div><div class="fes-preview" data-frame data-tipo="${t}" data-state="default"><div class="fes-preview-inner"><i class="fas ${icon}"></i><b>Visual padrão da Fabi</b><small>Selecione uma foto para pré-visualizar</small></div><img alt="Prévia da imagem do grupo" /></div><p class="fes-image-label"><i class="fas fa-circle"></i><span id="fes-v69-note-${t}">Imagem padrão da Fabi Bot</span></p><div class="fes-actions"><label class="fes-pick"><i class="fas fa-image"></i> Escolher foto<input type="file" accept="image/jpeg,image/png,image/webp" data-file="${t}"></label><button type="button" class="fes-btn fes-save" data-save="${t}" disabled><i class="fas fa-floppy-disk"></i> Salvar</button><button type="button" class="fes-btn fes-reset" data-restore="${t}" disabled><i class="fas fa-rotate-left"></i> Padrão</button></div></article>`).join('')}</div>
    <p class="fes-limit">Aceita JPG, PNG e WebP até 10 MB. Otimização automática antes do envio. A imagem salva é individual de cada grupo.</p><div class="fes-foot"><p class="fes-status" id="fes-v69-status" role="status"><i class="fas fa-circle-info"></i><span>Preparando o Estúdio…</span></p><button type="button" class="fes-btn fes-reload" data-retry><i class="fas fa-rotate"></i> Atualizar</button></div>`;
    parent.insertAdjacentElement('afterend',section);
@@ -22175,7 +22257,6 @@ body.light-mode #fzAluguelStatus[style*="f87171"],html[data-theme="light"] #fzAl
  function start(){mount();onUpdate();new MutationObserver(onUpdate).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style']});document.addEventListener('change',()=>queueMicrotask(onUpdate));}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
-
 </script>
 </body>
 </html>
