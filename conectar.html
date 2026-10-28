@@ -2225,6 +2225,10 @@ body[data-fabi-plan] #fb23Comecar,body[data-fabi-plan] #btnCriarSessao{border-co
 @media(max-width:600px){.fb59-guide{padding:15px;align-items:flex-start;gap:11px}.fb59-avatar{width:51px;height:51px;flex-basis:51px;font-size:27px;border-radius:13px}.fb59-guide-message h3{font-size:16px!important}.fb59-guide-message p{font-size:12px}}
 body.light-mode .fb59-guide{color:#fff}body.light-mode .fb59-guide-message p{color:#d9f5ea}
 </style>
+<style id="fb61-wallet-mode-css">
+#fb61ProWalletActions[hidden],#fb61FreeWalletActions[hidden],#fb61WalletIntro[hidden],#fb23SaldoAviso[hidden]{display:none!important}
+body[data-fabi-plan="free"] #fb61FreeWalletActions{margin:16px 0}
+</style>
 </head>
 <body>
 <!--
@@ -2458,14 +2462,14 @@ body.light-mode .fb59-guide{color:#fff}body.light-mode .fb59-guide-message p{col
 </div>
         </div>
         <!-- Botões de ação -->
-        <div class="fb25-wallet-strip">
+        <div class="fb25-wallet-strip" id="fb61WalletIntro">
             <div>
                 <span class="fb25-wallet-pill">⚡ Pronto para conectar</span>
                 <p>Escolha um plano para liberar sua próxima sessão. Se você já tiver saldo na carteira, o site mostra essa opção automaticamente.</p>
             </div>
         </div>
         <p id="fb23SaldoAviso" class="fb23-saldo-aviso" hidden>Você já tem saldo na carteira. Ao escolher um plano, a opção de usar saldo aparecerá automaticamente.</p>
-        <div class="row mb-4 fb23-wallet-actions">
+        <div class="row mb-4 fb23-wallet-actions" id="fb61ProWalletActions">
             <div class="col-md-6">
                 <button class="btn btn-whatsapp btn-lg w-100 mb-2" onclick="abrirModalPlanos()">
                     <i class="fas fa-crown"></i> Escolher e ativar plano
@@ -2478,6 +2482,12 @@ body.light-mode .fb59-guide{color:#fff}body.light-mode .fb59-guide-message p{col
             </div>
         </div>
 
+        <div id="fb61FreeWalletActions" hidden>
+          <button type="button" id="fb61FreeConnectBtn" class="btn btn-lg w-100 mb-3" style="background:#17b978;color:#08271d;font-weight:850;border-radius:14px;min-height:58px" onclick="fabi58AbrirPareamento()">
+            🛡️ Conectar robô grátis
+          </button>
+          <p id="fb61FreeWalletHint" style="color:#a9dccc;font-size:13px">Sem plano pago e sem utilizar saldo. Sujeito à disponibilidade de vagas Free.</p>
+        </div>
         <!-- Últimas Transações -->
         <h6 class="mb-3">
             <i class="fas fa-history"></i> Últimas Transações
@@ -3829,6 +3839,20 @@ function fabi57AtualizarModo(){
   const free=fabi57Modo()==='free';
   const tip=document.getElementById('fb57ModeTip');
   if(tip)tip.textContent=free?'Fabi Free: gratuita, até uma sessão por conta. Não permite aluguel, downloads automáticos ou comandos Pro.':'Fabi Pro: precisa de crédito disponível no plano; libera recursos extras, incluindo aluguel.';
+  const intro=document.getElementById('fb61WalletIntro');
+  const proActions=document.getElementById('fb61ProWalletActions');
+  const freeActions=document.getElementById('fb61FreeWalletActions');
+  const saldoNotice=document.getElementById('fb23SaldoAviso');
+  if(intro)intro.hidden=free;
+  if(proActions)proActions.hidden=free;
+  if(freeActions)freeActions.hidden=!free;
+  if(saldoNotice && free)saldoNotice.hidden=true;
+  const freeBtn=document.getElementById('fb61FreeConnectBtn');
+  if(freeBtn){
+    const full=window.fabi58Capacity?.available===false;
+    freeBtn.disabled=free&&full;
+    freeBtn.textContent=full?'🔒 Vagas grátis esgotadas':'🛡️ Conectar robô grátis';
+  }
   const btn=document.getElementById('btnCriarSessao');
   if(btn && !btn.disabled)btn.textContent=free?'Criar Fabi Free grátis':'Criar sessão Pro';
 }
