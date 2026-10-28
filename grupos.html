@@ -18,7 +18,7 @@
   <link rel="canonical" href="https://www.fabibot.com.br/grupos">
   <link rel="icon" href="/favicon-32x32.png">
   <link rel="stylesheet" href="/assets/fabi-grupos-v49.css">
-  <script defer src="/assets/fabi-grupos-v49.js"></script>
+  <script defer src="/assets/fabi-grupos-v49.js?v=50"></script>
 </head>
 <body>
   <a class="skip-link" href="#explorar">Pular para os grupos</a>
@@ -131,8 +131,9 @@
 <div class="modal-form hidden" id="boostForm">
 <div class="boost-group" id="boostName"></div>
 <label>Escolha o destaque<select id="boostPlan"><option value="day">24 horas · R$ 3,90</option><option value="week">7 dias · R$ 9,90</option><option value="month">30 dias · R$ 24,90</option></select></label>
+<label class="pix-payer-label">E-mail para o pagamento Pix<input id="boostPayerEmail" type="email" autocomplete="email" maxlength="150" placeholder="seuemail@exemplo.com" required><small>Solicitado pelo Mercado Pago exclusivamente para processar o Pix.</small></label>
 <p class="subtle">Qualquer pessoa pode turbinar um grupo publicado. Isso não concede administração sobre ele.</p>
-<button class="btn btn-primary full" id="payBtn" type="button">Continuar para o Mercado Pago</button>
+<button class="btn btn-primary full" id="payBtn" type="button">Gerar Pix para destacar o grupo</button>
 </div>
 </div>
 </div>
@@ -220,4 +221,40 @@
 <div class="toast admin-toast" id="adminToast" role="status"></div>
 </div>
 </section>
+
+<!-- Fabi Grupos V50: cobrança Pix nativa, sem redirecionar ao checkout externo. -->
+<style id="fabi-grupos-pix-v50">
+.pix-panel{position:relative;max-width:470px;width:min(94vw,470px);max-height:92vh;overflow-y:auto;text-align:center;padding:30px 24px;border-radius:24px;background:#fff;color:#1e293b;box-shadow:0 26px 95px rgba(0,0,0,.24)}
+html[data-theme="dark"] .pix-panel{background:#151c2b;color:#f8fafc}
+.pix-panel h2{margin:5px 0 5px;font-size:25px;font-weight:850;letter-spacing:-.7px}
+.pix-intro{font-size:14px;opacity:.75;margin:0 auto 14px;line-height:1.5}
+.pix-price{font-size:31px;font-weight:900;letter-spacing:-.9px;color:#16a34a;margin:4px 0 10px}
+.pix-qr-shell{width:min(240px,75vw);height:min(240px,75vw);padding:12px;display:grid;place-items:center;margin:12px auto;background:white;border:1px solid #e2e8f0;border-radius:20px}
+.pix-qr-shell img{width:100%;height:100%;object-fit:contain}
+.pix-qr-fallback{font-size:13px;color:#475569;line-height:1.4}
+.pix-code{display:block;box-sizing:border-box;width:100%;font:12px/1.4 monospace;height:76px;border:1px solid #94a3b8;border-radius:12px;padding:10px;margin:0 0 12px;background:transparent;color:inherit;resize:none;overflow-wrap:anywhere}
+.pix-buttons{display:flex;gap:9px;flex-wrap:wrap;justify-content:center}
+.pix-buttons button{flex:1;min-width:160px}
+.pix-state{font-weight:680;margin:15px 0 6px;color:#0d9488;line-height:1.4}
+html[data-theme="dark"] .pix-state{color:#5eead4}
+.pix-time{font-size:13px;opacity:.72;margin-bottom:6px}
+.pix-note{font-size:12px;line-height:1.4;opacity:.68;margin:12px 0 0}
+.pix-panel .modal-close{top:10px;right:12px}
+</style>
+<div class="modal-backdrop" id="pixModal" aria-hidden="true">
+  <div class="modal-card pix-panel" role="dialog" aria-modal="true" aria-labelledby="pixTitle">
+    <button type="button" class="modal-close" id="closePix" aria-label="Fechar pagamento">×</button>
+    <div class="modal-kicker">PAGAMENTO SEGURO · MERCADO PAGO</div>
+    <h2 id="pixTitle">Destaque seu grupo com Pix</h2>
+    <p class="pix-intro" id="pixGroupName"></p>
+    <div class="pix-price" id="pixPrice"></div>
+    <div class="pix-qr-shell"><img id="pixQr" alt="QR Code Pix do Mercado Pago"/><p class="pix-qr-fallback hidden" id="pixQrFallback">Use o código copia e cola no aplicativo do seu banco.</p></div>
+    <label for="pixCopyPaste" class="subtle">Código Pix copia e cola</label>
+    <textarea id="pixCopyPaste" class="pix-code" readonly></textarea>
+    <div class="pix-buttons"><button type="button" class="btn btn-primary" id="pixCopyBtn">Copiar código Pix</button></div>
+    <p class="pix-state" id="pixStatus" role="status" aria-live="polite">Aguardando pagamento…</p>
+    <p class="pix-time" id="pixCountdown"></p>
+    <p class="pix-note">O destaque é ativado automaticamente somente depois da confirmação oficial do Mercado Pago. Não é preciso enviar comprovante.</p>
+  </div>
+</div>
 </body></html>

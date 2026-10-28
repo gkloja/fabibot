@@ -7086,6 +7086,22 @@ body.light-mode .command-badge-mobile {
   <link rel="stylesheet" href="/assets/index-v3.css?v=20261007">
 <link rel="stylesheet" href="/assets/adsense-ready.css?v=20261007b">
 <link rel="stylesheet" href="/assets/fabi-home-v5.css?v=20261010home2">
+<script id="fabi-grupos-legacy-redirect">
+  // Links antigos salvos no Google ou favoritos devem ir ao novo catálogo.
+  (function () {
+    const p = new URLSearchParams(window.location.search);
+    if (p.has('comunidades') || p.get('secao') === 'comunidades')
+      window.location.replace('/grupos#explorar');
+    // Captura também os cliques no menu inferior antes do listener legado.
+    document.addEventListener('click', function(event) {
+      const target = event.target.closest?.('[data-section="comunidades"]');
+      if (!target) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      window.location.assign('/grupos#explorar');
+    }, true);
+  })();
+</script>
 </head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
 <body class="dark-mode">
@@ -7111,7 +7127,7 @@ body.light-mode .command-badge-mobile {
 <div class="menu" id="mainMenu">
 
     <a href="?feed" data-section="feed" class="active">Home</a>
-    <a href="?comunidades" data-section="comunidades">Comunidades</a>
+    <a href="/grupos#explorar" data-section="comunidades">Comunidades</a>
     <a href="?configurar" data-section="configurar">Configurar</a>
     
     <a href="?radio" data-section="radio">Música</a>
@@ -20118,6 +20134,12 @@ function toggleMaisMenu(force) {
 }
 
 function mudarSecao(section, options = {}) {
+    // Fabi Grupos V50: redirecionamento central (menu desktop, rodapé e atalhos).
+    if (section === 'comunidades') {
+        window.location.assign('/grupos#explorar');
+        return;
+    }
+
     if (section === 'chat') {
         try {
             if (window.FabiAjuda && typeof window.FabiAjuda.open === 'function') {
