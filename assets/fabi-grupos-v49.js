@@ -99,14 +99,14 @@ function card(group){
  const avatar=el('div','card-photo-frame');avatar.append(imageOrIcon(group));banner.append(avatar);
  const coverBottom=el('div','cover-bottom');
  coverBottom.append(el('span','cover-category',theme.icon+' '+(group.category||'Comunidade')));
- if(group.managed)coverBottom.append(el('span','cover-managed','✓ Fabi conectada'));
+ if(group.managed)coverBottom.append(el('span','cover-managed',group.plan==='free'?'🛡 Fabi Free':group.plan==='pro'?'💎 Fabi Pro':'✓ Fabi conectada'));
  banner.append(coverBottom);
  const main=el('div','card-main');
  const heading=el('div','group-title premium-title');heading.append(el('h3','',group.name||'Grupo sem nome'));
  main.append(heading,el('p','group-description',(group.description||'Conheça esta comunidade.').slice(0,230)));
  const foot=el('div','card-tags');
  if(group.members>0)foot.append(createBadge('👥 '+niceInt(group.members)+' membros'));
- foot.append(createBadge(group.managed?'✳ Proteção Fabi':'✓ Divulgado no catálogo'));
+ foot.append(createBadge(group.managed?(group.plan==='free'?'🛡 Plano Free':group.plan==='pro'?'💎 Plano Pro':'✳ Proteção Fabi'):'✓ Divulgado no catálogo'));
  main.append(foot);
  const actions=el('div','card-actions premium-card-actions');
  const join=document.createElement('a');join.href=joinUrl(group);join.target='_blank';join.rel='noopener noreferrer';join.textContent=groupKind(group)==='channel'?'Seguir canal ↗':'Entrar no grupo ↗';
@@ -201,7 +201,7 @@ function openDetails(id,fromUrl=false){
  const boosted=Boolean(group.boostUntil&&Date.parse(group.boostUntil)>Date.now());
  $('detailsTitle').textContent=group.name||'Grupo';
  $('detailsDescription').textContent=group.description||'Sem descrição disponível.';
- $('detailsBadge').textContent=boosted?'✦ Em destaque':groupKind(group)==='channel'?'📢 Canal':group.managed?'✓ Fabi conectada':(group.category||'Comunidade');
+ $('detailsBadge').textContent=boosted?'✦ Em destaque':groupKind(group)==='channel'?'📢 Canal':group.managed?(group.plan==='free'?'🛡 Fabi Free':group.plan==='pro'?'💎 Fabi Pro':'✓ Fabi conectada'):(group.category||'Comunidade');
  $('detailsUpdated').textContent='Atualizado em '+dateFmt(group.updatedAt);
  $('detailsHero').replaceChildren();
  const cover=makePhotoBackdrop(group);if(cover)$('detailsHero').append(cover);
@@ -211,7 +211,7 @@ function openDetails(id,fromUrl=false){
  const titleWrap=el('div','detail-cover-name');titleWrap.append(el('span','detail-cover-eyebrow','CONHEÇA A COMUNIDADE'),el('h3','',group.name||'Grupo'),el('small','',group.category||'Comunidade'));
  hero.append(avatar,titleWrap);$('detailsHero').append(hero);
  const facts=$('detailsFacts');facts.replaceChildren();
- const items=[['Tipo',communityLabel(group)],['Categoria',group.category||'Comunidade'],...(groupKind(group)==='channel'?[]:[['Membros',group.members>0?niceInt(group.members):'Não informado'],['Fabi Bot',group.managed?'Conectada':'Não confirmada']]),['Atualização',dateFmt(group.updatedAt)]];
+ const items=[['Tipo',communityLabel(group)],['Categoria',group.category||'Comunidade'],...(groupKind(group)==='channel'?[]:[['Membros',group.members>0?niceInt(group.members):'Não informado'],['Fabi Bot',group.managed?(group.plan==='free'?'Free · proteção gratuita':group.plan==='pro'?'Pro · versão completa':'Conectada'):'Não confirmada']]),['Atualização',dateFmt(group.updatedAt)]];
  for(const [label,value] of items){const item=el('div','detail-item');item.append(el('small','',label),el('strong','',value));facts.append(item)}
  $('detailsBotText').textContent=groupKind(group)==='channel'?'Este canal pode receber destaque no catálogo, mas a Fabi Free só pode ser instalada em grupos do WhatsApp.':group.managed?'A Fabi aparece como conectada nesta comunidade. A participação nos rankings depende da contagem de atividade habilitada.':'Este grupo está no catálogo. A instalação da Fabi Free e a participação nos rankings dependem de aprovação, conexão da robô e contagem de atividade.';
  $('detailsJoin').href=joinUrl(group);$('detailsJoin').textContent=groupKind(group)==='channel'?'Seguir canal ↗':'Entrar no grupo ↗';
