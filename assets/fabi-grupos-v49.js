@@ -234,14 +234,90 @@ $('submitForm').addEventListener('submit',async e=>{
   finally{btn.disabled=false;btn.textContent='Enviar grupo para análise ↗'}
 });
 
-$('payBtn').onclick=async()=>{
-  const btn=$('payBtn');btn.disabled=true;
+// V50: Pix do Mercado Pago, com status conferido no backend.
+let pixPollTimer=null,pixTransaction=null,pixChecking=false,pixExpiry=0;
+const pixCacheKey='fabi-grupos-pix-pendente-v50';
+function closePix(){
+  if(pixPollTimer)clearInterval(pixPollTimer);pixPollTimer=null;
+  pixTransaction=null;
+  if($('pixModal').classList.contains('show'))closeBackdrop('pixModal');
+}
+function pixCountdown(){
+  const remaining=Math.max(0,Math.ceil((pixExpiry-Date.now())/1000));
+  $('pixCountdown').textContent=remaining?`Código válido por ${String(Math.floor(remaining/60)).padStart(2,'0')}:${String(remaining%60).padStart(2,'0')} min`:'Prazo do código encerrado. Conferindo o status final.';
+}
+async function pollPix(){
+  if(!pixTransaction||pixChecking)return;
+  const tx=pixTransaction;pixChecking=true;
   try{
-    const data=await api('/boost',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({groupId:boostId,plan:$('boostPlan').value})});
-    const target=new URL(data.checkoutUrl);
-    if(target.protocol!=='https:'||!/(^|\.)mercadopago\.com(\.br)?$/.test(target.hostname))throw Error('Destino de pagamento inválido');
-    location.assign(target.href);
-  }catch(err){toast('modalToast',err.message,true);btn.disabled=false}
+    const data=await api('/boost/status/'+encodeURIComponent(tx));
+    if(tx!==pixTransaction)return;
+    if(data.status==='approved'){
+      clearInterval(pixPollTimer);pixPollTimer=null;
+      $('pixStatus').textContent='✓ Pagamento confirmado! Seu grupo já está em destaque.';
+      $('pixCountdown').textContent='O destaque foi ativado automaticamente.';
+      $('pixCopyBtn').disabled=true;
+      try{sessionStorage.removeItem(pixCacheKey)}catch(_){}
+      await loadGroups();
+    }else if(data.status==='expired'||data.status==='cancelled'||data.status==='rejected'){
+      clearInterval(pixPollTimer);pixPollTimer=null;
+      $('pixStatus').textContent='Este Pix venceu ou não foi aprovado. Feche esta janela para gerar um novo.';
+      $('pixCountdown').textContent='Nenhum destaque foi ativado.';
+      $('pixCopyBtn').disabled=true;
+      try{sessionStorage.removeItem(pixCacheKey)}catch(_){}
+    }else if(Date.now()>pixExpiry){
+      $('pixStatus').textContent='Conferindo a confirmação final com o Mercado Pago…';
+    }
+  }catch(_){if(tx===pixTransaction)$('pixStatus').textContent='Aguardando confirmação… A consulta será repetida automaticamente.'}
+  finally{pixChecking=false}
+}
+function openPix(info){
+  pixTransaction=String(info.transactionId||'');
+  pixExpiry=Date.parse(info.expiresAt)||Date.now()+30*60000;
+  $('pixPrice').textContent=Number(info.amount).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  $('pixGroupName').textContent=info.groupName||'Destaque Fabi Grupos';
+  $('pixCopyPaste').value=info.copyPaste||'';
+  $('pixCopyBtn').disabled=!info.copyPaste;
+  const qr=String(info.qrCode||'');
+  const validQr=qr.length<100000&&/^[A-Za-z0-9+/=]+$/.test(qr);
+  $('pixQr').classList.toggle('hidden',!validQr);
+  $('pixQrFallback').classList.toggle('hidden',validQr);
+  if(validQr)$('pixQr').src='data:image/png;base64,'+qr;
+  else $('pixQr').removeAttribute('src');
+  $('pixStatus').textContent='Aguardando pagamento… A confirmação é automática.';
+  if(pixPollTimer)clearInterval(pixPollTimer);
+  openBackdrop('pixModal');$('closePix').focus();
+  pixCountdown();pixPollTimer=setInterval(()=>{pixCountdown();pollPix()},5000);
+  pollPix();
+}
+$('closePix').onclick=closePix;
+$('pixModal').addEventListener('click',e=>{if(e.target===$('pixModal'))closePix()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePix()});
+$('pixCopyBtn').onclick=async()=>{
+  const value=$('pixCopyPaste').value;if(!value)return;
+  try{await navigator.clipboard.writeText(value)}catch(_){$('pixCopyPaste').select();document.execCommand('copy')}
+  $('pixCopyBtn').textContent='✓ Código copiado';
+  setTimeout(()=>{$('pixCopyBtn').textContent='Copiar código Pix'},2400);
+};
+$('payBtn').onclick=async()=>{
+  const btn=$('payBtn'),groupId=boostId,plan=$('boostPlan').value;
+  const payerEmail=$('boostPayerEmail').value.trim();
+  try{
+    // Permite voltar a um Pix ainda válido após fechar o modal.
+    const cached=JSON.parse(sessionStorage.getItem(pixCacheKey)||'null');
+    if(cached?.groupId===groupId&&cached?.plan===plan&&Date.parse(cached.data?.expiresAt)>Date.now()){
+      closeModal();openPix(cached.data);return;
+    }
+  }catch(_){}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payerEmail)){toast('modalToast','Informe um e-mail válido do pagador para gerar o Pix.',true);return}
+  btn.disabled=true;btn.textContent='Gerando Pix…';
+  try{
+    const data=await api('/boost/pix',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({groupId,plan,payerEmail})});
+    if(!data.transactionId||!data.copyPaste)throw Error('O Mercado Pago não retornou o código Pix');
+    try{sessionStorage.setItem(pixCacheKey,JSON.stringify({groupId,plan,data}))}catch(_){}
+    closeModal();openPix(data);
+  }catch(err){toast('modalToast',err.message,true)}
+  finally{btn.disabled=false;btn.textContent='Gerar Pix para destacar o grupo'}
 };
 
 ['search','category','sort'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',()=>{page=1;render()}));
