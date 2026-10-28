@@ -4,7 +4,7 @@
 const API='/api/fabi-grupos';
 const $=id=>document.getElementById(id);
 const el=(tag,cl,content)=>{const e=document.createElement(tag);if(cl)e.className=cl;if(content!==undefined)e.textContent=String(content);return e};
-let groups=[],boostId=null,detailId=null,page=1,adminKey='',requests=[],sessions=[],inventory=[],lastFocus=null,onlyFavorites=false;
+let groups=[],boostId=null,detailId=null,page=1,adminKey='',requests=[],sessions=[],inventory=[],lastFocus=null,onlyFavorites=false,typeFilter='';
 const favoriteKey='fabi-grupos-favorites-v1';
 let favorites=new Set();try{favorites=new Set(JSON.parse(localStorage.getItem(favoriteKey)||'[]').filter(x=>typeof x==='string').slice(0,500))}catch{}
 function saveFavorites(){try{localStorage.setItem(favoriteKey,JSON.stringify([...favorites]))}catch{};$('favoritesCount').textContent=String(favorites.size)}
@@ -57,11 +57,22 @@ async function api(path,opts={}){
 
 function openBackdrop(id){lastFocus=document.activeElement;const modal=$(id);modal.classList.add('show');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
 function closeBackdrop(id){const modal=$(id);modal.classList.remove('show');modal.setAttribute('aria-hidden','true');document.body.style.overflow='';lastFocus?.focus?.()}
-function openModal(kind,gid){boostId=gid||null;openBackdrop('modal');$('modalToast').className='toast';$('submitForm').classList.toggle('hidden',kind==='boost');$('boostForm').classList.toggle('hidden',kind!=='boost');$('modalTitle').textContent=kind==='boost'?'Impulsione uma comunidade':'Divulgue grátis e solicite a Free';$('modalKicker').textContent=kind==='boost'?'destaque opcional':'cadastro gratuito';$('modalSub').textContent=kind==='boost'?'Destaque o grupo no catálogo. Não é necessário ser administrador para patrocinar.':'O cadastro é gratuito. Após a revisão e autorização do administrador, você poderá solicitar a Fabi Free; a instalação é manual e depende da disponibilidade.';const group=groups.find(g=>g.id===gid);$('boostName').textContent=group?'✦ '+group.name:'';$('closeModal').focus()}
+function openModal(kind,gid){
+ boostId=gid||null;openBackdrop('modal');$('modalToast').className='toast';
+ $('submitForm').classList.toggle('hidden',kind==='boost');$('boostForm').classList.toggle('hidden',kind!=='boost');
+ $('modalTitle').textContent=kind==='boost'?'Impulsione uma comunidade':'Divulgue seu grupo ou canal';
+ $('modalKicker').textContent=kind==='boost'?'destaque opcional':'cadastro gratuito';
+ $('modalSub').textContent=kind==='boost'?'Patrocine esta comunidade no catálogo com Pix. Qualquer pessoa pode apoiar; isso não concede administração.':'Cole o convite do WhatsApp. Se já estiver publicado, você poderá conhecê-lo e patrocinar imediatamente. A Fabi Free é exclusiva de grupos elegíveis.';
+ const group=groups.find(g=>String(g.id)===String(gid))||(typeof duplicateRecord!=='undefined'&&duplicateRecord?.group?.id===gid?duplicateRecord.group:null);$('boostName').textContent=group?'✦ '+group.name:'';
+ if(kind==='submit'&&$('inviteWhatsApp').value.trim())checkInviteNow();
+ $('closeModal').focus();
+}
 function closeModal(){closeBackdrop('modal')}
 for(const btn of document.querySelectorAll('[data-modal]'))btn.addEventListener('click',()=>openModal(btn.dataset.modal));
 $('closeModal').onclick=closeModal;$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});
 
+function groupKind(group){return group.type==='channel'?'channel':'group'}
+function communityLabel(group){return groupKind(group)==='channel'?'Canal':'Grupo'}
 function themeFor(cat){const n=String(cat||'').toLowerCase();if(/jog|game|pok|arena/.test(n))return {icon:'🎮',label:'games'};if(/estud|escola|curso|concurs/.test(n))return {icon:'📚',label:'studies'};if(/fut|esport/.test(n))return {icon:'⚽',label:'sports'};if(/mús|art|filme|série/.test(n))return {icon:'🎵',label:'culture'};if(/amiz|namoro|conhecer|social|comunid/.test(n))return {icon:'💬',label:'social'};return {icon:'✳',label:'tech'}}
 function imageOrIcon(group){const tone=themeFor(group.category);const fallback=el('div','group-avatar',tone.icon);const url=safeUrl(group.photo);if(!url)return fallback;const img=document.createElement('img');img.className='group-avatar';img.alt='Foto do grupo';img.loading='lazy';img.referrerPolicy='no-referrer';img.src=url;img.onerror=()=>img.replaceWith(fallback);return img}
 function joinUrl(group){return API+'/r/'+encodeURIComponent(group.id)}
@@ -81,7 +92,7 @@ function card(group){
  const backdrop=makePhotoBackdrop(group);if(backdrop)banner.append(backdrop);
  const coverShade=el('div','cover-shade');banner.append(coverShade);
  const upper=el('div','card-cover-top');
- upper.append(el('span','badge',boosted?'✦ PATROCINADO':'✦ COMUNIDADE'));
+ upper.append(el('span','badge',boosted?'✦ EM DESTAQUE':groupKind(group)==='channel'?'📢 CANAL':'👥 GRUPO'));
  const favorite=createButton(isFavorite(group.id)?'♥':'♡',()=>toggleFavorite(group.id),'favorite-btn');
  favorite.setAttribute('aria-label',isFavorite(group.id)?'Remover dos favoritos':'Salvar nos favoritos');favorite.title=favorite.getAttribute('aria-label');
  upper.append(favorite);banner.append(upper);
@@ -98,10 +109,11 @@ function card(group){
  foot.append(createBadge(group.managed?'✳ Proteção Fabi':'✓ Divulgado no catálogo'));
  main.append(foot);
  const actions=el('div','card-actions premium-card-actions');
- const join=document.createElement('a');join.href=joinUrl(group);join.target='_blank';join.rel='noopener noreferrer';join.textContent='Entrar no grupo ↗';
+ const join=document.createElement('a');join.href=joinUrl(group);join.target='_blank';join.rel='noopener noreferrer';join.textContent=groupKind(group)==='channel'?'Seguir canal ↗':'Entrar no grupo ↗';
  const details=createButton('Ver detalhes',()=>openDetails(group.id));
  const permalink=document.createElement('a');permalink.href=detailUrl(group.id);permalink.className='group-seo-link';permalink.textContent='Página do grupo ↗';permalink.setAttribute('aria-label','Abrir página completa de '+String(group.name||'grupo'));
- actions.append(join,details);main.append(actions,permalink);
+ const boostAction=createButton(boosted?'✦ Renovar destaque':'✦ Patrocinar',()=>openModal('boost',group.id),'boost-card-btn');boostAction.setAttribute('aria-label','Patrocinar '+communityLabel(group).toLowerCase()+' '+String(group.name||''));
+ actions.append(join,details,boostAction);main.append(actions,permalink);
  article.append(banner,main);
  banner.addEventListener('click',e=>{if(!e.target.closest('a,button'))openDetails(group.id)});
  article.addEventListener('click',e=>{if(!e.target.closest('a,button')&&!e.target.closest('.card-banner'))openDetails(group.id)});
@@ -134,7 +146,7 @@ function filteredGroups(){
   const q=$('search').value.toLocaleLowerCase('pt-BR').trim();
   const cat=$('category').value;
   const sort=$('sort').value;
-  const list=groups.filter(g=>(!onlyFavorites||isFavorite(g.id))&&(!cat||g.category===cat)&&(!q||(`${g.name||''} ${g.description||''} ${g.category||''}`).toLocaleLowerCase('pt-BR').includes(q)));
+  const list=groups.filter(g=>(!onlyFavorites||isFavorite(g.id))&&(!typeFilter||groupKind(g)===typeFilter)&&(!cat||g.category===cat)&&(!q||(`${g.name||''} ${g.description||''} ${g.category||''}`).toLocaleLowerCase('pt-BR').includes(q)));
   list.sort((a,b)=>{
     if(sort==='name')return (a.name||'').localeCompare(b.name||'','pt-BR');
     if(sort==='members')return (b.members||0)-(a.members||0);
@@ -149,9 +161,9 @@ function render(){
   const {list,cat,q}=filteredGroups();
   for(const chip of $('chips').children)chip.classList.toggle('active',chip.dataset.cat===cat);
   $('favoritesFilter').setAttribute('aria-pressed',String(onlyFavorites));$('favoritesFilter').classList.toggle('selected',onlyFavorites);
-  $('resultsCount').textContent=niceInt(list.length)+' grupo'+(list.length===1?'':'s')+' encontrado'+(list.length===1?'':'s');
+  $('resultsCount').textContent=niceInt(list.length)+' '+(typeFilter==='channel'?'canal'+(list.length===1?'':'is'):typeFilter==='group'?'grupo'+(list.length===1?'':'s'):'comunidade'+(list.length===1?'':'s'))+' encontrado'+(list.length===1?'':'s');
   const root=$('groups');root.replaceChildren();
-  if(!list.length){drawEmpty(root,onlyFavorites?'Nenhum favorito encontrado':q?'Nenhum grupo encontrado':'Nenhum grupo publicado ainda',onlyFavorites?'Salve grupos tocando no coração de cada card.':q?'Tente outras palavras ou categorias.':'Cadastre seu grupo gratuitamente para aparecer aqui.');$('pagination').replaceChildren();return}
+  if(!list.length){drawEmpty(root,onlyFavorites?'Nenhum favorito encontrado':q?'Nenhuma comunidade encontrada':'Nenhuma comunidade publicada ainda',onlyFavorites?'Salve grupos ou canais tocando no coração de cada card.':q?'Tente outras palavras ou categorias.':'Cadastre gratuitamente seu grupo ou canal para aparecer aqui.');$('pagination').replaceChildren();return}
   const per=12,pages=Math.max(1,Math.ceil(list.length/per));page=Math.min(page,pages);
   for(const g of list.slice((page-1)*per,page*per))root.append(card(g));
   const pager=$('pagination');pager.replaceChildren();
@@ -175,7 +187,8 @@ async function loadGroups(){
     configureCategories();
     render();
     const requested=new URLSearchParams(location.search).get('grupo');
-    if(requested){const found=groups.find(g=>String(g.id)===requested);if(found)openDetails(found.id,true);else showSiteToast('Grupo indisponível ou não publicado.')}
+    const sponsor=new URLSearchParams(location.search).get('patrocinar');if(sponsor){const found=groups.find(g=>String(g.id)===sponsor);if(found)openModal('boost',found.id);else showSiteToast('Comunidade indisponível ou não publicada.')}
+    else if(requested){const found=groups.find(g=>String(g.id)===requested);if(found)openDetails(found.id,true);else showSiteToast('Comunidade indisponível ou não publicada.')}
   }catch(err){
     drawEmpty($('groups'),'Não foi possível carregar o catálogo',err.message+' · Verifique se a API e o proxy da Vercel estão ativos.');
     $('totalGroups').textContent='—';
@@ -188,7 +201,7 @@ function openDetails(id,fromUrl=false){
  const boosted=Boolean(group.boostUntil&&Date.parse(group.boostUntil)>Date.now());
  $('detailsTitle').textContent=group.name||'Grupo';
  $('detailsDescription').textContent=group.description||'Sem descrição disponível.';
- $('detailsBadge').textContent=boosted?'✦ Em destaque':group.managed?'✓ Fabi conectada':(group.category||'Comunidade');
+ $('detailsBadge').textContent=boosted?'✦ Em destaque':groupKind(group)==='channel'?'📢 Canal':group.managed?'✓ Fabi conectada':(group.category||'Comunidade');
  $('detailsUpdated').textContent='Atualizado em '+dateFmt(group.updatedAt);
  $('detailsHero').replaceChildren();
  const cover=makePhotoBackdrop(group);if(cover)$('detailsHero').append(cover);
@@ -198,10 +211,10 @@ function openDetails(id,fromUrl=false){
  const titleWrap=el('div','detail-cover-name');titleWrap.append(el('span','detail-cover-eyebrow','CONHEÇA A COMUNIDADE'),el('h3','',group.name||'Grupo'),el('small','',group.category||'Comunidade'));
  hero.append(avatar,titleWrap);$('detailsHero').append(hero);
  const facts=$('detailsFacts');facts.replaceChildren();
- const items=[['Categoria',group.category||'Comunidade'],['Membros',group.members>0?niceInt(group.members):'Não informado'],['Fabi Bot',group.managed?'Conectada':'Não confirmada'],['Atualização',dateFmt(group.updatedAt)]];
+ const items=[['Tipo',communityLabel(group)],['Categoria',group.category||'Comunidade'],...(groupKind(group)==='channel'?[]:[['Membros',group.members>0?niceInt(group.members):'Não informado'],['Fabi Bot',group.managed?'Conectada':'Não confirmada']]),['Atualização',dateFmt(group.updatedAt)]];
  for(const [label,value] of items){const item=el('div','detail-item');item.append(el('small','',label),el('strong','',value));facts.append(item)}
- $('detailsBotText').textContent=group.managed?'A Fabi aparece como conectada nesta comunidade. A participação nos rankings depende da contagem de atividade habilitada.':'Este grupo está no catálogo. A instalação da Fabi Free e a participação nos rankings dependem de aprovação, conexão da robô e contagem de atividade.';
- $('detailsJoin').href=joinUrl(group);
+ $('detailsBotText').textContent=groupKind(group)==='channel'?'Este canal pode receber destaque no catálogo, mas a Fabi Free só pode ser instalada em grupos do WhatsApp.':group.managed?'A Fabi aparece como conectada nesta comunidade. A participação nos rankings depende da contagem de atividade habilitada.':'Este grupo está no catálogo. A instalação da Fabi Free e a participação nos rankings dependem de aprovação, conexão da robô e contagem de atividade.';
+ $('detailsJoin').href=joinUrl(group);$('detailsJoin').textContent=groupKind(group)==='channel'?'Seguir canal ↗':'Entrar no grupo ↗';
  $('detailsLink').value=detailUrl(id);updateDetailFavorite();
  const pageButton=$('detailsFullPage');if(pageButton)pageButton.href=detailUrl(id);
  $('detailsBoost').onclick=()=>{closeDetails();openModal('boost',group.id)};
@@ -219,19 +232,75 @@ $('detailsModal').addEventListener('click',e=>{if(e.target===$('detailsModal'))c
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeDetails();closeMobileFilters()}});
 
+// V53: feedback instantâneo para cadastros existentes, sem expor cadastros ainda não publicados.
+const inviteInput=$('inviteWhatsApp'),duplicateLookup=$('duplicateLookup');
+let inviteTimer=null,inviteSequence=0,duplicateRecord=null;
+function recognizeInvite(value){
+ try{const u=new URL(String(value).trim());if(u.protocol!=='https:')return null;
+  if(u.hostname==='chat.whatsapp.com'&&/^\/[A-Za-z0-9]{12,64}\/?$/.test(u.pathname))return 'group';
+  if(['whatsapp.com','www.whatsapp.com'].includes(u.hostname)&&/^\/channel\/[A-Za-z0-9]{12,80}\/?$/.test(u.pathname))return 'channel';
+ }catch{}return null;
+}
+function updateEntryKind(type){
+ const channel=type==='channel';$('submitNameLabel').textContent=channel?'Nome do canal':'Nome do grupo';
+ $('submitDescriptionLabel').textContent=channel?'Sobre o canal':'Sobre o grupo';
+ $('freeOptin').classList.toggle('hidden',channel);$('freeOptin').querySelector('input').disabled=channel;
+ $('channelExplainer').classList.toggle('hidden',!channel);
+ $('submitBtn').textContent=channel?'Enviar canal para análise ↗':'Enviar grupo para análise ↗';
+}
+function hideDuplicate(){duplicateRecord=null;duplicateLookup.replaceChildren();duplicateLookup.classList.add('hidden');$('submitBtn').disabled=false;}
+function renderDuplicate(result){
+ hideDuplicate();duplicateRecord=result;
+ if(!result?.existing)return;
+ const published=result.status==='published'&&result.group;
+ duplicateLookup.classList.remove('hidden');
+ const panel=el('div','duplicate-panel');
+ const intro=el('div','duplicate-head');intro.append(el('span','duplicate-icon',published?'✓':'◷'));
+ const copy=el('div','duplicate-summary');copy.append(el('strong','',published?'Esta comunidade já está no Fabi Grupos!':'Este link já está cadastrado'));
+ copy.append(el('p','',result.message||'Este link já foi registrado.'));intro.append(copy);panel.append(intro);
+ if(published){
+  const g=result.group;const entity=el('div','duplicate-entity');const avatar=el('div','duplicate-avatar');avatar.append(imageOrIcon(g));
+  const info=el('div');info.append(el('span','duplicate-kind',communityLabel(g).toUpperCase()+' • '+(g.category||'Comunidade')));
+  info.append(el('strong','duplicate-name',g.name||'Comunidade'));info.append(el('small','',g.description||''));entity.append(avatar,info);panel.append(entity);
+  const actions=el('div','duplicate-actions');
+  actions.append(createButton('✦ Patrocinar agora',()=>openModal('boost',g.id),'btn btn-primary'),createButton('Ver comunidade',()=>{closeModal();const found=groups.find(x=>String(x.id)===String(g.id));if(found)openDetails(found.id);else location.href='/grupos/g/'+slugify(g.name)+'--'+g.id},'btn btn-secondary'));
+  panel.append(actions);
+ }else{panel.append(el('p','duplicate-help','Aguardando análise ou indisponível para publicação. Patrocínio somente depois da aprovação.'))}
+ duplicateLookup.append(panel);$('submitBtn').disabled=true;
+}
+async function checkInviteNow(){
+ const value=inviteInput.value.trim(),type=recognizeInvite(value),sequence=++inviteSequence;
+ clearTimeout(inviteTimer);hideDuplicate();updateEntryKind(type);
+ if(!type)return;
+ duplicateLookup.classList.remove('hidden');duplicateLookup.replaceChildren(el('p','duplicate-checking','🔎 Verificando se já está cadastrado…'));
+ try{
+  const data=await api('/lookup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({invite:value})});
+  if(sequence!==inviteSequence||inviteInput.value.trim()!==value)return;
+  if(data.existing)renderDuplicate(data);else{hideDuplicate();duplicateLookup.classList.remove('hidden');duplicateLookup.replaceChildren(el('p','duplicate-available','✓ Este link está disponível para cadastro gratuito.'));}
+ }catch(error){if(sequence!==inviteSequence)return;hideDuplicate();duplicateLookup.classList.remove('hidden');duplicateLookup.replaceChildren(el('p','duplicate-checking','Não foi possível verificar agora. Você ainda pode enviar o cadastro.'));}
+}
+inviteInput.addEventListener('input',()=>{clearTimeout(inviteTimer);inviteSequence++;hideDuplicate();updateEntryKind(recognizeInvite(inviteInput.value));if(recognizeInvite(inviteInput.value))inviteTimer=setTimeout(checkInviteNow,450)});
+inviteInput.addEventListener('blur',()=>{if(recognizeInvite(inviteInput.value)&&!duplicateRecord)checkInviteNow()});
+inviteInput.addEventListener('paste',()=>{clearTimeout(inviteTimer);inviteTimer=setTimeout(checkInviteNow,120)});
 $('submitForm').addEventListener('submit',async e=>{
-  e.preventDefault();
-  const btn=$('submitBtn');btn.disabled=true;btn.textContent='Enviando…';
-  try{
-    const body=Object.fromEntries(new FormData(e.target)); body.requestFree=e.target.querySelector('[name=requestFree]')?.checked===true;
-    const digits=String(body.contact||'').replace(/\D/g,'').replace(/^55(?=\d{10,11}$)/,'');
-    if(!/^[1-9][1-9](?:9\d{8}|[2-9]\d{7})$/.test(digits))throw Error('Digite um WhatsApp brasileiro válido com DDD, por exemplo (92) 99999-9999.');
-    body.contact='+55'+digits;
-    const d=await api('/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    toast('modalToast',d.message||'Solicitação recebida.');
-    if(!d.existing)e.target.reset();
-  }catch(err){toast('modalToast',err.message,true)}
-  finally{btn.disabled=false;btn.textContent='Enviar grupo para análise ↗'}
+ e.preventDefault();if(duplicateRecord?.existing)return;
+ const btn=$('submitBtn');btn.disabled=true;btn.textContent='Enviando…';
+ try{
+  const body=Object.fromEntries(new FormData(e.target));body.requestFree=recognizeInvite(body.invite)==='group'&&e.target.querySelector('[name=requestFree]')?.checked===true;
+  if(!recognizeInvite(body.invite))throw Error('Cole um convite válido de grupo ou canal do WhatsApp.');
+  const digits=String(body.contact||'').replace(/\D/g,'').replace(/^55(?=\d{10,11}$)/,'');
+  if(!/^[1-9][1-9](?:9\d{8}|[2-9]\d{7})$/.test(digits))throw Error('Digite um WhatsApp válido com DDD, por exemplo (92) 99999-9999.');
+  body.contact='+55'+digits;
+  const d=await api('/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(d.existing){renderDuplicate(d);return}
+  toast('modalToast',d.message||'Solicitação recebida.');e.target.reset();hideDuplicate();updateEntryKind('group');
+ }catch(err){toast('modalToast',err.message,true)}
+ finally{btn.disabled=!!duplicateRecord?.existing;btn.textContent=recognizeInvite(inviteInput.value)==='channel'?'Enviar canal para análise ↗':'Enviar grupo para análise ↗'}
+});
+for(const button of document.querySelectorAll('[data-type]'))button.addEventListener('click',()=>{
+ typeFilter=button.dataset.type;page=1;
+ document.querySelectorAll('[data-type]').forEach(b=>{b.classList.toggle('selected',b===button);b.setAttribute('aria-pressed',String(b===button))});
+ render();
 });
 
 // V50: Pix do Mercado Pago, com status conferido no backend.
@@ -317,7 +386,7 @@ $('payBtn').onclick=async()=>{
     try{sessionStorage.setItem(pixCacheKey,JSON.stringify({groupId,plan,data}))}catch(_){}
     closeModal();openPix(data);
   }catch(err){toast('modalToast',err.message,true)}
-  finally{btn.disabled=false;btn.textContent='Gerar Pix para destacar o grupo'}
+  finally{btn.disabled=false;btn.textContent='Gerar Pix para destacar'}
 };
 
 ['search','category','sort'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',()=>{page=1;render()}));
@@ -349,23 +418,23 @@ function showRequests(){
   for(const g of filtered.slice(0,300)){
     const row=el('article','admin-entry'),info=el('div'),details=el('div','detail');
     info.append(el('h4','',g.name),el('small','',(g.contact||'Sem contato')+' · '+(g.category||'Outros')));
-    details.append(createBadge(safeStatus(g.status)),createBadge(g.ownerApproved?'✓ Autorizado':'! Aguardando autorização'),createBadge(g.source||'novo'));
+    details.append(createBadge(g.type==='channel'?'📢 Canal':'👥 Grupo'),createBadge(safeStatus(g.status)),createBadge(g.ownerApproved?'✓ Autorizado':'! Aguardando autorização'),createBadge(g.source||'novo'));
     if(g.requestFree)details.append(createBadge('✳ Solicitou Fabi Free'));
     if(g.groupJid)details.append(createBadge('Grupo '+g.groupJid));
     info.append(details);
     const acts=el('div','admin-actions');
     const waDigits=String(g.contact||'').replace(/\D/g,'');
     if(/^55[1-9][1-9]\d{8,9}$/.test(waDigits)){
-      const notice='Olá! Aqui é da equipe Fabi Grupos. Recebemos o cadastro do grupo "'+String(g.name||'')+'" e vamos falar sobre a divulgação e a Fabi Free.';
+      const notice='Olá! Aqui é da equipe Fabi Grupos. Recebemos o cadastro do '+(g.type==='channel'?'canal':'grupo')+' "'+String(g.name||'')+'" para analisar a divulgação.';
       const chat=el('a','mini-btn admin-wa-link','Avisar no WhatsApp ↗');
       chat.href='https://wa.me/'+waDigits+'?text='+encodeURIComponent(notice);
       chat.target='_blank';chat.rel='noopener noreferrer';acts.append(chat);
     }
     if(!g.ownerApproved)acts.append(createButton('Confirmar autorização',async()=>{const note=prompt('Como o administrador confirmou a divulgação?'); if(!note?.trim())return; await action('/'+g.id+'/owner-confirm',{approved:true,note},'Autorização registrada.')}));
-    if(g.status!=='published')acts.append(createButton('Publicar',()=>action('/'+g.id+'/decision',{action:'approve'},'Grupo publicado.')));
-    if(g.status==='published')acts.append(createButton('Pausar',()=>action('/'+g.id+'/decision',{action:'pause'},'Grupo pausado.'),'mini-btn'));
+    if(g.status!=='published')acts.append(createButton('Publicar',()=>action('/'+g.id+'/decision',{action:'approve'},'Comunidade publicada.')));
+    if(g.status==='published')acts.append(createButton('Pausar',()=>action('/'+g.id+'/decision',{action:'pause'},'Comunidade pausada.'),'mini-btn'));
     if(g.status==='pending')acts.append(createButton('Rejeitar',()=>action('/'+g.id+'/decision',{action:'reject'},'Cadastro rejeitado.'),'mini-btn'));
-    if(g.ownerApproved){
+    if(g.ownerApproved&&g.type!=='channel'){
       acts.append(createButton('Vincular Free',async()=>{
         const groupJid=prompt('JID do grupo (ex.: 120363...@g.us):',g.groupJid||''); if(!groupJid)return;
         const free=sessions.filter(s=>s.mode==='free'); if(!free.length){adminToast('Ative um número Free primeiro.',true);return}
