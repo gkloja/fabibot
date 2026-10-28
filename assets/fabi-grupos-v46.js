@@ -1,0 +1,314 @@
+/* Fabi Grupos V46: redesign mobile-first, theme toggle and group details modal. */
+'use strict';
+(()=>{
+const API='/api/fabi-grupos';
+const $=id=>document.getElementById(id);
+const el=(tag,cl,content)=>{const e=document.createElement(tag);if(cl)e.className=cl;if(content!==undefined)e.textContent=String(content);return e};
+let groups=[],boostId=null,detailId=null,page=1,adminKey='',requests=[],sessions=[],inventory=[],lastFocus=null,onlyFavorites=false;
+const favoriteKey='fabi-grupos-favorites-v1';
+let favorites=new Set();try{favorites=new Set(JSON.parse(localStorage.getItem(favoriteKey)||'[]').filter(x=>typeof x==='string').slice(0,500))}catch{}
+function saveFavorites(){try{localStorage.setItem(favoriteKey,JSON.stringify([...favorites]))}catch{};$('favoritesCount').textContent=String(favorites.size)}
+function isFavorite(id){return favorites.has(String(id))}
+function toggleFavorite(id){const key=String(id);if(isFavorite(key))favorites.delete(key);else favorites.add(key);saveFavorites();if(detailId===id)updateDetailFavorite();render()}
+function updateDetailFavorite(){if($('detailsFavorite'))$('detailsFavorite').textContent=isFavorite(detailId)?'♥ Salvo nos favoritos':'♡ Salvar nos favoritos'}
+function detailUrl(id){const u=new URL('/grupos',location.origin);u.searchParams.set('grupo',String(id));return u.href}
+function showSiteToast(message){const t=$('siteToast');t.textContent=message;t.classList.add('visible');clearTimeout(showSiteToast.timer);showSiteToast.timer=setTimeout(()=>t.classList.remove('visible'),3500)}
+async function copyGroupLink(id){const link=detailUrl(id);try{await navigator.clipboard.writeText(link);showSiteToast('Link copiado!')}catch{const input=$('detailsLink');input.focus();input.select();showSiteToast('Selecione e copie o link exibido')}}
+async function shareGroup(id){const g=groups.find(x=>String(x.id)===String(id));const data={title:g?.name||'Fabi Grupos',text:'Confira este grupo no Fabi Grupos',url:detailUrl(id)};try{if(navigator.share){await navigator.share(data);return}}catch(e){if(e.name==='AbortError')return}await copyGroupLink(id)}
+const cats=['Tecnologia','Jogos','Estudos','Notícias','Amizade','Futebol','Música','Negócios','Comunidades','Outros'];
+const themeKey='fabi-grupos-theme';
+const safeUrl=url=>{try{const u=new URL(url,location.origin);return /^https?:$/.test(u.protocol)?u.href:null}catch{return null}};
+const niceInt=n=>Number(n||0).toLocaleString('pt-BR');
+const dateFmt=(s)=>{const d=new Date(s||Date.now());return isNaN(d)?'—':d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})};
+
+function applyTheme(theme){document.body.dataset.theme=theme;$('themeToggle')?.setAttribute('aria-label',theme==='light'?'Ativar modo escuro':'Ativar modo claro');localStorage.setItem(themeKey,theme)}
+applyTheme(localStorage.getItem(themeKey)||'dark');
+$('themeToggle')?.addEventListener('click',()=>applyTheme(document.body.dataset.theme==='light'?'dark':'light'));
+$('adminThemeToggle')?.addEventListener('click',()=>applyTheme(document.body.dataset.theme==='light'?'dark':'light'));
+$('year').textContent=String(new Date().getFullYear());
+
+function toast(target,msg,error=false){const n=$(target);if(!n)return;n.textContent=msg;n.className='toast show'+(error?' error':'')}
+function drawEmpty(root,title,details){root.replaceChildren();const e=el('div','empty-state');e.append(el('strong','',title),el('p','',details));root.append(e)}
+function createButton(label,fn,cls='mini-btn'){const b=el('button',cls,label);b.type='button';b.onclick=fn;return b}
+function createBadge(text,cl='mini-tag'){return el('span',cl,text)}
+
+async function api(path,opts={}){
+  const abort=new AbortController();
+  const timeout=setTimeout(()=>abort.abort(),20000);
+  try{
+    const res=await fetch(API+path,{...opts,signal:abort.signal,headers:{...(opts.headers||{}),'Accept':'application/json'},credentials:'same-origin'});
+    const value=await res.json().catch(()=>({}));
+    if(!res.ok)throw Error(value.error||value.message||('Serviço indisponível ('+res.status+')'));
+    return value;
+  }finally{clearTimeout(timeout)}
+}
+
+function openBackdrop(id){lastFocus=document.activeElement;const modal=$(id);modal.classList.add('show');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
+function closeBackdrop(id){const modal=$(id);modal.classList.remove('show');modal.setAttribute('aria-hidden','true');document.body.style.overflow='';lastFocus?.focus?.()}
+function openModal(kind,gid){boostId=gid||null;openBackdrop('modal');$('modalToast').className='toast';$('submitForm').classList.toggle('hidden',kind==='boost');$('boostForm').classList.toggle('hidden',kind!=='boost');$('modalTitle').textContent=kind==='boost'?'Impulsione uma comunidade':'Divulgue seu grupo';$('modalKicker').textContent=kind==='boost'?'destaque opcional':'cadastro gratuito';$('modalSub').textContent=kind==='boost'?'Destaque o grupo no catálogo. Não é necessário ser administrador para patrocinar.':'Preencha o formulário. A publicação será revisada e depende da autorização de um administrador.';const group=groups.find(g=>g.id===gid);$('boostName').textContent=group?'✦ '+group.name:'';$('closeModal').focus()}
+function closeModal(){closeBackdrop('modal')}
+for(const btn of document.querySelectorAll('[data-modal]'))btn.addEventListener('click',()=>openModal(btn.dataset.modal));
+$('closeModal').onclick=closeModal;$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});
+
+function themeFor(cat){const n=String(cat||'').toLowerCase();if(/jog|game|pok|arena/.test(n))return {icon:'🎮',label:'games'};if(/estud|escola|curso|concurs/.test(n))return {icon:'📚',label:'studies'};if(/fut|esport/.test(n))return {icon:'⚽',label:'sports'};if(/mús|art|filme|série/.test(n))return {icon:'🎵',label:'culture'};if(/amiz|namoro|conhecer|social|comunid/.test(n))return {icon:'💬',label:'social'};return {icon:'✳',label:'tech'}}
+function imageOrIcon(group){const tone=themeFor(group.category);const fallback=el('div','group-avatar',tone.icon);const url=safeUrl(group.photo);if(!url)return fallback;const img=document.createElement('img');img.className='group-avatar';img.alt='Foto do grupo';img.loading='lazy';img.referrerPolicy='no-referrer';img.src=url;img.onerror=()=>img.replaceWith(fallback);return img}
+function joinUrl(group){return API+'/r/'+encodeURIComponent(group.id)}
+
+function card(group){
+  const theme=themeFor(group.category);
+  const article=el('article','group-card');
+  const banner=el('div','card-banner');
+  const boosted=group.boostUntil&&Date.parse(group.boostUntil)>Date.now();
+  banner.append(el('span','badge',boosted?'★ DESTAQUE':'COMUNIDADE'),el('span','banner-symbol',theme.icon));
+
+  const main=el('div','card-main');
+  const head=el('div','group-heading');
+  const heading=el('div','group-title');
+  heading.append(el('h3','',group.name||'Grupo'),el('span','',group.category||'Comunidade'));
+  head.append(imageOrIcon(group),heading);
+
+  const description=el('p','group-description',(group.description||'Conheça esta comunidade.').slice(0,220));
+  const tags=el('div','card-tags');
+  tags.append(createBadge(group.managed?'✳ Fabi conectada':'✓ Grupo publicado'));
+  if(group.members>0)tags.append(createBadge('👥 '+niceInt(group.members)+' membros'));
+  if(boosted)tags.append(createBadge('Em destaque'));
+
+  const favorite=createButton(isFavorite(group.id)?'♥':'♡',()=>toggleFavorite(group.id),'favorite-btn');favorite.setAttribute('aria-label',isFavorite(group.id)?'Remover dos favoritos':'Salvar nos favoritos');favorite.setAttribute('title',isFavorite(group.id)?'Remover dos favoritos':'Salvar nos favoritos');banner.append(favorite);
+  const actions=el('div','card-actions');
+  const join=document.createElement('a');
+  join.href=joinUrl(group); join.target='_blank'; join.rel='noopener noreferrer'; join.textContent='Entrar no grupo';
+  const details=createButton('Ver detalhes',()=>openDetails(group.id));
+  actions.append(join,details);
+
+  main.append(head,description,tags,actions);
+  article.append(banner,main);
+  article.addEventListener('dblclick',()=>openDetails(group.id));
+  return article;
+}
+
+function configureCategories(){
+  const available=[...new Set(groups.map(g=>g.category||'Outros'))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const sel=$('category');
+  const selected=sel.value;
+  sel.replaceChildren(new Option('Todas',''));
+  for(const c of available)sel.add(new Option(c,c));
+  sel.value=selected;
+
+  const submit=$('submitCategory');
+  submit.replaceChildren();
+  for(const c of cats)submit.add(new Option(c,c));
+  for(const c of available)if(!cats.includes(c))submit.add(new Option(c,c));
+
+  const chips=$('chips');
+  chips.replaceChildren();
+  for(const cat of ['',...available.slice(0,8)]){
+    const chip=createButton(cat||'Todos',()=>{sel.value=cat;page=1;render();closeMobileFilters()},'chip');
+    chip.dataset.cat=cat;
+    chip.classList.toggle('active',selected===cat);
+    chips.append(chip);
+  }
+}
+
+function filteredGroups(){
+  const q=$('search').value.toLocaleLowerCase('pt-BR').trim();
+  const cat=$('category').value;
+  const sort=$('sort').value;
+  const list=groups.filter(g=>(!onlyFavorites||isFavorite(g.id))&&(!cat||g.category===cat)&&(!q||(`${g.name||''} ${g.description||''} ${g.category||''}`).toLocaleLowerCase('pt-BR').includes(q)));
+  list.sort((a,b)=>{
+    if(sort==='name')return (a.name||'').localeCompare(b.name||'','pt-BR');
+    if(sort==='members')return (b.members||0)-(a.members||0);
+    if(sort==='recent')return Date.parse(b.updatedAt||0)-Date.parse(a.updatedAt||0);
+    const boost=x=>Date.parse(x.boostUntil||0)>Date.now()?1:0;
+    return boost(b)-boost(a)||Date.parse(b.updatedAt||0)-Date.parse(a.updatedAt||0);
+  });
+  return {list,q,cat};
+}
+
+function render(){
+  const {list,cat,q}=filteredGroups();
+  for(const chip of $('chips').children)chip.classList.toggle('active',chip.dataset.cat===cat);
+  $('favoritesFilter').setAttribute('aria-pressed',String(onlyFavorites));$('favoritesFilter').classList.toggle('selected',onlyFavorites);
+  $('resultsCount').textContent=niceInt(list.length)+' grupo'+(list.length===1?'':'s')+' encontrado'+(list.length===1?'':'s');
+  const root=$('groups');root.replaceChildren();
+  if(!list.length){drawEmpty(root,onlyFavorites?'Nenhum favorito encontrado':q?'Nenhum grupo encontrado':'Nenhum grupo publicado ainda',onlyFavorites?'Salve grupos tocando no coração de cada card.':q?'Tente outras palavras ou categorias.':'Cadastre seu grupo gratuitamente para aparecer aqui.');$('pagination').replaceChildren();return}
+  const per=12,pages=Math.max(1,Math.ceil(list.length/per));page=Math.min(page,pages);
+  for(const g of list.slice((page-1)*per,page*per))root.append(card(g));
+  const pager=$('pagination');pager.replaceChildren();
+  if(pages>1){
+    const prev=createButton('← Anterior',()=>{page--;render();document.querySelector('#explorar').scrollIntoView({block:'start'})});
+    prev.disabled=page<=1;
+    const next=createButton('Próxima →',()=>{page++;render();document.querySelector('#explorar').scrollIntoView({block:'start'})});
+    next.disabled=page>=pages;
+    pager.append(prev,el('span','',page+' de '+pages),next);
+  }
+}
+
+async function loadGroups(){
+  try{
+    const data=await api('/public');
+    groups=Array.isArray(data.groups)?data.groups:[];
+    const total=data.total||groups.length;
+    const catCount=new Set(groups.map(g=>g.category||'Outros')).size;
+    $('totalGroups').textContent=niceInt(total);$('metricGroups').textContent=niceInt(total);
+    $('totalCategories').textContent=niceInt(catCount);$('metricCategories').textContent=niceInt(catCount);
+    configureCategories();
+    render();
+    const requested=new URLSearchParams(location.search).get('grupo');
+    if(requested){const found=groups.find(g=>String(g.id)===requested);if(found)openDetails(found.id,true);else showSiteToast('Grupo indisponível ou não publicado.')}
+  }catch(err){
+    drawEmpty($('groups'),'Não foi possível carregar o catálogo',err.message+' · Verifique se a API e o proxy da Vercel estão ativos.');
+    $('totalGroups').textContent='—';$('metricGroups').textContent='—';
+  }
+}
+
+function openDetails(id,fromUrl=false){
+  detailId=id; const group=groups.find(g=>String(g.id)===String(id)); if(!group)return;
+  if(!fromUrl){const u=new URL(location.href);u.searchParams.set('grupo',String(id));history.pushState({group:id},'',u)}
+  $('detailsTitle').textContent=group.name||'Grupo';
+  $('detailsDescription').textContent=group.description||'Sem descrição disponível.';
+  $('detailsBadge').textContent=(group.boostUntil&&Date.parse(group.boostUntil)>Date.now())?'★ Em destaque':(group.category||'Comunidade');
+  $('detailsUpdated').textContent='Atualizado em '+dateFmt(group.updatedAt);
+  $('detailsHero').replaceChildren();
+  const heroWrap=el('div','group-heading');
+  const titleWrap=el('div','group-title');
+  titleWrap.append(el('h3','',group.name||'Grupo'),el('span','',group.category||'Comunidade'));
+  heroWrap.append(imageOrIcon(group),titleWrap);
+  $('detailsHero').append(heroWrap);
+  const facts=$('detailsFacts'); facts.replaceChildren();
+  const items=[
+    ['Categoria',group.category||'Comunidade'],
+    ['Situação',group.managed?'Fabi conectada':'Publicado no catálogo'],
+    ['Membros',group.members>0?niceInt(group.members):'Não informado'],
+    ['Última atualização',dateFmt(group.updatedAt)]
+  ];
+  for(const [label,value] of items){const item=el('div','detail-item');item.append(el('small','',label),el('strong','',value));facts.append(item)}
+  $('detailsJoin').href=joinUrl(group);
+  $('detailsLink').value=detailUrl(id);updateDetailFavorite();
+  $('detailsBoost').onclick=()=>{closeDetails();openModal('boost',group.id)};
+  openBackdrop('detailsModal');
+  $('closeDetailsModal').focus();
+}
+function closeDetails(){if(!$('detailsModal').classList.contains('show'))return;closeBackdrop('detailsModal');const u=new URL(location.href);if(u.searchParams.has('grupo')){u.searchParams.delete('grupo');history.replaceState({},'',u)}}
+$('closeDetailsModal').onclick=closeDetails;
+$('detailsFavorite').onclick=()=>toggleFavorite(detailId);
+$('detailsShare').onclick=()=>shareGroup(detailId);
+$('detailsCopy').onclick=()=>copyGroupLink(detailId);
+$('favoritesFilter').onclick=()=>{onlyFavorites=!onlyFavorites;page=1;render()};
+saveFavorites();
+window.addEventListener('popstate',()=>{const id=new URLSearchParams(location.search).get('grupo');if(!id){if($('detailsModal').classList.contains('show'))closeBackdrop('detailsModal')}else if(groups.some(g=>String(g.id)===id))openDetails(id,true)});
+$('detailsModal').addEventListener('click',e=>{if(e.target===$('detailsModal'))closeDetails()});
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeDetails();closeMobileFilters()}});
+
+$('submitForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const btn=$('submitBtn');btn.disabled=true;btn.textContent='Enviando…';
+  try{
+    const body=Object.fromEntries(new FormData(e.target));
+    const d=await api('/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    toast('modalToast',d.message||'Solicitação recebida.');
+    if(!d.existing)e.target.reset();
+  }catch(err){toast('modalToast',err.message,true)}
+  finally{btn.disabled=false;btn.textContent='Enviar para análise'}
+});
+
+$('payBtn').onclick=async()=>{
+  const btn=$('payBtn');btn.disabled=true;
+  try{
+    const data=await api('/boost',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({groupId:boostId,plan:$('boostPlan').value})});
+    const target=new URL(data.checkoutUrl);
+    if(target.protocol!=='https:'||!/(^|\.)mercadopago\.com(\.br)?$/.test(target.hostname))throw Error('Destino de pagamento inválido');
+    location.assign(target.href);
+  }catch(err){toast('modalToast',err.message,true);btn.disabled=false}
+};
+
+['search','category','sort'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',()=>{page=1;render()}));
+
+function openMobileFilters(){if(window.innerWidth>760)return;document.body.classList.add('filters-open');$('mobileFilterOverlay').classList.add('show');$('mobileFilterOverlay').setAttribute('aria-hidden','false')}
+function closeMobileFilters(){document.body.classList.remove('filters-open');$('mobileFilterOverlay').classList.remove('show');$('mobileFilterOverlay').setAttribute('aria-hidden','true')}
+$('mobileFilterBtn')?.addEventListener('click',openMobileFilters);
+$('mobileFilterOverlay')?.addEventListener('click',closeMobileFilters);
+
+function adminToast(msg,err=false){toast('adminToast',msg,err);$('adminToast').scrollIntoView({block:'nearest',behavior:'smooth'})}
+async function adminApi(path,method='GET',body){return api('/admin'+path,{method,headers:{'x-fabi-admin-key':adminKey,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined})}
+async function loadAdmin(){
+  const [r,s,m,i]=await Promise.all([adminApi('/requests'),adminApi('/sessions'),adminApi('/metrics'),adminApi('/inventory')]);
+  requests=r.groups||[]; sessions=s.sessions||[]; inventory=i.groups||[];
+  $('statAll').textContent=niceInt(m.total); $('statPending').textContent=niceInt(m.pending); $('statSessions').textContent=niceInt(s.total); $('statOnline').textContent=niceInt(s.online);
+  showRequests(); showSessions(); showInventory();
+}
+$('adminLogin').onclick=async()=>{adminKey=$('adminKey').value.trim(); if(!adminKey)return; const btn=$('adminLogin'); btn.disabled=true; try{await loadAdmin(); $('adminAuth').classList.add('hidden'); $('adminDashboard').classList.remove('hidden')}catch(err){$('adminAuth').querySelector('p').textContent='Falha de autenticação: '+err.message}finally{btn.disabled=false}};
+$('adminRefresh').onclick=async()=>{try{await loadAdmin();adminToast('Dados atualizados.')}catch(err){adminToast(err.message,true)}};
+for(const btn of document.querySelectorAll('[data-tab]'))btn.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b===btn)); for(const [tab,panel] of [['requests','tabRequests'],['sessions','tabSessions'],['inventory','tabInventory']])$(panel).classList.toggle('hidden',btn.dataset.tab!==tab)};
+function safeStatus(status){return ({pending:'Aguardando',published:'Publicado',paused:'Pausado',rejected:'Rejeitado'})[status]||status}
+async function action(path,data,text){try{await adminApi(path,'POST',data);await loadAdmin();adminToast(text||'Atualizado com sucesso.');return true}catch(err){adminToast(err.message,true);return false}}
+
+function showRequests(){
+  const root=$('requestsList'); root.replaceChildren();
+  const filtered=requests.filter(g=>!$('statusFilter').value||g.status===$('statusFilter').value);
+  if(!filtered.length){drawEmpty(root,'Sem solicitações','Nada para mostrar nesse filtro.');return}
+  for(const g of filtered.slice(0,300)){
+    const row=el('article','admin-entry'),info=el('div'),details=el('div','detail');
+    info.append(el('h4','',g.name),el('small','',(g.contact||'Sem contato')+' · '+(g.category||'Outros')));
+    details.append(createBadge(safeStatus(g.status)),createBadge(g.ownerApproved?'✓ Autorizado':'! Aguardando autorização'),createBadge(g.source||'novo'));
+    if(g.groupJid)details.append(createBadge('Grupo '+g.groupJid));
+    info.append(details);
+    const acts=el('div','admin-actions');
+    if(!g.ownerApproved)acts.append(createButton('Confirmar autorização',async()=>{const note=prompt('Como o administrador confirmou a divulgação?'); if(!note?.trim())return; await action('/'+g.id+'/owner-confirm',{approved:true,note},'Autorização registrada.')}));
+    if(g.status!=='published')acts.append(createButton('Publicar',()=>action('/'+g.id+'/decision',{action:'approve'},'Grupo publicado.')));
+    if(g.status==='published')acts.append(createButton('Pausar',()=>action('/'+g.id+'/decision',{action:'pause'},'Grupo pausado.'),'mini-btn'));
+    if(g.status==='pending')acts.append(createButton('Rejeitar',()=>action('/'+g.id+'/decision',{action:'reject'},'Cadastro rejeitado.'),'mini-btn'));
+    if(g.ownerApproved){
+      acts.append(createButton('Vincular Free',async()=>{
+        const groupJid=prompt('JID do grupo (ex.: 120363...@g.us):',g.groupJid||''); if(!groupJid)return;
+        const free=sessions.filter(s=>s.mode==='free'); if(!free.length){adminToast('Ative um número Free primeiro.',true);return}
+        const session=prompt('Número da sessão Free: '+free.map(s=>s.number).join(', '),free[0].number); if(!session)return;
+        await action('/'+g.id+'/link-free',{groupJid,session},'Grupo vinculado à sessão Free.');
+      }));
+      if(g.freeEnabled)acts.append(createButton('Desvincular',()=>{if(confirm('Desvincular a Free deste grupo?'))action('/'+g.id+'/unlink-free',{},'Vínculo desativado.')}));
+    }
+    row.append(info,acts); root.append(row);
+  }
+}
+$('statusFilter').onchange=showRequests;
+
+function showSessions(){
+  const root=$('sessionsList'); root.replaceChildren();
+  const q=$('sessionSearch').value.trim();
+  const filtered=sessions.filter(s=>!q||s.number.includes(q));
+  if(!filtered.length){drawEmpty(root,'Nenhuma sessão encontrada','Confira se o servidor possui pastas de sessão.');return}
+  for(const s of filtered){
+    const c=el('article','session-card'),top=el('div','session-top'),status=el('span','pill-label'+(!s.online?' offline':''),s.online?'● Conectado':'○ Offline'),mode=el('span','pill-label',s.mode==='free'?'FREE':'PRO');
+    top.append(status,mode);
+    c.append(top,el('h4','','+'+s.number),el('small','',s.status||'Sem informação'));
+    const acts=el('div','session-actions'); const other=s.mode==='free'?'pro':'free';
+    acts.append(createButton(s.mode==='free'?'Ativar Pro':'Ativar Free',async()=>{
+      const explanation=other==='free'?'Todos os grupos desta sessão perderão os comandos Pro e ficarão só com a proteção Free.':'Os comandos Pro voltarão a ficar disponíveis; verifique a assinatura do cliente.';
+      if(!confirm('Alterar número '+s.number+' para '+other.toUpperCase()+'?\n\n'+explanation))return;
+      await action('/sessions/'+encodeURIComponent(s.number)+'/mode',{mode:other},'Modo '+other.toUpperCase()+' aplicado para '+s.number+'.');
+    }));
+    c.append(acts); root.append(c);
+  }
+}
+$('sessionSearch').oninput=showSessions;
+
+function showInventory(){
+  const root=$('inventoryList'); root.replaceChildren();
+  if(!inventory.length){drawEmpty(root,'Inventário vazio','Clique em Consultar sessões para verificar grupos online.');return}
+  for(const g of inventory.slice(0,300)){
+    const row=el('article','admin-entry'),info=el('div'),detail=el('div','detail');
+    info.append(el('h4','',g.name||g.groupJid),el('small','',g.groupJid));
+    detail.append(createBadge(g.published?'No catálogo':'Não divulgado'),createBadge(g.session?'Sessão '+g.session:'Arquivo existente'));
+    if(g.members)detail.append(createBadge(niceInt(g.members)+' membros'));
+    if(g.mode)detail.append(createBadge(g.mode.toUpperCase()));
+    info.append(detail); row.append(info); root.append(row);
+  }
+}
+$('scanGroups').onclick=async()=>{const b=$('scanGroups');b.disabled=true;b.textContent='Consultando…';try{const data=await adminApi('/inventory?live=1');inventory=data.groups||[];showInventory();adminToast('Inventário atualizado: '+data.total+' grupos encontrados.')}catch(err){adminToast(err.message,true)}finally{b.disabled=false;b.textContent='Consultar sessões'}};
+$('diagnoseGroups').onclick=async()=>{const btn=$('diagnoseGroups');btn.disabled=true; try{const d=await adminApi('/diagnostics'); $('inventoryDiagnostics').textContent=`Origem: ${d.source} · Arquivo: ${d.fileExists?'encontrado':'ausente'} · Registros: ${d.registered} · Convites utilizáveis: ${d.withInvite} · Sem convite: ${d.withoutInvite} · Excluídos por privacidade: ${d.excluded} · Publicados: ${d.published} · Sessões: ${d.sessions} (${d.online} online).`;}catch(err){adminToast(err.message,true)} finally{btn.disabled=false}};
+$('importGroups').onclick=async()=>{const btn=$('importGroups');btn.disabled=true; try{const d=await adminApi('/import-existing','POST',{}); await Promise.all([loadAdmin(),loadGroups()]); adminToast(`Importação concluída: ${d.added||0} novos, ${d.changed||0} atualizados, ${d.skipped||0} ignorados.`);}catch(err){adminToast(err.message,true)} finally{btn.disabled=false}};
+
+if(new URLSearchParams(location.search).has('admin')){$('adminPanel').classList.remove('hidden'); $('publicMain').classList.add('hidden'); document.querySelector('.footer')?.classList.add('hidden'); $('adminPanel').scrollIntoView({block:'start'})}
+
+loadGroups();
+})();
