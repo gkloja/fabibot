@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#111021"><title>Acesso seguro ao painel — Fabi Bot</title>
+<style>
+:root{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color-scheme:dark;background:#0e1119;color:#faf9ff}
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse at top,#282050 0,transparent 62%),#0e1119}
+main{width:min(100%,440px);background:#191b2b;border:1px solid #373651;border-radius:24px;padding:clamp(24px,6vw,36px);box-shadow:0 25px 90px #0005}
+.brand{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:900}.icon{width:44px;height:44px;border-radius:15px;background:#7455ed;display:grid;place-items:center}
+h1{font-size:clamp(25px,5vw,32px);line-height:1.15;letter-spacing:-1px;margin:28px 0 10px}p{line-height:1.6;color:#c4c2db;font-size:14px}
+.notice{margin:22px 0;padding:15px;border-radius:14px;background:#26253b;border:1px solid #413f60;font-size:13px;color:#d4d1ee}
+button{appearance:none;border:0;background:#8363ff;color:white;width:100%;min-height:50px;border-radius:13px;padding:14px;font:800 15px system-ui;cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+a{color:#b6a4ff}#status{min-height:40px;margin-top:14px;font-size:13px;color:#e2d7ff}
+</style></head><body><main>
+<div class="brand"><span class="icon">🤖</span><span>Fabi Bot</span></div>
+<h1>Seu painel está a um toque.</h1>
+<p>Este acesso foi solicitado pelo WhatsApp de um administrador. Não é necessário digitar usuário ou senha.</p>
+<div class="notice">🔐 Link pessoal, válido por 10 minutos e utilizável uma única vez. Sua permissão de administrador também é verificada pelo servidor.</div>
+<button type="button" id="go">Entrar na configuração do grupo</button>
+<p id="status" role="status" aria-live="polite"></p>
+<p><a href="/login">Prefiro fazer login com minha conta</a></p>
+</main>
+<script>
+(()=>{
+ const button=document.getElementById('go'),status=document.getElementById('status');
+ const token=new URLSearchParams(location.hash.slice(1)).get('t')||'';
+ history.replaceState(null,'','/acesso-grupo.html');
+ if(!/^[A-Za-z0-9_-]{40,60}$/.test(token)){button.disabled=true;status.textContent='Este link é inválido ou está incompleto. Peça outro com /painelgrupo no WhatsApp.';return;}
+ button.addEventListener('click',async()=>{
+  button.disabled=true;status.textContent='Validando seu acesso privado…';
+  try{
+   const response=await fetch('/api/fabi-acesso',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({token}),cache:'no-store'});
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok||!data.success)throw Error(data.message||'O link expirou ou já foi utilizado.');
+   const u=data.user||{};
+   const grupo=String(data.grupo||'');if(!/^\d{8,24}(?:-\d+)?@g\.us$/.test(grupo)||!data.fabiGrupoToken||!data.fabiGrupoRefreshToken||!u.numero)throw Error('Resposta de acesso incompleta.');
+   const sess={logado:true,id:u.id||u.nome,nome:u.nome||'',numero:u.numero,email:'',golds:u.golds||0,rank:0,avatar:u.avatar||'/flogo.jpg',provider:'servidor',at:Date.now()};
+   localStorage.removeItem('fabi_session');localStorage.removeItem('neconecta_user_session');localStorage.removeItem('fabi_group_refresh_v33');sessionStorage.removeItem('fabi_group_token');
+   localStorage.setItem('fabi_session',JSON.stringify(sess));
+   localStorage.setItem('neconecta_user_session',JSON.stringify({id:sess.id,nome:sess.nome,numero:sess.numero,avatar:sess.avatar,provider:'servidor',seguidores:[],seguindo:[]}));
+   sessionStorage.setItem('fabi_group_token',data.fabiGrupoToken);
+   localStorage.setItem('fabi_group_refresh_v33',JSON.stringify({numero:String(u.numero).replace(/\D/g,''),token:data.fabiGrupoRefreshToken}));
+   status.textContent='Acesso confirmado. Abrindo suas configurações…';
+   location.replace('/?grupo='+encodeURIComponent(grupo));
+  }catch(err){status.textContent=err.message||'Não foi possível entrar. Solicite outro link no WhatsApp.';button.disabled=false;}
+ });
+})();
+</script></body></html>

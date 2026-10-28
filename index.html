@@ -7111,6 +7111,19 @@ body.light-mode .command-badge-mobile {
 .fabi-v55-chip.free{color:#10b981;background:rgba(16,185,129,.09)}.fabi-v55-chip.pro{color:#a78bfa;background:rgba(139,92,246,.11)}
 body.light-mode .fabi-v55-pro-label{color:#603ad4}
 </style>
+<style id="fabi-v56-upgrade-css">
+/* Fabi Free V56 — convite Pro visível só no painel Free. */
+.fabi-v56-upgrade{margin:12px 0 20px;padding:clamp(16px,2.5vw,24px);border:1px solid rgba(141,108,248,.42);border-radius:18px;background:linear-gradient(125deg,rgba(112,78,233,.16),rgba(38,198,218,.06));display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}
+.fabi-v56-upgrade[hidden]{display:none!important}
+.fabi-v56-upgrade-copy{display:flex;flex-direction:column;gap:7px;max-width:630px}
+.fabi-v56-upgrade-kicker{font-size:11px;font-weight:900;letter-spacing:.1em;color:#9f8cff}
+.fabi-v56-upgrade-copy strong{font-size:clamp(17px,2.3vw,23px);line-height:1.2;color:var(--text-color,#e8e6f4)}
+.fabi-v56-upgrade-copy p{margin:0;font-size:13px;line-height:1.55;color:var(--text2,#a3a5bd)}
+.fabi-v56-upgrade-link{display:inline-flex;align-items:center;justify-content:center;text-align:center;min-height:44px;padding:12px 17px;border-radius:13px;background:#7551ee;color:white!important;text-decoration:none!important;font-size:13px;font-weight:850;white-space:normal}
+.fabi-v56-upgrade-link:hover{background:#6043c6}
+body.light-mode .fabi-v56-upgrade-copy strong{color:#251c43}body.light-mode .fabi-v56-upgrade-copy p{color:#525169}body.light-mode .fabi-v56-upgrade-kicker{color:#5133bd}
+@media(max-width:600px){.fabi-v56-upgrade-link{width:100%}}
+</style>
 </head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
 <body class="dark-mode">
@@ -8972,7 +8985,7 @@ body.light-mode .fz34-community-meta{color:#395950}body.light-mode .fz34-check-s
 let cfgGruposOriginais = [];   // lista completa da API
 let cfgGruposAdmin = [];       // só onde o número logado é admin
 let cfgPlanoAtualV55 = 'pro';
-const CFG_FREE_V55 = new Set(['sistemGold','antinotas','x9','soinsta','soadm','visuUnica','soinstaface','antistatus','antiimg','antivideo','antisticker','antidoc','antictt','antiloc','antilinkgp','level','antilinkhard','antifake','antispam','nsfw']);
+const CFG_FREE_V55 = new Set(['sistemGold','antinotas','x9','soinsta','soadm','visuUnica','soinstaface','antistatus','antiimg','antivideo','antiaudio','antisticker','antidoc','antictt','antiloc','antilinkgp','level','antilinkhard','antifake','antispam','nsfw']);
 let cfgGruposFiltrados = [];
 let cfgPaginaAtual = 1;
 let cfgFiltroAtual = 'todos';  // 'todos' | 'admin'
@@ -9206,7 +9219,20 @@ function cfgAplicarPlanoV55(plano){
  if(!banner){banner=document.createElement('div');banner.id='fabiV55PlanoAviso';banner.setAttribute('role','status');area.prepend(banner)}
  const isFree=cfgPlanoAtualV55==='free';area.classList.toggle('fabi-v55-free',isFree);
  banner.className='fabi-v55-plan-banner '+(isFree?'free':'pro');
- banner.textContent=isFree?'🛡️ Fabi Free · 20 controles de moderação + programação de horários. Recursos Pro aparecem bloqueados. Downloads automáticos indisponíveis.':'💎 Fabi Pro · Todos os controles disponíveis conforme as permissões da sua assinatura.';
+ banner.textContent=isFree?'🛡️ Fabi Free · 21 controles de moderação + programação de horários. Recursos Pro aparecem bloqueados. Downloads automáticos indisponíveis.':'💎 Fabi Pro · Todos os controles disponíveis conforme as permissões da sua assinatura.';
+ let offer=document.getElementById('fabiV56Upgrade');
+ if(!offer){
+   offer=document.createElement('section');offer.id='fabiV56Upgrade';offer.className='fabi-v56-upgrade';
+   const heading=document.createElement('div');heading.className='fabi-v56-upgrade-copy';
+   const kicker=document.createElement('span');kicker.className='fabi-v56-upgrade-kicker';kicker.textContent='💎 DESBLOQUEIE MAIS POSSIBILIDADES';
+   const title=document.createElement('strong');title.textContent='Transforme sua Fabi Free em Pro';
+   const desc=document.createElement('p');desc.textContent='Chat inteligente, boas-vindas especiais, downloads automáticos e mais ferramentas. Sua configuração gratuita continua disponível.';
+   heading.append(kicker,title,desc);
+   const action=document.createElement('a');action.href='/conectar';action.className='fabi-v56-upgrade-link';action.textContent='Conhecer a Fabi Pro →';
+   action.setAttribute('aria-label','Conhecer planos e recursos da Fabi Pro');
+   offer.append(heading,action);banner.insertAdjacentElement('afterend',offer);
+ }
+ offer.hidden=!isFree;
  for(const id of ['fzPalavrasCard','g1EstadosCard']){
   const node=document.getElementById(id);if(!node)continue;
   node.classList.toggle('fabi-v55-pro-only',isFree);
