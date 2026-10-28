@@ -14,7 +14,9 @@ module.exports=async function handler(req,res){
   const rewriteValue=url.searchParams.get('endpoint');
   const tail=rewriteValue!==null?'/'+rewriteValue.replace(/^\/+/, ''):url.pathname.replace(/^\/api\/fabi-grupos/,'');
   url.searchParams.delete('endpoint');
-  if(!/^\/(?:public|submit|boost|r\/[A-Za-z0-9_-]+|mp\/webhook|podium|live-ranking|admin(?:\/[A-Za-z0-9_\/-]+)?)$/.test(tail))return res.status(404).json({error:'Rota desconhecida'});
+  if(!/^\/(?:public|submit|boost(?:\/pix|\/status\/[a-f0-9]{24})?|r\/[A-Za-z0-9_-]+|mp\/webhook|podium|live-ranking|admin(?:\/[A-Za-z0-9_\/-]+)?)$/.test(tail))return res.status(404).json({error:'Rota desconhecida'});
+  if(tail==='/boost/pix'&&method!=='POST')return res.status(405).json({error:'Método não permitido'});
+  if(tail.startsWith('/boost/status/')&&method!=='GET')return res.status(405).json({error:'Método não permitido'});
   // Pódio/rankings existentes no index.html; nenhuma outra origem ou caminho arbitrário.
   if((tail==='/podium'||tail==='/live-ranking')&&method!=='GET')return res.status(405).json({error:'Método não permitido'});
   const fixedRankPath=tail==='/podium'?'/api/top3-medalhistas':tail==='/live-ranking'?'/api/ranking-live':null;
