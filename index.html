@@ -8536,19 +8536,19 @@ body.light-mode .close-user-modal:hover { background: #d1d5db; }
                 </div>
 
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:14px;">
-                    <div style="padding:12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);">
+                    <div class="fz-owner-metric" style="padding:12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);">
                         <div style="font-size:11px;color:var(--text2);">SESSÃO</div>
-                        <div id="fzOwnerSessaoNumero" style="font-weight:800;margin-top:4px;word-break:break-all;">—</div>
+                        <div class="fz-owner-number" id="fzOwnerSessaoNumero" style="font-weight:800;margin-top:4px;word-break:break-all;">—</div>
                     </div>
-                    <div style="padding:12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);">
+                    <div class="fz-owner-metric" style="padding:12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);">
                         <div style="font-size:11px;color:var(--text2);">ALUGUEL</div>
                         <div id="fzAluguelStatus" style="font-weight:800;margin-top:4px;">—</div>
                         <div id="fzAluguelRestante" style="font-size:12px;color:var(--text2);margin-top:3px;">—</div>
                     </div>
                 </div>
 
-                <div style="margin-top:14px;padding:14px;border-radius:12px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.08);">
-                    <label style="font-size:12px;color:#cbd5e1;font-weight:700;display:block;margin-bottom:7px;"><i class="fas fa-calendar-clock"></i> Vencimento do aluguel — horário de Brasília</label>
+                <div class="fz-owner-rental-box" style="margin-top:14px;padding:14px;border-radius:12px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.08);">
+                    <label class="fz-owner-rental-label" style="font-size:12px;color:#cbd5e1;font-weight:700;display:block;margin-bottom:7px;"><i class="fas fa-calendar-clock"></i> Vencimento do aluguel — horário de Brasília</label>
                     <input type="datetime-local" id="fzAluguelVenceEm" style="width:100%;padding:11px 12px;border-radius:10px;border:1px solid #263241;background:#090d13;color:#fff;color-scheme:dark;">
                     <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;">
                         <button type="button" class="fz-horario-save-btn" style="width:auto;padding:8px 12px;" onclick="fzAluguelRapido(1)">+1 dia</button>
@@ -21920,90 +21920,261 @@ function ready(){if(read('fabi-bot-push-choice')==='on'&&window.Notification?.pe
 document.addEventListener('fabi-bot-push-ready',ready);if(window.fabiBotPushReady)ready();
 })();
 </script>
-<!-- FABI ESTÚDIO V68: integração nativa, sem dependências adicionais -->
-<script id="fabi-estudio-v68-integrado">
-(function(){
-'use strict';
-const api=(p)=>typeof fzApi==='function'?fzApi(p):p;
-const headers=()=>typeof fzAuthHeaders==='function'?fzAuthHeaders():{'Content-Type':'application/json'};
-const auth=()=>typeof cfgAuthBody==='function'?cfgAuthBody():{};
-const group=()=>typeof cfgPainelObterGrupoSelecionado==='function'?cfgPainelObterGrupoSelecionado():'';
-const session=()=>String(typeof fzSessaoControleAtual!=='undefined'?fzSessaoControleAtual:'');
-let current='', imageData={};
-const css=document.createElement('style');
-css.textContent=`
-#fabiEstudioV66{margin:20px 0;padding:20px;border:1px solid rgba(125,140,180,.28);border-radius:20px;background:var(--card-bg,rgba(105,120,160,.09));color:var(--text-primary,inherit)}
-#fabiEstudioV66 .fes-top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
-#fabiEstudioV66 .fes-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
-#fabiEstudioV66 .fes-card{border:1px solid rgba(125,140,180,.35);border-radius:16px;padding:12px;background:rgba(125,140,180,.07)}
-#fabiEstudioV66 .fes-preview{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:12px;background:linear-gradient(135deg,#163b34,#252a65)}
-#fabiEstudioV66 .fes-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-#fabiEstudioV66 button,#fabiEstudioV66 label.fes-upload{border:0;border-radius:10px;padding:9px 12px;font:inherit;cursor:pointer;background:#2563eb;color:#fff;font-weight:650}
-#fabiEstudioV66 button.fes-reset{background:#64748b}
-#fabiEstudioV66 .fes-status{font-size:13px;margin-top:10px;min-height:20px}
-#fabiEstudioV66 input[type=file]{display:none}
-@media(max-width:580px){#fabiEstudioV66 .fes-grid{grid-template-columns:1fr}}
-`;
-document.head.append(css);
-function render(){
-  const sw=document.getElementById('fzBotAtivo');
-  if(!sw)return;
-  const target=sw.closest('.fz-horario-toggle-row')?.parentElement || sw.parentElement;
-  if(!target||document.getElementById('fabiEstudioV66'))return;
-  const el=document.createElement('section');
-  el.id='fabiEstudioV66';
-  el.innerHTML=`<div class="fes-top"><div><strong>🎨 Estúdio Fabi Pro</strong><div style="opacity:.75;font-size:13px">Personalize a identidade visual deste grupo.</div></div><span>👑 Pro</span></div>
-  <div class="fes-grid">${[['menu','🖼️ Fundo do menu'],['bemvindo','🌅 Boas-vindas']].map(([id,title])=>`<article class="fes-card"><strong>${title}</strong><img class="fes-preview" id="fes-img-${id}" alt="Prévia da imagem" /><div class="fes-actions"><label class="fes-upload">Escolher imagem<input type="file" accept="image/jpeg,image/png,image/webp" data-type="${id}"></label><button data-save="${id}">Salvar</button><button class="fes-reset" data-reset="${id}">Restaurar</button></div></article>`).join('')}</div><div class="fes-status" id="fes-status" role="status"></div>`;
-  target.insertAdjacentElement('afterend',el);
-  el.querySelectorAll('input[type=file]').forEach(inp=>inp.addEventListener('change',()=>{
-    const file=inp.files?.[0];if(!file)return;
-    if(file.size>3*1024*1024){status('A imagem deve ter até 3 MB.');return;}
-    const reader=new FileReader();
-    reader.onload=()=>{imageData[inp.dataset.type]=reader.result;el.querySelector('#fes-img-'+inp.dataset.type).src=reader.result;status('Prévia pronta. Clique em Salvar para aplicar.');};
-    reader.readAsDataURL(file);
-  }));
-  el.querySelectorAll('[data-save]').forEach(b=>b.addEventListener('click',()=>send(b.dataset.save)));
-  el.querySelectorAll('[data-reset]').forEach(b=>b.addEventListener('click',()=>send(b.dataset.reset,true)));
-  refresh();
-}
-function status(t){const x=document.getElementById('fes-status');if(x)x.textContent=t;}
-async function refresh(){
- const gid=group();if(!gid||!document.getElementById('fabiEstudioV66'))return;
- current=gid+'|'+session();
- try{
-  if(typeof fz33AssegurarGrupoToken==='function')await fz33AssegurarGrupoToken();
-  const qs=new URLSearchParams({grupoID:gid,sessao:session(),...auth()});
-  const r=await fetch(api('/api/grupo/estudio?'+qs),{headers:headers(),cache:'no-store'});
-  const j=await r.json();
-  if(!j.success){status(j.message||'Estúdio indisponível para este grupo.');document.querySelectorAll('#fabiEstudioV66 button,#fabiEstudioV66 input').forEach(e=>e.disabled=true);return;}
-  document.querySelectorAll('#fabiEstudioV66 button,#fabiEstudioV66 input').forEach(e=>e.disabled=false);
-  for(const tipo of ['menu','bemvindo']){
-   const img=document.getElementById('fes-img-'+tipo);
-   img.removeAttribute('src');
-   if(j.imagens?.[tipo]?.personalizado){
-    const response=await fetch(api('/api/grupo/estudio/imagem?'+new URLSearchParams({grupoID:gid,sessao:session(),tipo,...auth()})),{headers:headers(),cache:'no-store'});
-    if(response.ok){const blob=await response.blob();img.src=URL.createObjectURL(blob);}
-   }
-  }
-  status('Somente a conta proprietária da sessão pode salvar alterações neste painel.');
- }catch(_){status('Não foi possível carregar as imagens.');}
-}
-async function send(tipo,reset=false){
- const gid=group();if(!gid||gid+'|'+session()!==current){status('Selecione novamente o grupo antes de salvar.');return;}
- if(!reset&&!imageData[tipo]){status('Escolha uma imagem primeiro.');return;}
- status('Salvando...');
- try{
-  if(typeof fz33AssegurarGrupoToken==='function')await fz33AssegurarGrupoToken();
-  const r=await fetch(api('/api/grupo/estudio'),{method:'POST',headers:headers(),body:JSON.stringify({grupoID:gid,sessao:session(),tipo,acao:reset?'restaurar':'salvar',imagem:reset?undefined:imageData[tipo],...auth()})});
-  const j=await r.json();
-  if(!j.success)throw Error(j.message||'Falha ao salvar.');
-  delete imageData[tipo];status(j.message);await refresh();
- }catch(e){status(e.message||'Erro ao salvar.');}
-}
-new MutationObserver(()=>{render();const gid=group();if(gid&&session()&&gid+'|'+session()!==current&&document.getElementById('fabiEstudioV66'))refresh();}).observe(document.body,{subtree:true,childList:true});
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
-})();
+<!-- FABI ESTÚDIO V69: estilos de alto contraste e prévia integrada -->
+<style id="fabi-v69-theme">
+/* Fabi Estúdio V69: interface responsiva com contrastes próprios dos dois temas. */
+#fabiEstudioV69 { --fes-bg:#101b27; --fes-tile:#182536; --fes-border:#304459; --fes-text:#f0f8ff; --fes-muted:#b4c5d6; --fes-blue:#2871ea; position:relative; isolation:isolate; margin:22px 0 2px; padding:18px; border:1px solid var(--fes-border); border-radius:22px; background:var(--fes-bg); color:var(--fes-text); box-shadow:0 14px 30px #06111b16; font-family:'Plus Jakarta Sans',system-ui,sans-serif; }
+#fabiEstudioV69 * { box-sizing:border-box; }
+#fabiEstudioV69 .fes-header { display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
+#fabiEstudioV69 .fes-eyebrow { display:block; font-size:10px; letter-spacing:1.4px; text-transform:uppercase; color:#55e7ae; font-weight:800; margin-bottom:4px; }
+#fabiEstudioV69 .fes-header h3 { margin:0 0 7px; font-size:clamp(18px,3.8vw,22px); font-weight:850; color:var(--fes-text); letter-spacing:-.4px; }
+#fabiEstudioV69 .fes-description { margin:0; font-size:12px; font-weight:500; line-height:1.65; color:var(--fes-muted); max-width:510px; }
+#fabiEstudioV69 .fes-pro { display:flex; gap:5px; align-items:center; padding:7px 10px; border-radius:30px; color:#f8cf6f; background:#b8801721; border:1px solid #cf9c4538; font-size:10px; font-weight:850; white-space:nowrap; }
+#fabiEstudioV69 .fes-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+#fabiEstudioV69 .fes-card { padding:12px; background:var(--fes-tile); border-radius:17px; border:1px solid var(--fes-border); min-width:0; }
+#fabiEstudioV69 .fes-card-title { display:flex; gap:9px; align-items:center; color:var(--fes-text); font-size:13px; font-weight:800; margin-bottom:10px; }
+#fabiEstudioV69 .fes-card-title .fes-icon { display:grid; place-items:center; flex-shrink:0; width:29px; height:29px; background:#3473f123; border:1px solid #4a89fc38; color:#76adff; border-radius:9px; }
+#fabiEstudioV69 .fes-preview { display:grid; place-items:center; position:relative; width:100%; overflow:hidden; aspect-ratio:16/10; min-height:145px; background:radial-gradient(circle at 48% 25%,#12665f,#121b31 75%); border:1px solid #586d803d; border-radius:12px; isolation:isolate; }
+#fabiEstudioV69 .fes-preview[data-tipo="bemvindo"] { background:radial-gradient(circle at 52% 25%,#214d4b,#181b30 75%); }
+#fabiEstudioV69 .fes-preview::before { content:''; position:absolute; z-index:-1; top:-48%; right:-26%; width:75%; aspect-ratio:1; border-radius:50%; border:1px solid #a8fbd02e; box-shadow:0 0 0 26px #a8fbd00b,0 0 0 60px #a8fbd006; }
+#fabiEstudioV69 .fes-preview-inner { text-align:center; padding:15px; color:#ecfffa; }
+#fabiEstudioV69 .fes-preview-inner i { display:block; font-size:26px; color:#6be7b2; margin-bottom:10px; }
+#fabiEstudioV69 .fes-preview-inner b { display:block; font-size:13px; }
+#fabiEstudioV69 .fes-preview-inner small { display:block; margin-top:5px; font-size:10px; color:#c3d6d2; font-weight:500; }
+#fabiEstudioV69 .fes-preview img { position:absolute!important; inset:0; z-index:2; display:none!important; width:100%!important; height:100%!important; max-width:none!important; object-fit:contain!important; border:0!important; border-radius:0!important; background:#071018; filter:none!important; opacity:1!important; }
+#fabiEstudioV69 .fes-preview[data-state="custom"] img, #fabiEstudioV69 .fes-preview[data-state="draft"] img { display:block!important; }
+#fabiEstudioV69 .fes-image-label { display:flex; align-items:center; gap:6px; font-size:11px; font-weight:650; line-height:1.35; color:var(--fes-muted); margin:10px 0 12px; min-height:28px; }
+#fabiEstudioV69 .fes-image-label i { font-size:9px; color:#48dda3; }
+#fabiEstudioV69 .fes-actions { display:flex; gap:7px; flex-wrap:wrap; align-items:stretch; }
+#fabiEstudioV69 .fes-btn, #fabiEstudioV69 .fes-pick { display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid transparent; border-radius:10px; padding:10px 11px; min-height:40px; font:750 11px 'Plus Jakarta Sans',system-ui,sans-serif; text-align:center; transition:background .15s ease,transform .15s ease; cursor:pointer; line-height:1.2; }
+#fabiEstudioV69 .fes-btn:focus-visible, #fabiEstudioV69 .fes-pick:focus-within { outline:2px solid #60a5fa; outline-offset:3px; }
+#fabiEstudioV69 .fes-pick { flex:1 1 100%; background:#263f5c; color:#e4f5ff; border-color:#385776; }
+#fabiEstudioV69 .fes-save { flex:1 1 90px; background:#16c77d; color:#071a14; }
+#fabiEstudioV69 .fes-reset { flex:1 1 90px; background:transparent; border-color:#3f5269; color:#dbe7f4; }
+#fabiEstudioV69 .fes-btn:not(:disabled):active,#fabiEstudioV69 .fes-pick:active { transform:scale(.97); }
+#fabiEstudioV69 button:disabled { cursor:not-allowed; opacity:.43; }
+#fabiEstudioV69 input[type=file] { position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; pointer-events:none; }
+#fabiEstudioV69 .fes-foot { display:flex; align-items:center; flex-wrap:wrap; gap:9px; justify-content:space-between; margin-top:15px; padding-top:14px; border-top:1px solid var(--fes-border); }
+#fabiEstudioV69 .fes-status { display:flex; gap:8px; align-items:center; color:var(--fes-muted); font-weight:650; font-size:11px; line-height:1.55; flex:1; min-width:160px; }
+#fabiEstudioV69 .fes-reload { flex:0 0 auto; background:transparent; color:var(--fes-text); border:1px solid var(--fes-border); padding:7px 10px; min-height:35px; font-size:11px; }
+#fabiEstudioV69 .fes-limit { color:var(--fes-muted); font-size:10px; margin-top:12px; line-height:1.5; }
+#fabiEstudioV69 [data-state=loading]::after { content:''; position:absolute; inset:0; z-index:4; background:linear-gradient(100deg,transparent 0%,#ffffff14 50%,transparent 100%); animation:fesShimmer 1.5s ease-in-out infinite; }
+@keyframes fesShimmer { 0%{transform:translateX(-120%)} 100%{transform:translateX(120%)} }
+@media(max-width:640px) { #fabiEstudioV69 {padding:15px;margin:18px -1px 0;} #fabiEstudioV69 .fes-grid {grid-template-columns:1fr} #fabiEstudioV69 .fes-preview {min-height:175px} #fabiEstudioV69 .fes-actions {flex-wrap:nowrap} #fabiEstudioV69 .fes-pick {flex:1 1 48%} #fabiEstudioV69 .fes-save,#fabiEstudioV69 .fes-reset{flex:1 1 26%} #fabiEstudioV69 .fes-btn,#fabiEstudioV69 .fes-pick {padding:10px 7px;font-size:10px} }
+@media(max-width:380px) { #fabiEstudioV69 .fes-actions{flex-wrap:wrap} #fabiEstudioV69 .fes-pick{flex:1 1 100%} }
+/* Correção real da legibilidade: o cartão do proprietário tinha gradiente escuro + texto claro esmaecido no tema claro. */
+body.light-mode #fzSessaoOwnerCard, html[data-theme="light"] #fzSessaoOwnerCard {background:#fff!important;color:#142135!important; border:1px solid #b6e6d2!important; box-shadow:0 16px 40px #153b2f10!important;}
+body.light-mode #fzSessaoOwnerCard h3, html[data-theme="light"] #fzSessaoOwnerCard h3 {color:#101c2d!important;}
+body.light-mode #fzSessaoOwnerCard .fz-cfg-hint, html[data-theme="light"] #fzSessaoOwnerCard .fz-cfg-hint {color:#4c5b6d!important;opacity:1!important;}
+body.light-mode #fzSessaoOwnerCard #fzOwnerBadge, html[data-theme="light"] #fzSessaoOwnerCard #fzOwnerBadge {color:#047857!important;background:#d8f9e9!important;border-color:#a1e7ca!important;}
+body.light-mode #fzSessaoOwnerCard .fz-owner-metric, html[data-theme="light"] #fzSessaoOwnerCard .fz-owner-metric {background:#f5f9fc!important;border:1px solid #dce6ef!important;}
+body.light-mode #fzSessaoOwnerCard .fz-owner-rental-box, html[data-theme="light"] #fzSessaoOwnerCard .fz-owner-rental-box {background:#f5f9fc!important;border:1px solid #dce6ef!important;}
+body.light-mode #fzSessaoOwnerCard .fz-owner-rental-label, html[data-theme="light"] #fzSessaoOwnerCard .fz-owner-rental-label {color:#334155!important;}
+body.light-mode #fzSessaoOwnerCard #fzAluguelVenceEm,html[data-theme="light"] #fzSessaoOwnerCard #fzAluguelVenceEm,body.light-mode #fzSessaoOwnerCard #fzOwnerSessaoSelect,html[data-theme="light"] #fzSessaoOwnerCard #fzOwnerSessaoSelect {background:#fff!important;color:#0f172a!important;border:1px solid #cad6e3!important;color-scheme:light!important;}
+body.light-mode #fzSessaoOwnerCard .fz-horario-status, html[data-theme="light"] #fzSessaoOwnerCard .fz-horario-status {background:#f1f8f4!important;color:#173528!important;border:1px solid #d4e9dc!important;}
+body.light-mode #fzSessaoOwnerCard #fzBotoffLabel,body.light-mode #fzSessaoOwnerCard #fzBotoffStatusTexto,html[data-theme="light"] #fzSessaoOwnerCard #fzBotoffLabel {color:#142135!important;}
+body.light-mode #fzSessaoOwnerCard .fz-horario-save-btn:not(:last-child),html[data-theme="light"] #fzSessaoOwnerCard .fz-horario-save-btn:not(:last-child) {color:#fff!important;}
+body.light-mode #fzSessaoOwnerCard .fz-owner-number,html[data-theme="light"] #fzSessaoOwnerCard .fz-owner-number {color:#13243b!important;}
+body.light-mode .fz-horario-card:not(#fzSessaoOwnerCard),html[data-theme="light"] .fz-horario-card:not(#fzSessaoOwnerCard){background:#fff!important;border:1px solid #dee7f0!important;color:#142135!important;box-shadow:0 5px 20px #11223308;}
+body.light-mode .fz-horario-item label,html[data-theme="light"] .fz-horario-item label{color:#374151!important;}
+body.light-mode #fabiEstudioV69, html[data-theme="light"] #fabiEstudioV69 {--fes-bg:#f6fafc;--fes-tile:#fff;--fes-border:#d6e4eb;--fes-text:#11263a;--fes-muted:#4c6173;--fes-blue:#185ed3; box-shadow:0 10px 26px #0b24310b;}
+body.light-mode #fabiEstudioV69 .fes-eyebrow,html[data-theme="light"] #fabiEstudioV69 .fes-eyebrow{color:#07784f;}
+body.light-mode #fabiEstudioV69 .fes-pick,html[data-theme="light"] #fabiEstudioV69 .fes-pick{background:#e7f1ff;border-color:#bed6f9;color:#1555aa;}
+body.light-mode #fabiEstudioV69 .fes-save,html[data-theme="light"] #fabiEstudioV69 .fes-save{background:#087e58;color:#fff;}
+body.light-mode #fabiEstudioV69 .fes-reset,html[data-theme="light"] #fabiEstudioV69 .fes-reset{background:#f4f8fb;color:#34485c;border-color:#c9d6e4;}
+body.light-mode #fabiEstudioV69 .fes-pro,html[data-theme="light"] #fabiEstudioV69 .fes-pro{background:#fef4dc;color:#795514;border-color:#eed7a9;}
+/* A imagem da mascote tem o próprio fundo preto: remover a vinheta esbranquiçada do tema claro. */
+body.light-mode #introSection .fz-fabi-stage,html[data-theme="light"] #introSection .fz-fabi-stage {background:#000!important;border-radius:16px!important;overflow:hidden!important;box-shadow:0 16px 38px #03110d27;}
+body.light-mode #introSection .fz-fabi-stage::after,html[data-theme="light"] #introSection .fz-fabi-stage::after {background:linear-gradient(to right,#000 0%,transparent 10%,transparent 90%,#000 100%),linear-gradient(to bottom,#000 0%,transparent 6%,transparent 92%,#000 100%)!important;opacity:1!important;}
+body.light-mode #introSection .fz-fabi-media,html[data-theme="light"] #introSection .fz-fabi-media {background:#000!important;filter:none!important;mix-blend-mode:normal!important;}
+body.light-mode #introSection .fz-fabi-glow,html[data-theme="light"] #introSection .fz-fabi-glow {opacity:.18!important;}
+/* Cores de status definidas pelo JavaScript antigo eram muito claras sobre o cartão branco. */
+body.light-mode #fzAluguelStatus[style*="93c5fd"],html[data-theme="light"] #fzAluguelStatus[style*="93c5fd"]{color:#1d4ed8!important;}
+body.light-mode #fzAluguelStatus[style*="34d399"],html[data-theme="light"] #fzAluguelStatus[style*="34d399"]{color:#047857!important;}
+body.light-mode #fzAluguelStatus[style*="f87171"],html[data-theme="light"] #fzAluguelStatus[style*="f87171"]{color:#b91c1c!important;}
 
+</style>
+<script id="fabi-v69-studio">
+/* Fabi Estúdio V69 - integrado ao index.html; comunicação com o backend via proxy existente. */
+(()=>{
+ 'use strict';
+ const rootId='fabiEstudioV69', types=['menu','bemvindo'];
+ const state={key:'', seq:0, ok:false, pending:false, files:{}, objectUrls:{}, version:{}};
+ const $=(selector,base=document)=>base.querySelector(selector);
+ const group=()=>typeof cfgPainelObterGrupoSelecionado==='function' ? String(cfgPainelObterGrupoSelecionado()||'') : '';
+ const session=()=>typeof fzSessaoControleAtual!=='undefined' ? String(fzSessaoControleAtual||'') : '';
+ const current=()=>group()+'|'+session();
+ const api=path=>typeof fzApi==='function'?fzApi(path):typeof apiProxyUrl==='function'?apiProxyUrl(path):path;
+ const headers=()=>typeof fzAuthHeaders==='function'?fzAuthHeaders():{'Content-Type':'application/json'};
+ const msg=(text,kind='info')=>{
+   const box=$('#fes-v69-status');if(!box)return;
+   const icons={info:'fa-circle-info',success:'fa-circle-check',error:'fa-circle-exclamation',loading:'fa-circle-notch fa-spin'};
+   box.dataset.kind=kind;
+   box.replaceChildren();
+   const icon=document.createElement('i');icon.className='fas '+(icons[kind]||icons.info);
+   const span=document.createElement('span');span.textContent=text;
+   box.append(icon,span);
+ };
+ const tile=type=>$('#fes-v69-'+type);
+ const note=(type,text)=>{const n=$('#fes-v69-note-'+type);if(n)n.textContent=text};
+ function setImage(type,url,mode){
+   const el=tile(type);if(!el)return;
+   const frame=$('[data-frame]',el),img=$('img',frame);
+   if(state.objectUrls[type] && state.objectUrls[type]!==url){URL.revokeObjectURL(state.objectUrls[type]);delete state.objectUrls[type]}
+   if(url){
+     if(url.startsWith('blob:'))state.objectUrls[type]=url;
+     img.onerror=()=>{img.removeAttribute('src');frame.dataset.state='default';note(type,'Não foi possível abrir esta imagem.');};
+     img.src=url;frame.dataset.state=mode;
+   }else{img.removeAttribute('src');frame.dataset.state=mode||'default'}
+ }
+ function allowSave(ok){
+   state.ok=!!ok;
+   document.querySelectorAll('#'+rootId+' [data-save],#'+rootId+' [data-restore]').forEach(el=>{el.disabled=!state.ok||state.pending});
+ }
+ function describeError(j,status){
+   const raw=String(j?.message||j?.erro||j?.error||'');
+   if(status===404||/rota não encontrada|route not found|not found/i.test(raw))return 'A API do Estúdio ainda não está disponível. Atualize o connect.js no servidor e confira o proxy Cloudflare.';
+   if(status===401)return 'A autenticação expirou. Entre novamente na conta para continuar.';
+   if(status===403)return raw||'Somente a conta proprietária da sessão Pro pode alterar estas imagens.';
+   if(j?.plan==='free')return 'Este grupo utiliza a versão Free. O Estúdio requer a versão Pro.';
+   if(status===413)return 'A imagem enviada ficou grande demais. Escolha outra foto.';
+   return raw||'Não foi possível consultar o servidor. Confira a conexão e tente novamente.';
+ }
+ async function jsonRequest(path,options){
+   const r=await fetch(api(path),{cache:'no-store',...options});
+   const j=await r.json().catch(()=>null);
+   if(!r.ok||!j?.success)throw Object.assign(new Error(describeError(j,r.status)),{status:r.status});
+   return j;
+ }
+ async function ensureToken(){
+   if(typeof fz33AssegurarGrupoToken==='function'){
+     const ok=await fz33AssegurarGrupoToken();
+     if(ok===false)throw new Error('Entre novamente na sua conta para autorizar esta operação.');
+   }
+ }
+ async function load(){
+   if(!$('#'+rootId))return;
+   const gid=group(),sess=session(),key=current();
+   if(!gid||!sess){allowSave(false);msg('Selecione um grupo e uma sessão conectada à sua conta.');return;}
+   const seq=++state.seq;state.key=key;
+   allowSave(false);msg('Conferindo sua sessão e carregando as imagens…','loading');
+   types.forEach(type=>{if(!state.files[type]){setImage(type,'','loading');note(type,'Verificando imagem atual…')}});
+   try{
+     await ensureToken();
+     const query=new URLSearchParams({grupoID:gid,sessao:sess});
+     const j=await jsonRequest('/api/grupo/estudio?'+query,{headers:headers()});
+     if(seq!==state.seq||current()!==key)return;
+     allowSave(true);
+     for(const type of types){
+       const info=j.imagens?.[type];state.version[type]=!!info?.personalizado;
+       if(state.files[type]){setImage(type,state.files[type].preview,'draft');note(type,'Imagem escolhida, ainda não salva');continue}
+       if(!info?.personalizado){setImage(type,'','default');note(type,'Imagem padrão da Fabi Bot');continue}
+       try{
+         const response=await fetch(api('/api/grupo/estudio/imagem?'+new URLSearchParams({grupoID:gid,sessao:sess,tipo:type})),{headers:headers(),cache:'no-store'});
+         if(!response.ok)throw Error('Imagem não encontrada');
+         const blob=await response.blob();
+         if(!blob.type.startsWith('image/')||blob.size<100)throw Error('Resposta não é imagem');
+         if(seq!==state.seq||current()!==key)return;
+         setImage(type,URL.createObjectURL(blob),'custom');note(type,'Imagem atual do grupo');
+       }catch(e){setImage(type,'','default');note(type,'Não foi possível carregar a imagem salva');}
+     }
+     msg('Estúdio disponível. Só a conta proprietária da sessão pode salvar alterações.','success');
+   }catch(e){
+     if(seq!==state.seq||current()!==key)return;
+     allowSave(false);
+     types.forEach(type=>{if(!state.files[type]){setImage(type,'','default');note(type,'Prévia padrão • sem conexão com o Estúdio')}});
+     msg(e.message||'O Estúdio não pôde ser carregado.','error');
+   }
+ }
+ async function blobToBase64(blob){
+   return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result));r.onerror=()=>reject(new Error('Falha ao ler imagem.'));r.readAsDataURL(blob)})
+ }
+ async function imageToJpeg(file){
+   if(file.size>10*1024*1024)throw new Error('Escolha uma imagem de até 10 MB.');
+   if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw new Error('Use uma imagem JPG, PNG ou WebP.');
+   const src=URL.createObjectURL(file);
+   try{
+     const picture=new Image();picture.decoding='async';picture.src=src;
+     await picture.decode();
+     const w=picture.naturalWidth,h=picture.naturalHeight;
+     if(!w||!h||w*h>40000000)throw new Error('Imagem muito grande ou inválida.');
+     const ratio=Math.min(1,1400/Math.max(w,h));
+     const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(w*ratio));canvas.height=Math.max(1,Math.round(h*ratio));
+     const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Seu navegador não suporta esse formato.');
+     ctx.fillStyle='#000';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(picture,0,0,canvas.width,canvas.height);
+     let blob=null;
+     for(const quality of [.88,.76,.64]){
+       blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+       if(blob&&blob.size<=2.8*1024*1024)break;
+     }
+     if(!blob||blob.size>3*1024*1024)throw new Error('Não foi possível otimizar esta imagem.');
+     return blob;
+   }finally{URL.revokeObjectURL(src)}
+ }
+ async function choose(type,file){
+   if(!file)return;
+   const key=current();
+   note(type,'Preparando a prévia…');
+   try{
+     const jpg=await imageToJpeg(file);
+     if(current()!==key)return;
+     if(state.files[type]?.preview)URL.revokeObjectURL(state.files[type].preview);
+     const preview=URL.createObjectURL(jpg);
+     state.files[type]={blob:jpg,preview};
+     setImage(type,preview,'draft');note(type,'Nova prévia • confirme em Salvar');
+     msg('Imagem otimizada e pronta para salvar.','success');
+   }catch(e){msg(e.message||'Não foi possível ler a imagem.','error');note(type,'Escolha uma imagem válida.');}
+ }
+ async function save(type,restore=false){
+   const gid=group(),sess=session();
+   if(!state.ok||!gid||!sess||state.key!==current())return msg('A sessão precisa estar autorizada antes de salvar.','error');
+   if(!restore&&!state.files[type])return msg('Escolha uma imagem para visualizar e salvar.');
+   if(restore){
+     if(!state.version[type]&&!state.files[type])return msg('Essa imagem já está no padrão da Fabi.');
+     if(typeof Swal!=='undefined'){
+       const ans=await Swal.fire({title:'Restaurar imagem padrão?',text:'A personalização atual será removida deste grupo.',icon:'question',showCancelButton:true,confirmButtonText:'Restaurar',cancelButtonText:'Cancelar',confirmButtonColor:'#087e58'});
+       if(!ans.isConfirmed)return;
+     }else if(!confirm('Restaurar imagem padrão deste grupo?'))return;
+   }
+   state.pending=true;allowSave(false);msg(restore?'Restaurando imagem padrão…':'Enviando e salvando imagem…','loading');
+   try{
+     await ensureToken();
+     const payload={grupoID:gid,sessao:sess,tipo:type,acao:restore?'restaurar':'salvar'};
+     if(!restore)payload.imagem=await blobToBase64(state.files[type].blob);
+     const j=await jsonRequest('/api/grupo/estudio',{method:'POST',headers:headers(),body:JSON.stringify(payload)});
+     if(state.key!==current())return;
+     if(state.files[type]?.preview){URL.revokeObjectURL(state.files[type].preview)}
+     delete state.files[type];
+     state.pending=false;await load();msg(j.message||'Personalização atualizada.','success');
+   }catch(e){state.pending=false;allowSave(true);msg(e.message||'Não foi possível salvar.','error');}
+ }
+ function mount(){
+   if($('#'+rootId))return;
+   const sw=$('#fzBotAtivo');if(!sw)return;
+   const parent=sw.closest('.fz-horario-toggle-row')?.parentElement;
+   if(!parent||!parent.closest('#fzSessaoOwnerCard'))return;
+   const section=document.createElement('section');section.id=rootId;
+   section.innerHTML=`<header class="fes-header"><div><span class="fes-eyebrow">IDENTIDADE VISUAL DO GRUPO</span><h3>🎨 Estúdio Fabi</h3><p class="fes-description">Seu grupo, sua identidade. Escolha o fundo do menu e a arte de boas-vindas. Veja como fica antes de publicar.</p></div><span class="fes-pro">👑 Exclusivo Pro</span></header>
+   <div class="fes-grid">${[['menu','Imagem do menu','fa-palette'],['bemvindo','Boas-vindas','fa-sun']].map(([t,title,icon])=>`<article id="fes-v69-${t}" class="fes-card"><div class="fes-card-title"><span class="fes-icon"><i class="fas ${icon}"></i></span>${title}</div><div class="fes-preview" data-frame data-tipo="${t}" data-state="default"><div class="fes-preview-inner"><i class="fas ${icon}"></i><b>Visual padrão da Fabi</b><small>Selecione uma foto para pré-visualizar</small></div><img alt="Prévia da imagem do grupo" /></div><p class="fes-image-label"><i class="fas fa-circle"></i><span id="fes-v69-note-${t}">Imagem padrão da Fabi Bot</span></p><div class="fes-actions"><label class="fes-pick"><i class="fas fa-image"></i> Escolher foto<input type="file" accept="image/jpeg,image/png,image/webp" data-file="${t}"></label><button type="button" class="fes-btn fes-save" data-save="${t}" disabled><i class="fas fa-floppy-disk"></i> Salvar</button><button type="button" class="fes-btn fes-reset" data-restore="${t}" disabled><i class="fas fa-rotate-left"></i> Padrão</button></div></article>`).join('')}</div>
+   <p class="fes-limit">Aceita JPG, PNG e WebP até 10 MB. Otimização automática antes do envio. A imagem salva é individual de cada grupo.</p><div class="fes-foot"><p class="fes-status" id="fes-v69-status" role="status"><i class="fas fa-circle-info"></i><span>Preparando o Estúdio…</span></p><button type="button" class="fes-btn fes-reload" data-retry><i class="fas fa-rotate"></i> Atualizar</button></div>`;
+   parent.insertAdjacentElement('afterend',section);
+   section.querySelectorAll('input[data-file]').forEach(input=>input.addEventListener('change',()=>choose(input.dataset.file,input.files?.[0])));
+   section.querySelectorAll('button[data-save]').forEach(btn=>btn.addEventListener('click',()=>save(btn.dataset.save)));
+   section.querySelectorAll('button[data-restore]').forEach(btn=>btn.addEventListener('click',()=>save(btn.dataset.restore,true)));
+   $('[data-retry]',section).addEventListener('click',load);
+ }
+ let prev='';
+ function onUpdate(){
+   mount();
+   const panel=$('#'+rootId),owner=$('#fzSessaoOwnerCard');
+   if(!panel||!owner||owner.style.display==='none')return;
+   const key=current();
+   if(!key.includes('@g.us')||!session())return;
+   if(key!==prev){prev=key;Object.values(state.files).forEach(f=>{try{URL.revokeObjectURL(f.preview)}catch(_){}});state.files={};load()}
+ }
+ function start(){mount();onUpdate();new MutationObserver(onUpdate).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style']});document.addEventListener('change',()=>queueMicrotask(onUpdate));}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
 
 </script>
 </body>
