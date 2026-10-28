@@ -9233,6 +9233,16 @@ function cfgAplicarPlanoV55(plano){
    offer.append(heading,action);banner.insertAdjacentElement('afterend',offer);
  }
  offer.hidden=!isFree;
+ // O aluguel continua exclusivo da Pro, mesmo para a conta dona da sessão.
+ if(isFree && typeof fzEsconderControleSessao==='function')fzEsconderControleSessao('Fabi Free sem aluguel');
+ let rentalNote=document.getElementById('fabiV57FreeSemAluguel');
+ if(!rentalNote){
+   rentalNote=document.createElement('p');rentalNote.id='fabiV57FreeSemAluguel';
+   rentalNote.style.cssText='padding:12px 15px;border:1px solid rgba(157,137,255,.4);background:rgba(107,70,193,.10);border-radius:12px;font:600 13px/1.6 system-ui;margin:12px 0;';
+   rentalNote.textContent='🔒 Aluguel por grupo é exclusivo da Fabi Pro. Sua sessão Free continua com os controles gratuitos liberados.';
+   offer.insertAdjacentElement('afterend',rentalNote);
+ }
+ rentalNote.hidden=!isFree;
  for(const id of ['fzPalavrasCard','g1EstadosCard']){
   const node=document.getElementById(id);if(!node)continue;
   node.classList.toggle('fabi-v55-pro-only',isFree);
@@ -10301,6 +10311,8 @@ function fzEsconderControleSessao(msg) {
 }
 
 async function fzCarregarControleSessaoDona(grupoID, sessaoPreferida = '') {
+    // Free não consulta e não mostra o controle de aluguel; o backend também verifica o modo da sessão.
+    if(cfgPlanoAtualV55==='free')return fzEsconderControleSessao('Aluguel disponível somente na Fabi Pro');
     const gid = grupoID || cfgPainelObterGrupoSelecionado();
     if (!gid) return fzEsconderControleSessao('sem grupo');
     try {

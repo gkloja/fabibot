@@ -2130,6 +2130,58 @@ img,video { max-width:100%; height:auto; }
 @media(prefers-reduced-motion:reduce){.fb-video-direct img,.fb-video-direct-play{transition:none;}}
 </style>
 
+
+<style id="fb57-planos-css">
+.fb57-plans{margin:20px auto 28px;max-width:1200px;color:#f4fbff}
+.fb57-title{display:flex;gap:14px;justify-content:space-between;align-items:end;flex-wrap:wrap;margin:0 0 16px}
+.fb57-eyebrow{color:#70edba;font-size:11px;font-weight:850;letter-spacing:.13em;text-transform:uppercase}
+.fb57-title h2{font-size:clamp(23px,3vw,32px);font-weight:900;letter-spacing:-.04em;margin:5px 0}
+.fb57-title p{color:#adc0d0;margin:0;max-width:700px;font-size:14px}
+.fb57-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.fb57-plan{position:relative;border-radius:22px;padding:22px;background:linear-gradient(155deg,#142b2a,#0c1722 75%);border:1px solid rgba(75,225,160,.30);box-shadow:0 12px 32px #0002;display:flex;flex-direction:column;gap:12px}
+.fb57-plan.pro{background:linear-gradient(155deg,#22234c,#11162c 80%);border-color:rgba(157,137,255,.4)}
+.fb57-pill{display:inline-flex;align-self:start;border-radius:999px;padding:5px 11px;font-size:11px;font-weight:850;letter-spacing:.02em;background:#1d644c;color:#b9ffe0}
+.fb57-plan.pro .fb57-pill{background:#473a8c;color:#e4dbff}
+.fb57-plan h3{font-weight:900;font-size:25px;letter-spacing:-.05em;margin:0;color:#fff}
+.fb57-price{font-size:30px;font-weight:900;color:#b0ffd4;line-height:1}
+.fb57-plan.pro .fb57-price{color:#e1d2ff}
+.fb57-price small{font-weight:550;font-size:13px;color:#b9c7d3}
+.fb57-plan p{font-size:13px;line-height:1.55;margin:0;color:#b7c7d4}
+.fb57-plan ul{padding:0;list-style:none;margin:0;display:grid;gap:9px;color:#ebf6ff;font-size:13px;line-height:1.5}
+.fb57-plan li:before{content:'✓';font-weight:900;color:#5be8aa;margin-right:10px}
+.fb57-plan.pro li:before{color:#c7afff}
+.fb57-foot{display:grid;gap:8px;margin-top:auto;padding-top:8px}
+.fb57-cta{min-height:48px;border:0;border-radius:13px;background:#31d88b;color:#06231b;font-weight:900;font-size:14px;cursor:pointer}
+.fb57-plan.pro .fb57-cta{background:#b3a0ff;color:#191536}
+.fb57-cta:hover{filter:brightness(1.09);transform:translateY(-1px)}
+.fb57-foot small{color:#acbdd0;font-size:11px}
+.fb57-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.fb57-choice label{border:1px solid #354556;border-radius:14px;padding:13px 12px;color:#f3f9ff;background:#13222d;cursor:pointer;display:flex;align-items:start;gap:10px;font-size:13px}
+.fb57-choice label:has(input:checked){border-color:#56e6a4;background:#173d31;box-shadow:0 0 0 2px #56e6a414}
+.fb57-choice label:has(input[value=pro]:checked){border-color:#c4abff;background:#242042}
+.fb57-choice strong{display:block;font-size:15px}
+.fb57-choice input{accent-color:#39d98e;margin-top:3px}
+.fb57-choice small{display:block;color:#b9c9da;font-size:11px;margin-top:5px}
+.fb57-note{margin-bottom:13px;padding:12px 14px;background:#13283a;border:1px solid #33516d;border-radius:12px;color:#d4e9f4;font-size:12px;line-height:1.5}
+body.light-mode .fb57-plans{color:#132c26}body.light-mode .fb57-title p{color:#526475}
+body.light-mode .fb57-plan{background:#f5fff8;border-color:#b9dec9}body.light-mode .fb57-plan.pro{background:#f7f3ff;border-color:#d4c5f5}
+body.light-mode .fb57-plan h3{color:#1c2436}body.light-mode .fb57-plan p,body.light-mode .fb57-plan ul{color:#33445a}
+body.light-mode .fb57-price{color:#04794c}body.light-mode .fb57-plan.pro .fb57-price{color:#6e46bf}
+body.light-mode .fb57-price small,body.light-mode .fb57-foot small{color:#637083}
+.fb57-extras{margin-top:14px;padding:16px 20px;border:1px solid rgba(167,183,196,.32);border-radius:16px;background:rgba(11,25,34,.65)}
+.fb57-extras summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:800;color:inherit;list-style:none}
+.fb57-extras summary::-webkit-details-marker{display:none}
+.fb57-details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:16px;padding-top:16px;border-top:1px solid #ffffff29}
+.fb57-details-grid h3{font-size:15px;font-weight:800;margin:0 0 10px;color:inherit}
+.fb57-details-grid ul{display:grid;gap:7px;list-style:none;margin:0;padding:0;font-size:12px;line-height:1.55}
+.fb57-details-grid li{padding-left:15px;position:relative;color:inherit}
+.fb57-details-grid li:before{content:'•';position:absolute;left:0;color:#60e6ae}
+.fb57-details-grid p{font-size:12px;margin:11px 0 0;color:#bbcada}
+body.light-mode .fb57-extras{background:#f8fafc;border-color:#d9e3e4}body.light-mode .fb57-details-grid p{color:#617084}
+@media(max-width:680px){.fb57-details-grid{grid-template-columns:1fr}}
+@media(max-width:680px){.fb57-grid,.fb57-choice{grid-template-columns:1fr}.fb57-plan{padding:18px}}
+@media(prefers-reduced-motion:reduce){.fb57-cta{transition:none!important}}
+</style>
 </head>
 <body>
 <!--
@@ -2178,6 +2230,38 @@ img,video { max-width:100%; height:auto; }
             <h1>Sua central de comando <span>Fabi Bot</span></h1>
             <p>Pareie números, acompanhe sessões em tempo real e gerencie sua carteira — tudo em um só lugar.</p>
         </div>
+
+<section class="fb57-plans" id="escolher-fabi" aria-labelledby="fb57Title">
+ <div class="fb57-title"><div><span class="fb57-eyebrow">ESCOLHA A SUA FABI</span><h2 id="fb57Title">Grátis para começar. Pro para ir além.</h2><p>A mesma central de conexão, mas com limites transparentes. Você escolhe antes de gerar seu código do WhatsApp.</p></div></div>
+ <div class="fb57-grid">
+  <article class="fb57-plan"><span class="fb57-pill">🛡️ GRATUITA</span><h3>Fabi Free</h3><div class="fb57-price">R$ 0 <small>sem comprar plano</small></div>
+   <p>Para administrar sua comunidade com as proteções essenciais e experimentar o RPG.</p>
+   <ul><li>Até 1 sessão Free por conta registrada</li><li>Bloquear anúncios, spam, números suspeitos e links de grupos/canais</li><li>Bloquear imagens, vídeos, áudios, figurinhas, documentos, contatos e localizações</li><li>Modo RPG e programação para abrir/fechar o grupo</li><li>Controle no painel com apenas os recursos Free</li><li>Sem downloads automáticos, boas-vindas por áudio ou aluguel por grupo</li></ul>
+   <div class="fb57-foot"><button type="button" class="fb57-cta" onclick="fabi57SelecionarModo('free')">Conectar Fabi Free — grátis</button><small>Sem cobrança de plano. Necessário login e pareamento do WhatsApp.</small></div>
+  </article>
+  <article class="fb57-plan pro"><span class="fb57-pill">💎 COMPLETA</span><h3>Fabi Pro</h3><div class="fb57-price">Planos pagos <small>por período</small></div>
+   <p>Para quem precisa de recursos extras, automação avançada e controle de aluguel.</p>
+   <ul><li>Todos os recursos Free incluídos</li><li>Recursos avançados e comandos Pro</li><li>Downloads e automações de mídia, se ativados</li><li>Boas-vindas personalizadas, incluindo áudio</li><li>Aluguel por grupo e vencimentos no painel</li><li>Limite de sessões conforme o plano contratado</li></ul>
+   <div class="fb57-foot"><button type="button" class="fb57-cta" onclick="abrirModalPlanos()">Conhecer planos Pro</button><small>Compra opcional. A criação de uma sessão Pro depende de crédito de plano.</small></div>
+  </article>
+ </div>
+ <details class="fb57-extras" id="fb57Detalhes"><summary><span>Comparar todas as funcionalidades</span><span aria-hidden="true">⌄</span></summary>
+ <div class="fb57-details-grid">
+ <section><h3>🛡️ Incluído na Free e na Pro</h3><ul>
+ <li>Agendar abertura e fechamento</li><li>Bloquear anúncios e divulgações</li><li>Modo RPG</li><li>Somente o dono promove</li>
+ <li>Permitir só links do Instagram</li><li>Somente administradores usam a robô</li><li>Revelar visualizações únicas</li>
+ <li>Permitir só Instagram e Facebook</li><li>Impedir compartilhamento de status</li>
+ <li>Bloquear imagens, vídeos e <strong>áudios</strong></li><li>Bloquear figurinhas, documentos, contatos e localizações</li>
+ <li>Remover links de grupos e de canais</li><li>Remover todos os links</li>
+ <li>Bloquear números falsos e spam</li><li>Verificar links suspeitos</li>
+ </ul></section>
+ <section><h3>💎 Exclusivo da Pro</h3><ul>
+ <li>Boas-vindas automáticas por áudio e imagem</li><li>Downloads automáticos e automações de mídia</li>
+ <li>Aluguel por grupo e controle de vencimento</li><li>Comandos e ferramentas extras assinalados no painel como Pro</li>
+ <li>Recursos avançados de resposta, efeitos e integrações disponíveis na assinatura</li>
+ </ul><p>Na Free, as funções Pro ficam visíveis, mas não podem ser ativadas. Os limites de sessões Pro dependem do plano comprado.</p></section>
+ </div></details>
+</section>
         <!-- V25: área de ajuda priorizando YouTube + microdemonstração -->
         <section class="fb25-help-top" aria-labelledby="fb25HelpTitle">
             <div class="fb25-help-copy">
@@ -2514,6 +2598,13 @@ img,video { max-width:100%; height:auto; }
     </div>
 </div>
     
+
+<div class="fb57-note" id="fb57ModeTip" role="status">Escolha o modo. A Fabi Free não precisa de plano pago, mas possui recursos limitados. A Pro exige sessão disponível no plano.</div>
+<div class="fb57-choice" role="radiogroup" aria-label="Tipo de conexão">
+ <label><input type="radio" name="fb57Modo" value="free" onchange="fabi57AtualizarModo()"><span><strong>🛡️ Free · R$ 0</strong><small>1 sessão por conta, sem aluguel e sem automação de mídia</small></span></label>
+ <label><input type="radio" name="fb57Modo" value="pro" checked onchange="fabi57AtualizarModo()"><span><strong>💎 Pro · Plano pago</strong><small>Recursos completos e aluguel por grupo</small></span></label>
+</div>
+
     <form id="formNovaSessao">
         <div class="mb-3">
             <label class="form-label">Número do WhatsApp *</label>
@@ -3405,6 +3496,8 @@ function renderizarListaSessoes(sessoes) {
         const msg = (s.status && s.status.message) || s.message || '';
         // isActive vem do backend (socket vivo). Status no card espelha isso.
         const isActive = s.isActive === true;
+        const free=String(s.plan||s.mode||'').toLowerCase()==='free';
+        const planBadge=free?' <span class="badge bg-success ms-2">FABI FREE</span>':' <span class="badge ms-2" style="background:#5740a7;color:#fff">FABI PRO</span>';
         const stShow = isActive ? 'connected' : stStr;
         const onlineBadge = isActive ? ' <span class="badge bg-success ms-2">ONLINE</span>' : ' <span class="badge bg-secondary ms-2">OFFLINE</span>';
         const pairing = s.pairingCode || (s.pairing && s.pairing.code) || s.code || '';
@@ -3418,7 +3511,7 @@ function renderizarListaSessoes(sessoes) {
                     <div class="col-md-6">
                         <h6 class="mb-1">
                             <span class="status-dot status-dot-${isActive ? 'connected' : stStr}"></span>
-                            <i class="fab fa-whatsapp text-success"></i> ${name}${onlineBadge}
+                            <i class="fab fa-whatsapp text-success"></i> ${name}${onlineBadge}${planBadge}
                         </h6>
                         <span class="status-badge status-${isActive ? 'connected' : stStr}">${(isActive ? 'CONNECTED' : String(st).toUpperCase())}</span>
                         <p class="mb-1 mt-2 small">
@@ -3430,9 +3523,9 @@ function renderizarListaSessoes(sessoes) {
                     </div>
                     <div class="col-md-6 text-end">
                         ${btnCodigo}
-                        <button class="btn btn-sm btn-primary mb-1" onclick="abrirAlugueisSessao('${name}')">
-                            <i class="fas fa-clock"></i> Aluguéis dos grupos
-                        </button>
+                        ${free
+                          ? '<span class="badge bg-secondary mb-1" title="Aluguel por grupo é exclusivo da Fabi Pro">Aluguel: somente Pro</span>'
+                          : `<button class="btn btn-sm btn-primary mb-1" onclick="abrirAlugueisSessao('${name}')"><i class="fas fa-clock"></i> Aluguéis dos grupos</button>`}
                         <button class="btn btn-sm btn-warning mb-1" onclick="verificarSessao('${name}')">
                             <i class="fas fa-sync-alt"></i> Verificar
                         </button>
@@ -3665,8 +3758,47 @@ let codigoImediatoTimer = null;
 let codigoImediatoSegundos = 70;
 let windowCodigoAtualImediato = '';
 let windowSessaoAtualImediato = '';
-function criarNovaSessao() {
-    if (Number((window.fabiConnectState && window.fabiConnectState.sessoes) || 0) < 1) {
+
+function fabi57Modo(){return document.querySelector('input[name="fb57Modo"]:checked')?.value==='free'?'free':'pro'}
+function fabi57AtualizarModo(){
+  const free=fabi57Modo()==='free';
+  const tip=document.getElementById('fb57ModeTip');
+  if(tip)tip.textContent=free?'Fabi Free: gratuita, até uma sessão por conta. Não permite aluguel, downloads automáticos ou comandos Pro.':'Fabi Pro: precisa de crédito disponível no plano; libera recursos extras, incluindo aluguel.';
+  const btn=document.getElementById('btnCriarSessao');
+  if(btn && !btn.disabled)btn.textContent=free?'Criar Fabi Free grátis':'Criar sessão Pro';
+}
+window.fabi57SelecionarModo=function(mode){
+  if(!getSessaoLocal()?.numero){location.href='/login?redirect=conectar';return;}
+  const val=mode==='free'?'free':'pro',radio=document.querySelector('input[name="fb57Modo"][value="'+val+'"]');
+  if(radio)radio.checked=true;
+  fabi57AtualizarModo();
+  if(val==='pro'&&Number(window.fabiConnectState?.sessoes||0)<1){abrirModalPlanos();return;}
+  const element=document.getElementById('novaSessaoModal');
+  if(element && window.bootstrap?.Modal)bootstrap.Modal.getOrCreateInstance(element).show();
+};
+async function fabi57TokenFree(){
+  let token=sessionStorage.getItem('fabi_group_token')||'';
+  if(token)return token;
+  const raw=localStorage.getItem('fabi_group_refresh_v33');
+  if(!raw)return '';
+  let saved;
+  try{saved=JSON.parse(raw)}catch{return ''}
+  const conta=String(getSessaoLocal()?.numero||'').replace(/\D/g,'');
+  if(!conta||String(saved.numero||'').replace(/\D/g,'')!==conta||!saved.token)return '';
+  try{
+    const resp=await fetch(apiUrl('/api/grupos/renovar-token'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fabiGrupoRefreshToken:saved.token})});
+    const data=await resp.json();
+    if(!resp.ok||!data.success||!data.fabiGrupoToken)return '';
+    token=data.fabiGrupoToken;
+    sessionStorage.setItem('fabi_group_token',token);
+    if(data.fabiGrupoRefreshToken)localStorage.setItem('fabi_group_refresh_v33',JSON.stringify({numero:conta,token:data.fabiGrupoRefreshToken}));
+    return token;
+  }catch{return ''}
+}
+
+async function criarNovaSessao() {
+    const modo=fabi57Modo();
+    if (modo==='pro' && Number((window.fabiConnectState && window.fabiConnectState.sessoes) || 0) < 1) {
         $('#novaSessaoModal').modal('hide');
         fabiAbrirSemPlanoModal('Seu plano atual não possui sessão disponível para criar uma nova conexão. Escolha um plano e tente novamente.');
         return;
@@ -3680,13 +3812,19 @@ function criarNovaSessao() {
         return;
     }
     
+    let tokenFree='';
+    if(modo==='free'){
+      tokenFree=await fabi57TokenFree();
+      if(!tokenFree){toastr.warning('Para sua segurança, faça login novamente para autorizar a sessão gratuita.');location.href='/login?redirect=conectar';return;}
+    }
     $('#resultadoCriacao').show();
     $('#btnCriarSessao').prop('disabled', true).html('<span class="loading"></span> Criando...');
-    
-    fetch(apiUrl('/api/sessoes/nova'), {
+
+    fetch(apiUrl(modo==='free'?'/api/sessoes/nova-free':'/api/sessoes/nova'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ numero, nome, modoPrivado, ...authBodyFields() })
+        body: JSON.stringify({ numero, nome, modoPrivado:modo==='pro'&&modoPrivado,
+          ...authBodyFields(), ...(modo==='free'?{fabiGrupoToken:tokenFree}:{}) })
     })
     .then(response => response.json())
     .then(data => {
@@ -3726,8 +3864,8 @@ function criarNovaSessao() {
         } else {
             const mensagemErro = String(data.message || 'Erro ao criar sessão');
             $('#mensagemStatus').html(`<i class="fas fa-times-circle text-danger"></i> ${mensagemErro}`);
-            $('#btnCriarSessao').prop('disabled', false).html('<i class="fas fa-plus"></i> Criar Sessão');
-            if (/sess|plano|limite|saldo/i.test(mensagemErro)) {
+            $('#btnCriarSessao').prop('disabled', false).text(modo==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
+            if (modo==='pro' && /sess|plano|limite|saldo/i.test(mensagemErro)) {
                 setTimeout(() => {
                     $('#novaSessaoModal').modal('hide');
                     fabiAbrirSemPlanoModal('No momento sua conta não pode abrir uma nova sessão. Escolha um plano para liberar a conexão e tente de novo.');
@@ -3742,7 +3880,7 @@ function criarNovaSessao() {
     .catch(error => {
         console.error('Erro:', error);
         $('#mensagemStatus').html('<i class="fas fa-times-circle text-danger"></i> Erro de comunicação com o servidor');
-        $('#btnCriarSessao').prop('disabled', false).html('<i class="fas fa-plus"></i> Criar Sessão');
+        $('#btnCriarSessao').prop('disabled', false).text(modo==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
         setTimeout(() => {
             $('#resultadoCriacao').hide();
             $('#mensagemStatus').text('Criando sessão...');
@@ -5178,7 +5316,7 @@ $(document).ready(function() {
         $('#resultadoCriacao').hide();
         $('#mensagemStatus').text('Criando sessão...');
         $('#detalhesResultado').empty();
-        $('#btnCriarSessao').prop('disabled', false).html('<i class="fas fa-plus"></i> Criar Sessão');
+        $('#btnCriarSessao').prop('disabled', false).text(modo==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
     });
     
     $('#inputNumero').keypress(function(e) { 
@@ -5746,6 +5884,7 @@ body.light-mode .fb25-yt-card-alt .fb26-yt-watch { color:#1557ac; }
  window.fabi23PlanoAtivado=function(){completed=true;pending=null;save(null);if(timer)clearTimeout(timer);state('✅ Plano ativado! Agora toque em “Conectar meu WhatsApp” para criar a sessão.',true);move(2);var b=get('fb23BtnPlanos');if(b){b.textContent='✅ Plano ativo';b.disabled=false;}var c=get('fb23BtnConectar');if(c){c.textContent='📱 Conectar meu WhatsApp';c.classList.add('fb23-btn-primary');}modal('confirmarPlanoModal','hide');try{carregarDadosAtualizados();}catch(e){}get('fb23Comecar')?.scrollIntoView({behavior:'smooth',block:'start'});};
  window.fabi23AbrirCriarSessao=function(){
    var sessoes = Number((window.fabiConnectState && window.fabiConnectState.sessoes) || 0);
+   if(fabi57Modo()==='free') {window.fabi57SelecionarModo('free');return;}
    if(sessoes < 1){
      fabiAbrirSemPlanoModal('Para gerar o código do WhatsApp, você precisa liberar uma sessão primeiro. Escolha um plano e, assim que confirmar, volte para conectar.');
      return;
@@ -5800,9 +5939,9 @@ body.light-mode .fb25-yt-card-alt .fb26-yt-watch { color:#1557ac; }
    if (novaSessaoEl && window.bootstrap) {
      novaSessaoEl.addEventListener('show.bs.modal', function(ev){
        var sessoes = Number((window.fabiConnectState && window.fabiConnectState.sessoes) || 0);
-       if (sessoes < 1) {
+       if (sessoes < 1 && fabi57Modo()==='pro') {
          ev.preventDefault();
-         fabiAbrirSemPlanoModal('Você não tem sessão disponível no momento. Primeiro escolha um plano para liberar a próxima conexão.');
+         fabiAbrirSemPlanoModal('Você não tem sessão Pro disponível no momento. Escolha um plano ou selecione Fabi Free.');
        }
      });
    }
