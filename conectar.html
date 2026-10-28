@@ -2248,6 +2248,7 @@ body[data-fabi-plan="free"] #fb61FreeWalletActions{margin:16px 0}
             </a>
             <div class="d-flex align-items-center gap-2 ms-auto" id="fbUserNav">
                 <a href="index.html" class="btn btn-nav-home btn-sm"><i class="fas fa-home"></i> <span class="d-none d-sm-inline">Início</span></a>
+                <button type="button" id="fabiThemeToggle" class="fabi-theme-toggle fb62-theme-header-btn" aria-label="Alternar entre modo claro e escuro" title="Alternar tema" onclick="if(window.FabiTheme)window.FabiTheme.toggle();else if(window.toggleDarkMode)window.toggleDarkMode();"><svg class="fabi-theme-icon-sun" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg><svg class="fabi-theme-icon-moon" aria-hidden="true" viewBox="0 0 24 24"><path d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z"></path></svg></button>
                 <a href="login.html?redirect=conectar.html" class="btn btn-nav-login btn-sm"><i class="fas fa-sign-in-alt"></i> Login</a>
             </div>
         </div>
@@ -5506,6 +5507,7 @@ $(document).ready(function() {
   function renderUserNav() {
     var el = document.getElementById("fbUserNav");
     if (!el) return;
+    var themeButton = document.getElementById('fabiThemeToggle');
     var home = '<a href="index.html" class="btn btn-nav-home btn-sm"><i class="fas fa-home"></i> <span class="d-none d-sm-inline">Início</span></a>';
     var s = getSess();
     var logado = !!(s && (s.logado || s.id || s.nome || s.username || s.numero));
@@ -5531,6 +5533,13 @@ $(document).ready(function() {
     } else {
       el.innerHTML = home +
         '<a href="login.html?redirect=conectar.html" class="btn btn-nav-login btn-sm"><i class="fas fa-sign-in-alt"></i> Login</a>';
+    }
+    // O painel reconstrói o menu após login. Preserva o botão de tema original,
+    // inclusive as ações já conectadas por /assets/fabi-theme.js.
+    if (themeButton) {
+      var homeButton = el.querySelector('.btn-nav-home');
+      if (homeButton) homeButton.insertAdjacentElement('afterend', themeButton);
+      else el.prepend(themeButton);
     }
   }
   if (document.readyState === "loading") {
@@ -6112,5 +6121,149 @@ body.light-mode .fb25-yt-card-alt .fb26-yt-watch { color:#1557ac; }
  });
 })();
 </script>
+
+<style id="fabi-conectar-v62-a11y-theme">
+/* V62: botão de tema dentro das ações do cabeçalho, ao lado do início. */
+#fbUserNav{display:flex;align-items:center;justify-content:flex-end;flex-wrap:nowrap;min-width:0;gap:8px!important}
+#fbUserNav .fb62-theme-header-btn{position:static!important;inset:auto!important;transform:none!important;float:none!important;order:0;display:inline-flex!important;flex:0 0 41px;width:41px!important;height:41px!important;min-width:41px!important;min-height:41px!important;margin:0!important;border-radius:13px!important;background:rgba(255,255,255,.09)!important;color:#f8fafc!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:none!important;z-index:auto!important}
+#fbUserNav .fb62-theme-header-btn:hover{background:rgba(98,141,248,.22)!important;border-color:rgba(171,196,255,.6)!important}
+#fbUserNav .fb62-theme-header-btn:focus-visible{outline:3px solid #45c6a1!important;outline-offset:2px!important}
+#fbUserNav .fb62-theme-header-btn svg{width:19px;height:19px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#fbUserNav .fb62-theme-header-btn .fabi-theme-icon-sun,
+#fbUserNav .fb62-theme-header-btn .fabi-theme-icon-moon{display:none!important}
+html[data-theme="light"] #fbUserNav .fb62-theme-header-btn .fabi-theme-icon-moon{display:block!important}
+html:not([data-theme="light"]) #fbUserNav .fb62-theme-header-btn .fabi-theme-icon-sun{display:block!important}
+#fbUserNav .btn-nav-home{min-height:40px;display:inline-flex;align-items:center;justify-content:center}
+#fbUserNav .btn-nav-login,#fbUserNav .btn-nav-out{white-space:nowrap}
+@media(max-width:520px){
+  .navbar-whatsapp .container-fluid{padding-inline:10px!important;gap:6px!important;flex-wrap:nowrap}
+  .navbar-whatsapp .navbar-brand{margin-right:auto!important;min-width:0;gap:6px!important;font-size:clamp(16px,4.3vw,23px)!important}
+  .navbar-whatsapp .navbar-brand img{width:34px!important;height:34px!important}
+  #fbUserNav{gap:6px!important}
+  #fbUserNav .fb62-theme-header-btn{flex-basis:39px;width:39px!important;min-width:39px!important;height:39px!important;min-height:39px!important}
+  #fbUserNav .btn-nav-home,#fbUserNav .btn-nav-out,#fbUserNav .btn-nav-login{padding:8px 10px!important;min-width:38px!important;min-height:39px!important}
+  #fbUserNav .fb-user-chip{padding:2px!important}
+  #fbUserNav .fb-user-chip img{width:34px!important;height:34px!important}
+}
+@media(max-width:350px){
+  .navbar-whatsapp .navbar-brand{font-size:16px!important}
+  .navbar-whatsapp .navbar-brand img{width:30px!important;height:30px!important}
+  #fbUserNav{gap:4px!important}
+  #fbUserNav .fb62-theme-header-btn{flex-basis:35px;width:35px!important;min-width:35px!important;height:36px!important;min-height:36px!important}
+  #fbUserNav .btn-nav-home,#fbUserNav .btn-nav-out,#fbUserNav .btn-nav-login{padding:6px 7px!important;min-width:34px!important}
+}
+/* V62: tema claro coeso e legível. Não altera as cores do tema escuro. */
+html[data-theme="light"] body.light-mode{
+  --fb-card:#ffffff;--fb-border:#d7e1ed;--fb-text:#182d43;--fb-text-muted:#52657b;
+  --bs-body-color:#182d43;--bs-body-bg:#f4f7fb;
+  background-color:#f4f7fb!important;
+  background-image:radial-gradient(ellipse at 8% -9%,rgba(16,185,129,.10),transparent 45%),radial-gradient(ellipse at 95% 7%,rgba(77,110,234,.10),transparent 45%),linear-gradient(180deg,#f7fafe,#eef4f8)!important;
+  color:#192d42!important;
+}
+html[data-theme="light"] body.light-mode .navbar-whatsapp,
+html[data-theme="light"] body.light-mode[data-fabi-plan] .navbar-whatsapp{
+  background:rgba(255,255,255,.97)!important;
+  border-bottom:1px solid #dce6ee!important;
+  box-shadow:0 8px 23px rgba(18,48,82,.08)!important;
+  backdrop-filter:blur(16px);
+}
+html[data-theme="light"] body.light-mode .navbar-whatsapp .navbar-brand{color:#183247!important}
+html[data-theme="light"] body.light-mode #fbUserNav .btn-nav-home{background:#ecf3fb!important;color:#183d65!important;border-color:#c9d8ec!important}
+html[data-theme="light"] body.light-mode #fbUserNav .fb62-theme-header-btn{background:#edf4fc!important;color:#123d69!important;border-color:#bcd3e5!important}
+html[data-theme="light"] body.light-mode #fbUserNav .fb62-theme-header-btn:hover{background:#dceaff!important;border-color:#7097d2!important}
+html[data-theme="light"] body.light-mode #fbUserNav .fb-user-chip{background:#eaf4f5!important;border-color:#bdded6!important}
+html[data-theme="light"] body.light-mode #fbUserNav .fb-user-meta strong{color:#203e53!important}
+html[data-theme="light"] body.light-mode #fbUserNav .fb-user-meta small{color:#11664d!important}
+html[data-theme="light"] body.light-mode #fbUserNav .btn-nav-out{color:#9f2942!important;background:#fff1f3!important;border-color:#e6a8b4!important}
+/* Capa introdutória: cor de texto escura sobre gradientes claros. */
+html[data-theme="light"] body.light-mode .fb-page-hero{
+  background:linear-gradient(135deg,#f5fffa,#e9f7f4 46%,#e9f0ff)!important;
+  border-color:#bbdedb!important;
+}
+html[data-theme="light"] body.light-mode[data-fabi-plan="pro"] .fb-page-hero{background:linear-gradient(135deg,#faf6ff,#f3f0ff 54%,#eaf3ff)!important;border-color:#cdbcf2!important}
+html[data-theme="light"] body.light-mode .fb-page-hero h1{color:#182d43!important}
+html[data-theme="light"] body.light-mode .fb-page-hero p{color:#43576e!important}
+html[data-theme="light"] body.light-mode .fb-eyebrow{color:#166e59!important;background:#e5f8f0!important;border-color:#a3dcca!important}
+html[data-theme="light"] body.light-mode .fb-eyebrow-dot{background:#169b6c!important}
+/* Seletor Free/Pro, comparativo e selos. */
+html[data-theme="light"] body.light-mode .fb57-eyebrow{color:#116847!important}
+html[data-theme="light"] body.light-mode .fb57-title h2{color:#183c38!important}
+html[data-theme="light"] body.light-mode .fb57-plans{background:#f1faf7!important;color:#182d43!important;border-color:#bfded1!important}
+html[data-theme="light"] body.light-mode .fb57-plan.pro{background:#f8f5ff!important}
+html[data-theme="light"] body.light-mode .fb58-topchoice{color:#613ba0!important;opacity:1!important}
+html[data-theme="light"] body.light-mode .fb57-plan li:before{color:#087b52!important}
+html[data-theme="light"] body.light-mode .fb57-plan.pro li:before{color:#7151ae!important}
+html[data-theme="light"] body.light-mode .fb57-details-grid li:before{color:#087b52!important}
+html[data-theme="light"] body.light-mode .fb57-details-grid p{color:#465a70!important}
+html[data-theme="light"] body.light-mode .fb57-extras summary{color:#1e3951!important}
+html[data-theme="light"] body.light-mode .fb57-details-grid h3{color:#1d3751!important}
+/* Vídeos e tutoriais: rótulos claros antigos ficavam invisíveis sobre cartões brancos. */
+html[data-theme="light"] body.light-mode .fb25-kicker{color:#087a56!important;background:#dff7eb!important;border-color:#8bd5b1!important}
+html[data-theme="light"] body.light-mode .fb25-mini-tag{color:#0d7054!important}
+html[data-theme="light"] body.light-mode .fb25-yt-badge{color:#a22632!important;background:#fff0f0!important;border-color:#f2b6ba!important}
+html[data-theme="light"] body.light-mode .fb25-yt-card-alt .fb25-yt-badge{color:#2153a0!important;background:#e9f1ff!important;border-color:#b6d0f9!important}
+html[data-theme="light"] body.light-mode .fb25-help-link{color:#116752!important;text-decoration:underline!important}
+html[data-theme="light"] body.light-mode .fb26-yt-watch{color:#056747!important}
+/* Carteira, sessões e cartões do painel: sobrescreve gradientes escuros antigos. */
+html[data-theme="light"] body.light-mode .card-whatsapp{background:#ffffff!important;background-image:none!important;color:#193047!important;border:1px solid #d5e1eb!important;box-shadow:0 15px 36px rgba(30,64,99,.075)!important}
+html[data-theme="light"] body.light-mode .card-whatsapp .card-body{color:#243b51!important}
+html[data-theme="light"] body.light-mode .card-whatsapp .card-body h4,
+html[data-theme="light"] body.light-mode .card-whatsapp .card-body h5,
+html[data-theme="light"] body.light-mode .card-whatsapp .card-body h6{color:#183248!important}
+html[data-theme="light"] body.light-mode .card-header-whatsapp{background:linear-gradient(115deg,#1c5da8,#276fbb)!important;color:#fff!important}
+html[data-theme="light"] body.light-mode .card-header-whatsapp h4,
+html[data-theme="light"] body.light-mode .card-header-whatsapp h5,
+html[data-theme="light"] body.light-mode .card-header-whatsapp p{color:#fff!important}
+html[data-theme="light"] body.light-mode .stats-box{background:#f7faff!important;border:1px solid #d5e3f1!important;box-shadow:none!important}
+html[data-theme="light"] body.light-mode .stats-box:hover{background:#eff6ff!important;border-color:#7ba6da!important}
+html[data-theme="light"] body.light-mode .stats-number{color:#1d497a!important;background:none!important;-webkit-text-fill-color:#1d497a!important}
+html[data-theme="light"] body.light-mode .stats-label{color:#51667e!important}
+html[data-theme="light"] body.light-mode .session-item{background:#f8fbff!important;border-color:#d8e6f0!important;border-left-color:#347ccc!important;color:#1c3348!important}
+html[data-theme="light"] body.light-mode .session-item:hover{background:#eef6ff!important}
+html[data-theme="light"] body.light-mode .session-item h5,
+html[data-theme="light"] body.light-mode .session-item strong{color:#1d344e!important}
+html[data-theme="light"] body.light-mode .fb23-saldo-aviso{background:#eaf4ff!important;border-color:#bbd5f0!important;color:#23486d!important}
+html[data-theme="light"] body.light-mode #fb61FreeWalletHint{color:#3d6560!important}
+html[data-theme="light"] body.light-mode .fb25-wallet-strip{background:#f2faf7!important}
+html[data-theme="light"] body.light-mode .fb25-saldo-hint{background:#ebf4ff!important;color:#1e456a!important}
+html[data-theme="light"] body.light-mode .fb23-payment-state{background:#e5f6ef!important;color:#14634a!important}
+/* Formulários e modais: texto escuro, placeholders visíveis, cabeçalhos separados. */
+html[data-theme="light"] body.light-mode .modal-content,
+html[data-theme="light"] body.light-mode .fb25-empty-modal .modal-content{background:#fff!important;background-image:none!important;color:#193047!important;border:1px solid #cddce7!important}
+html[data-theme="light"] body.light-mode .modal-body,
+html[data-theme="light"] body.light-mode .modal-footer,
+html[data-theme="light"] body.light-mode .fb25-empty-modal .modal-body,
+html[data-theme="light"] body.light-mode .fb25-empty-modal .modal-footer{background:#fff!important;background-image:none!important;color:#263c52!important}
+html[data-theme="light"] body.light-mode .modal-header,
+html[data-theme="light"] body.light-mode .fb25-empty-modal .modal-header{background:linear-gradient(120deg,#1d5fa7,#2b75bd)!important;color:#fff!important;border-bottom:0!important}
+html[data-theme="light"] body.light-mode .modal-header .modal-title{color:#fff!important}
+html[data-theme="light"] body.light-mode .fb25-empty-icon{background:#e8f9f1!important;color:#116e54!important;border-color:#a6dbca!important}
+html[data-theme="light"] body.light-mode .fb25-empty-modal h4{color:#17384f!important}
+html[data-theme="light"] body.light-mode .fb25-empty-modal p{color:#51667a!important}
+html[data-theme="light"] body.light-mode .fb25-empty-points div{background:#f0f6fb!important;border-color:#d0dfea!important;color:#24445d!important}
+html[data-theme="light"] body.light-mode .form-control,
+html[data-theme="light"] body.light-mode .form-select,
+html[data-theme="light"] body.light-mode textarea,
+html[data-theme="light"] body.light-mode input:not([type="checkbox"]):not([type="radio"]){background:#fff!important;color:#18334a!important;border-color:#b9cddd!important}
+html[data-theme="light"] body.light-mode .form-control:focus,
+html[data-theme="light"] body.light-mode .form-select:focus{background:#fff!important;color:#0e2f4c!important;border-color:#2563eb!important;box-shadow:0 0 0 3px rgba(37,99,235,.16)!important}
+html[data-theme="light"] body.light-mode .form-control::placeholder,
+html[data-theme="light"] body.light-mode input::placeholder{color:#617487!important;opacity:1}
+html[data-theme="light"] body.light-mode .input-group-text{background:#f0f5fb!important;border-color:#b9cddd!important;color:#31516a!important}
+html[data-theme="light"] body.light-mode .form-label,
+html[data-theme="light"] body.light-mode .modal-body label{color:#2c4964!important}
+html[data-theme="light"] body.light-mode .text-muted{color:#536982!important}
+html[data-theme="light"] body.light-mode .modal-body .text-secondary{color:#4f667d!important}
+html[data-theme="light"] body.light-mode .modal-body .text-white:not(.modal-title){color:#223b54!important}
+/* Assistente, código de pareamento e fundo de vídeo mantêm contraste do próprio card escuro. */
+html[data-theme="light"] body.light-mode .fb59-guide .fb59-guide-message h3{color:#fff!important}
+html[data-theme="light"] body.light-mode .fb59-guide .fb59-guide-message p{color:#e1f6ed!important}
+html[data-theme="light"] body.light-mode .fb59-guide .fb59-guide-tag{color:#83e9c6!important}
+html[data-theme="light"] body.light-mode .fb59-guide[data-mode="pro"] .fb59-guide-tag{color:#e6ccff!important}
+html[data-theme="light"] body.light-mode .fb23-video-overlay-card,
+html[data-theme="light"] body.light-mode .fb23-video-overlay-card p{color:#e3f4f2!important}
+@media(prefers-reduced-motion:reduce){#fbUserNav .fb62-theme-header-btn{transition:none!important}}
+</style>
+
 </body>
 </html>
