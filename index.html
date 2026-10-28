@@ -21993,7 +21993,7 @@ body.light-mode #fzAluguelStatus[style*="93c5fd"],html[data-theme="light"] #fzAl
 body.light-mode #fzAluguelStatus[style*="34d399"],html[data-theme="light"] #fzAluguelStatus[style*="34d399"]{color:#047857!important;}
 body.light-mode #fzAluguelStatus[style*="f87171"],html[data-theme="light"] #fzAluguelStatus[style*="f87171"]{color:#b91c1c!important;}
 
-/* V70: diagnóstico na parte superior: o usuário não precisa rolar até o rodapé. */
+/* V71: diagnóstico na parte superior: o usuário não precisa rolar até o rodapé. */
 #fabiEstudioV69 .fes-header-badges{display:flex;flex-direction:column;align-items:flex-end;gap:7px;}
 #fabiEstudioV69 .fes-connection{display:inline-flex;align-items:center;gap:5px;border-radius:30px;padding:5px 10px;font-size:10px;font-weight:800;background:#1f3142;color:#d4e0ea;border:1px solid #3e536a;}
 #fabiEstudioV69 .fes-connection[data-status=success]{background:#064d3b;color:#d5ffec;border-color:#1fa773;}
@@ -22007,8 +22007,8 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
 @media(max-width:420px){#fabiEstudioV69 .fes-header-badges{align-items:flex-start;}}
 
 </style>
-<script id="fabi-v70-studio">
-/* Fabi Estúdio V70 - integrado ao index.html; comunicação com o backend via proxy existente. */
+<script id="fabi-v71-studio">
+/* Fabi Estúdio V71 - integrado ao index.html; comunicação com o backend via proxy existente. */
 (()=>{
  'use strict';
  const rootId='fabiEstudioV69', types=['menu','bemvindo'];
@@ -22018,7 +22018,7 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
  const session=()=>typeof fzSessaoControleAtual!=='undefined' ? String(fzSessaoControleAtual||'') : '';
  const current=()=>group()+'|'+session();
  // A rota /?url= foi informada pelo proprietário; o caminho anterior fica como alternativa.
- // As credenciais continuam APENAS nos cabeçalhos da requisição (nunca na URL).
+ // Credenciais assinadas via corpo JSON nas ações do Estúdio; nunca em URLs.
  const worker='https://orange-hill-2e61.gbscabral15.workers.dev';
  const upstream='http://br2.bronxyshost.com:4009';
  const gateways=[
@@ -22065,7 +22065,7 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
  function describeError(j,status){
    const raw=String(j?.message||j?.erro||j?.error||'');
    if(status===404||/rota não encontrada|route not found|not found/i.test(raw))return 'A API do Estúdio ainda não está disponível. Atualize o connect.js no servidor e confira o proxy Cloudflare.';
-   if(status===401)return 'A autenticação expirou. Entre novamente na conta para continuar.';
+   if(status===401)return 'O servidor recusou a autorização do Estúdio (401). Confira se o connect.js V71 está em execução; se persistir, entre novamente na conta.';
    if(status===403)return raw||'Somente a conta proprietária da sessão Pro pode alterar estas imagens.';
    if(j?.plan==='free')return 'Este grupo utiliza a versão Free. O Estúdio requer a versão Pro.';
    if(status===413)return 'A imagem enviada ficou grande demais. Escolha outra foto.';
@@ -22075,12 +22075,13 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
    const isWrite=/^(POST|PATCH|PUT|DELETE)$/i.test(String(options.method||'GET'));
    const order=state.gateway===null ? [0,1] : [state.gateway,...[0,1].filter(n=>n!==state.gateway)];
    // Não reenviar POST a outro proxy automaticamente: evita duplicação após perda de resposta.
-   const indices=isWrite?order.slice(0,1):order;
+   const indices=(isWrite && options.safeRead!==true)?order.slice(0,1):order;
    const errors=[];
    for(const i of indices){
      const gate=gateways[i];
      try{
-       const response=await fetch(gate.url(path),{cache:'no-store',...options});
+       const {safeRead, ...requestOptions}=options;
+       const response=await fetch(gate.url(path),{cache:'no-store',...requestOptions});
        const raw=await response.text();
        let data=null;
        try{data=JSON.parse(raw)}catch(_){ /* Página de erro HTML do Worker, não uma resposta da API. */ }
@@ -22109,10 +22110,58 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
    const detail=errors.map(e=>e.mode+': '+(e.code?'HTTP '+e.code:'rede/CORS')).join(' • ');
    throw Object.assign(new Error(message+' ['+detail+']'),{status:meaningful?.code||errors[0]?.code||0,attempts:errors});
  }
- async function ensureToken(){
-   if(typeof fz33AssegurarGrupoToken==='function'){
-     const ok=await fz33AssegurarGrupoToken();
-     if(ok===false)throw new Error('Entre novamente na sua conta para autorizar esta operação.');
+ async function ensureToken(force=false){
+   if(typeof fz33AssegurarGrupoToken!=='function')throw new Error('Controle de autorização não carregado no painel.');
+   const ok=await fz33AssegurarGrupoToken(force);
+   if(ok===false)throw new Error(force?
+     'Não foi possível renovar a autorização. Entre novamente na conta para obter um novo token.':
+     'A autorização do painel não está disponível. Entre novamente na conta para ativá-la.');
+   const a=typeof cfgAuthBody==='function'?cfgAuthBody():{};
+   if(!a.fabiGrupoToken)throw new Error('Token de grupos não encontrado. Entre novamente na conta para autorizar o Estúdio.');
+   return a;
+ }
+ // Todos os pedidos autenticados do Estúdio são POST JSON, inclusive consultas.
+ // Assim o Worker não precisa encaminhar X-Fabi-Grupo-Token para que o backend
+ // verifique a assinatura; GET legado continua disponível para versões antigas.
+ async function studioJson(acao,tipo,imagem){
+   for(let attempt=0;attempt<2;attempt++){
+     const authorization=await ensureToken(attempt>0);
+     const data={grupoID:group(),sessao:session(),acao,...authorization};
+     if(tipo)data.tipo=tipo;
+     if(imagem)data.imagem=imagem;
+     try{
+       return await jsonRequest('/api/grupo/estudio',{method:'POST',headers:{'Content-Type':'application/json'},
+         body:JSON.stringify(data),safeRead:acao==='consultar'});
+     }catch(e){if(e.status===401&&attempt===0){msg('Renovando a autorização do Estúdio…','loading');continue;}throw e;}
+   }
+ }
+ // Devolve uma imagem binária sem incluir token em links ou parâmetros de URL.
+ async function studioImage(tipo,expectedKey){
+   for(let renewal=0;renewal<2;renewal++){
+     const auth=await ensureToken(renewal>0);
+     const payload=JSON.stringify({grupoID:group(),sessao:session(),tipo,acao:'imagem',...auth});
+     const order=state.gateway===null?[0,1]:[state.gateway,...[0,1].filter(n=>n!==state.gateway)];
+     let unauthorized=false, issue='Imagem indisponível.';
+     for(const i of order){
+       if(current()!==expectedKey)return null;
+       try{
+         const response=await fetch(gateways[i].url('/api/grupo/estudio'),{
+           method:'POST',headers:{'Content-Type':'application/json'},body:payload,cache:'no-store'});
+         if(response.status===401){unauthorized=true;continue;}
+         if(!response.ok){issue='Imagem não carregou (HTTP '+response.status+').';continue;}
+         const bin=await response.blob();
+         if(bin.size<100)continue;
+         const magic=new Uint8Array(await bin.slice(0,12).arrayBuffer());
+         const jpeg=magic[0]===255&&magic[1]===216&&magic[2]===255;
+         const png=magic[0]===137&&magic[1]===80&&magic[2]===78;
+         const webp=String.fromCharCode(...magic.slice(0,4))==='RIFF'&&String.fromCharCode(...magic.slice(8,12))==='WEBP';
+         if(jpeg||png||webp){state.gateway=i;return new Blob([bin],{type:jpeg?'image/jpeg':png?'image/png':'image/webp'});}
+         issue='O proxy não retornou uma imagem válida.';
+       }catch(_){issue='Conexão com a imagem indisponível.';}
+     }
+     if(!unauthorized)throw new Error(issue);
+     if(renewal===0){msg('Renovando a autorização da imagem…','loading');continue;}
+     throw new Error('A autorização do Estúdio não foi aceita mesmo após renovação.');
    }
  }
  async function load(){
@@ -22123,9 +22172,7 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
    allowSave(false);msg('Conferindo sua sessão e carregando as imagens…','loading');
    types.forEach(type=>{if(!state.files[type]){setImage(type,'','loading');note(type,'Verificando imagem atual…')}});
    try{
-     await ensureToken();
-     const query=new URLSearchParams({grupoID:gid,sessao:sess});
-     const j=await jsonRequest('/api/grupo/estudio?'+query,{headers:headers()});
+     const j=await studioJson('consultar');
      if(seq!==state.seq||current()!==key)return;
      allowSave(true);
      for(const type of types){
@@ -22133,28 +22180,8 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
        if(state.files[type]){setImage(type,state.files[type].preview,'draft');note(type,'Imagem escolhida, ainda não salva');continue}
        if(!info?.personalizado){setImage(type,'','default');note(type,'Imagem padrão da Fabi Bot');continue}
        try{
-         const imagePath='/api/grupo/estudio/imagem?'+new URLSearchParams({grupoID:gid,sessao:sess,tipo:type});
-         const attempts=state.gateway===null?[0,1]:[state.gateway,...[0,1].filter(n=>n!==state.gateway)];
-         let blob=null;
-         for(const candidate of attempts){
-           try{
-             const response=await fetch(gateways[candidate].url(imagePath),{headers:headers(),cache:'no-store'});
-             if(!response.ok)continue;
-             const candidateBlob=await response.blob();
-             if(candidateBlob.size<100)continue;
-             // Alguns Workers devolvem imagens como application/octet-stream.
-             // Confirma os bytes do arquivo em vez de depender apenas do MIME.
-             const magic=new Uint8Array(await candidateBlob.slice(0,12).arrayBuffer());
-             const jpeg=magic[0]===255&&magic[1]===216&&magic[2]===255;
-             const png=magic[0]===137&&magic[1]===80&&magic[2]===78&&magic[3]===71;
-             const webp=String.fromCharCode(...magic.slice(0,4))==='RIFF'&&String.fromCharCode(...magic.slice(8,12))==='WEBP';
-             if(jpeg||png||webp){
-               blob=new Blob([candidateBlob],{type:jpeg?'image/jpeg':png?'image/png':'image/webp'});
-               break;
-             }
-           }catch(_){/* Testa o outro formato do Worker. */}
-         }
-         if(!blob)throw Error('Imagem não encontrada no servidor.');
+         const blob=await studioImage(type,key);
+         if(!blob)continue;
          if(seq!==state.seq||current()!==key)return;
          setImage(type,URL.createObjectURL(blob),'custom');note(type,'Imagem atual do grupo');
        }catch(e){setImage(type,'','default');note(type,'Não foi possível carregar a imagem salva');}
@@ -22219,10 +22246,8 @@ body.light-mode #fabiEstudioV69 .fes-banner,html[data-theme=light] #fabiEstudioV
    }
    state.pending=true;allowSave(false);msg(restore?'Restaurando imagem padrão…':'Enviando e salvando imagem…','loading');
    try{
-     await ensureToken();
-     const payload={grupoID:gid,sessao:sess,tipo:type,acao:restore?'restaurar':'salvar'};
-     if(!restore)payload.imagem=await blobToBase64(state.files[type].blob);
-     const j=await jsonRequest('/api/grupo/estudio',{method:'POST',headers:headers(),body:JSON.stringify(payload)});
+     const imagem=restore?undefined:await blobToBase64(state.files[type].blob);
+     const j=await studioJson(restore?'restaurar':'salvar',type,imagem);
      if(state.key!==current())return;
      if(state.files[type]?.preview){URL.revokeObjectURL(state.files[type].preview)}
      delete state.files[type];
