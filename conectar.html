@@ -2204,6 +2204,27 @@ body.light-mode .fb58-channel{color:#2256a7!important}body.light-mode .fb58-noti
 body.light-mode #fb58Admin{background:#edf4fa;color:#102537}body.light-mode #fb58Admin input{background:white;color:#092b35}
 @media(max-width:720px){.fb57-plans{padding:15px;border-radius:21px}.fb58-topchoice{position:static;font-size:10px}.fb58-steps{grid-template-columns:1fr}.fb58-steps li{display:grid;grid-template-columns:34px 1fr;gap:2px 9px}.fb58-steps li:before{grid-row:span 2;margin:0}.fb58-steps small{margin:0}}
 </style>
+<style id="fabi-free-pro-v59">
+/* Modo visual global: escolha muda cores sem esconder conteúdo ou saltar a página. */
+body[data-fabi-plan="free"]{--fb59-accent:#21c982;--fb59-soft:#d9fae8;--fb59-dark:#0d4030}
+body[data-fabi-plan="pro"]{--fb59-accent:#b99afe;--fb59-soft:#efe6ff;--fb59-dark:#35205e}
+body[data-fabi-plan] .navbar-whatsapp{background:linear-gradient(110deg,var(--fb59-dark),#0c202e)!important;transition:background .2s}
+body[data-fabi-plan] .fb-page-hero{border-color:var(--fb59-accent)!important}
+body[data-fabi-plan] .fb25-help-top,body[data-fabi-plan] .fb23-onboard,body[data-fabi-plan] .card-whatsapp{border-color:color-mix(in srgb,var(--fb59-accent) 44%,transparent)!important}
+body[data-fabi-plan] #fb23Comecar,body[data-fabi-plan] #btnCriarSessao{border-color:var(--fb59-accent)}
+.fb57-plans{margin:20px auto 22px!important;scroll-margin-top:85px}
+.fb59-guide[hidden]{display:none!important}.fb59-guide{display:flex;align-items:center;gap:18px;margin-top:16px;padding:16px 19px;border:1px solid #31cc96;border-radius:21px;background:linear-gradient(115deg,#083829,#12372e);box-shadow:0 18px 35px #0c31262a;color:#e9fff7}
+.fb59-guide[data-mode="pro"]{border-color:#b7a1f9;background:linear-gradient(110deg,#332259,#272247)}
+.fb59-avatar{flex:0 0 72px;width:72px;height:72px;display:grid;place-items:center;position:relative;font-size:39px;border-radius:19px;background:#ffffff15;border:1px solid #ffffff2a}
+.fb59-avatar span{position:absolute;bottom:-3px;right:-3px;width:22px;height:22px;display:grid;place-items:center;background:#24c786;color:#072419;font-size:12px;font-weight:900;border:3px solid #12372e;border-radius:50%}
+.fb59-guide-tag{display:block;color:#78f0c3;font-size:10px;font-weight:900;letter-spacing:.11em}
+.fb59-guide[data-mode="pro"] .fb59-guide-tag{color:#d9bfff}
+.fb59-guide-message{min-width:0}.fb59-guide-message h3{font-size:19px!important;line-height:1.2;margin:6px 0;font-weight:900;color:#fff}.fb59-guide-message p{font-size:13px;line-height:1.6;color:#e0f5ec;margin:0 0 9px}
+.fb59-guide-links{display:flex;gap:9px;flex-wrap:wrap}.fb59-guide-links a{color:#d2fff0;border:1px solid #d2fff044;border-radius:999px;padding:7px 11px;text-decoration:none;font-size:12px;font-weight:750}
+.fb59-guide[data-mode="pro"] .fb59-guide-links a{color:#f4eaff}
+@media(max-width:600px){.fb59-guide{padding:15px;align-items:flex-start;gap:11px}.fb59-avatar{width:51px;height:51px;flex-basis:51px;font-size:27px;border-radius:13px}.fb59-guide-message h3{font-size:16px!important}.fb59-guide-message p{font-size:12px}}
+body.light-mode .fb59-guide{color:#fff}body.light-mode .fb59-guide-message p{color:#d9f5ea}
+</style>
 </head>
 <body>
 <!--
@@ -2254,6 +2275,51 @@ body.light-mode #fb58Admin{background:#edf4fa;color:#102537}body.light-mode #fb5
         </div>
 
         <!-- V25: área de ajuda priorizando YouTube + microdemonstração -->
+<section class="fb57-plans" id="escolher-fabi" aria-labelledby="fb57Title">
+ <div class="fb57-title"><div><span class="fb57-eyebrow">ESCOLHA A SUA FABI</span><h2 id="fb57Title">Conheça as versões e escolha a sua proteção.</h2><p>Escolha Free ou Pro primeiro. Depois continue rolando para assistir aos vídeos, seguir o tutorial e conectar sua Fabi. A escolha só muda a versão e a aparência do site.</p></div></div>
+ <div class="fb57-grid">
+  <article class="fb57-plan free" id="fb58FreeCard"><span class="fb57-pill">🛡️ INICIAL · VAGAS LIMITADAS</span><h3>Fabi Free</h3><div class="fb57-price">R$ 0 <small>sem comprar plano</small></div>
+   <p>Proteção básica para começar sem pagar, com comandos de moderação e controle de grupo.</p><div class="fb58-capacity" id="fb58Capacity" role="status" aria-live="polite">🔄 Consultando vagas gratuitas…</div>
+   <ul><li>Até 1 sessão Free por conta registrada</li><li>Bloquear anúncios, spam, números suspeitos e links de grupos/canais</li><li>Bloquear imagens, vídeos, áudios, figurinhas, documentos, contatos e localizações</li><li>Modo RPG e programação para abrir/fechar o grupo</li><li>Controle no painel com apenas os recursos Free</li><li>Sem downloads automáticos, boas-vindas por áudio ou aluguel por grupo</li></ul>
+   <div class="fb57-foot"><button type="button" class="fb57-cta" id="fb58FreeCTA" onclick="fabi57SelecionarModo('free')">Escolher Fabi Free</button><small>Uma sessão por conta e vagas globais limitadas. Sem compra de plano.</small><a class="fb58-channel" href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener noreferrer">📢 Canal oficial · avisos de novas vagas</a><button class="fb58-notify" id="fb58Notify" type="button" onclick="fabi58InscreverAviso()">🔔 Ativar notificações de vagas</button></div>
+  </article>
+  <article class="fb57-plan pro" id="fb58ProCard"><span class="fb57-pill">💎 PROTEÇÃO AVANÇADA</span><span class="fb58-topchoice">AUTOMAÇÃO + SEGURANÇA</span><h3>Fabi Pro</h3><div class="fb57-price">Planos pagos <small>por período</small></div>
+   <p>Para comunidades que exigem uma proteção mais avançada, conteúdo inteligente e ferramentas profissionais de gerenciamento.</p>
+   <ul><li><strong>Segurança avançada:</strong> antipornografia, antipolítica e filtros especiais de moderação</li><li><strong>Autoresposta:</strong> respostas automáticas para interagir com os membros</li><li><strong>Notícias automáticas:</strong> programação e seleção de fontes disponíveis</li><li><strong>RPG e Pokémon:</strong> experiência de jogos e recursos ampliados</li><li><strong>Boas-vindas:</strong> mensagens e áudios personalizados em OGG/Opus</li><li><strong>Ferramentas extras:</strong> downloads e automações de mídia, quando ativados</li><li><strong>Gestão comercial:</strong> aluguel de robô por grupo, vencimentos e acesso a comandos Pro</li><li>Inclui os controles Free, com limites de sessão conforme o plano contratado</li></ul>
+   <div class="fb57-foot"><button type="button" class="fb57-cta" onclick="fabi57SelecionarModo('pro')">Escolher Fabi Pro</button><button type="button" class="fb58-pro-tour" onclick="abrirModalPlanos()">💎 Ver planos Pro</button><small>Se você já usa a Free, pode atualizar a mesma sessão depois de ativar um plano, sem novo pareamento.</small></div>
+  </article>
+ </div>
+ <details class="fb57-extras" id="fb57Detalhes"><summary><span>Comparar todas as funcionalidades</span><span aria-hidden="true">⌄</span></summary>
+ <div class="fb57-details-grid">
+ <section><h3>🛡️ Incluído na Free e na Pro</h3><ul>
+ <li>Agendar abertura e fechamento</li><li>Bloquear anúncios e divulgações</li><li>Modo RPG</li><li>Somente o dono promove</li>
+ <li>Permitir só links do Instagram</li><li>Somente administradores usam a robô</li><li>Revelar visualizações únicas</li>
+ <li>Permitir só Instagram e Facebook</li><li>Impedir compartilhamento de status</li>
+ <li>Bloquear imagens, vídeos e <strong>áudios</strong></li><li>Bloquear figurinhas, documentos, contatos e localizações</li>
+ <li>Remover links de grupos e de canais</li><li>Remover todos os links</li>
+ <li>Bloquear números falsos e spam</li><li>Verificar links suspeitos</li>
+ </ul></section>
+ <section><h3>💎 Exclusivo da Pro</h3><ul>
+ <li>Boas-vindas automáticas por áudio e imagem</li><li>Downloads automáticos e automações de mídia</li>
+ <li>Aluguel por grupo e controle de vencimento</li><li>Comandos e ferramentas extras assinalados no painel como Pro</li>
+ <li>Proteção avançada antipornografia e antipolítica</li><li>Autoresposta e programação de notícias automáticas</li><li>RPG / Pokémon e integrações avançadas habilitadas na sessão</li>
+ </ul><p>Na Free, as funções Pro ficam visíveis, mas não podem ser ativadas. Os limites de sessões Pro dependem do plano comprado.</p></section>
+ </div></details>
+<div class="fb58-journey" id="fb58Journey" hidden aria-live="polite">
+ <div class="fb58-journey-head"><span id="fb58JourneyTag">🛡️ MODO ESCOLHIDO</span><h3 id="fb58JourneyTitle">Seu próximo passo</h3><p id="fb58JourneyDesc">Continue abaixo para gerar o código de pareamento da sua Fabi.</p></div>
+ <ol class="fb58-steps"><li><b>Escolha a versão</b><small>Free ou Pro.</small></li><li><b>Entre na sua conta</b><small>Se for sua primeira vez, faça o cadastro.</small></li><li><b>Conecte o WhatsApp</b><small>Gere o código e conclua o pareamento.</small></li></ol>
+ <button type="button" class="fb58-journey-cta" id="fb58JourneyCTA" onclick="fabi58AbrirPareamento()">Ir para o pareamento</button>
+ <p class="fb58-journey-meta" id="fb58JourneyMeta"></p>
+</div>
+<div class="fb59-guide" id="fb59Guide" role="status" aria-live="polite" hidden>
+  <div class="fb59-avatar" aria-hidden="true">👩🏽‍💻<span>✓</span></div>
+  <div class="fb59-guide-message"><span class="fb59-guide-tag" id="fb59GuideTag">SUA ASSISTENTE DE CONEXÃO</span>
+   <h3 id="fb59GuideTitle">Tudo pronto para conectar!</h3>
+   <p id="fb59GuideText">Sua versão está selecionada. Continue rolando para ver os vídeos e o passo a passo.</p>
+   <div class="fb59-guide-links"><a href="#fb25HelpTitle">▶ Ver vídeos e tutoriais</a><a href="#fb23Comecar">📱 Ir para conexão</a></div>
+  </div>
+ </div>
+</section>
         <section class="fb25-help-top" aria-labelledby="fb25HelpTitle">
             <div class="fb25-help-copy">
                 <span class="fb25-kicker">▶ COMEÇE POR AQUI</span>
@@ -2347,58 +2413,9 @@ body.light-mode #fb58Admin{background:#edf4fa;color:#102537}body.light-mode #fb5
         </div>
 
 <!-- Fabi V58: escolha após tutoriais e instruções -->
-<section class="fb57-plans" id="escolher-fabi" aria-labelledby="fb57Title">
- <div class="fb57-title"><div><span class="fb57-eyebrow">ESCOLHA A SUA FABI</span><h2 id="fb57Title">Conheça as versões e escolha a sua proteção.</h2><p>Assista aos tutoriais acima, compare tudo aqui e selecione o modo. O pareamento é o mesmo — os recursos e limites são diferentes.</p></div></div>
- <div class="fb57-grid">
-  <article class="fb57-plan free" id="fb58FreeCard"><span class="fb57-pill">🛡️ INICIAL · VAGAS LIMITADAS</span><h3>Fabi Free</h3><div class="fb57-price">R$ 0 <small>sem comprar plano</small></div>
-   <p>Proteção básica para começar sem pagar, com comandos de moderação e controle de grupo.</p><div class="fb58-capacity" id="fb58Capacity" role="status" aria-live="polite">🔄 Consultando vagas gratuitas…</div>
-   <ul><li>Até 1 sessão Free por conta registrada</li><li>Bloquear anúncios, spam, números suspeitos e links de grupos/canais</li><li>Bloquear imagens, vídeos, áudios, figurinhas, documentos, contatos e localizações</li><li>Modo RPG e programação para abrir/fechar o grupo</li><li>Controle no painel com apenas os recursos Free</li><li>Sem downloads automáticos, boas-vindas por áudio ou aluguel por grupo</li></ul>
-   <div class="fb57-foot"><button type="button" class="fb57-cta" id="fb58FreeCTA" onclick="fabi57SelecionarModo('free')">Escolher Fabi Free</button><small>Uma sessão por conta e vagas globais limitadas. Sem compra de plano.</small><a class="fb58-channel" href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener noreferrer">📢 Canal oficial · avisos de novas vagas</a><button class="fb58-notify" id="fb58Notify" type="button" onclick="fabi58InscreverAviso()">🔔 Ativar notificações de vagas</button></div>
-  </article>
-  <article class="fb57-plan pro" id="fb58ProCard"><span class="fb57-pill">💎 PROTEÇÃO AVANÇADA</span><span class="fb58-topchoice">AUTOMAÇÃO + SEGURANÇA</span><h3>Fabi Pro</h3><div class="fb57-price">Planos pagos <small>por período</small></div>
-   <p>Para comunidades que exigem uma proteção mais avançada, conteúdo inteligente e ferramentas profissionais de gerenciamento.</p>
-   <ul><li><strong>Segurança avançada:</strong> antipornografia, antipolítica e filtros especiais de moderação</li><li><strong>Autoresposta:</strong> respostas automáticas para interagir com os membros</li><li><strong>Notícias automáticas:</strong> programação e seleção de fontes disponíveis</li><li><strong>RPG e Pokémon:</strong> experiência de jogos e recursos ampliados</li><li><strong>Boas-vindas:</strong> mensagens e áudios personalizados em OGG/Opus</li><li><strong>Ferramentas extras:</strong> downloads e automações de mídia, quando ativados</li><li><strong>Gestão comercial:</strong> aluguel de robô por grupo, vencimentos e acesso a comandos Pro</li><li>Inclui os controles Free, com limites de sessão conforme o plano contratado</li></ul>
-   <div class="fb57-foot"><button type="button" class="fb57-cta" onclick="abrirModalPlanos()">Ver planos e ativar Pro</button><button type="button" class="fb58-pro-tour" onclick="fabi57SelecionarModo('pro')">Escolher modo Pro e continuar ↓</button><small>Se você já usa a Free, pode atualizar a mesma sessão depois de ativar um plano, sem novo pareamento.</small></div>
-  </article>
- </div>
- <details class="fb57-extras" id="fb57Detalhes"><summary><span>Comparar todas as funcionalidades</span><span aria-hidden="true">⌄</span></summary>
- <div class="fb57-details-grid">
- <section><h3>🛡️ Incluído na Free e na Pro</h3><ul>
- <li>Agendar abertura e fechamento</li><li>Bloquear anúncios e divulgações</li><li>Modo RPG</li><li>Somente o dono promove</li>
- <li>Permitir só links do Instagram</li><li>Somente administradores usam a robô</li><li>Revelar visualizações únicas</li>
- <li>Permitir só Instagram e Facebook</li><li>Impedir compartilhamento de status</li>
- <li>Bloquear imagens, vídeos e <strong>áudios</strong></li><li>Bloquear figurinhas, documentos, contatos e localizações</li>
- <li>Remover links de grupos e de canais</li><li>Remover todos os links</li>
- <li>Bloquear números falsos e spam</li><li>Verificar links suspeitos</li>
- </ul></section>
- <section><h3>💎 Exclusivo da Pro</h3><ul>
- <li>Boas-vindas automáticas por áudio e imagem</li><li>Downloads automáticos e automações de mídia</li>
- <li>Aluguel por grupo e controle de vencimento</li><li>Comandos e ferramentas extras assinalados no painel como Pro</li>
- <li>Proteção avançada antipornografia e antipolítica</li><li>Autoresposta e programação de notícias automáticas</li><li>RPG / Pokémon e integrações avançadas habilitadas na sessão</li>
- </ul><p>Na Free, as funções Pro ficam visíveis, mas não podem ser ativadas. Os limites de sessões Pro dependem do plano comprado.</p></section>
- </div></details>
-<div class="fb58-journey" id="fb58Journey" hidden aria-live="polite">
- <div class="fb58-journey-head"><span id="fb58JourneyTag">🛡️ MODO ESCOLHIDO</span><h3 id="fb58JourneyTitle">Seu próximo passo</h3><p id="fb58JourneyDesc">Continue abaixo para gerar o código de pareamento da sua Fabi.</p></div>
- <ol class="fb58-steps"><li><b>Escolha a versão</b><small>Free ou Pro.</small></li><li><b>Entre na sua conta</b><small>Se for sua primeira vez, faça o cadastro.</small></li><li><b>Conecte o WhatsApp</b><small>Gere o código e conclua o pareamento.</small></li></ol>
- <button type="button" class="fb58-journey-cta" id="fb58JourneyCTA" onclick="fabi58AbrirPareamento()">Continuar para a conexão</button>
- <p class="fb58-journey-meta" id="fb58JourneyMeta"></p>
-</div>
-</section>
 
-<section id="fb58Admin" hidden aria-labelledby="fb58AdminTitle">
- <h3 id="fb58AdminTitle">⚙️ Painel do proprietário — vagas Free</h3>
- <p>Controle global das vagas disponíveis e envie notificações quando liberar novas conexões. Só a chave administrativa do servidor autoriza alterações.</p>
- <label>Chave FABI_FREE_ADMIN_KEY <input type="password" autocomplete="off" id="fb58AdminKey" placeholder="Chave configurada no servidor"></label>
- <button type="button" onclick="fabi58AdminCarregar()">Consultar</button>
- <label>Limite global de sessões Free <input type="number" min="0" max="100000" id="fb58AdminLimit" value="5"></label>
- <label><input type="checkbox" id="fb58AdminPaused" style="width:auto"> Pausar novos cadastros gratuitos</label>
- <button type="button" onclick="fabi58AdminSalvar()">Salvar limite e disponibilidade</button>
- <button type="button" onclick="fabi58AdminAnunciar()">🔔 Avisar vagas pelo OneSignal</button>
- <p>Para avisar no canal oficial, use o texto abaixo. O envio ao canal não é automático.</p>
- <button type="button" onclick="fabi58CopiarAviso()">Copiar anúncio para o canal</button>
- <a class="fb58-channel" href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener noreferrer">Abrir canal</a>
- <pre id="fb58AdminStatus" role="status">Pronto para consultar.</pre>
-</section>
+
+
 
 
 
@@ -3831,7 +3848,14 @@ window.fabi57SelecionarModo=function(mode){
   if(desc)desc.textContent=val==='free'?'Você terá as proteções essenciais e os comandos de moderação. Sem aluguel e sem downloads automáticos.':'Proteção avançada, autoresposta, notícias, Pokémon e controles de plano. É possível converter uma Free existente sem reconectar.';
   if(cta)cta.textContent=val==='free'?'Continuar com Fabi Free — R$ 0':'Continuar para Fabi Pro';
   if(meta)meta.textContent=val==='free'?'Sujeito à disponibilidade de vagas gratuitas.':'Para uma nova conexão Pro, é necessário crédito de sessão no plano.';
-  section?.scrollIntoView({behavior:'smooth',block:'center'});
+  const guide=document.getElementById('fb59Guide');
+  if(guide){guide.hidden=false;guide.dataset.mode=val;}
+  const guideTitle=document.getElementById('fb59GuideTitle'),guideText=document.getElementById('fb59GuideText'),guideTag=document.getElementById('fb59GuideTag');
+  if(guideTitle)guideTitle.textContent=val==='free'?'Prontinho! Seu site está no modo Fabi Free.':'Tudo certo! Você selecionou a Fabi Pro.';
+  if(guideTag)guideTag.textContent=val==='free'?'🟢 MODO GRÁTIS ATIVADO':'💎 MODO PRO SELECIONADO';
+  if(guideText)guideText.textContent=val==='free'?'Você pode continuar rolando normalmente. Logo abaixo estão os vídeos, o passo a passo e o botão para conectar a Fabi Free gratuitamente.':'Continue rolando para ver os tutoriais. Para conectar a Pro, tenha um plano ativo; se já usa Free, você poderá convertê-la sem desconectar.';
+  try{sessionStorage.setItem('fabi-connect-selected-plan',val)}catch(_){ }
+  
 };
 window.fabi58AbrirPareamento=function(){
   const mode=fabi57Modo();
@@ -6032,8 +6056,6 @@ body.light-mode .fb25-yt-card-alt .fb26-yt-watch { color:#1557ac; }
 (function(){
  'use strict';
  function url(p){return typeof apiUrl==='function'?apiUrl(p):p;}
- function adminKey(){return document.getElementById('fb58AdminKey')?.value||'';}
- function txt(s){const e=document.getElementById('fb58AdminStatus');if(e)e.textContent=String(s);}
  async function req(path,opt={}){const res=await fetch(url(path),{cache:'no-store',...opt});let data=await res.json().catch(()=>({}));if(!res.ok)throw Error(data.message||'Erro '+res.status);return data;}
  async function refresh(){
   const target=document.getElementById('fb58Capacity'),btn=document.getElementById('fb58FreeCTA');
@@ -6057,17 +6079,10 @@ body.light-mode .fb25-yt-card-alt .fb26-yt-watch { color:#1557ac; }
      catch{alert('Não foi possível ativar as notificações. Acompanhe o canal oficial.');}
    });
  };
- async function admin(method,path,data){
-  const key=adminKey();if(key.length<16)throw Error('Informe a chave administrativa configurada no servidor (mínimo 16 caracteres).');
-  return req(path,{method,headers:{'x-fabi-free-admin-key':key,...(method==='POST'?{'Content-Type':'application/json'}:{})},...(method==='POST'?{body:JSON.stringify(data||{})}:{})});
- }
- window.fabi58AdminCarregar=async function(){try{const d=await admin('GET','/api/fabi-free/admin/capacity');document.getElementById('fb58AdminLimit').value=d.limit;document.getElementById('fb58AdminPaused').checked=d.paused;txt('✅ '+d.used+' sessões Free utilizadas. '+d.remaining+' vaga(s) restantes. '+(d.paused?'Novos cadastros pausados.':'Cadastros abertos.'));}catch(e){txt(e.message)}};
- window.fabi58AdminSalvar=async function(){try{const d=await admin('POST','/api/fabi-free/admin/capacity',{limit:Number(document.getElementById('fb58AdminLimit').value),paused:document.getElementById('fb58AdminPaused').checked});txt('✅ Limite salvo. '+d.used+'/'+d.limit+' ocupadas; '+d.remaining+' disponíveis.');refresh();}catch(e){txt(e.message)}};
- window.fabi58AdminAnunciar=async function(){if(!confirm('Enviar notificação a todos os assinantes do app Fabi Bot sobre vagas disponíveis?'))return;try{const d=await admin('POST','/api/fabi-free/admin/announce');txt(d.message+'\n\n'+(d.announcement||''));}catch(e){txt(e.message)}};
- window.fabi58CopiarAviso=async function(){const t='🛡️ Vagas Fabi Free liberadas! Conecte gratuitamente enquanto houver vagas: https://www.fabibot.com.br/conectar#escolher-fabi';try{await navigator.clipboard.writeText(t);txt('✅ Texto copiado. Agora publique no seu canal oficial.')}catch{txt(t)}};
  document.addEventListener('DOMContentLoaded',()=>{
-  const query=new URLSearchParams(location.search);const panel=document.getElementById('fb58Admin');
-  if(panel&&(query.has('adminFree')||location.hash==='#admin-free')){panel.hidden=false;panel.scrollIntoView({block:'nearest'});}
+  const query=new URLSearchParams(location.search);
+  if(query.has('adminFree')||location.hash==='#admin-free'){location.replace('/grupos?admin=1#tabFree');return;}
+  try{const chosen=sessionStorage.getItem('fabi-connect-selected-plan');if(chosen==='free'||chosen==='pro')fabi57SelecionarModo(chosen)}catch(_){ }
   refresh();
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
   setInterval(()=>{if(!document.hidden)refresh()},60000);

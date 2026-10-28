@@ -17,8 +17,8 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Fabi Grupos — Comunidades de WhatsApp","url":"https://www.fabibot.com.br/grupos","inLanguage":"pt-BR","description":"Divulgue sua comunidade de WhatsApp gratuitamente, explore grupos publicados e solicite avaliação da Fabi Free."}</script>
   <link rel="canonical" href="https://www.fabibot.com.br/grupos">
   <link rel="icon" href="/favicon-32x32.png">
-  <link rel="stylesheet" href="/assets/fabi-grupos-v49.css?v=53">
-  <script defer src="/assets/fabi-grupos-v49.js?v=53"></script>
+  <link rel="stylesheet" href="/assets/fabi-grupos-v49.css?v=59">
+  <script defer src="/assets/fabi-grupos-v49.js?v=59"></script>
 </head>
 <body>
   <a class="skip-link" href="#explorar">Pular para os grupos</a>
@@ -192,6 +192,7 @@
 <button class="active" data-tab="requests" type="button">Solicitações</button>
 <button data-tab="sessions" type="button">Números conectados</button>
 <button data-tab="inventory" type="button">Grupos da robô</button>
+<button data-tab="free" type="button">🟢 Vagas Fabi Free</button>
 </div>
 <div class="tab-panel" id="tabRequests">
 <div class="admin-toolbar">
@@ -203,22 +204,35 @@
 <div class="tab-panel hidden" id="tabSessions">
 <div class="admin-toolbar">
 <div><h3>Gerenciar números</h3><p>Ative Free ou Pro por número.</p></div>
-<input class="admin-search" id="sessionSearch" placeholder="Buscar número…"/>
+<div class="admin-toolbar-filters"><input class="admin-search" id="sessionSearch" placeholder="Buscar número…" aria-label="Buscar número"/><select class="admin-mode-filter" id="sessionModeFilter" aria-label="Filtrar sessões por plano"><option value="">Todos os planos</option><option value="free">🟢 Free</option><option value="pro">💎 Pro</option></select></div>
 </div>
-<div class="session-grid" id="sessionsList"></div>
+<p class="admin-filter-stats" id="sessionModeStats" role="status"></p><div class="session-grid" id="sessionsList"></div>
 </div>
 <div class="tab-panel hidden" id="tabInventory">
 <div class="admin-toolbar">
 <div><h3>Inventário da robô</h3><p>Verifique grupos conhecidos pela base e pelas sessões online.</p></div>
-<div class="admin-inventory-actions">
+<div class="admin-inventory-actions"><select id="inventoryModeFilter" class="admin-mode-filter" aria-label="Filtrar grupos por plano"><option value="">Todos os planos</option><option value="free">🟢 Grupos Free</option><option value="pro">💎 Grupos Pro</option><option value="unknown">Sem plano identificado</option></select>
 <button class="btn btn-outline" id="diagnoseGroups" type="button">Diagnosticar base</button>
 <button class="btn btn-outline" id="importGroups" type="button">Importar diretório</button>
 <button class="btn btn-outline" id="scanGroups" type="button">Consultar sessões</button>
 </div>
 </div>
 <div aria-live="polite" class="diagnostics-line" id="inventoryDiagnostics" role="status"></div>
-<div class="admin-list" id="inventoryList"></div>
+<p class="admin-filter-stats" id="inventoryModeStats" role="status"></p><div class="admin-list" id="inventoryList"></div>
 </div>
+<div class="tab-panel hidden" id="tabFree">
+  <div class="free-admin-hero"><div class="free-admin-hero-icon" aria-hidden="true">🛡️</div><div><span class="free-admin-eyebrow">CONSOLE FABI FREE</span><h3>Gerenciar vagas gratuitas</h3><p>Seu controle de vagas agora está aqui no painel de grupos. A mesma autenticação protege todas as operações.</p></div></div>
+  <div class="free-admin-stats" aria-live="polite"><div><small>Vagas usadas</small><strong id="freeAdminUsed">—</strong></div><div><small>Limite total</small><strong id="freeAdminLimitStat">—</strong></div><div><small>Disponíveis</small><strong id="freeAdminRemaining">—</strong></div><div><small>Situação</small><strong id="freeAdminOpen">—</strong></div></div>
+  <div class="free-admin-progress" id="freeAdminProgress" aria-label="Ocupação das vagas" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="freeAdminProgressBar"></span></div>
+  <form id="freeAdminForm" class="free-admin-form">
+    <label for="freeAdminLimitInput">Quantidade máxima de sessões Free simultâneas<input id="freeAdminLimitInput" type="number" required min="0" max="100000" step="1" value="5"/></label>
+    <label class="free-admin-check"><input type="checkbox" id="freeAdminPaused"/><span><strong>Pausar novas conexões gratuitas</strong><small>As sessões Free existentes continuam operando.</small></span></label>
+    <div class="free-admin-actions"><button type="submit" id="freeAdminSave" class="btn btn-primary">Salvar configuração</button><button type="button" id="freeAdminReload" class="btn btn-outline">Atualizar números</button><button type="button" id="freeAdminAnnounce" class="btn btn-secondary">🔔 Avisar novas vagas</button></div>
+  </form>
+  <div class="free-admin-note">As vagas consideram sessões Free ainda existentes. Ao converter uma Free em Pro ou excluir uma Free, a vaga pode ser liberada. Novas inscrições são impedidas ao atingir o limite.</div>
+  <div class="free-admin-channel"><div><strong>📢 Canal oficial da Fabi</strong><p>Confira a mensagem e divulgue quando abrir novas vagas.</p></div><div class="free-admin-actions"><button id="freeAdminCopy" type="button" class="btn btn-outline">Copiar aviso</button><a href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Abrir canal</a></div></div>
+  <p class="free-admin-response" id="freeAdminResponse" role="status" aria-live="polite"></p>
+ </div>
 <div class="toast admin-toast" id="adminToast" role="status"></div>
 </div>
 </section>
