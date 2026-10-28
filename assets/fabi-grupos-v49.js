@@ -397,6 +397,35 @@ $('mobileFilterBtn')?.addEventListener('click',openMobileFilters);
 $('mobileFilterOverlay')?.addEventListener('click',closeMobileFilters);
 $('closeMobileFilters')?.addEventListener('click',closeMobileFilters);
 
+const FREE_CHANNEL_NOTICE='🛡️ Vagas Fabi Free liberadas! Conecte gratuitamente enquanto houver disponibilidade: https://www.fabibot.com.br/conectar#escolher-fabi';
+let freeAdminSnapshot=null;
+function freeAdminMessage(message,error=false){const e=$('freeAdminResponse');if(e){e.textContent=message;e.classList.toggle('is-error',Boolean(error))}}
+async function freeAdminLoad(){
+  const d=await adminApi('/free-capacity');freeAdminSnapshot=d;
+  $('freeAdminUsed').textContent=niceInt(d.used);$('freeAdminLimitStat').textContent=niceInt(d.limit);
+  $('freeAdminRemaining').textContent=niceInt(d.remaining);$('freeAdminOpen').textContent=d.paused?'⏸ Pausado':d.available?'● Aberto':'● Esgotado';
+  $('freeAdminLimitInput').value=String(d.limit);$('freeAdminPaused').checked=Boolean(d.paused);
+  const pct=d.limit>0?Math.min(100,Math.round((d.used/d.limit)*100)):100;
+  const bar=$('freeAdminProgressBar');bar.style.width=pct+'%';bar.classList.toggle('is-full',pct>=100);
+  $('freeAdminProgress').setAttribute('aria-valuenow',String(pct));
+  freeAdminMessage('Dados atualizados: '+d.used+' de '+d.limit+' vagas ocupadas.');return d;
+}
+$('freeAdminForm').addEventListener('submit',async e=>{
+ e.preventDefault();const btn=$('freeAdminSave');btn.disabled=true;
+ try{const limit=Number($('freeAdminLimitInput').value),paused=$('freeAdminPaused').checked;
+  if(!Number.isInteger(limit)||limit<0||limit>100000)throw Error('Informe um limite inteiro de 0 a 100000.');
+  await adminApi('/free-capacity','POST',{limit,paused});await freeAdminLoad();adminToast('Vagas Free atualizadas.');
+ }catch(err){freeAdminMessage(err.message,true)}finally{btn.disabled=false}
+});
+$('freeAdminReload').onclick=async()=>{try{await freeAdminLoad()}catch(e){freeAdminMessage(e.message,true)}};
+$('freeAdminAnnounce').onclick=async()=>{
+ if(!freeAdminSnapshot?.available){freeAdminMessage('Não há vagas abertas para anunciar.',true);return}
+ if(!confirm('Enviar notificação de vagas gratuitas aos assinantes?'))return;
+ const btn=$('freeAdminAnnounce');btn.disabled=true;
+ try{const d=await adminApi('/free-announce','POST',{});freeAdminMessage(d.message+(d.channelPublished?' Publicado no canal.':' Use o botão Copiar aviso para publicar manualmente.'));}
+ catch(err){freeAdminMessage(err.message,true)}finally{btn.disabled=false}
+};
+$('freeAdminCopy').onclick=async()=>{try{await navigator.clipboard.writeText(FREE_CHANNEL_NOTICE);freeAdminMessage('Texto do anúncio copiado. Agora publique no canal oficial.')}catch{freeAdminMessage(FREE_CHANNEL_NOTICE)}};
 function adminToast(msg,err=false){toast('adminToast',msg,err);$('adminToast').scrollIntoView({block:'nearest',behavior:'smooth'})}
 async function adminApi(path,method='GET',body){return api('/admin'+path,{method,headers:{'x-fabi-admin-key':adminKey,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined})}
 async function loadAdmin(){
@@ -404,10 +433,11 @@ async function loadAdmin(){
   requests=r.groups||[]; sessions=s.sessions||[]; inventory=i.groups||[];
   $('statAll').textContent=niceInt(m.total); $('statPending').textContent=niceInt(m.pending); $('statSessions').textContent=niceInt(s.total); $('statOnline').textContent=niceInt(s.online);
   showRequests(); showSessions(); showInventory();
+  try{await freeAdminLoad()}catch(e){freeAdminMessage('Vagas Free indisponíveis: '+e.message,true)}
 }
 $('adminLogin').onclick=async()=>{adminKey=$('adminKey').value.trim(); if(!adminKey)return; const btn=$('adminLogin'); btn.disabled=true; try{await loadAdmin(); $('adminAuth').classList.add('hidden'); $('adminDashboard').classList.remove('hidden')}catch(err){$('adminAuth').querySelector('p').textContent='Falha de autenticação: '+err.message}finally{btn.disabled=false}};
 $('adminRefresh').onclick=async()=>{try{await loadAdmin();adminToast('Dados atualizados.')}catch(err){adminToast(err.message,true)}};
-for(const btn of document.querySelectorAll('[data-tab]'))btn.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b===btn)); for(const [tab,panel] of [['requests','tabRequests'],['sessions','tabSessions'],['inventory','tabInventory']])$(panel).classList.toggle('hidden',btn.dataset.tab!==tab)};
+for(const btn of document.querySelectorAll('[data-tab]'))btn.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b===btn)); for(const [tab,panel] of [['requests','tabRequests'],['sessions','tabSessions'],['inventory','tabInventory'],['free','tabFree']])$(panel).classList.toggle('hidden',btn.dataset.tab!==tab)};
 function safeStatus(status){return ({pending:'Aguardando',published:'Publicado',paused:'Pausado',rejected:'Rejeitado'})[status]||status}
 async function action(path,data,text){try{await adminApi(path,'POST',data);await loadAdmin();adminToast(text||'Atualizado com sucesso.');return true}catch(err){adminToast(err.message,true);return false}}
 
@@ -451,7 +481,10 @@ $('statusFilter').onchange=showRequests;
 function showSessions(){
   const root=$('sessionsList'); root.replaceChildren();
   const q=$('sessionSearch').value.trim();
-  const filtered=sessions.filter(s=>!q||s.number.includes(q));
+  const plan=$('sessionModeFilter').value;
+  const filtered=sessions.filter(s=>(!q||s.number.includes(q))&&(!plan||s.mode===plan));
+  const free=sessions.filter(s=>s.mode==='free').length, pro=sessions.filter(s=>s.mode==='pro').length;
+  $('sessionModeStats').textContent=filtered.length+' exibidas · '+free+' Free · '+pro+' Pro';
   if(!filtered.length){drawEmpty(root,'Nenhuma sessão encontrada','Confira se o servidor possui pastas de sessão.');return}
   for(const s of filtered){
     const c=el('article','session-card'),top=el('div','session-top'),status=el('span','pill-label'+(!s.online?' offline':''),s.online?'● Conectado':'○ Offline'),mode=el('span','pill-label',s.mode==='free'?'FREE':'PRO');
@@ -467,11 +500,16 @@ function showSessions(){
   }
 }
 $('sessionSearch').oninput=showSessions;
+$('sessionModeFilter').onchange=showSessions;
 
 function showInventory(){
   const root=$('inventoryList'); root.replaceChildren();
-  if(!inventory.length){drawEmpty(root,'Inventário vazio','Clique em Consultar sessões para verificar grupos online.');return}
-  for(const g of inventory.slice(0,300)){
+  const plan=$('inventoryModeFilter').value;
+  const filtered=inventory.filter(g=>!plan||(plan==='unknown'?!['free','pro'].includes(g.mode):g.mode===plan));
+  const free=inventory.filter(g=>g.mode==='free').length,pro=inventory.filter(g=>g.mode==='pro').length;
+  $('inventoryModeStats').textContent=filtered.length+' exibidos · '+free+' grupos Free · '+pro+' grupos Pro · '+(inventory.length-free-pro)+' sem identificação';
+  if(!filtered.length){drawEmpty(root,'Nenhum grupo encontrado','Tente outro plano ou consulte as sessões conectadas.');return}
+  for(const g of filtered.slice(0,300)){
     const row=el('article','admin-entry'),info=el('div'),detail=el('div','detail');
     info.append(el('h4','',g.name||g.groupJid),el('small','',g.groupJid));
     detail.append(createBadge(g.published?'No catálogo':'Não divulgado'),createBadge(g.session?'Sessão '+g.session:'Arquivo existente'));
@@ -480,11 +518,12 @@ function showInventory(){
     info.append(detail); row.append(info); root.append(row);
   }
 }
+$('inventoryModeFilter').onchange=showInventory;
 $('scanGroups').onclick=async()=>{const b=$('scanGroups');b.disabled=true;b.textContent='Consultando…';try{const data=await adminApi('/inventory?live=1');inventory=data.groups||[];showInventory();adminToast('Inventário atualizado: '+data.total+' grupos encontrados.')}catch(err){adminToast(err.message,true)}finally{b.disabled=false;b.textContent='Consultar sessões'}};
 $('diagnoseGroups').onclick=async()=>{const btn=$('diagnoseGroups');btn.disabled=true; try{const d=await adminApi('/diagnostics'); $('inventoryDiagnostics').textContent=`Origem: ${d.source} · Arquivo: ${d.fileExists?'encontrado':'ausente'} · Registros: ${d.registered} · Convites utilizáveis: ${d.withInvite} · Sem convite: ${d.withoutInvite} · Excluídos por privacidade: ${d.excluded} · Publicados: ${d.published} · Sessões: ${d.sessions} (${d.online} online).`;}catch(err){adminToast(err.message,true)} finally{btn.disabled=false}};
 $('importGroups').onclick=async()=>{const btn=$('importGroups');btn.disabled=true; try{const d=await adminApi('/import-existing','POST',{}); await Promise.all([loadAdmin(),loadGroups()]); adminToast(`Importação concluída: ${d.added||0} novos, ${d.changed||0} atualizados, ${d.skipped||0} ignorados.`);}catch(err){adminToast(err.message,true)} finally{btn.disabled=false}};
 
-if(new URLSearchParams(location.search).has('admin')){$('adminPanel').classList.remove('hidden'); $('publicMain').classList.add('hidden'); document.querySelector('.footer')?.classList.add('hidden'); $('adminPanel').scrollIntoView({block:'start'})}
+if(new URLSearchParams(location.search).has('admin')){$('adminPanel').classList.remove('hidden'); $('publicMain').classList.add('hidden'); document.querySelector('.footer')?.classList.add('hidden'); $('adminPanel').scrollIntoView({block:'start'});if(location.hash==='#tabFree'){document.querySelector('[data-tab=free]')?.click()}}
 
 
 // Ranking real: o mesmo backend utilizado pelo pódio e pelo ranking ao vivo do index.html.
