@@ -14,8 +14,11 @@ module.exports=async function handler(req,res){
   const rewriteValue=url.searchParams.get('endpoint');
   const tail=rewriteValue!==null?'/'+rewriteValue.replace(/^\/+/, ''):url.pathname.replace(/^\/api\/fabi-grupos/,'');
   url.searchParams.delete('endpoint');
-  if(!/^\/(?:public|submit|boost|r\/[A-Za-z0-9_-]+|mp\/webhook|admin(?:\/[A-Za-z0-9_\/-]+)?)$/.test(tail))return res.status(404).json({error:'Rota desconhecida'});
-  const upstream=new URL('/api/fabi-grupos'+tail+url.search,origin);
+  if(!/^\/(?:public|submit|boost|r\/[A-Za-z0-9_-]+|mp\/webhook|podium|live-ranking|admin(?:\/[A-Za-z0-9_\/-]+)?)$/.test(tail))return res.status(404).json({error:'Rota desconhecida'});
+  // Pódio/rankings existentes no index.html; nenhuma outra origem ou caminho arbitrário.
+  if((tail==='/podium'||tail==='/live-ranking')&&method!=='GET')return res.status(405).json({error:'Método não permitido'});
+  const fixedRankPath=tail==='/podium'?'/api/top3-medalhistas':tail==='/live-ranking'?'/api/ranking-live':null;
+  const upstream=new URL((fixedRankPath||'/api/fabi-grupos'+tail)+(fixedRankPath?'':url.search),origin);
   const headers={'accept':'application/json'};
   let body;
   if(method==='POST'){
