@@ -1,330 +1,177 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#091513">
-  <meta name="description" content="Descubra grupos do WhatsApp, divulgue sua comunidade gratuitamente e proteja seu grupo com a Fabi Free.">
-  <meta property="og:title" content="Fabi Grupos — Descubra e divulgue comunidades">
-  <meta property="og:description" content="Encontre grupos, divulgue sua comunidade e conheça a Fabi Free.">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f8f8fe" id="themeMeta">
+  <title>Fabi Grupos — Divulgue seu grupo e solicite a Fabi Free</title>
+  <meta name="description" content="Divulgue seu grupo de WhatsApp gratuitamente e solicite a Fabi Free para ajudar na proteção. Descubra comunidades, favoritos e grupos por categoria.">
+  <meta property="og:title" content="Fabi Grupos — Seu grupo divulgado, sua robô grátis">
+  <meta property="og:description" content="Anuncie seu grupo gratuitamente. Após análise e disponibilidade, solicite uma robô Fabi Free sem mensalidade para ajudar a protegê-lo.">
   <meta property="og:type" content="website">
   <link rel="canonical" href="https://www.fabibot.com.br/grupos">
   <link rel="icon" href="/favicon-32x32.png">
-  <title>Fabi Grupos — Comunidades, divulgação e proteção</title>
-  <link rel="stylesheet" href="/assets/fabi-grupos-v46.css">
-  <script src="/assets/fabi-grupos-v46.js" defer></script>
+  <link rel="stylesheet" href="/assets/fabi-grupos-v47.css">
+  <script defer src="/assets/fabi-grupos-v47.js"></script>
 </head>
 <body>
-  <div class="site-shell"></div><div id="siteToast" class="site-toast" role="status" aria-live="polite"></div>
+  <a class="skip-link" href="#explorar">Pular para os grupos</a>
+  <div class="announcement"><div class="container announcement-inner"><span class="announce-spark">✦</span><strong>Conheça a Fabi Free:</strong><span>proteção gratuita para grupos aprovados</span><a href="#como-ganhar">Saiba como <span aria-hidden="true">↗</span></a></div></div>
   <header class="topbar">
     <div class="container topbar-inner">
-      <a href="/" class="brand" aria-label="Fabi Bot, início">
-        <span class="brand-mark">F</span>
-        <span class="brand-text">
-          <strong>Fabi</strong>
-          <small>Grupos</small>
-        </span>
-      </a>
-
-      <nav class="topnav" aria-label="Navegação principal">
-        <a href="#explorar">Explorar</a>
-        <a href="#vantagens">Vantagens</a>
-        <a href="#fabi-free">Fabi Free</a>
-        <a href="?admin=1" class="admin-link">Painel</a>
-      </nav>
-
-      <div class="topbar-actions">
-        <button type="button" class="icon-btn" id="themeToggle" aria-label="Alternar tema">
-          <span class="theme-icon">◐</span>
-        </button>
-        <button type="button" class="btn btn-primary" data-modal="submit">Divulgar grupo</button>
-      </div>
+      <a href="/" class="brand" aria-label="Fabi Bot, página inicial"><span class="brand-mark"><svg width="29" height="29" viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="4" y="4" width="32" height="32" rx="11" fill="white"/><path d="M13 28V12H27V17H19V20H25V25H19V28H13Z" fill="#634BF2"/><circle cx="29.4" cy="28" r="2.7" fill="#FFBC38"/></svg></span><span class="brand-name">fabi<span>grupos</span><small>BY FABI BOT</small></span></a>
+      <nav class="topnav" aria-label="Navegação principal"><a href="#explorar">Explorar</a><a href="#como-ganhar">Como funciona</a><a href="#fabi-free">A robô grátis</a><a href="?admin=1">Painel</a></nav>
+      <div class="top-actions"><button type="button" class="icon-btn theme-switch" id="themeToggle" title="Alternar tema" aria-label="Alternar tema"><span id="themeToggleIcon">☾</span></button><button type="button" class="btn btn-primary nav-cta" data-modal="submit">+ Divulgar grátis</button></div>
     </div>
   </header>
-
   <main id="publicMain">
-    <section class="hero container">
+    <section class="hero-band"><div class="container hero">
       <div class="hero-copy">
-        <span class="eyebrow"><span class="dot"></span> catálogo de comunidades</span>
-        <h1>Um site de grupos <span>bonito, rápido e profissional.</span></h1>
-        <p class="lead">Descubra grupos do WhatsApp, anuncie sua comunidade gratuitamente e use a Fabi Free para deixar seu grupo mais protegido e organizado.</p>
-        <div class="hero-cta">
-          <button type="button" class="btn btn-primary btn-lg" data-modal="submit">Cadastrar meu grupo</button>
-          <a href="#explorar" class="btn btn-secondary btn-lg">Explorar grupos</a>
-        </div>
-        <div class="hero-points">
-          <span>Cadastro grátis</span>
-          <span>Revisão antes de publicar</span>
-          <span>Destaques opcionais</span>
-        </div>
+        <div class="hero-super"><span class="pulse"></span> DIVULGAÇÃO GRATUITA + FABI FREE</div>
+        <h1>Divulgue seu <em>grupo.</em><br><span class="hero-ink">E solicite uma <span class="stroke-yellow">robô grátis.</span></span></h1>
+        <p>Seu grupo merece crescer sem ficar desprotegido. Publique sua comunidade no catálogo e peça a <b>Fabi Free</b> para ajudar na moderação — sem mensalidade para grupos elegíveis.</p>
+        <div class="hero-buttons"><button type="button" data-modal="submit" class="btn btn-sun btn-xl"><span>Quero divulgar + solicitar a Free</span><span class="btn-arrow" aria-hidden="true">↗</span></button><a href="#explorar" class="btn btn-white btn-xl">Encontrar grupos <span aria-hidden="true">↓</span></a></div>
+        <div class="hero-footnotes"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4 10-10"/></svg> Cadastro grátis</span><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4 10-10"/></svg> Sem mensalidade na Free</span><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4 10-10"/></svg> Após aprovação</span></div>
+        <p class="hero-fineprint">*A Fabi Free é solicitada após o cadastro, com ativação manual sujeita à análise, autorização do administrador e disponibilidade. A divulgação não instala a robô automaticamente.</p>
       </div>
-
-      <div class="hero-panel">
-        <div class="hero-panel-grid"></div>
-        <div class="hero-card highlight-card">
-          <div class="hero-card-top">
-            <span class="status-pill">Em destaque</span>
-            <span class="subtle-text">catálogo ao vivo</span>
-          </div>
-          <h2>Seu grupo pode aparecer aqui</h2>
-          <p>Ganhe mais visibilidade com uma página limpa, com filtros, detalhes do grupo e visual profissional tanto no celular quanto no PC.</p>
-          <div class="mini-stats">
-            <div><strong id="totalGroups">—</strong><small>grupos</small></div>
-            <div><strong id="totalCategories">—</strong><small>categorias</small></div>
-            <div><strong>24h</strong><small>catálogo ativo</small></div>
-          </div>
-        </div>
+      <div class="hero-art" aria-label="Ilustração da Fabi Free protegendo um grupo de WhatsApp">
+        <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+        <div class="art-sticker sticker-verified"><span>✓</span><div><strong>Grupo divulgado</strong><small>Pronto para ser descoberto</small></div></div>
+        <div class="art-sticker sticker-bot"><span class="dot-icon">✦</span><div><strong>Fabi Free</strong><small>Moderação gratuita*</small></div></div>
+        <svg class="robot-svg" viewBox="0 0 460 460" role="img" aria-labelledby="robotTitle" xmlns="http://www.w3.org/2000/svg">
+          <title id="robotTitle">Robô Fabi Free com escudo de proteção</title>
+          <defs><linearGradient id="bodyGrad" x1="70" y1="70" x2="400" y2="400" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#D8D6FF"/></linearGradient><linearGradient id="faceGrad" x1="135" y1="135" x2="325" y2="275" gradientUnits="userSpaceOnUse"><stop stop-color="#1B1647"/><stop offset="1" stop-color="#383179"/></linearGradient><linearGradient id="shieldGrad" x1="235" y1="265" x2="380" y2="396"><stop stop-color="#C9FF9D"/><stop offset="1" stop-color="#67DBA4"/></linearGradient><filter id="blurShadow" x="0" y="0" width="460" height="460"><feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#2A1E81" flood-opacity=".25"/></filter></defs>
+          <ellipse cx="233" cy="398" rx="138" ry="22" fill="#34228B" opacity=".15"/>
+          <g filter="url(#blurShadow)"><path d="M145 310c-25-7-37-27-42-47l-16-47c-6-19 5-39 23-44s38 6 42 25l16 47" fill="#D8D6FF" stroke="#2A206B" stroke-width="8"/><path d="M328 302c24-8 36-25 42-47l15-45c6-19-5-38-23-43s-37 6-42 25l-15 46" fill="#D8D6FF" stroke="#2A206B" stroke-width="8"/>
+          <path d="M169 309h114v56c0 18-15 32-32 32h-50c-18 0-32-14-32-32v-56Z" fill="#5146B9" stroke="#281E6D" stroke-width="8"/><rect x="139" y="294" width="180" height="70" rx="35" fill="url(#bodyGrad)" stroke="#2A206B" stroke-width="9"/><rect x="139" y="68" width="182" height="237" rx="82" fill="url(#bodyGrad)" stroke="#2A206B" stroke-width="10"/><path d="M226 66V38" stroke="#2A206B" stroke-width="9" stroke-linecap="round"/><circle cx="226" cy="29" r="15" fill="#FFCB42" stroke="#2A206B" stroke-width="8"/><rect x="109" y="128" width="240" height="162" rx="69" fill="url(#bodyGrad)" stroke="#2A206B" stroke-width="10"/><rect x="130" y="150" width="198" height="119" rx="47" fill="url(#faceGrad)"/>
+          <rect x="163" y="183" width="32" height="43" rx="16" fill="#9EFFAB"/><rect x="263" y="183" width="32" height="43" rx="16" fill="#9EFFAB"/><path d="M210 227q20 16 40 0" stroke="#9EFFAB" stroke-width="7" stroke-linecap="round" fill="none"/><circle cx="105" cy="209" r="16" fill="#FFCB42" stroke="#2A206B" stroke-width="7"/><circle cx="350" cy="209" r="16" fill="#FFCB42" stroke="#2A206B" stroke-width="7"/>
+          <path d="M241 321c-2-9 5-17 15-17 10 0 16 8 14 18l-6 29h-17l-6-30Z" fill="#FFCB42" stroke="#2A206B" stroke-width="5"/></g>
+          <g filter="url(#blurShadow)"><path d="M311 294c20 10 39 10 58 0v55c0 26-20 49-58 65-38-16-58-39-58-65v-55c19 10 38 10 58 0Z" fill="url(#shieldGrad)" stroke="#2A206B" stroke-width="9" stroke-linejoin="round"/><path d="m285 351 18 18 34-39" stroke="#264264" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
+          <path d="M87 94l8 19 19 8-19 8-8 19-8-19-19-8 19-8 8-19Z" fill="#FFCB42"/><path d="M376 85l7 15 15 7-15 7-7 15-7-15-15-7 15-7 7-15Z" fill="#CBFFAA"/>
+        </svg>
+        <div class="art-caption"><span class="caption-bullet">●</span> FABI FREE <strong>é de verdade, não é só propaganda.</strong></div>
       </div>
-    </section>
-
-    <section class="quick-stats">
-      <div class="container quick-stats-inner">
-        <article class="metric-card"><small>Comunidades publicadas</small><strong id="metricGroups">—</strong></article>
-        <article class="metric-card"><small>Categorias disponíveis</small><strong id="metricCategories">—</strong></article>
-        <article class="metric-card"><small>Divulgação</small><strong>100% grátis</strong></article>
-        <article class="metric-card"><small>Proteção</small><strong>Fabi Free</strong></article>
-      </div>
-    </section>
-
-    <section class="container catalog-section" id="explorar">
-      <div class="section-head modern">
-        <div>
-          <span class="kicker">explorar catálogo</span>
-          <h2>Encontre sua próxima <span>comunidade favorita</span></h2>
-          <p>Pesquise, filtre e clique em um grupo para ver seus detalhes antes de entrar.</p>
-        </div>
-        <div class="result-live"><span class="dot"></span> catálogo atualizado</div>
-      </div>
-
-      <div class="catalog-layout">
-        <aside class="filter-panel" aria-label="Filtros do catálogo">
-          <div class="panel-block">
-            <label class="field-label" for="search">Pesquisar</label>
-            <div class="search-box">
-              <span>⌕</span>
-              <input type="search" id="search" placeholder="Nome, tema ou palavra-chave">
-            </div>
-          </div>
-
-          <div class="panel-block">
-            <label class="field-label" for="category">Categoria</label>
-            <select id="category">
-              <option value="">Todas</option>
-            </select>
-          </div>
-
-          <div class="panel-block">
-            <label class="field-label" for="sort">Ordenação</label>
-            <select id="sort">
-              <option value="featured">Em destaque</option>
-              <option value="recent">Mais recentes</option>
-              <option value="members">Mais membros</option>
-              <option value="name">Nome A–Z</option>
-            </select>
-          </div>
-
-          <div class="panel-block">
-            <div class="field-label">Atalhos</div>
-            <div class="chips" id="chips">
-              <button class="chip active" type="button" data-cat="">Todos</button>
-            </div>
-          </div>
-
-          <div class="panel-block promo-box">
-            <span class="kicker">Fabi Free</span>
-            <h3>Proteção para seu grupo</h3>
-            <p>Anti-anúncio, anti-pagamento, anti-trava e mais segurança para sua comunidade.</p>
-            <button type="button" class="btn btn-secondary full" data-modal="submit">Quero divulgar meu grupo</button>
-          </div>
-        </aside>
-
-        <div class="catalog-content">
-          <div class="catalog-toolbar">
-            <div>
-              <h3>Grupos disponíveis</h3>
-              <p id="resultsCount">Carregando catálogo…</p>
-            </div>
-            <div class="catalog-tools"><button type="button" class="btn btn-ghost" id="favoritesFilter" aria-pressed="false">♡ Favoritos <span id="favoritesCount">0</span></button><button type="button" class="btn btn-ghost mobile-filter-btn" id="mobileFilterBtn">Filtros</button></div>
-          </div>
-
-          <div class="cards-grid" id="groups" aria-live="polite">
-            <div class="loading-grid"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
-          </div>
-
-          <div class="pagination" id="pagination"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="container benefits" id="vantagens">
-      <div class="section-head compact">
-        <div>
-          <span class="kicker">por que usar</span>
-          <h2>Mais bonito, mais intuitivo e melhor para converter</h2>
-        </div>
-      </div>
-      <div class="benefit-grid">
-        <article class="benefit-card"><div class="benefit-icon">✦</div><h3>Catálogo profissional</h3><p>Layout premium com foco em leitura, confiança e experiência no celular.</p></article>
-        <article class="benefit-card"><div class="benefit-icon">⌘</div><h3>Detalhes ao clicar</h3><p>Cada grupo abre uma visão detalhada com descrição, categoria e ações rápidas.</p></article>
-        <article class="benefit-card"><div class="benefit-icon">◐</div><h3>Modo claro e escuro</h3><p>A pessoa escolhe o visual que preferir, com preferência salva automaticamente.</p></article>
-        <article class="benefit-card"><div class="benefit-icon">✓</div><h3>Divulgação com revisão</h3><p>Publicação mais organizada e com revisão antes de aparecer no catálogo.</p></article>
-      </div>
-    </section>
-
-    <section class="container free-banner" id="fabi-free">
-      <div class="free-copy">
-        <span class="kicker">fabi free</span>
-        <h2>Divulgação + proteção para o grupo</h2>
-        <p>A Fabi Free ajuda a manter o grupo organizado enquanto ele cresce no catálogo. Ideal para comunidades que querem ganhar visibilidade e manter segurança ao mesmo tempo.</p>
-        <div class="free-list">
-          <span>Anti-anúncio e anti-pagamento</span>
-          <span>Anti-trava e anti-flood</span>
-          <span>Lista negra global</span>
-          <span>Anti-link de grupo opcional</span>
-        </div>
-      </div>
-      <div class="free-sidecard">
-        <strong>Camada extra de segurança</strong>
-        <p>A instalação é manual e depende da aprovação da equipe.</p>
-        <button type="button" class="btn btn-primary full" data-modal="submit">Solicitar divulgação</button>
-      </div>
-    </section>
+    </div></section>
+    <section class="benefit-ribbon" aria-label="Benefícios"><div class="container ribbon-grid"><div><span class="ribbon-icon">↗</span><strong>Mais gente descobrindo seu grupo</strong><small>Divulgação em um catálogo organizado</small></div><div><span class="ribbon-icon">✦</span><strong>Robô Free para proteger</strong><small>Solicitação sem mensalidade, após aprovação</small></div><div><span class="ribbon-icon">✓</span><strong>Mais organização no WhatsApp</strong><small>Proteções úteis, sem complicação</small></div></div></section>
+    <section class="container how-section" id="como-ganhar"><div class="how-intro"><span class="eyeline">COMO GANHAR A FABI FREE</span><h2>Seu grupo cresce.<br><span>Sua comunidade fica protegida.</span></h2><p>Não é sorteio. Você divulga sua comunidade, passa pela análise e pode solicitar nossa robô gratuita para ajudar a moderar o grupo.</p><button class="text-link" type="button" data-modal="submit">Quero começar agora <span aria-hidden="true">↗</span></button></div><div class="how-steps"><div class="how-step"><span class="step-no">01</span><div><h3>Cadastre seu grupo</h3><p>Envie o convite, nome e categoria. A divulgação é gratuita.</p></div></div><div class="how-step"><span class="step-no">02</span><div><h3>Confirmamos a autorização</h3><p>A equipe analisa o cadastro e valida a permissão de um administrador.</p></div></div><div class="how-step"><span class="step-no">03</span><div><h3>Solicite sua robô Free</h3><p>Com aprovação e disponibilidade, a Fabi pode ser instalada manualmente sem mensalidade.</p></div></div></div></section>
+    <section class="catalog-section" id="explorar"><div class="container">
+      <div class="catalog-title"><div><span class="eyeline">ENCONTRE SUA GALERA</span><h2>Tem um grupo <span>pra você.</span></h2><p>Comunidades de verdade para conversar, aprender e conhecer pessoas.</p></div><div class="catalog-counter"><div><strong id="totalGroups">—</strong><span>grupos disponíveis</span></div><div><strong id="totalCategories">—</strong><span>categorias</span></div></div></div>
+      <div class="search-shell"><div class="main-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="Busque por jogos, estudo, amizade..." autocomplete="off" aria-label="Pesquisar grupos"></div><label class="sort-control"><span>Ordenar</span><select id="sort" aria-label="Ordenar grupos"><option value="featured">Em destaque</option><option value="recent">Mais recentes</option><option value="members">Mais membros</option><option value="name">Nome A–Z</option></select></label><button type="button" class="filter-trigger" id="mobileFilterBtn">☷ Filtros</button></div>
+      <div class="catalog-layout"><aside class="filter-panel" aria-label="Filtros do catálogo"><div class="filter-heading"><strong>Filtrar grupos</strong><button type="button" id="closeMobileFilters" aria-label="Fechar filtros">×</button></div><div class="panel-block"><label class="field-label" for="category">Categoria</label><select id="category"><option value="">Todas as categorias</option></select></div><div class="panel-block"><span class="field-label">Navegar por interesse</span><div class="chips" id="chips"><button class="chip active" data-cat="" type="button">Todos</button></div></div><div class="filter-promo"><span class="promo-symbol">✳</span><h3>Seu grupo está aqui?</h3><p>Divulgue gratuitamente e solicite a Fabi Free para ajudar na proteção.</p><button type="button" class="btn btn-sun" data-modal="submit">Cadastrar grátis ↗</button></div></aside>
+      <div class="catalog-content"><div class="catalog-toolbar"><div><span class="eyeline">EXPLORAR COMUNIDADES</span><h3>Grupos para descobrir</h3><p id="resultsCount">Carregando catálogo…</p></div><div class="catalog-tools"><button type="button" id="favoritesFilter" class="fav-filter" aria-pressed="false"><span aria-hidden="true">♡</span> Meus favoritos <span id="favoritesCount">0</span></button></div></div><div id="groups" class="cards-grid" aria-live="polite"><div class="loading-grid"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></div><div id="pagination" class="pagination"></div></div></div>
+    </div></section>
+    <section class="free-section" id="fabi-free"><div class="container free-shell"><div class="free-content"><span class="free-chip">✦ FABI FREE</span><h2>Uma robô cuidando do seu grupo.<br><em>Sem mensalidade.</em></h2><p>A Fabi Free oferece recursos de moderação para comunidades elegíveis. Sua solicitação é analisada e a instalação depende de disponibilidade.</p><div class="feature-list"><span>✓ Anti-anúncio e anti-pagamento</span><span>✓ Anti-flood e anti-trava</span><span>✓ Lista negra global</span><span>✓ Anti-link opcional</span></div><button type="button" class="btn btn-sun btn-xl" data-modal="submit">Divulgar e solicitar minha Free ↗</button><p class="free-legal">*A ativação não é automática: exige revisão, autorização do administrador e disponibilidade do serviço.</p></div><div class="free-graphic" aria-hidden="true"><div class="graphic-ring"><div class="graphic-center">F<span>+</span></div></div><div class="graphic-bubble bubble-a">✓ Grupo protegido</div><div class="graphic-bubble bubble-b">✳ Fabi Free</div><div class="graphic-bubble bubble-c">♡ Mais tranquilidade</div></div></div></section>
+    <section class="container faq-section"><div class="faq-intro"><span class="eyeline">DÚVIDAS FREQUENTES</span><h2>Sem letras miúdas.<br><span>Tudo explicado.</span></h2></div><div class="faq-list"><details><summary>Divulgar o grupo é realmente gratuito?</summary><p>Sim. O cadastro e a publicação, depois de aprovados, não exigem pagamento. O destaque pago é opcional.</p></details><details><summary>Vou receber a Fabi Free automaticamente?</summary><p>Não. Após cadastrar seu grupo, a equipe valida a autorização do administrador. A instalação é manual e depende da elegibilidade e da disponibilidade do serviço.</p></details><details><summary>O que a Fabi Free faz?</summary><p>Ajuda na moderação com proteções como anti-anúncio, anti-pagamento, anti-trava e anti-flood, além de lista negra global e anti-link configurável.</p></details><details><summary>Posso ver os detalhes antes de entrar?</summary><p>Sim. Toque em “Ver detalhes” no card para consultar a descrição, categoria, membros (quando disponíveis) e outras informações publicadas.</p></details></div></section>
+    <section class="container final-cta"><div><span class="eyeline">COMECE AGORA, É GRÁTIS</span><h2>Seu próximo passo é <em>divulgar.</em></h2><p>Cadastre o grupo e conheça a possibilidade de receber a Fabi Free.</p></div><button class="btn btn-ink btn-xl" type="button" data-modal="submit">Cadastrar meu grupo ↗</button></section>
   </main>
-
-  <footer class="footer">
-    <div class="container footer-inner">
-      <a href="/" class="brand mini">
-        <span class="brand-mark">F</span>
-        <span class="brand-text"><strong>Fabi</strong><small>Grupos</small></span>
-      </a>
-      <div class="footer-links">
-        <a href="/">Fabi Bot</a>
-        <a href="/privacidade">Privacidade</a>
-        <a href="/termos">Termos</a>
-      </div>
-      <p>© <span id="year"></span> Fabi Bot · comunidades com mais organização.</p>
-    </div>
-  </footer>
-
-  <div class="mobile-filter-overlay" id="mobileFilterOverlay" aria-hidden="true"></div>
-
-  <div class="modal-backdrop" id="modal" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button class="modal-close" type="button" id="closeModal" aria-label="Fechar">×</button>
-      <span class="kicker" id="modalKicker">cadastro gratuito</span>
-      <h2 id="modalTitle">Divulgue seu grupo</h2>
-      <p class="modal-sub" id="modalSub">Envie os dados do grupo para análise. A publicação depende da autorização de um administrador.</p>
-      <div class="toast" id="modalToast" role="status"></div>
-
-      <form id="submitForm" class="modal-form">
-        <label>Convite do WhatsApp<input required name="invite" type="url" placeholder="https://chat.whatsapp.com/…" autocomplete="off"></label>
-        <div class="form-grid">
-          <label>Nome do grupo<input required name="name" minlength="3" maxlength="90" placeholder="Comunidade de tecnologia"></label>
-          <label>Categoria<select name="category" id="submitCategory" required></select></label>
-        </div>
-        <label>Sobre o grupo<textarea required name="description" minlength="15" maxlength="500" rows="4" placeholder="Conte sobre o assunto do grupo e o que as pessoas encontrarão nele…"></textarea></label>
-        <label>Contato do responsável<input required name="contact" maxlength="120" placeholder="WhatsApp ou e-mail"></label>
-        <label class="check-label"><input type="checkbox" required><span>Entendo que a publicação só acontece após revisão e autorização.</span></label>
-        <button class="btn btn-primary full" type="submit" id="submitBtn">Enviar para análise</button>
-      </form>
-
-      <div id="boostForm" class="modal-form hidden">
-        <div class="boost-group" id="boostName"></div>
-        <label>Escolha o destaque<select id="boostPlan"><option value="day">24 horas · R$ 3,90</option><option value="week">7 dias · R$ 9,90</option><option value="month">30 dias · R$ 24,90</option></select></label>
-        <p class="subtle">Qualquer pessoa pode turbinar um grupo publicado. Isso não concede administração sobre ele.</p>
-        <button class="btn btn-primary full" type="button" id="payBtn">Continuar para o Mercado Pago</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="detailsModal" aria-hidden="true">
-    <div class="modal-card detail-modal" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
-      <button class="modal-close" type="button" id="closeDetailsModal" aria-label="Fechar">×</button>
-      <div class="detail-hero" id="detailsHero"></div>
-      <div class="detail-content">
-        <div class="detail-topline">
-          <span class="status-pill" id="detailsBadge">Comunidade</span>
-          <span class="subtle-text" id="detailsUpdated"></span>
-        </div>
-        <h2 id="detailsTitle">Detalhes do grupo</h2>
-        <p id="detailsDescription"></p>
-        <div class="detail-list" id="detailsFacts"></div><div class="detail-share-link"><label for="detailsLink">Link desta página</label><div class="share-row"><input type="text" id="detailsLink" readonly aria-label="Link do grupo"><button type="button" id="detailsCopy" class="btn btn-secondary">Copiar</button></div></div>
-        <div class="detail-actions"><button type="button" id="detailsFavorite" class="btn btn-secondary">♡ Salvar</button><button type="button" id="detailsShare" class="btn btn-secondary">Compartilhar</button>
-          <a id="detailsJoin" class="btn btn-primary" href="#" target="_blank" rel="noopener noreferrer">Entrar no grupo</a>
-          <button id="detailsBoost" type="button" class="btn btn-secondary">Turbinar grupo</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <section id="adminPanel" class="admin-wrap container hidden" aria-label="Painel administrativo">
-    <div class="admin-auth" id="adminAuth">
-      <span class="kicker">acesso restrito</span>
-      <h2>Central Fabi Grupos</h2>
-      <p>Gerencie solicitações, números conectados e grupos conhecidos pela robô.</p>
-      <div class="admin-auth-row">
-        <input id="adminKey" type="password" placeholder="Chave administrativa do servidor" autocomplete="off">
-        <button id="adminLogin" class="btn btn-primary" type="button">Entrar no painel</button>
-      </div>
-    </div>
-
-    <div id="adminDashboard" class="hidden">
-      <div class="admin-heading">
-        <div>
-          <span class="kicker">central de operações</span>
-          <h2>Painel de controle</h2>
-          <p>Dados reais do servidor e das sessões da Francisca.</p>
-        </div>
-        <div class="admin-heading-actions">
-          <button class="btn btn-secondary" id="adminThemeToggle" type="button">Alternar tema</button>
-          <button class="btn btn-outline" id="adminRefresh" type="button">Atualizar</button>
-        </div>
-      </div>
-
-      <div class="admin-metrics">
-        <div><small>Grupos cadastrados</small><strong id="statAll">—</strong></div>
-        <div><small>Aguardando análise</small><strong id="statPending">—</strong></div>
-        <div><small>Sessões cadastradas</small><strong id="statSessions">—</strong></div>
-        <div><small>Números conectados</small><strong id="statOnline">—</strong></div>
-      </div>
-
-      <div class="admin-tabs" role="tablist">
-        <button type="button" class="active" data-tab="requests">Solicitações</button>
-        <button type="button" data-tab="sessions">Números conectados</button>
-        <button type="button" data-tab="inventory">Grupos da robô</button>
-      </div>
-
-      <div id="tabRequests" class="tab-panel">
-        <div class="admin-toolbar">
-          <div><h3>Fila de análise</h3><p>Confirme o responsável antes de publicar o convite.</p></div>
-          <select id="statusFilter"><option value="">Todos os status</option><option value="pending">Pendentes</option><option value="published">Publicados</option><option value="paused">Pausados</option><option value="rejected">Rejeitados</option></select>
-        </div>
-        <div class="admin-list" id="requestsList"></div>
-      </div>
-
-      <div id="tabSessions" class="tab-panel hidden">
-        <div class="admin-toolbar">
-          <div><h3>Gerenciar números</h3><p>Ative Free ou Pro por número.</p></div>
-          <input class="admin-search" id="sessionSearch" placeholder="Buscar número…">
-        </div>
-        <div id="sessionsList" class="session-grid"></div>
-      </div>
-
-      <div id="tabInventory" class="tab-panel hidden">
-        <div class="admin-toolbar">
-          <div><h3>Inventário da robô</h3><p>Verifique grupos conhecidos pela base e pelas sessões online.</p></div>
-          <div class="admin-inventory-actions">
-            <button class="btn btn-outline" type="button" id="diagnoseGroups">Diagnosticar base</button>
-            <button class="btn btn-outline" type="button" id="importGroups">Importar diretório</button>
-            <button class="btn btn-outline" type="button" id="scanGroups">Consultar sessões</button>
-          </div>
-        </div>
-        <div id="inventoryDiagnostics" class="diagnostics-line" role="status" aria-live="polite"></div>
-        <div id="inventoryList" class="admin-list"></div>
-      </div>
-
-      <div class="toast admin-toast" id="adminToast" role="status"></div>
-    </div>
-  </section>
-</body>
-</html>
+  <footer class="footer"><div class="container footer-content"><div class="footer-head"><a href="/" class="brand" aria-label="Fabi Bot"><span class="brand-mark">✳</span><span class="brand-name">fabi<span>grupos</span></span></a><p>Mais do que divulgar. Aproximar pessoas e ajudar a proteger comunidades.</p></div><div class="footer-links"><a href="#explorar">Explorar</a><a href="#como-ganhar">Como funciona</a><a href="/privacidade">Privacidade</a><a href="/termos">Termos</a><a href="?admin=1">Painel</a></div></div><div class="container copyright"><span>© <span id="year"></span> Fabi Bot</span><span>Feito para as comunidades.</span></div></footer>
+  <div id="mobileFilterOverlay" class="mobile-filter-overlay" aria-hidden="true"></div>
+  <div id="siteToast" class="site-toast" role="status" aria-live="polite"></div>
+  <div aria-hidden="true" class="modal-backdrop" id="modal">
+<div aria-labelledby="modalTitle" aria-modal="true" class="modal-card" role="dialog">
+<button aria-label="Fechar" class="modal-close" id="closeModal" type="button">×</button>
+<span class="kicker" id="modalKicker">cadastro gratuito</span>
+<h2 id="modalTitle">Divulgue grátis. Solicite a Fabi Free.</h2>
+<p class="modal-sub" id="modalSub">Cadastre gratuitamente. Após aprovação e conforme disponibilidade, você poderá solicitar a instalação manual da Fabi Free, sem mensalidade.</p>
+<div class="toast" id="modalToast" role="status"></div>
+<form class="modal-form" id="submitForm">
+<label>Convite do WhatsApp<input autocomplete="off" name="invite" placeholder="https://chat.whatsapp.com/…" required="" type="url"/></label>
+<div class="form-grid">
+<label>Nome do grupo<input maxlength="90" minlength="3" name="name" placeholder="Comunidade de tecnologia" required=""/></label>
+<label>Categoria<select id="submitCategory" name="category" required=""></select></label>
+</div>
+<label>Sobre o grupo<textarea maxlength="500" minlength="15" name="description" placeholder="Conte sobre o assunto do grupo e o que as pessoas encontrarão nele…" required="" rows="4"></textarea></label>
+<label>Contato do responsável<input maxlength="120" name="contact" placeholder="WhatsApp ou e-mail" required=""/></label>
+<label class="check-label free-optin"><input type="checkbox" name="requestFree" value="yes" checked><span><strong>Quero solicitar a Fabi Free grátis</strong><small>Peço avaliação para instalação manual da robô, sem mensalidade, conforme disponibilidade.</small></span></label>
+<label class="check-label"><input required="" type="checkbox"/><span>Entendo que a publicação só acontece após revisão e autorização.</span></label>
+<button class="btn btn-primary full" id="submitBtn" type="submit">Enviar grupo para análise ↗</button>
+</form>
+<div class="modal-form hidden" id="boostForm">
+<div class="boost-group" id="boostName"></div>
+<label>Escolha o destaque<select id="boostPlan"><option value="day">24 horas · R$ 3,90</option><option value="week">7 dias · R$ 9,90</option><option value="month">30 dias · R$ 24,90</option></select></label>
+<p class="subtle">Qualquer pessoa pode turbinar um grupo publicado. Isso não concede administração sobre ele.</p>
+<button class="btn btn-primary full" id="payBtn" type="button">Continuar para o Mercado Pago</button>
+</div>
+</div>
+</div>
+<div aria-hidden="true" class="modal-backdrop" id="detailsModal">
+<div aria-labelledby="detailsTitle" aria-modal="true" class="modal-card detail-modal" role="dialog">
+<button aria-label="Fechar" class="modal-close" id="closeDetailsModal" type="button">×</button>
+<div class="detail-hero" id="detailsHero"></div>
+<div class="detail-content">
+<div class="detail-topline">
+<span class="status-pill" id="detailsBadge">Comunidade</span>
+<span class="subtle-text" id="detailsUpdated"></span>
+</div>
+<h2 id="detailsTitle">Detalhes do grupo</h2>
+<p id="detailsDescription"></p>
+<div class="detail-list" id="detailsFacts"></div><div class="detail-share-link"><label for="detailsLink">Link desta página</label><div class="share-row"><input aria-label="Link do grupo" id="detailsLink" readonly="" type="text"/><button class="btn btn-secondary" id="detailsCopy" type="button">Copiar</button></div></div>
+<div class="detail-actions"><button class="btn btn-secondary" id="detailsFavorite" type="button">♡ Salvar</button><button class="btn btn-secondary" id="detailsShare" type="button">Compartilhar</button>
+<a class="btn btn-primary" href="#" id="detailsJoin" rel="noopener noreferrer" target="_blank">Entrar no grupo</a>
+<button class="btn btn-secondary" id="detailsBoost" type="button">Turbinar grupo</button>
+</div>
+</div>
+</div>
+</div>
+<section aria-label="Painel administrativo" class="admin-wrap container hidden" id="adminPanel">
+<div class="admin-auth" id="adminAuth">
+<span class="kicker">acesso restrito</span>
+<h2>Central Fabi Grupos</h2>
+<p>Gerencie solicitações, números conectados e grupos conhecidos pela robô.</p>
+<div class="admin-auth-row">
+<input autocomplete="off" id="adminKey" placeholder="Chave administrativa do servidor" type="password"/>
+<button class="btn btn-primary" id="adminLogin" type="button">Entrar no painel</button>
+</div>
+</div>
+<div class="hidden" id="adminDashboard">
+<div class="admin-heading">
+<div>
+<span class="kicker">central de operações</span>
+<h2>Painel de controle</h2>
+<p>Dados reais do servidor e das sessões da Francisca.</p>
+</div>
+<div class="admin-heading-actions">
+<button class="btn btn-secondary" id="adminThemeToggle" type="button">Alternar tema</button>
+<button class="btn btn-outline" id="adminRefresh" type="button">Atualizar</button>
+</div>
+</div>
+<div class="admin-metrics">
+<div><small>Grupos cadastrados</small><strong id="statAll">—</strong></div>
+<div><small>Aguardando análise</small><strong id="statPending">—</strong></div>
+<div><small>Sessões cadastradas</small><strong id="statSessions">—</strong></div>
+<div><small>Números conectados</small><strong id="statOnline">—</strong></div>
+</div>
+<div class="admin-tabs" role="tablist">
+<button class="active" data-tab="requests" type="button">Solicitações</button>
+<button data-tab="sessions" type="button">Números conectados</button>
+<button data-tab="inventory" type="button">Grupos da robô</button>
+</div>
+<div class="tab-panel" id="tabRequests">
+<div class="admin-toolbar">
+<div><h3>Fila de análise</h3><p>Confirme o responsável antes de publicar o convite.</p></div>
+<select id="statusFilter"><option value="">Todos os status</option><option value="pending">Pendentes</option><option value="published">Publicados</option><option value="paused">Pausados</option><option value="rejected">Rejeitados</option></select>
+</div>
+<div class="admin-list" id="requestsList"></div>
+</div>
+<div class="tab-panel hidden" id="tabSessions">
+<div class="admin-toolbar">
+<div><h3>Gerenciar números</h3><p>Ative Free ou Pro por número.</p></div>
+<input class="admin-search" id="sessionSearch" placeholder="Buscar número…"/>
+</div>
+<div class="session-grid" id="sessionsList"></div>
+</div>
+<div class="tab-panel hidden" id="tabInventory">
+<div class="admin-toolbar">
+<div><h3>Inventário da robô</h3><p>Verifique grupos conhecidos pela base e pelas sessões online.</p></div>
+<div class="admin-inventory-actions">
+<button class="btn btn-outline" id="diagnoseGroups" type="button">Diagnosticar base</button>
+<button class="btn btn-outline" id="importGroups" type="button">Importar diretório</button>
+<button class="btn btn-outline" id="scanGroups" type="button">Consultar sessões</button>
+</div>
+</div>
+<div aria-live="polite" class="diagnostics-line" id="inventoryDiagnostics" role="status"></div>
+<div class="admin-list" id="inventoryList"></div>
+</div>
+<div class="toast admin-toast" id="adminToast" role="status"></div>
+</div>
+</section>
+</body></html>
