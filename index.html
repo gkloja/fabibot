@@ -21920,5 +21920,91 @@ function ready(){if(read('fabi-bot-push-choice')==='on'&&window.Notification?.pe
 document.addEventListener('fabi-bot-push-ready',ready);if(window.fabiBotPushReady)ready();
 })();
 </script>
+<!-- FABI ESTÚDIO V68: integração nativa, sem dependências adicionais -->
+<script id="fabi-estudio-v68-integrado">
+(function(){
+'use strict';
+const api=(p)=>typeof fzApi==='function'?fzApi(p):p;
+const headers=()=>typeof fzAuthHeaders==='function'?fzAuthHeaders():{'Content-Type':'application/json'};
+const auth=()=>typeof cfgAuthBody==='function'?cfgAuthBody():{};
+const group=()=>typeof cfgPainelObterGrupoSelecionado==='function'?cfgPainelObterGrupoSelecionado():'';
+const session=()=>String(typeof fzSessaoControleAtual!=='undefined'?fzSessaoControleAtual:'');
+let current='', imageData={};
+const css=document.createElement('style');
+css.textContent=`
+#fabiEstudioV66{margin:20px 0;padding:20px;border:1px solid rgba(125,140,180,.28);border-radius:20px;background:var(--card-bg,rgba(105,120,160,.09));color:var(--text-primary,inherit)}
+#fabiEstudioV66 .fes-top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+#fabiEstudioV66 .fes-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+#fabiEstudioV66 .fes-card{border:1px solid rgba(125,140,180,.35);border-radius:16px;padding:12px;background:rgba(125,140,180,.07)}
+#fabiEstudioV66 .fes-preview{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:12px;background:linear-gradient(135deg,#163b34,#252a65)}
+#fabiEstudioV66 .fes-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+#fabiEstudioV66 button,#fabiEstudioV66 label.fes-upload{border:0;border-radius:10px;padding:9px 12px;font:inherit;cursor:pointer;background:#2563eb;color:#fff;font-weight:650}
+#fabiEstudioV66 button.fes-reset{background:#64748b}
+#fabiEstudioV66 .fes-status{font-size:13px;margin-top:10px;min-height:20px}
+#fabiEstudioV66 input[type=file]{display:none}
+@media(max-width:580px){#fabiEstudioV66 .fes-grid{grid-template-columns:1fr}}
+`;
+document.head.append(css);
+function render(){
+  const sw=document.getElementById('fzBotAtivo');
+  if(!sw)return;
+  const target=sw.closest('.fz-horario-toggle-row')?.parentElement || sw.parentElement;
+  if(!target||document.getElementById('fabiEstudioV66'))return;
+  const el=document.createElement('section');
+  el.id='fabiEstudioV66';
+  el.innerHTML=`<div class="fes-top"><div><strong>🎨 Estúdio Fabi Pro</strong><div style="opacity:.75;font-size:13px">Personalize a identidade visual deste grupo.</div></div><span>👑 Pro</span></div>
+  <div class="fes-grid">${[['menu','🖼️ Fundo do menu'],['bemvindo','🌅 Boas-vindas']].map(([id,title])=>`<article class="fes-card"><strong>${title}</strong><img class="fes-preview" id="fes-img-${id}" alt="Prévia da imagem" /><div class="fes-actions"><label class="fes-upload">Escolher imagem<input type="file" accept="image/jpeg,image/png,image/webp" data-type="${id}"></label><button data-save="${id}">Salvar</button><button class="fes-reset" data-reset="${id}">Restaurar</button></div></article>`).join('')}</div><div class="fes-status" id="fes-status" role="status"></div>`;
+  target.insertAdjacentElement('afterend',el);
+  el.querySelectorAll('input[type=file]').forEach(inp=>inp.addEventListener('change',()=>{
+    const file=inp.files?.[0];if(!file)return;
+    if(file.size>3*1024*1024){status('A imagem deve ter até 3 MB.');return;}
+    const reader=new FileReader();
+    reader.onload=()=>{imageData[inp.dataset.type]=reader.result;el.querySelector('#fes-img-'+inp.dataset.type).src=reader.result;status('Prévia pronta. Clique em Salvar para aplicar.');};
+    reader.readAsDataURL(file);
+  }));
+  el.querySelectorAll('[data-save]').forEach(b=>b.addEventListener('click',()=>send(b.dataset.save)));
+  el.querySelectorAll('[data-reset]').forEach(b=>b.addEventListener('click',()=>send(b.dataset.reset,true)));
+  refresh();
+}
+function status(t){const x=document.getElementById('fes-status');if(x)x.textContent=t;}
+async function refresh(){
+ const gid=group();if(!gid||!document.getElementById('fabiEstudioV66'))return;
+ current=gid+'|'+session();
+ try{
+  if(typeof fz33AssegurarGrupoToken==='function')await fz33AssegurarGrupoToken();
+  const qs=new URLSearchParams({grupoID:gid,sessao:session(),...auth()});
+  const r=await fetch(api('/api/grupo/estudio?'+qs),{headers:headers(),cache:'no-store'});
+  const j=await r.json();
+  if(!j.success){status(j.message||'Estúdio indisponível para este grupo.');document.querySelectorAll('#fabiEstudioV66 button,#fabiEstudioV66 input').forEach(e=>e.disabled=true);return;}
+  document.querySelectorAll('#fabiEstudioV66 button,#fabiEstudioV66 input').forEach(e=>e.disabled=false);
+  for(const tipo of ['menu','bemvindo']){
+   const img=document.getElementById('fes-img-'+tipo);
+   img.removeAttribute('src');
+   if(j.imagens?.[tipo]?.personalizado){
+    const response=await fetch(api('/api/grupo/estudio/imagem?'+new URLSearchParams({grupoID:gid,sessao:session(),tipo,...auth()})),{headers:headers(),cache:'no-store'});
+    if(response.ok){const blob=await response.blob();img.src=URL.createObjectURL(blob);}
+   }
+  }
+  status('Somente a conta proprietária da sessão pode salvar alterações neste painel.');
+ }catch(_){status('Não foi possível carregar as imagens.');}
+}
+async function send(tipo,reset=false){
+ const gid=group();if(!gid||gid+'|'+session()!==current){status('Selecione novamente o grupo antes de salvar.');return;}
+ if(!reset&&!imageData[tipo]){status('Escolha uma imagem primeiro.');return;}
+ status('Salvando...');
+ try{
+  if(typeof fz33AssegurarGrupoToken==='function')await fz33AssegurarGrupoToken();
+  const r=await fetch(api('/api/grupo/estudio'),{method:'POST',headers:headers(),body:JSON.stringify({grupoID:gid,sessao:session(),tipo,acao:reset?'restaurar':'salvar',imagem:reset?undefined:imageData[tipo],...auth()})});
+  const j=await r.json();
+  if(!j.success)throw Error(j.message||'Falha ao salvar.');
+  delete imageData[tipo];status(j.message);await refresh();
+ }catch(e){status(e.message||'Erro ao salvar.');}
+}
+new MutationObserver(()=>{render();const gid=group();if(gid&&session()&&gid+'|'+session()!==current&&document.getElementById('fabiEstudioV66'))refresh();}).observe(document.body,{subtree:true,childList:true});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
+})();
+
+
+</script>
 </body>
 </html>
