@@ -229,6 +229,18 @@
   ],
   "rewrites": [
     {
+      "source": "/sitemap-grupos.xml",
+      "destination": "/api/fabi-grupos-seo?mode=sitemap"
+    },
+    {
+      "source": "/grupos/g/:slug",
+      "destination": "/api/fabi-grupos-seo?mode=group&slug=:slug"
+    },
+    {
+      "source": "/grupos/categoria/:slug",
+      "destination": "/api/fabi-grupos-seo?mode=category&slug=:slug"
+    },
+    {
       "source": "/api/fabi-grupos/:endpoint*",
       "destination": "/api/fabi-grupos?endpoint=:endpoint*"
     },
@@ -407,6 +419,28 @@
         {
           "key": "Cache-Control",
           "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/sitemap-grupos.xml",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/xml; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, s-maxage=300, stale-while-revalidate=600"
+        }
+      ]
+    },
+    {
+      "source": "/api/fabi-grupos-seo",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
         }
       ]
     }
