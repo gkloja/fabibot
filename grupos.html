@@ -70,6 +70,33 @@ html[data-theme="dark"] .free-choice-option .free-choice-sub,html[data-theme="da
 @media(prefers-reduced-motion:reduce){.free-choice-option{transition:none}}
 </style>
 
+
+<!-- Fabi Grupos: confirmação acessível e imediatamente visível após cadastro aprovado pela API. -->
+<style id="fabi-submit-confirm-v1">
+.fabi-confirm-overlay{position:fixed;inset:0;z-index:100500;display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:18px;background:rgba(11,12,34,.74);-webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility .22s ease}
+.fabi-confirm-overlay.is-visible{opacity:1;visibility:visible;pointer-events:auto}
+.fabi-confirm-card{position:relative;width:min(100%,480px);margin:auto;padding:clamp(25px,6vw,38px);border-radius:28px;border:1px solid #e5e1ff;background:linear-gradient(155deg,#fff 0%,#faf9ff 100%);color:#191633;box-shadow:0 30px 100px rgba(0,0,0,.25);transform:translateY(14px) scale(.985);transition:transform .25s ease;font-family:inherit}
+.fabi-confirm-overlay.is-visible .fabi-confirm-card{transform:translateY(0) scale(1)}
+.fabi-confirm-close{position:absolute;right:19px;top:18px;display:grid;place-items:center;width:39px;height:39px;border-radius:12px;border:1px solid #e5e3f0;background:#f5f4fd;color:#3c3565;font-size:25px;cursor:pointer}
+.fabi-confirm-close:focus-visible,.fabi-confirm-actions button:focus-visible{outline:3px solid #8065ff;outline-offset:3px}
+.fabi-confirm-symbol{position:relative;display:grid;place-items:center;width:77px;height:77px;margin:0 0 20px;border-radius:24px;background:linear-gradient(145deg,#e3fff1,#c6f7d9);color:#11834a;font-size:46px;font-weight:900;box-shadow:0 10px 25px rgba(32,157,101,.12)}
+.fabi-confirm-symbol:after{content:'✦';position:absolute;top:-9px;right:-10px;color:#6850eb;font-size:22px}
+.fabi-confirm-kicker{margin:0 0 8px;color:#6446dc;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:900}
+.fabi-confirm-card h2{margin:0 40px 11px 0;font-size:clamp(27px,5.8vw,36px);line-height:1.12;letter-spacing:-1px;color:#191633}
+.fabi-confirm-card p{color:#5e6080;line-height:1.65;font-size:15px;margin:0}
+.fabi-confirm-community{margin:20px 0;padding:13px 16px;border-radius:15px;border:1px solid #dfdafb;background:#f0ecff;overflow-wrap:anywhere;color:#33246e;font-weight:800;font-size:14px}
+.fabi-confirm-steps{display:grid;gap:13px;margin:22px 0;padding:18px 18px 18px 20px;background:#f6f6fc;border:1px solid #e7e7f0;border-radius:16px;list-style:none}
+.fabi-confirm-steps li{display:flex;align-items:center;gap:12px;color:#555876;font-size:13px;font-weight:700}
+.fabi-confirm-step-icon{width:27px;height:27px;display:grid;place-items:center;flex:0 0 27px;border:1px solid #dedcec;border-radius:50%;background:white;color:#6e6a86;font-size:13px}
+.fabi-confirm-steps li:first-child .fabi-confirm-step-icon{background:#20a668;color:#fff;border-color:#20a668}
+.fabi-confirm-note{font-size:12px!important;color:#73748c!important}
+.fabi-confirm-actions{display:grid;gap:10px;margin-top:24px}
+.fabi-confirm-actions button{min-height:48px;padding:12px 16px;border:1px solid transparent;border-radius:13px;font-size:14px;font-weight:850;cursor:pointer;font-family:inherit}
+#fabiConfirmFinish{color:white;background:linear-gradient(120deg,#6146ec,#775af8);box-shadow:0 9px 23px rgba(97,70,236,.2)}
+#fabiConfirmAgain{color:#49359b;border-color:#ddd8f5;background:#fff}
+@media(max-width:470px){.fabi-confirm-overlay{padding:14px}.fabi-confirm-card{padding:26px 23px;border-radius:23px}.fabi-confirm-card h2{margin-right:30px}.fabi-confirm-steps{padding:15px}}
+@media(prefers-reduced-motion:reduce){.fabi-confirm-overlay,.fabi-confirm-card{transition:none!important}}
+</style>
 </head>
 <body>
   <a class="skip-link" href="#explorar">Pular para os grupos</a>
@@ -400,6 +427,99 @@ html[data-theme="dark"] .pix-state{color:#5eead4}
   const sub=document.getElementById('modalSub');if(sub)sub.textContent='Cadastre o link do grupo e seu WhatsApp para contato. Sua solicitação gratuita será analisada antes de qualquer ativação; nenhuma sessão pessoal precisa ser conectada.';
   const focus=document.getElementById('inviteWhatsApp');if(focus)focus.focus();
  });
+})();
+</script>
+
+<!-- A confirmação é mostrada somente quando o servidor registra o envio com sucesso. -->
+<div id="fabiSubmitConfirm" class="fabi-confirm-overlay" aria-hidden="true">
+  <section class="fabi-confirm-card" role="dialog" aria-modal="true" aria-labelledby="fabiConfirmTitle" aria-describedby="fabiConfirmDescription">
+    <button class="fabi-confirm-close" type="button" id="fabiConfirmClose" aria-label="Fechar confirmação">×</button>
+    <div class="fabi-confirm-symbol" aria-hidden="true">✓</div>
+    <div class="fabi-confirm-kicker">✓ Solicitação enviada com sucesso</div>
+    <h2 id="fabiConfirmTitle">Cadastro recebido!</h2>
+    <p id="fabiConfirmDescription">Sua comunidade foi enviada para análise. Você não precisa fazer mais nada agora.</p>
+    <div id="fabiConfirmCommunity" class="fabi-confirm-community" hidden></div>
+    <ol class="fabi-confirm-steps" aria-label="Etapas da solicitação">
+      <li><span class="fabi-confirm-step-icon" aria-hidden="true">✓</span> Cadastro recebido</li>
+      <li><span class="fabi-confirm-step-icon" aria-hidden="true">2</span> Análise da equipe Fabi</li>
+      <li><span class="fabi-confirm-step-icon" aria-hidden="true">3</span> Publicação após aprovação</li>
+    </ol>
+    <p class="fabi-confirm-note" id="fabiConfirmNote">A publicação depende de revisão e autorização.</p>
+    <div class="fabi-confirm-actions">
+      <button type="button" id="fabiConfirmFinish">✓ Concluir e explorar grupos</button>
+      <button type="button" id="fabiConfirmAgain">Cadastrar outra comunidade</button>
+    </div>
+  </section>
+</div>
+<script id="fabi-submit-confirm-handler">
+(()=>{'use strict';
+ const $=id=>document.getElementById(id);
+ const form=$('submitForm'),toast=$('modalToast'),modal=$('modal'),overlay=$('fabiSubmitConfirm');
+ if(!form||!toast||!modal||!overlay||!window.MutationObserver)return;
+ const mainDialog=modal.querySelector('.modal-card');
+ const finish=$('fabiConfirmFinish'),again=$('fabiConfirmAgain'),close=$('fabiConfirmClose');
+ let lastSubmission={kind:'group',name:'',free:false};
+ let visible=false;
+ // Captura o que foi cadastrado, sem interferir no POST nem nos outros scripts.
+ form.addEventListener('submit',()=>{
+   const invite=String(form.elements.namedItem('invite')?.value||'');
+   lastSubmission={
+     kind:/whatsapp\.com\/channel\//i.test(invite)?'channel':'group',
+     name:String(form.elements.namedItem('name')?.value||'').trim().slice(0,90),
+     free:Boolean(form.elements.namedItem('requestFree')?.checked)
+   };
+ },true);
+ const show=()=>{
+   if(visible||!modal.classList.contains('show')||form.classList.contains('hidden'))return;
+   visible=true;
+   const kind=lastSubmission.kind;
+   $('fabiConfirmTitle').textContent=kind==='channel'?'Canal recebido!':'Grupo recebido!';
+   $('fabiConfirmDescription').textContent=kind==='channel'
+     ?'Seu canal foi enviado para análise. Após a aprovação, poderá aparecer no catálogo e receber destaque.'
+     :'Seu grupo foi enviado para análise. Após a aprovação, poderá aparecer no catálogo.';
+   const name=$('fabiConfirmCommunity');
+   name.textContent=lastSubmission.name;
+   name.hidden=!lastSubmission.name;
+   $('fabiConfirmNote').textContent=kind==='group'&&lastSubmission.free
+     ?'A solicitação da Fabi Free também será avaliada e depende da disponibilidade do serviço.'
+     :'A publicação acontece somente após revisão e autorização.';
+   overlay.classList.add('is-visible');
+   overlay.setAttribute('aria-hidden','false');
+   if(mainDialog)mainDialog.inert=true;
+   finish.focus({preventScroll:true});
+ };
+ const hide=(reopenForm)=>{
+   if(!visible)return;
+   visible=false;
+   overlay.classList.remove('is-visible');
+   overlay.setAttribute('aria-hidden','true');
+   if(mainDialog)mainDialog.inert=false;
+   // A confirmação antiga não interfere no próximo cadastro.
+   toast.className='toast';toast.textContent='';
+   if(reopenForm){
+     if(mainDialog)mainDialog.scrollTop=0;
+     $('inviteWhatsApp')?.focus({preventScroll:true});
+   }else{
+     // Usa o fechamento nativo, preservando foco, bloqueio de rolagem e demais modais.
+     $('closeModal')?.click();
+   }
+ };
+ const observer=new MutationObserver(()=>{
+   if(toast.classList.contains('show')&&!toast.classList.contains('error'))show();
+ });
+ observer.observe(toast,{attributes:true,attributeFilter:['class']});
+ finish.addEventListener('click',()=>hide(false));
+ again.addEventListener('click',()=>hide(true));
+ close.addEventListener('click',()=>hide(false));
+ document.addEventListener('keydown',event=>{
+   if(!visible)return;
+   if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();hide(false)}
+   if(event.key!=='Tab')return;
+   const controls=[close,finish,again].filter(x=>x&&!x.disabled);
+   const first=controls[0],last=controls[controls.length-1];
+   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+ },true);
 })();
 </script>
 </body></html>
