@@ -505,21 +505,71 @@ function showSessions(){
 $('sessionSearch').oninput=showSessions;
 $('sessionModeFilter').onchange=showSessions;
 
+
+function inventoryInviteUrl(g){
+  if(!g||typeof g!=='object')return '';
+  const candidates=[g.invite,g.inviteLink,g.inviteUrl,g.link,g.groupLink,g.inviteCode,g.code,g.convite];
+  for(const raw of candidates){
+    const s=String(raw||'').trim();
+    if(!s)continue;
+    if(/^https?:\/\/chat\.whatsapp\.com\//i.test(s)){
+      try{const u=new URL(s);if(/^\/[A-Za-z0-9_-]{8,}/.test(u.pathname))return u.origin+u.pathname;}catch(_){return s.split('?')[0];}
+    }
+    // código puro de convite
+    if(/^[A-Za-z0-9_-]{8,64}$/.test(s))return 'https://chat.whatsapp.com/'+s;
+  }
+  // tenta achar no catálogo público já carregado
+  try{
+    const jid=String(g.groupJid||g.id||g.jid||'');
+    const hit=(groups||[]).find(x=>String(x.id)===jid||String(x.groupJid)===jid||String(x.jid)===jid);
+    if(hit){
+      const l=hit.invite||hit.link||hit.inviteLink||'';
+      if(l)return inventoryInviteUrl({invite:l});
+    }
+  }catch(_){}
+  return '';
+}
+
 function showInventory(){
   const root=$('inventoryList'); root.replaceChildren();
   const plan=$('inventoryModeFilter').value;
-  const base=inventory.filter(g=>g&&g.present!==false&&g.botPresent!==false&&g.botPresente!==false&&g.inGroup!==false);
+  // Só grupos com a robô E com link de convite utilizável
+  const base=inventory.filter(g=>{
+    if(!g)return false;
+    if(g.present===false||g.botPresent===false||g.botPresente===false||g.inGroup===false)return false;
+    const invite=inventoryInviteUrl(g);
+    if(!invite)return false;
+    g.__inviteUrl=invite;
+    return true;
+  });
   const filtered=base.filter(g=>!plan||(plan==='unknown'?!['free','pro'].includes(g.mode):g.mode===plan));
   const free=base.filter(g=>g.mode==='free').length,pro=base.filter(g=>g.mode==='pro').length;
-  $('inventoryModeStats').textContent=filtered.length+' com a robô · '+free+' Free · '+pro+' Pro · '+(base.length-free-pro)+' sem plano';
-  if(!filtered.length){drawEmpty(root,'Nenhum grupo com a robô agora','Use Consultar sessões (live). Grupos só em disco não aparecem.');return}
+  $('inventoryModeStats').textContent=filtered.length+' com link · '+free+' Free · '+pro+' Pro · '+(base.length-free-pro)+' sem plano';
+  if(!filtered.length){drawEmpty(root,'Nenhum grupo com link de convite','Só listamos grupos em que a robô está e que possuem convite do WhatsApp.');return}
   for(const g of filtered.slice(0,500)){
     const row=el('article','admin-entry'),info=el('div'),detail=el('div','detail');
     info.append(el('h4','',g.name||g.groupJid),el('small','',g.groupJid));
-    detail.append(createBadge('🤖 Robô presente'),createBadge(g.published?'No catálogo':'Não divulgado'),createBadge(g.session?'Sessão '+g.session:'Sessão online'));
+    detail.append(createBadge('🤖 Robô presente'),createBadge('🔗 Com link'),createBadge(g.published?'No catálogo':'Não divulgado'));
+    if(g.session)detail.append(createBadge('Sessão '+g.session));
     if(g.members)detail.append(createBadge(niceInt(g.members)+' membros'));
     if(g.mode)detail.append(createBadge(g.mode.toUpperCase()));
-    info.append(detail); row.append(info); root.append(row);
+    info.append(detail);
+    const acts=el('div','session-actions');
+    const invite=g.__inviteUrl||inventoryInviteUrl(g);
+    if(invite){
+      const open=document.createElement('a');
+      open.href=invite; open.target='_blank'; open.rel='noopener noreferrer';
+      open.className='boost-card-btn';
+      open.textContent='Entrar no grupo ↗';
+      open.style.cssText='display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;font-weight:700;text-decoration:none;font-size:13px';
+      acts.append(open);
+      const copy=createButton('Copiar link',async()=>{
+        try{await navigator.clipboard.writeText(invite);adminToast('Link copiado.');}
+        catch{adminToast(invite);}
+      });
+      acts.append(copy);
+    }
+    row.append(info,acts); root.append(row);
   }
 }
 $('inventoryModeFilter').onchange=showInventory;
