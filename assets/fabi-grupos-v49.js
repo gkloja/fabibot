@@ -429,8 +429,11 @@ $('freeAdminCopy').onclick=async()=>{try{await navigator.clipboard.writeText(FRE
 function adminToast(msg,err=false){toast('adminToast',msg,err);$('adminToast').scrollIntoView({block:'nearest',behavior:'smooth'})}
 async function adminApi(path,method='GET',body){return api('/admin'+path,{method,headers:{'x-fabi-admin-key':adminKey,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined})}
 async function loadAdmin(){
-  const [r,s,m,i]=await Promise.all([adminApi('/requests'),adminApi('/sessions'),adminApi('/metrics'),adminApi('/inventory')]);
-  requests=r.groups||[]; sessions=s.sessions||[]; inventory=i.groups||[];
+  // live=1: consulta WhatsApp e lista só grupos em que a sessão ainda está
+  const [r,s,m,i]=await Promise.all([adminApi('/requests'),adminApi('/sessions'),adminApi('/metrics'),adminApi('/inventory?live=1')]);
+  requests=r.groups||[]; sessions=s.sessions||[];
+  const raw=Array.isArray(i.groups)?i.groups:[];
+  inventory=raw.filter(g=>g&&g.present!==false&&g.botPresent!==false&&g.botPresente!==false&&g.inGroup!==false&&!(g.live===false&&g.source==='disk'));
   $('statAll').textContent=niceInt(m.total); $('statPending').textContent=niceInt(m.pending); $('statSessions').textContent=niceInt(s.total); $('statOnline').textContent=niceInt(s.online);
   showRequests(); showSessions(); showInventory();
   try{await freeAdminLoad()}catch(e){freeAdminMessage('Vagas Free indisponíveis: '+e.message,true)}
@@ -505,21 +508,22 @@ $('sessionModeFilter').onchange=showSessions;
 function showInventory(){
   const root=$('inventoryList'); root.replaceChildren();
   const plan=$('inventoryModeFilter').value;
-  const filtered=inventory.filter(g=>!plan||(plan==='unknown'?!['free','pro'].includes(g.mode):g.mode===plan));
-  const free=inventory.filter(g=>g.mode==='free').length,pro=inventory.filter(g=>g.mode==='pro').length;
-  $('inventoryModeStats').textContent=filtered.length+' exibidos · '+free+' grupos Free · '+pro+' grupos Pro · '+(inventory.length-free-pro)+' sem identificação';
-  if(!filtered.length){drawEmpty(root,'Nenhum grupo encontrado','Tente outro plano ou consulte as sessões conectadas.');return}
-  for(const g of filtered.slice(0,300)){
+  const base=inventory.filter(g=>g&&g.present!==false&&g.botPresent!==false&&g.botPresente!==false&&g.inGroup!==false);
+  const filtered=base.filter(g=>!plan||(plan==='unknown'?!['free','pro'].includes(g.mode):g.mode===plan));
+  const free=base.filter(g=>g.mode==='free').length,pro=base.filter(g=>g.mode==='pro').length;
+  $('inventoryModeStats').textContent=filtered.length+' com a robô · '+free+' Free · '+pro+' Pro · '+(base.length-free-pro)+' sem plano';
+  if(!filtered.length){drawEmpty(root,'Nenhum grupo com a robô agora','Use Consultar sessões (live). Grupos só em disco não aparecem.');return}
+  for(const g of filtered.slice(0,500)){
     const row=el('article','admin-entry'),info=el('div'),detail=el('div','detail');
     info.append(el('h4','',g.name||g.groupJid),el('small','',g.groupJid));
-    detail.append(createBadge(g.published?'No catálogo':'Não divulgado'),createBadge(g.session?'Sessão '+g.session:'Arquivo existente'));
+    detail.append(createBadge('🤖 Robô presente'),createBadge(g.published?'No catálogo':'Não divulgado'),createBadge(g.session?'Sessão '+g.session:'Sessão online'));
     if(g.members)detail.append(createBadge(niceInt(g.members)+' membros'));
     if(g.mode)detail.append(createBadge(g.mode.toUpperCase()));
     info.append(detail); row.append(info); root.append(row);
   }
 }
 $('inventoryModeFilter').onchange=showInventory;
-$('scanGroups').onclick=async()=>{const b=$('scanGroups');b.disabled=true;b.textContent='Consultando…';try{const data=await adminApi('/inventory?live=1');inventory=data.groups||[];showInventory();adminToast('Inventário atualizado: '+data.total+' grupos encontrados.')}catch(err){adminToast(err.message,true)}finally{b.disabled=false;b.textContent='Consultar sessões'}};
+$('scanGroups').onclick=async()=>{const b=$('scanGroups');b.disabled=true;b.textContent='Consultando…';try{const data=await adminApi('/inventory?live=1');const raw=data.groups||[];inventory=raw.filter(g=>g&&g.present!==false&&g.botPresent!==false&&g.botPresente!==false&&g.inGroup!==false);showInventory();adminToast('Ao vivo: '+inventory.length+' grupos com a robô (API: '+(data.total||raw.length)+').')}catch(err){adminToast(err.message,true)}finally{b.disabled=false;b.textContent='Consultar sessões'}};
 $('diagnoseGroups').onclick=async()=>{const btn=$('diagnoseGroups');btn.disabled=true; try{const d=await adminApi('/diagnostics'); $('inventoryDiagnostics').textContent=`Origem: ${d.source} · Arquivo: ${d.fileExists?'encontrado':'ausente'} · Registros: ${d.registered} · Convites utilizáveis: ${d.withInvite} · Sem convite: ${d.withoutInvite} · Excluídos por privacidade: ${d.excluded} · Publicados: ${d.published} · Sessões: ${d.sessions} (${d.online} online).`;}catch(err){adminToast(err.message,true)} finally{btn.disabled=false}};
 $('importGroups').onclick=async()=>{const btn=$('importGroups');btn.disabled=true; try{const d=await adminApi('/import-existing','POST',{}); await Promise.all([loadAdmin(),loadGroups()]); adminToast(`Importação concluída: ${d.added||0} novos, ${d.changed||0} atualizados, ${d.skipped||0} ignorados.`);}catch(err){adminToast(err.message,true)} finally{btn.disabled=false}};
 
