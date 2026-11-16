@@ -9389,11 +9389,35 @@ function cfgUsuarioEhAdminDoGrupo(grupo, numUser) {
 async function cfgCarregarConfigGrupo(grupoID) {
   if (!grupoID) return;
   try {
-    const url = API_URL + "/api/grupo-config/" + encodeURIComponent(grupoID);
-    const resp = await fetch(url);
+    // Envia token + sessão (a lista já sabe se é Pro/Free e qual robô admin)
+    const auth = (typeof cfgAuthBody === 'function') ? (cfgAuthBody() || {}) : {};
+    const meta = (cfgGruposAdmin || []).find(g =>
+      String(g.grupoID || g.groupId || g.id || '') === String(grupoID)
+    ) || {};
+    const sessao = String(meta.sessaoAdmin || meta.sessao || meta.session || '').replace(/\D/g, '');
+    const qs = new URLSearchParams();
+    if (sessao) qs.set('sessao', sessao);
+    if (auth.fabiGrupoToken) qs.set('fabiGrupoToken', auth.fabiGrupoToken);
+    if (auth.contaNumero) qs.set('numero', auth.contaNumero);
+    if (auth.nome || auth.nomeConta) qs.set('nome', auth.nome || auth.nomeConta);
+    const url = API_URL + "/api/grupo-config/" + encodeURIComponent(grupoID) + (qs.toString() ? ('?' + qs.toString()) : '');
+    const resp = await fetch(url, {
+      cache: 'no-store',
+      credentials: 'include',
+      headers: {
+        'X-Fabi-Grupo-Token': auth.fabiGrupoToken || '',
+        'X-User-Numero': auth.contaNumero || '',
+        'X-User-Nome': auth.nome || auth.nomeConta || '',
+        'X-Fabi-Sessao': sessao || ''
+      }
+    });
     const data = await resp.json();
     if(!resp.ok||!data.success)throw new Error(data.message||'Falha ao carregar plano.');
-    cfgAplicarPlanoV55(data.plan);
+    // Se a lista já confirmou Pro para este grupo, não travar a UI como Free residual
+    let plan = data.plan;
+    if (String(meta.plano || meta.plan || '').toLowerCase() === 'pro') plan = 'pro';
+    if (sessao && plan === 'free' && String(meta.plano || '').toLowerCase() === 'pro') plan = 'pro';
+    cfgAplicarPlanoV55(plan);
     const cfg = (data && data.config && (data.config[0] || data.config)) || {};
     cfgRenderizarOpcoes(cfg);
     try {
@@ -9404,7 +9428,15 @@ async function cfgCarregarConfigGrupo(grupoID) {
     if (input) input.value = grupoID;
   } catch (e) {
     console.error("cfgCarregarConfigGrupo", e);
-    // Não renderizar toggles Pro como editáveis quando plano não pôde ser confirmado.
+    // Se a lista marca Pro, não força Free na falha de rede
+    const meta = (cfgGruposAdmin || []).find(g =>
+      String(g.grupoID || g.groupId || g.id || '') === String(grupoID)
+    ) || {};
+    if (String(meta.plano || meta.plan || '').toLowerCase() === 'pro') {
+      cfgAplicarPlanoV55('pro');
+      cfgRenderizarOpcoes({});
+      return;
+    }
     cfgAplicarPlanoV55('free');
     cfgRenderizarOpcoes({});
   }
@@ -9589,7 +9621,17 @@ async function cfgPainelCarregarGrupos() {
                 err.status=respPerm.status;
                 throw err;
             }
-            cfgGruposAdmin = Array.isArray(perm.grupos) ? perm.grupos : [];
+            // Só grupos em que a robô AINDA está (fonte robo-admin / botPresente).
+            // Evita listar grupos fantasma do catálogo onde a Fabi já saiu.
+            const gruposApi = Array.isArray(perm.grupos) ? perm.grupos : [];
+            cfgGruposAdmin = gruposApi.filter(g => {
+                if (!g) return false;
+                if (g.fontePermissao === 'robo-admin') return true;
+                if (g.botPresente === true) return true;
+                // fallback: se veio sessaoAdmin da consulta live, a robô está no grupo
+                if (g.sessaoAdmin || g.sessao) return true;
+                return false;
+            });
             // V29 preservada: grupos exclusivos da robô podem não estar no catálogo.
             const existentes = new Set(lista.map(g => String(g.grupoID || g.groupId || g.id || '')));
             for (const g of cfgGruposAdmin) {
@@ -9660,8 +9702,8 @@ function cfgPainelAtualizarLista() {
             : ((fz31EstadoPermissoes === 'expired' || fz31EstadoPermissoes === 'unavailable' || fz31EstadoPermissoes === 'offline')
                 ? `Acesso pendente · ${total} grupos`
                 : cfgFiltroAtual === 'admin'
-                    ? `${cfgGruposFiltrados.length} admin · ${total} no total`
-                    : `${cfgGruposFiltrados.length} de ${total} grupos` + (adminN ? ` · ${adminN} onde sou admin` : ''));
+                    ? `${cfgGruposFiltrados.length} com a robô · ${total} no catálogo`
+                    : `${cfgGruposFiltrados.length} de ${total} grupos` + (adminN ? ` · ${adminN} com a robô` : ''));
     }
     if (cfgPaginaAtual < 1) cfgPaginaAtual = 1;
     cfgPainelRenderizarPagina();
