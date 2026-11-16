@@ -433,7 +433,13 @@ async function loadAdmin(){
   const [r,s,m,i]=await Promise.all([adminApi('/requests'),adminApi('/sessions'),adminApi('/metrics'),adminApi('/inventory?live=1')]);
   requests=r.groups||[]; sessions=s.sessions||[];
   const raw=Array.isArray(i.groups)?i.groups:[];
-  inventory=raw.filter(g=>g&&g.present!==false&&g.botPresent!==false&&g.botPresente!==false&&g.inGroup!==false&&!(g.live===false&&g.source==='disk'));
+  // Backend já tenta anexar convite; mantém quem tem link OU quem veio do live
+  inventory=raw.filter(g=>{
+    if(!g)return false;
+    if(g.present===false||g.inGroup===false)return false;
+    if(g.live===false&&g.source==='disk')return false;
+    return true;
+  });
   $('statAll').textContent=niceInt(m.total); $('statPending').textContent=niceInt(m.pending); $('statSessions').textContent=niceInt(s.total); $('statOnline').textContent=niceInt(s.online);
   showRequests(); showSessions(); showInventory();
   try{await freeAdminLoad()}catch(e){freeAdminMessage('Vagas Free indisponíveis: '+e.message,true)}
@@ -573,7 +579,7 @@ function showInventory(){
   }
 }
 $('inventoryModeFilter').onchange=showInventory;
-$('scanGroups').onclick=async()=>{const b=$('scanGroups');b.disabled=true;b.textContent='Consultando…';try{const data=await adminApi('/inventory?live=1');const raw=data.groups||[];inventory=raw.filter(g=>g&&g.present!==false&&g.botPresent!==false&&g.botPresente!==false&&g.inGroup!==false);showInventory();adminToast('Ao vivo: '+inventory.length+' grupos com a robô (API: '+(data.total||raw.length)+').')}catch(err){adminToast(err.message,true)}finally{b.disabled=false;b.textContent='Consultar sessões'}};
+$('scanGroups').onclick=async()=>{const b=$('scanGroups');b.disabled=true;b.textContent='Consultando…';try{const data=await adminApi('/inventory?live=1');const raw=data.groups||[];inventory=raw.filter(g=>g&&g.present!==false&&g.inGroup!==false&&!(g.live===false&&g.source==='disk'));showInventory();adminToast('Ao vivo: '+inventory.length+' grupos com a robô (API: '+(data.total||raw.length)+').')}catch(err){adminToast(err.message,true)}finally{b.disabled=false;b.textContent='Consultar sessões'}};
 $('diagnoseGroups').onclick=async()=>{const btn=$('diagnoseGroups');btn.disabled=true; try{const d=await adminApi('/diagnostics'); $('inventoryDiagnostics').textContent=`Origem: ${d.source} · Arquivo: ${d.fileExists?'encontrado':'ausente'} · Registros: ${d.registered} · Convites utilizáveis: ${d.withInvite} · Sem convite: ${d.withoutInvite} · Excluídos por privacidade: ${d.excluded} · Publicados: ${d.published} · Sessões: ${d.sessions} (${d.online} online).`;}catch(err){adminToast(err.message,true)} finally{btn.disabled=false}};
 $('importGroups').onclick=async()=>{const btn=$('importGroups');btn.disabled=true; try{const d=await adminApi('/import-existing','POST',{}); await Promise.all([loadAdmin(),loadGroups()]); adminToast(`Importação concluída: ${d.added||0} novos, ${d.changed||0} atualizados, ${d.skipped||0} ignorados.`);}catch(err){adminToast(err.message,true)} finally{btn.disabled=false}};
 
