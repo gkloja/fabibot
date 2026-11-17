@@ -2390,7 +2390,7 @@ footer{ position:relative; z-index:1 !important; padding-bottom:calc(84px + env(
       <div class="zone-head">
         <div>
           <h2>🛒 Loja Imperial</h2>
-          <p>Premium com Golds · Pacotes via PIX · R$ 1 = 1.000.000.000 Golds (1 bilhão)</p>
+          <p>Premium com Golds · Pacotes via PIX · R$ 1 = 1.000.000 Golds · Ranking por temporada</p>
         </div>
         <span class="zone-badge" id="lojaPremBadge">Status</span>
       </div>
@@ -2410,12 +2410,12 @@ footer{ position:relative; z-index:1 !important; padding-bottom:calc(84px + env(
       </div>
       <div class="sec" style="margin-top:18px">💰 Comprar Golds <span style="font-weight:600;color:var(--muted);font-size:11px">(PIX · R$ 1 = 1.000.000)</span></div>
       <div class="shop-grid" id="shopGoldGrid">
-        <button type="button" class="shop-card gold" data-gold="1000000000"><span class="si">🪙</span><strong>1 bilhão</strong><em>R$ 1,00</em></button>
-        <button type="button" class="shop-card gold" data-gold="2000000000"><span class="si">💰</span><strong>2 bilhões</strong><em>R$ 2,00</em></button>
-        <button type="button" class="shop-card gold" data-gold="5000000000"><span class="si">🏦</span><strong>5 bilhões</strong><em>R$ 5,00</em></button>
-        <button type="button" class="shop-card gold" data-gold="10000000000"><span class="si">👑</span><strong>10 bilhões</strong><em>R$ 10,00</em></button>
-        <button type="button" class="shop-card gold" data-gold="20000000000"><span class="si">💎</span><strong>20 bilhões</strong><em>R$ 20,00</em></button>
-        <button type="button" class="shop-card gold" data-gold="50000000000"><span class="si">🚀</span><strong>50 bilhões</strong><em>R$ 50,00</em></button>
+        <button type="button" class="shop-card gold" data-gold="1000000"><span class="si">🪙</span><strong>1 milhão</strong><em>R$ 1,00</em></button>
+        <button type="button" class="shop-card gold" data-gold="2000000"><span class="si">💰</span><strong>2 milhões</strong><em>R$ 2,00</em></button>
+        <button type="button" class="shop-card gold" data-gold="5000000"><span class="si">🏦</span><strong>5 milhões</strong><em>R$ 5,00</em></button>
+        <button type="button" class="shop-card gold" data-gold="10000000"><span class="si">👑</span><strong>10 milhões</strong><em>R$ 10,00</em></button>
+        <button type="button" class="shop-card gold" data-gold="20000000"><span class="si">💎</span><strong>20 milhões</strong><em>R$ 20,00</em></button>
+        <button type="button" class="shop-card gold" data-gold="50000000"><span class="si">🚀</span><strong>50 milhões</strong><em>R$ 50,00</em></button>
       </div>
       <div class="shop-pix hide" id="shopPixBox">
         <div class="sec">PIX gerado</div>
@@ -2669,7 +2669,77 @@ footer{ position:relative; z-index:1 !important; padding-bottom:calc(84px + env(
       <button type="button" id="tabHall" role="tab" aria-selected="false"><span class="ti">🏛️</span><span class="tl">Hall</span></button>
     </div>
     <div class="panel">
-      <h3 id="rankTitle">🏆 Ranking</h3>
+      <h3 id="rankTitle">
+<!-- FABI GOLDS SEASON -->
+<style>
+.ge-season{
+  margin:12px 0 16px;padding:16px 16px 14px;border-radius:18px;
+  background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(14,165,233,.12) 45%,rgba(234,179,8,.1));
+  border:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden;
+}
+.ge-season::before{
+  content:"";position:absolute;inset:-40% auto auto -20%;width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(250,204,21,.25),transparent 70%);pointer-events:none;
+}
+.ge-season-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;position:relative;z-index:1}
+.ge-season-title{font-size:15px;font-weight:800;letter-spacing:.2px;margin:0 0 4px}
+.ge-season-sub{font-size:12px;opacity:.8;margin:0;line-height:1.4}
+.ge-countdown{
+  flex-shrink:0;min-width:108px;text-align:center;padding:10px 12px;border-radius:14px;
+  background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.1);
+}
+.ge-countdown strong{display:block;font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
+.ge-countdown span{font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.7}
+.ge-season-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;position:relative;z-index:1}
+.ge-chip{
+  font-size:11px;font-weight:700;padding:6px 10px;border-radius:999px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
+}
+.ge-season-top10{margin-top:14px;position:relative;z-index:1}
+.ge-season-top10 h4{margin:0 0 8px;font-size:13px;font-weight:800}
+.ge-srow{
+  display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;
+  background:rgba(0,0,0,.18);margin-bottom:6px;font-size:13px;
+}
+.ge-srow .pos{width:28px;height:28px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:12px;background:rgba(255,255,255,.08)}
+.ge-srow .pos.p1{background:linear-gradient(135deg,#f59e0b,#eab308);color:#111}
+.ge-srow .pos.p2{background:linear-gradient(135deg,#94a3b8,#cbd5e1);color:#111}
+.ge-srow .pos.p3{background:linear-gradient(135deg,#b45309,#d97706);color:#111}
+.ge-srow .name{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ge-srow .gold{font-weight:800;font-variant-numeric:tabular-nums;opacity:.95}
+.ge-season-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.ge-season-tabs button{
+  border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:inherit;
+  border-radius:999px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;
+}
+.ge-season-tabs button.on{background:rgba(124,58,237,.35);border-color:rgba(167,139,250,.5)}
+[data-theme="light"] .ge-season{border-color:rgba(0,0,0,.06);background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(14,165,233,.08),rgba(234,179,8,.08))}
+[data-theme="light"] .ge-countdown,[data-theme="light"] .ge-srow{background:rgba(255,255,255,.7)}
+</style>
+<div class="ge-season" id="geSeasonCard" aria-live="polite">
+  <div class="ge-season-top">
+    <div>
+      <p class="ge-season-title" id="geSeasonTitle">🏆 Temporada de Golds</p>
+      <p class="ge-season-sub" id="geSeasonSub">Carregando ranking e tempo restante…</p>
+    </div>
+    <div class="ge-countdown" title="Tempo até o fim da temporada">
+      <strong id="geSeasonCD">—</strong>
+      <span>restantes</span>
+    </div>
+  </div>
+  <div class="ge-season-meta">
+    <span class="ge-chip" id="geSeasonRate">💵 R$ 1 = 1.000.000 Golds</span>
+    <span class="ge-chip" id="geSeasonStart">🌱 Largada próxima: 1.000</span>
+    <span class="ge-chip" id="geSeasonNote">1ª temporada: saldos atuais valem</span>
+  </div>
+  <div class="ge-season-tabs" id="geSeasonTabs"></div>
+  <div class="ge-season-top10">
+    <h4 id="geSeasonTopTitle">Top 10 da temporada</h4>
+    <div id="geSeasonTopList"><div class="skel"></div></div>
+  </div>
+</div>
+
+🏆 Ranking</h3>
       <p class="sub" id="rankSub">Toque em alguém ou grupo para detalhes</p>
       <div id="rankList"></div>
       <div id="hallList" class="hide"></div>
@@ -4526,14 +4596,14 @@ bootSSO();
   <div class="shop-modal">
     <button type="button" class="close-x" id="shopModalClose" aria-label="Fechar">✕</button>
     <h3>💰 Comprar Golds</h3>
-    <p class="sub" style="margin:0 0 14px">PIX · <b style="color:var(--gold2)">R$ 1,00 = 1.000.000.000 Golds (1 bilhão)</b> · creditado no grupo ativo</p>
+    <p class="sub" style="margin:0 0 14px">PIX · <b style="color:var(--gold2)">R$ 1,00 = 1.000.000 Golds</b> · creditado no grupo ativo</p>
     <div class="shop-grid" id="modalGoldGrid">
-      <button type="button" class="shop-card gold" data-gold="1000000000"><span class="si">🪙</span><strong>1 bilhão</strong><em>R$ 1,00</em></button>
-      <button type="button" class="shop-card gold" data-gold="2000000000"><span class="si">💰</span><strong>2 bilhões</strong><em>R$ 2,00</em></button>
-      <button type="button" class="shop-card gold" data-gold="5000000000"><span class="si">🏦</span><strong>5 bilhões</strong><em>R$ 5,00</em></button>
-      <button type="button" class="shop-card gold" data-gold="10000000000"><span class="si">👑</span><strong>10 bilhões</strong><em>R$ 10,00</em></button>
-      <button type="button" class="shop-card gold" data-gold="20000000000"><span class="si">💎</span><strong>20 bilhões</strong><em>R$ 20,00</em></button>
-      <button type="button" class="shop-card gold" data-gold="50000000000"><span class="si">🚀</span><strong>50 bilhões</strong><em>R$ 50,00</em></button>
+      <button type="button" class="shop-card gold" data-gold="1000000"><span class="si">🪙</span><strong>1 milhão</strong><em>R$ 1,00</em></button>
+      <button type="button" class="shop-card gold" data-gold="2000000"><span class="si">💰</span><strong>2 milhões</strong><em>R$ 2,00</em></button>
+      <button type="button" class="shop-card gold" data-gold="5000000"><span class="si">🏦</span><strong>5 milhões</strong><em>R$ 5,00</em></button>
+      <button type="button" class="shop-card gold" data-gold="10000000"><span class="si">👑</span><strong>10 milhões</strong><em>R$ 10,00</em></button>
+      <button type="button" class="shop-card gold" data-gold="20000000"><span class="si">💎</span><strong>20 milhões</strong><em>R$ 20,00</em></button>
+      <button type="button" class="shop-card gold" data-gold="50000000"><span class="si">🚀</span><strong>50 milhões</strong><em>R$ 50,00</em></button>
     </div>
     <div class="shop-pix hide" id="modalPixBox" style="margin-top:14px">
       <div class="sec">PIX gerado</div>
@@ -5774,5 +5844,120 @@ bootSSO();
 </script>
 
 <script src="/assets/fabi-theme.js?v=20261011c" defer></script>
-<script src="/assets/news-push-preference.js?v=10" defer></script></body>
+<script src="/assets/news-push-preference.js?v=10" defer></script>
+<script>
+(function(){
+  const API_BASE = (typeof location !== 'undefined' && location.origin) ? location.origin : 'https://www.fabibot.com.br';
+  let seasonEndsAt = 0;
+  let seasonTimer = null;
+  let selectedSeason = null;
+
+  function fmt(n){
+    try { return Number(n||0).toLocaleString('pt-BR'); } catch(_){ return String(n||0); }
+  }
+  function maskId(id){
+    const d = String(id||'').replace(/\D/g,'');
+    if (d.length < 6) return d || '—';
+    return d.slice(0,4) + '…' + d.slice(-2);
+  }
+  function cd(ms){
+    if (ms <= 0) return 'encerrando';
+    const s = Math.floor(ms/1000);
+    const d = Math.floor(s/86400), h = Math.floor((s%86400)/3600), m = Math.floor((s%3600)/60);
+    if (d > 0) return d + 'd ' + h + 'h';
+    if (h > 0) return h + 'h ' + m + 'm';
+    return m + 'm';
+  }
+  function tick(){
+    const el = document.getElementById('geSeasonCD');
+    if (!el || !seasonEndsAt) return;
+    el.textContent = cd(Math.max(0, seasonEndsAt - Date.now()));
+  }
+  async function jget(path){
+    try {
+      const r = await fetch(API_BASE + path, { credentials: 'omit', cache: 'no-store' });
+      if (!r.ok) throw new Error('http ' + r.status);
+      return await r.json();
+    } catch (e) {
+      console.warn('[ge-season]', path, e);
+      return null;
+    }
+  }
+  function paintTop(data){
+    const box = document.getElementById('geSeasonTopList');
+    const title = document.getElementById('geSeasonTopTitle');
+    if (!box) return;
+    const top = (data && data.top) || [];
+    if (title) title.textContent = data && data.live === false
+      ? ('Hall · ' + (data.label || data.seasonId || 'temporada'))
+      : ('Top 10 · ' + (data && data.label ? data.label : 'temporada ao vivo'));
+    if (!top.length) {
+      box.innerHTML = '<p class="sub" style="margin:0">Ainda sem ranking nesta temporada. Jogue, apost e suba!</p>';
+      return;
+    }
+    box.innerHTML = top.map(function(row, i){
+      const pos = row.position || (i+1);
+      const cls = pos===1?'p1':pos===2?'p2':pos===3?'p3':'';
+      const medal = pos===1?'👑':pos===2?'🥈':pos===3?'🥉':pos;
+      const name = row.title ? row.title : ('Jogador ' + maskId(row.id || row.dig));
+      return '<div class="ge-srow"><div class="pos '+cls+'">'+medal+'</div><div class="name">'+name+'</div><div class="gold">'+fmt(row.golds)+'</div></div>';
+    }).join('');
+  }
+  function paintTabs(list, currentId){
+    const tabs = document.getElementById('geSeasonTabs');
+    if (!tabs) return;
+    const items = [];
+    if (list && list.current) items.push({ id: list.current.seasonId, label: 'Atual', live: true });
+    (list && list.past || []).slice(0, 6).forEach(function(p){
+      items.push({ id: p.seasonId, label: p.label || p.seasonId, live: false });
+    });
+    if (!items.length) { tabs.innerHTML = ''; return; }
+    tabs.innerHTML = items.map(function(it){
+      const on = (selectedSeason || currentId) === it.id ? ' on' : '';
+      return '<button type="button" data-sid="'+it.id+'" class="'+on.trim()+'">'+(it.live?'🔴 ':'')+it.label+'</button>';
+    }).join('');
+    tabs.querySelectorAll('button').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        selectedSeason = btn.getAttribute('data-sid');
+        loadTop(selectedSeason);
+        tabs.querySelectorAll('button').forEach(b => b.classList.toggle('on', b===btn));
+      });
+    });
+  }
+  async function loadTop(seasonId){
+    const q = seasonId ? ('?season=' + encodeURIComponent(seasonId)) : '';
+    const data = await jget('/api/golds/season/top' + q);
+    if (data && data.success !== false) paintTop(data);
+    else document.getElementById('geSeasonTopList').innerHTML = '<p class="sub">Ranking indisponível no momento.</p>';
+  }
+  async function boot(){
+    const info = await jget('/api/golds/season');
+    const list = await jget('/api/golds/season/list');
+    if (info && (info.success !== false)) {
+      seasonEndsAt = Number(info.endsAt) || 0;
+      const title = document.getElementById('geSeasonTitle');
+      const sub = document.getElementById('geSeasonSub');
+      const note = document.getElementById('geSeasonNote');
+      if (title) title.textContent = '🏆 ' + (info.title || (info.seasonNumber + 'ª Temporada'));
+      if (sub) sub.textContent = info.inaugural
+        ? 'Temporada inaugural: os Golds que você já tem entram neste ranking. Na próxima, todos recomeçam com 1.000.'
+        : ('Temporada ' + (info.label||'') + ' · ao zerar o relógio, ranking é arquivado e todos recomeçam com 1.000 Golds.');
+      if (note) note.textContent = info.inaugural ? '✨ 1ª temporada · saldos atuais valem' : '🔄 Próximo reset: 1.000 Golds';
+      tick();
+      if (seasonTimer) clearInterval(seasonTimer);
+      seasonTimer = setInterval(tick, 30000);
+    }
+    if (list) paintTabs(list, info && info.seasonId);
+    await loadTop(selectedSeason || (info && info.seasonId));
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  // re-boot when ranking tab is shown, if app has view switches
+  document.getElementById('btnRR') && document.getElementById('btnRR').addEventListener('click', function(){
+    loadTop(selectedSeason);
+  });
+})();
+</script>
+
+</body>
 </html>
