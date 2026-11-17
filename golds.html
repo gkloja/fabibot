@@ -2724,13 +2724,13 @@ footer{ position:relative; z-index:1 !important; padding-bottom:calc(84px + env(
     </div>
     <div class="ge-countdown" title="Tempo até o fim da temporada">
       <strong id="geSeasonCD">—</strong>
-      <span>restantes</span>
+      <span>para o fim</span>
     </div>
   </div>
   <div class="ge-season-meta">
     <span class="ge-chip" id="geSeasonRate">💵 R$ 1 = 1.000.000 Golds</span>
-    <span class="ge-chip" id="geSeasonStart">🌱 Largada próxima: 1.000</span>
-    <span class="ge-chip" id="geSeasonNote">1ª temporada: saldos atuais valem</span>
+    <span class="ge-chip" id="geSeasonStart">⏱️ 30 dias por corrida</span>
+    <span class="ge-chip" id="geSeasonNote">🎯 quem fica mais rico?</span>
   </div>
   <div class="ge-season-tabs" id="geSeasonTabs"></div>
   <div class="ge-season-top10">
@@ -5938,14 +5938,14 @@ bootSSO();
       const title = document.getElementById('geSeasonTitle');
       const sub = document.getElementById('geSeasonSub');
       const note = document.getElementById('geSeasonNote');
-      if (title) title.textContent = '🏆 ' + (info.title || (info.seasonNumber + 'ª Temporada'));
+      if (title) title.textContent = '🏁 ' + (info.title || ((info.seasonNumber||1) + 'ª Corrida de Golds'));
       if (sub) sub.textContent = info.inaugural
-        ? 'Temporada inaugural: os Golds que você já tem entram neste ranking. Na próxima, todos recomeçam com 1.000.'
-        : ('Temporada ' + (info.label||'') + ' · ao zerar o relógio, ranking é arquivado e todos recomeçam com 1.000 Golds.');
-      if (note) note.textContent = info.inaugural ? '✨ 1ª temporada · saldos atuais valem' : '🔄 Próximo reset: 1.000 Golds';
+        ? 'Corrida de 30 dias: quem fica mais rico até o fim do tempo? 1ª corrida — seus Golds atuais valem no ranking.'
+        : ('Faltam ' + (info.remainingText||'—') + ' · ao zerar o relógio o ranking é arquivado e todos recomeçam com 1.000 Golds.');
+      if (note) note.textContent = info.justReset ? '🔄 Nova corrida · Golds resetados' : (info.inaugural ? '✨ 1ª corrida · 30 dias' : '🌱 Largada: 1.000 Golds');
       tick();
       if (seasonTimer) clearInterval(seasonTimer);
-      seasonTimer = setInterval(tick, 30000);
+      seasonTimer = setInterval(tick, 1000);
     }
     if (list) paintTabs(list, info && info.seasonId);
     await loadTop(selectedSeason || (info && info.seasonId));
