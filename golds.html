@@ -2715,6 +2715,56 @@ footer{ position:relative; z-index:1 !important; padding-bottom:calc(84px + env(
 .ge-season-tabs button.on{background:rgba(124,58,237,.35);border-color:rgba(167,139,250,.5)}
 [data-theme="light"] .ge-season{border-color:rgba(0,0,0,.06);background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(14,165,233,.08),rgba(234,179,8,.08))}
 [data-theme="light"] .ge-countdown,[data-theme="light"] .ge-srow{background:rgba(255,255,255,.7)}
+
+/* Season reset / new race notice */
+.ge-season-toast-bg{
+  position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  animation:geFadeIn .25s ease;
+}
+.ge-season-toast-bg.hide{display:none}
+@keyframes geFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes gePop{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}
+.ge-season-toast{
+  width:min(420px,100%);border-radius:22px;padding:22px 20px 18px;position:relative;overflow:hidden;
+  background:linear-gradient(160deg,#1e1b4b 0%,#312e81 40%,#0f172a 100%);
+  border:1px solid rgba(250,204,21,.35);box-shadow:0 24px 60px rgba(0,0,0,.45);
+  color:#f8fafc;animation:gePop .35s cubic-bezier(.2,.9,.3,1);
+}
+.ge-season-toast::before{
+  content:"";position:absolute;top:-40%;right:-20%;width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(250,204,21,.35),transparent 70%);pointer-events:none;
+}
+.ge-season-toast .badge{
+  display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;padding:5px 10px;border-radius:999px;margin-bottom:12px;
+  background:rgba(250,204,21,.18);color:#fde68a;border:1px solid rgba(250,204,21,.35);
+}
+.ge-season-toast h3{margin:0 0 8px;font-size:20px;font-weight:800;letter-spacing:-.02em;position:relative}
+.ge-season-toast p{margin:0 0 10px;font-size:14px;line-height:1.45;opacity:.92;position:relative}
+.ge-season-toast .stats{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0 16px;position:relative;
+}
+.ge-season-toast .stat{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 12px;
+}
+.ge-season-toast .stat b{display:block;font-size:15px;font-weight:800}
+.ge-season-toast .stat span{font-size:11px;opacity:.7}
+.ge-season-toast .actions{display:flex;flex-direction:column;gap:8px;position:relative}
+.ge-season-toast .btn-main{
+  border:0;border-radius:14px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;
+  background:linear-gradient(90deg,#eab308,#f59e0b);color:#111;
+}
+.ge-season-toast .btn-ghost{
+  border:1px solid rgba(255,255,255,.15);background:transparent;color:#e2e8f0;
+  border-radius:14px;padding:10px 14px;font-weight:700;font-size:13px;cursor:pointer;
+}
+[data-theme="light"] .ge-season-toast{
+  background:linear-gradient(160deg,#fff7ed,#eef2ff 50%,#fff);
+  color:#0f172a;border-color:rgba(245,158,11,.4);
+}
+[data-theme="light"] .ge-season-toast .stat{background:rgba(15,23,42,.04);border-color:rgba(15,23,42,.08)}
+[data-theme="light"] .ge-season-toast .btn-ghost{color:#334155;border-color:rgba(15,23,42,.12)}
 </style>
 <div class="ge-season" id="geSeasonCard" aria-live="polite">
   <div class="ge-season-top">
@@ -5956,6 +6006,98 @@ bootSSO();
   document.getElementById('btnRR') && document.getElementById('btnRR').addEventListener('click', function(){
     loadTop(selectedSeason);
   });
+})();
+</script>
+
+
+<div class="ge-season-toast-bg hide" id="geSeasonToast" role="dialog" aria-modal="true" aria-labelledby="geToastTitle">
+  <div class="ge-season-toast">
+    <div class="badge" id="geToastBadge">🏁 Nova corrida</div>
+    <h3 id="geToastTitle">A temporada virou!</h3>
+    <p id="geToastBody">Uma nova corrida de Golds começou. Acumule Golds e suba no ranking antes do tempo acabar.</p>
+    <div class="stats">
+      <div class="stat"><b id="geToastDays">30 dias</b><span>duração</span></div>
+      <div class="stat"><b id="geToastCD">—</b><span>restantes</span></div>
+      <div class="stat"><b>1.000</b><span>largada</span></div>
+      <div class="stat"><b>R$1=1M</b><span>cotação</span></div>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn-main" id="geToastGo">Quero subir no ranking 🚀</button>
+      <button type="button" class="btn-ghost" id="geToastClose">Entendi</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function(){
+  function showSeasonToast(info){
+    if(!info || !info.seasonId) return;
+    var key = 'fabiGoldSeasonSeen:' + info.seasonId;
+    try {
+      if(localStorage.getItem(key) === '1') return;
+    } catch(_){}
+
+    var el = document.getElementById('geSeasonToast');
+    if(!el) return;
+
+    var isReset = !!info.justReset;
+    var isFirst = !!info.inaugural && !isReset;
+
+    var badge = document.getElementById('geToastBadge');
+    var title = document.getElementById('geToastTitle');
+    var body = document.getElementById('geToastBody');
+    var days = document.getElementById('geToastDays');
+    var cd = document.getElementById('geToastCD');
+
+    if(badge) badge.textContent = isReset ? '🔄 Nova temporada' : (isFirst ? '🏁 1ª corrida' : '🏁 Corrida ativa');
+    if(title) title.textContent = isReset
+      ? 'Temporada encerrada — começou outra!'
+      : (isFirst ? (info.title || '1ª Corrida de Golds') + ' no ar!' : (info.title || 'Corrida de Golds') + ' rolando');
+    if(body) body.textContent = isReset
+      ? 'O ranking da corrida anterior foi arquivado e todos largaram de novo. Acumule Golds, jogue e suba no Top 10 antes do tempo zerar!'
+      : (isFirst
+        ? 'Você está na primeira corrida de 30 dias. Seus Golds contam no ranking — acelere agora e brigue pelo Top 10!'
+        : 'Faltam ' + (info.remainingText || 'alguns dias') + ' para o fim. Cada Gold conta: jogue, compre pacotes e suba no ranking!');
+    if(days) days.textContent = (info.durationDays || 30) + ' dias';
+    if(cd) cd.textContent = info.remainingText || '—';
+
+    el.classList.remove('hide');
+
+    function dismiss(){
+      el.classList.add('hide');
+      try { localStorage.setItem(key, '1'); } catch(_){}
+    }
+    var btnClose = document.getElementById('geToastClose');
+    var btnGo = document.getElementById('geToastGo');
+    if(btnClose) btnClose.onclick = dismiss;
+    if(btnGo) btnGo.onclick = function(){
+      dismiss();
+      var rank = document.getElementById('rankList') || document.getElementById('geSeasonCard');
+      if(rank && rank.scrollIntoView) rank.scrollIntoView({ behavior:'smooth', block:'start' });
+      // tenta abrir loja se existir
+      var buy = document.getElementById('navBuyGolds') || document.querySelector('[data-open="shop"], #btnBuyGolds');
+      if(buy && typeof buy.click === 'function') {
+        setTimeout(function(){ try{ buy.click(); }catch(_){ } }, 400);
+      }
+    };
+    el.addEventListener('click', function(ev){ if(ev.target === el) dismiss(); });
+  }
+
+  // Hook into existing boot if present; otherwise poll API
+  async function tryBootToast(){
+    try {
+      var origin = (typeof location !== 'undefined' && location.origin) ? location.origin : 'https://www.fabibot.com.br';
+      var r = await fetch(origin + '/api/golds/season', { cache:'no-store' });
+      if(!r.ok) return;
+      var info = await r.json();
+      if(info && info.success === false) return;
+      // small delay so a página carrega
+      setTimeout(function(){ showSeasonToast(info); }, 600);
+    } catch(e){ console.warn('[ge-toast]', e); }
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tryBootToast);
+  else tryBootToast();
 })();
 </script>
 
