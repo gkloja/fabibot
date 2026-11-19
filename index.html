@@ -9411,7 +9411,12 @@ async function cfgCarregarConfigGrupo(grupoID) {
         'X-Fabi-Sessao': sessao || ''
       }
     });
-    const data = await resp.json();
+    const rawLoad = await resp.text();
+    let data = {};
+    try { data = rawLoad ? JSON.parse(rawLoad) : {}; } catch (_) {
+      if (resp.status === 520 || String(rawLoad).includes('520')) throw new Error('Servidor temporariamente indisponível (520). Aguarde e recarregue.');
+      throw new Error('Resposta inválida ao carregar configurações.');
+    }
     if(!resp.ok||!data.success)throw new Error(data.message||'Falha ao carregar plano.');
     // Se a lista já confirmou Pro para este grupo, não travar a UI como Free residual
     let plan = data.plan;
@@ -9482,17 +9487,24 @@ async function cfgSalvarTodas() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
         "X-User-Numero": body.contaNumero || "",
         "X-User-Nome": body.nome || body.nomeConta || ""
       },
       body: JSON.stringify(body)
     });
-    const data = await resp.json();
+    const raw = await resp.text();
+    let data = {};
+    try { data = raw ? JSON.parse(raw) : {}; } catch (_) {
+      data = { success: false, message: (resp.status === 520 || String(raw).includes('520'))
+        ? 'Servidor temporariamente indisponível (520). Aguarde e tente de novo.'
+        : 'Resposta inválida do servidor.' };
+    }
     if (typeof Swal !== "undefined") {
-      Swal.fire({ icon: data.success ? "success" : "error", title: data.message || (data.success ? "Salvo" : "Erro"), timer: 2000, showConfirmButton: false });
+      Swal.fire({ icon: data.success ? "success" : "error", title: data.message || (data.success ? "Salvo" : "Erro"), timer: data.success ? 2000 : 4000, showConfirmButton: !data.success });
     }
   } catch (e) {
-    if (typeof Swal !== "undefined") Swal.fire("Erro", "Falha ao salvar.", "error");
+    if (typeof Swal !== "undefined") Swal.fire("Erro", (e && e.message) || "Falha ao salvar.", "error");
   }
 }
 
@@ -9993,20 +10005,45 @@ function cfgPainelIniciarListeners() {
             }
 
             await fz33AssegurarGrupoToken();
+            const authBody = (typeof cfgAuthBody === 'function') ? (cfgAuthBody() || {}) : {};
+            const metaG = (cfgGruposAdmin || []).find(g => String(g.grupoID || g.groupId || g.id || '') === String(grupoID)) || {};
+            const sessaoCfg = String(metaG.sessaoAdmin || metaG.sessao || metaG.session || '').replace(/\D/g, '');
             fetch(API_URL + '/alterarConfig', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ grupoID, [configName]: isChecked ? 'on' : 'off', ...cfgAuthBody() })
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                  grupoID,
+                  [configName]: isChecked ? 'on' : 'off',
+                  sessao: sessaoCfg || undefined,
+                  ...authBody
+                })
             })
-            .then(async r => { const data=await r.json(); if (!r.ok || !data.success) throw new Error(data.message || 'Falha ao salvar'); return data; })
-            .then(() => {
-                if (typeof Swal !== 'undefined') Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1800,
+            .then(async r => {
+                const raw = await r.text();
+                let data = {};
+                try { data = raw ? JSON.parse(raw) : {}; } catch (_) {
+                  const low = String(raw || '').toLowerCase();
+                  if (r.status === 520 || low.includes('error code: 520') || low.includes('520')) {
+                    throw new Error('Servidor temporariamente indisponível (520). Aguarde 10–20s e tente de novo.');
+                  }
+                  if (r.status >= 500) throw new Error('Servidor com falha (' + r.status + '). Tente novamente em instantes.');
+                  throw new Error('Resposta inválida do servidor. Recarregue a página e tente outra vez.');
+                }
+                if (!r.ok || !data.success) throw new Error(data.message || ('Falha ao salvar (' + r.status + ')'));
+                return data;
+            })
+            .then((data) => {
+                if (typeof Swal !== 'undefined') Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000,
                     icon: 'success', title: `${friendlyName}: ${isChecked ? 'ativado' : 'desativado'}` });
+                else if (typeof toastr !== 'undefined') toastr.success(`${friendlyName}: ${isChecked ? 'ativado' : 'desativado'}`);
             })
             .catch((e) => {
                 this.checked = !isChecked;
                 if (statusSpan) { statusSpan.textContent = this.checked ? 'Ativo' : 'Inativo'; statusSpan.className = `fz-cfg-status ${this.checked ? 'on' : 'off'}`; }
-                if (typeof Swal !== 'undefined') Swal.fire('Erro', e.message || 'Falha ao salvar configuração.', 'error');
+                const msg = e && e.message ? e.message : 'Falha ao salvar configuração.';
+                if (typeof Swal !== 'undefined') Swal.fire('Erro', msg, 'error');
+                else if (typeof toastr !== 'undefined') toastr.error(msg);
+                else alert(msg);
             });
         });
     });
