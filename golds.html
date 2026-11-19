@@ -207,6 +207,20 @@ button.ge-online-pill:hover{background:rgba(79,212,168,.14)}
 
 .shell{max-width:1080px;margin:0 auto;padding:20px 16px calc(var(--dock-h) + 48px)}
 
+
+/* BUY GOLDS BUTTON EMPHASIS */
+.nav-chip.nav-chip-gold{
+  background: linear-gradient(180deg,#f0d78a,#c9a24a)!important;
+  color:#1a1408!important;
+  border:1px solid rgba(255,220,120,.55)!important;
+  box-shadow:0 6px 18px rgba(201,162,74,.35)!important;
+  font-weight:800!important;
+  min-width:auto;
+  padding:8px 14px!important;
+}
+.nav-chip.nav-chip-gold em{color:#1a1408!important;font-style:normal;font-weight:800;letter-spacing:.2px}
+.nav-chip.nav-chip-gold:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.nav-chip.nav-chip-gold span{font-size:16px}
 /* ===== BUTTONS ===== */
 .btn{
   border:0;border-radius:12px;padding:13px 18px;font:inherit;font-weight:700;font-size:13px;
@@ -2238,8 +2252,8 @@ footer{ position:relative; z-index:1 !important; padding-bottom:calc(84px + env(
     <button type="button" class="nav-chip" id="navBolsaBtn" title="Trader Desk" aria-label="Abrir Trader">
       <span aria-hidden="true">📈</span><em>Trader</em>
     </button>
-    <button type="button" class="nav-chip nav-chip-gold" id="navBuyGolds" title="Comprar Golds via PIX" aria-label="Comprar Golds">
-      <span aria-hidden="true">✦</span><em>Buy</em>
+    <button type="button" class="nav-chip nav-chip-gold" id="navBuyGolds" title="Comprar Golds via PIX — R$ 1 = 1.000.000 Golds" aria-label="Comprar Golds">
+      <span aria-hidden="true">💰</span><em>Comprar Golds</em>
     </button>
     <a href="golds.html#conquistas" id="navCq" class="hide">Conquistas</a>
     <div class="nav-divider hide" id="navLoggedOnly"></div>
