@@ -9643,23 +9643,24 @@ function cfgPainelObterGrupoSelecionado() {
 
 async function cfgPainelCarregarGrupos() {
     const carregamento = ++fz31CarregamentoId;
-    fz31AvisarPermissao('loading', 'Localizando seus grupos', 'Buscando os grupos da Fabi e conferindo seu acesso de maneira segura.');
+    fz31AvisarPermissao('loading', 'Carregando seus grupos', 'Confirmando permissões com a robô…');
     fz34AtualizarConferencia(0);
     fz34MostrarCarregamentoPermissoes();
     try {
-        const resp = await fetch(apiProxyUrl('/grupos.json'), {cache:'no-store'});
-        if (!resp.ok) throw new Error('Não foi possível carregar o catálogo de grupos (HTTP '+resp.status+').');
-        let lista = await resp.json();
-        if (!Array.isArray(lista)) lista = [];
-        if (carregamento!==fz31CarregamentoId)return;
-        cfgGruposOriginais = lista;
-        cfgGruposAdmin = [];
+        // Token + catálogo + permissões em paralelo (antes era serial e lento)
+        const tokenP = fz33AssegurarGrupoToken().catch(() => false);
+        const catalogoP = fetch(apiProxyUrl('/grupos.json'), {cache:'no-store'}).then(async r => {
+            if (!r.ok) throw new Error('Catálogo indisponível (HTTP ' + r.status + ')');
+            const j = await r.json();
+            return Array.isArray(j) ? j : [];
+        }).catch(() => []);
+        await tokenP;
+        if (carregamento !== fz31CarregamentoId) return;
         fz34AtualizarConferencia(1);
-        fz31AvisarPermissao('loading','Verificando a conta','Validando sua conta com segurança, sem pedir login novamente.');
-        await fz33AssegurarGrupoToken();
-        fz34AtualizarConferencia(2);
-        fz31AvisarPermissao('loading','Encontrando suas robôs administradoras','Verificando os grupos em que suas sessões conectadas podem configurar recursos.');
         const avisoTempoDeLogin = fz31TokenTemporarioExpirou();
+        fz31AvisarPermissao('loading','Confirmando administração','Verificando em quais grupos sua sessão pode configurar.');
+        fz34AtualizarConferencia(2);
+        let lista = [];
         try {
             let respPerm = await fetch(apiProxyUrl('/api/grupos/permissoes-conta'), {
                 method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
@@ -9672,6 +9673,10 @@ async function cfgPainelCarregarGrupos() {
                 });
             }
             const perm = await respPerm.json().catch(()=>({}));
+            lista = await catalogoP;
+            if (carregamento!==fz31CarregamentoId)return;
+            cfgGruposOriginais = lista;
+            cfgGruposAdmin = [];
             if(carregamento!==fz31CarregamentoId)return;
             if (!respPerm.ok || !perm.success) {
                 const err = new Error(perm.message || 'Não foi possível verificar a autorização.');
@@ -9683,17 +9688,24 @@ async function cfgPainelCarregarGrupos() {
             const gruposApi = Array.isArray(perm.grupos) ? perm.grupos : [];
             cfgGruposAdmin = gruposApi.filter(g => {
                 if (!g) return false;
-                if (g.fontePermissao === 'robo-admin') return true;
+                const fonte = String(g.fontePermissao || '');
+                // Aceita qualquer confirmação válida de acesso
+                if (fonte === 'robo-admin' || fonte === 'robo-presente' || fonte === 'admin-pessoal') return true;
                 if (g.botPresente === true) return true;
-                // fallback: se veio sessaoAdmin da consulta live, a robô está no grupo
                 if (g.sessaoAdmin || g.sessao) return true;
-                return false;
+                // Último recurso: grupo com ID válido retornado pela API de permissões
+                const gid = String(g.grupoID || g.groupId || g.id || '');
+                return /@g\.us$/.test(gid);
             });
             // V29 preservada: grupos exclusivos da robô podem não estar no catálogo.
             const existentes = new Set(lista.map(g => String(g.grupoID || g.groupId || g.id || '')));
             for (const g of cfgGruposAdmin) {
                 const gid=String(g.grupoID || g.groupId || g.id || '');
                 if(gid && !existentes.has(gid)){cfgGruposOriginais.push(g);existentes.add(gid);}
+            }
+            if (!cfgGruposAdmin.length && gruposApi.length) {
+                // Nunca zerar a lista se a API devolveu grupos
+                cfgGruposAdmin = gruposApi.filter(Boolean);
             }
             fz31UltimaConsultaPermissoes=Date.now();
             if(cfgGruposAdmin.length){fz31AvisarPermissao('ready');}
@@ -9717,9 +9729,18 @@ async function cfgPainelCarregarGrupos() {
         if(fz31EstadoPermissoes==='ready'){
             if(fz30GrupoDaUrl())fz30RestaurarAtalho();
             else {
-                fz30RenderAtalho(cfgPainelObterGrupoSelecionado());
-                // Revalidar a seleção depois de receber as permissões reais.
-                if(cfgPainelObterGrupoSelecionado())cfgVerificarAdmin();
+                const salvo = cfgPainelObterGrupoSelecionado();
+                fz30RenderAtalho(salvo);
+                // Reabre automaticamente as configurações do grupo selecionado (reload / voltar na aba)
+                if (salvo && fz30GrupoAutorizado(salvo)) {
+                    const card = document.querySelector('.fz-cfg-group-card[data-grupo-id="' + CSS.escape(salvo) + '"]')
+                      || document.querySelector('[data-grupo-id="' + CSS.escape(salvo) + '"]');
+                    if (card) card.classList.add('selected', 'ativo', 'is-selected');
+                    cfgVerificarAdmin();
+                    try { fz30RolarConfig(false); } catch(_) {}
+                } else if (salvo) {
+                    cfgVerificarAdmin();
+                }
             }
         } else {
             const box=document.getElementById('fz30AcessoGrupo');if(box)box.hidden=true;
@@ -10031,50 +10052,69 @@ async function g1SalvarEstados() {
   css.textContent = '.fabi-pokeauto-hint{display:block;margin:7px 0 10px;font-size:11px;line-height:1.5;color:#7dd3af;font-weight:600}#group-pokemonAuto{border-color:rgba(16,185,129,.28);background:linear-gradient(135deg,rgba(16,185,129,.07),rgba(59,130,246,.03))}body.light-mode .fabi-pokeauto-hint{color:#047857}';
   document.head.appendChild(css);
 })();
-// Feedback visual ao ativar/desativar cada configuração
+// Feedback visual otimista ao ativar/desativar (igual Pro e Free)
+function cfgToastRapido(icon, title) {
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1400, timerProgressBar: true,
+            icon: icon || 'success', title: title || '' });
+    } else if (typeof toastr !== 'undefined') {
+        (icon === 'error' ? toastr.error : toastr.success)(title || '');
+    }
+}
 function cfgPainelIniciarListeners() {
     document.querySelectorAll('#configForm .config-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', async function () {
+        if (checkbox.dataset.cfgBound === '1') return;
+        checkbox.dataset.cfgBound = '1';
+        checkbox.addEventListener('change', function () {
             const configName = this.dataset.configName;
             if (this.disabled || (cfgPlanoAtualV55==='free' && !CFG_FREE_V55.has(configName))) {
-                this.checked=false;return;
+                this.checked = false;
+                return;
             }
-            const friendlyName = this.dataset.friendlyName;
+            const friendlyName = this.dataset.friendlyName || configName;
             const isChecked = this.checked;
             const grupoID = cfgPainelObterGrupoSelecionado();
-
-            const statusSpan = document.getElementById(`status-${configName}`);
-            if (statusSpan) {
-                statusSpan.textContent = isChecked ? 'Ativo' : 'Inativo';
-                statusSpan.className = `fz-cfg-status ${isChecked ? 'on' : 'off'}`;
+            if (!grupoID) {
+                this.checked = !isChecked;
+                cfgToastRapido('error', 'Selecione um grupo primeiro');
+                return;
             }
 
-            await fz33AssegurarGrupoToken();
+            const statusSpan = document.getElementById('status-' + configName);
+            if (statusSpan) {
+                statusSpan.textContent = isChecked ? 'Ativo' : 'Inativo';
+                statusSpan.className = 'fz-cfg-status ' + (isChecked ? 'on' : 'off');
+            }
+            // Feedback IMEDIATO (não espera a rede)
+            cfgToastRapido('success', friendlyName + ': ' + (isChecked ? 'ativado' : 'desativado'));
+
             const authBody = (typeof cfgAuthBody === 'function') ? (cfgAuthBody() || {}) : {};
             const metaG = (cfgGruposAdmin || []).find(g => String(g.grupoID || g.groupId || g.id || '') === String(grupoID)) || {};
             const sessaoCfg = String(metaG.sessaoAdmin || metaG.sessao || metaG.session || '').replace(/\D/g, '');
-            fabiApiFetch('/alterarConfig', {
-                method: 'POST',
-                body: {
-                  grupoID,
-                  [configName]: isChecked ? 'on' : 'off',
-                  sessao: sessaoCfg || undefined,
-                  ...authBody
-                }
-            })
-            .then(({ resp, data }) => {
+
+            // Token em background: se já for válido, não bloqueia o save
+            const savePromise = (async () => {
+                try { await Promise.race([fz33AssegurarGrupoToken(), new Promise(r => setTimeout(r, 400))]); } catch (_) {}
+                return fabiApiFetch('/alterarConfig', {
+                    method: 'POST',
+                    body: {
+                        grupoID,
+                        [configName]: isChecked ? 'on' : 'off',
+                        sessao: sessaoCfg || undefined,
+                        ...authBody
+                    }
+                });
+            })();
+
+            savePromise.then(({ resp, data }) => {
                 if (!resp.ok || !data.success) throw new Error(data.message || ('Falha ao salvar (' + resp.status + ')'));
-                if (typeof Swal !== 'undefined') Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000,
-                    icon: 'success', title: `${friendlyName}: ${isChecked ? 'ativado' : 'desativado'}` });
-                else if (typeof toastr !== 'undefined') toastr.success(`${friendlyName}: ${isChecked ? 'ativado' : 'desativado'}`);
-            })
-            .catch((e) => {
+            }).catch((e) => {
                 this.checked = !isChecked;
-                if (statusSpan) { statusSpan.textContent = this.checked ? 'Ativo' : 'Inativo'; statusSpan.className = `fz-cfg-status ${this.checked ? 'on' : 'off'}`; }
-                const msg = e && e.message ? e.message : 'Falha ao salvar configuração.';
-                if (typeof Swal !== 'undefined') Swal.fire('Erro', msg, 'error');
-                else if (typeof toastr !== 'undefined') toastr.error(msg);
-                else alert(msg);
+                if (statusSpan) {
+                    statusSpan.textContent = this.checked ? 'Ativo' : 'Inativo';
+                    statusSpan.className = 'fz-cfg-status ' + (this.checked ? 'on' : 'off');
+                }
+                cfgToastRapido('error', (e && e.message) ? e.message : 'Falha ao salvar configuração');
             });
         });
     });
@@ -10084,12 +10124,21 @@ function cfgPainelIniciarListeners() {
 function inicializarPainelConfiguracao() {
     cfgPainelJaInicializado = true;
     if(fz30GrupoDaUrl()) {
-      // Esconde a configuração salva anteriormente até a API validar o grupo do link.
+      // Link direto ?grupo=... prevalece sobre a seleção anterior
       const area=document.getElementById('areaAdmin'); if(area)area.style.display='none';
       try { localStorage.removeItem('grupoSelecionadoAdmin'); } catch(_) {}
+    } else {
+      // Mantém o último grupo e já prepara a área (abre de fato após permissões)
+      const salvo = cfgPainelObterGrupoSelecionado();
+      if (salvo) {
+        const aviso = document.getElementById('fzCfgNaoAdmin');
+        if (aviso) {
+          aviso.style.display = 'block';
+          aviso.innerHTML = '<i class="fas fa-spinner fa-spin"></i><p>Reabrindo as configurações do grupo selecionado…</p>';
+        }
+      }
     }
     cfgPainelCarregarGrupos();
-    // cfgVerificarAdmin deve rodar apenas após a lista autorizada chegar do servidor.
     g1AtualizarContador();
 }
 
@@ -10161,23 +10210,22 @@ async function cfgVerificarAdmin() {
 // 🔥 CARREGAR PAINEL DE ATIVIDADE SE FOR ADMIN
 // Dentro do if (cfgIsAdmin), após setTimeout:
 if (cfgIsAdmin) {
-    console.log('✅ Usuário é admin, carregando painel de atividade para:', grupoSelecionado);
+    // Painéis secundários em background (não atrasam os toggles)
     setTimeout(() => {
-        carregarPainelAtividade(grupoSelecionado);
-        carregarHorarioGrupo(grupoSelecionado);
-        iniciarAtualizacaoStatus();
-        if (typeof fzCarregarPalavras === 'function') fzCarregarPalavras(grupoSelecionado);
-    }, 500);
+        try { carregarPainelAtividade(grupoSelecionado); } catch(_) {}
+        try { carregarHorarioGrupo(grupoSelecionado); } catch(_) {}
+        try { iniciarAtualizacaoStatus(); } catch(_) {}
+        try { if (typeof fzCarregarPalavras === 'function') fzCarregarPalavras(grupoSelecionado); } catch(_) {}
+    }, 50);
 } else {
         console.log('❌ Usuário NÃO é admin do grupo selecionado');
     }
     
-    // Mostrar o nome do grupo selecionado no topo do formulário
+    // Nome do grupo sem nova requisição (usa listas já em memória)
     const tituloForm = document.querySelector('.fz-cfg-form-card h3');
     if (tituloForm && cfgIsAdmin) {
         try {
-            const resp2 = await fetch(apiProxyUrl('/grupos.json'));
-            const dados2 = await resp2.json();
+            const dados2 = Array.isArray(cfgGruposOriginais) && cfgGruposOriginais.length ? cfgGruposOriginais : (cfgGruposAdmin || []);
             const g = dados2.find(g => g.grupoID === grupoSelecionado);
             const nomeGrupo = g?.nome || grupoSelecionado;
             let badge = document.getElementById('nomeGrupoAtual');
