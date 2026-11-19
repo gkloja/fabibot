@@ -8985,7 +8985,7 @@ body.light-mode .fz34-community-meta{color:#395950}body.light-mode .fz34-check-s
 let cfgGruposOriginais = [];   // lista completa da API
 let cfgGruposAdmin = [];       // só onde o número logado é admin
 let cfgPlanoAtualV55 = 'pro';
-const CFG_FREE_V55 = new Set(['sistemGold','antinotas','x9','soinsta','soadm','visuUnica','soinstaface','antistatus','antiimg','antivideo','antiaudio','antisticker','antidoc','antictt','antiloc','antilinkgp','level','antilinkhard','antifake','antispam','nsfw']);
+const CFG_FREE_V55 = new Set(['sistemGold','antinotas','x9','soinsta','soadm','visuUnica','soinstaface','antistatus','antiimg','antivideo','antiaudio','antisticker','antidoc','antictt','antiloc','antilinkgp','level','antilinkhard','antifake','antispam','nsfw','autosticker']);
 let cfgGruposFiltrados = [];
 let cfgPaginaAtual = 1;
 let cfgFiltroAtual = 'todos';  // 'todos' | 'admin'
@@ -9400,10 +9400,10 @@ async function cfgCarregarConfigGrupo(grupoID) {
     if (auth.fabiGrupoToken) qs.set('fabiGrupoToken', auth.fabiGrupoToken);
     if (auth.contaNumero) qs.set('numero', auth.contaNumero);
     if (auth.nome || auth.nomeConta) qs.set('nome', auth.nome || auth.nomeConta);
-    const url = API_URL + "/api/grupo-config/" + encodeURIComponent(grupoID) + (qs.toString() ? ('?' + qs.toString()) : '');
-    const resp = await fetch(url, {
+    const pathCfg = "/api/grupo-config/" + encodeURIComponent(grupoID) + (qs.toString() ? ('?' + qs.toString()) : '');
+    const { resp, data } = await fabiApiFetch(pathCfg, {
       cache: 'no-store',
-      credentials: 'include',
+      credentials: 'omit',
       headers: {
         'X-Fabi-Grupo-Token': auth.fabiGrupoToken || '',
         'X-User-Numero': auth.contaNumero || '',
@@ -9411,12 +9411,6 @@ async function cfgCarregarConfigGrupo(grupoID) {
         'X-Fabi-Sessao': sessao || ''
       }
     });
-    const rawLoad = await resp.text();
-    let data = {};
-    try { data = rawLoad ? JSON.parse(rawLoad) : {}; } catch (_) {
-      if (resp.status === 520 || String(rawLoad).includes('520')) throw new Error('Servidor temporariamente indisponível (520). Aguarde e recarregue.');
-      throw new Error('Resposta inválida ao carregar configurações.');
-    }
     if(!resp.ok||!data.success)throw new Error(data.message||'Falha ao carregar plano.');
     // Se a lista já confirmou Pro para este grupo, não travar a UI como Free residual
     let plan = data.plan;
@@ -9447,11 +9441,71 @@ async function cfgCarregarConfigGrupo(grupoID) {
   }
 }
 
-/** Monta URL do worker proxy com query string correta (encodeURIComponent). */
+/** Backend HTTP (não acessível direto do HTTPS — usa worker proxy). */
+const FABI_BACKEND_ORIGIN = 'http://br2.bronxyshost.com:4009';
+/** Worker que faz o proxy HTTPS → HTTP (evita mixed content). */
+const FABI_PROXY_BASE = 'https://orange-hill-2e61.gbscabral15.workers.dev/br2.bronxyshost.com:4009/proxy';
+
+/**
+ * Monta URL do worker proxy com encodeURIComponent completo.
+ * NUNCA concatene path em API_URL com "?" extra — quebra o querystring do proxy.
+ * Exemplos:
+ *   apiProxyUrl('/alterarConfig')
+ *   apiProxyUrl('/api/grupo-config/' + encodeURIComponent(id) + '?sessao=1')
+ */
 function apiProxyUrl(pathAndQuery) {
-  const origin = 'http://br2.bronxyshost.com:4009';
-  const p = pathAndQuery.startsWith('/') ? pathAndQuery : '/' + pathAndQuery;
-  return 'https://orange-hill-2e61.gbscabral15.workers.dev/br2.bronxyshost.com:4009/proxy?url=' + encodeURIComponent(origin + p);
+  const origin = (typeof FABI_BACKEND_ORIGIN !== 'undefined' && FABI_BACKEND_ORIGIN)
+    ? FABI_BACKEND_ORIGIN
+    : 'http://br2.bronxyshost.com:4009';
+  let p = String(pathAndQuery || '/');
+  if (!p.startsWith('/')) p = '/' + p;
+  // Se alguém passar URL absoluta do backend, extrai só path+query
+  if (/^https?:\/\//i.test(p)) {
+    try {
+      const u = new URL(p);
+      p = u.pathname + u.search;
+    } catch (_) {}
+  }
+  const base = (typeof FABI_PROXY_BASE !== 'undefined' && FABI_PROXY_BASE)
+    ? FABI_PROXY_BASE
+    : 'https://orange-hill-2e61.gbscabral15.workers.dev/br2.bronxyshost.com:4009/proxy';
+  return base + '?url=' + encodeURIComponent(origin.replace(/\/$/, '') + p);
+}
+
+/** fetch JSON via proxy com tratamento de 520 / HTML de erro. */
+async function fabiApiFetch(pathAndQuery, options) {
+  const opts = Object.assign({ method: 'GET', headers: {} }, options || {});
+  opts.headers = Object.assign({
+    'Accept': 'application/json'
+  }, opts.headers || {});
+  if (opts.body && typeof opts.body === 'object' && !(opts.body instanceof FormData) && !(opts.body instanceof Blob)) {
+    opts.headers['Content-Type'] = opts.headers['Content-Type'] || 'application/json';
+    opts.body = JSON.stringify(opts.body);
+  }
+  const url = apiProxyUrl(pathAndQuery);
+  let resp;
+  try {
+    resp = await fetch(url, opts);
+  } catch (netErr) {
+    const e = new Error('Falha de rede no proxy. Verifique se o backend está online.');
+    e.cause = netErr;
+    throw e;
+  }
+  const raw = await resp.text();
+  let data = null;
+  try {
+    data = raw ? JSON.parse(raw) : {};
+  } catch (_) {
+    const low = String(raw || '').toLowerCase();
+    if (resp.status === 520 || low.includes('error code: 520') || low.includes('520')) {
+      throw new Error('Servidor temporariamente indisponível (520 via proxy). Aguarde 10–20s e tente de novo.');
+    }
+    if (resp.status >= 500) {
+      throw new Error('Servidor com falha (' + resp.status + ') no proxy. Tente novamente.');
+    }
+    throw new Error('Resposta inválida do proxy (não é JSON). Status ' + resp.status);
+  }
+  return { resp, data, raw, ok: resp.ok && !!(data && (data.success !== false || resp.status < 400)) };
 }
 
 function cfgAuthBody() {
@@ -9483,25 +9537,16 @@ async function cfgSalvarTodas() {
   try {
     await fz33AssegurarGrupoToken();
     body.fabiGrupoToken = sessionStorage.getItem('fabi_group_token') || '';
-    const resp = await fetch(API_URL + "/alterarConfig", {
-      method: "POST",
+    const { resp, data } = await fabiApiFetch('/alterarConfig', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-User-Numero": body.contaNumero || "",
-        "X-User-Nome": body.nome || body.nomeConta || ""
+        'X-User-Numero': body.contaNumero || '',
+        'X-User-Nome': body.nome || body.nomeConta || ''
       },
-      body: JSON.stringify(body)
+      body: body
     });
-    const raw = await resp.text();
-    let data = {};
-    try { data = raw ? JSON.parse(raw) : {}; } catch (_) {
-      data = { success: false, message: (resp.status === 520 || String(raw).includes('520'))
-        ? 'Servidor temporariamente indisponível (520). Aguarde e tente de novo.'
-        : 'Resposta inválida do servidor.' };
-    }
     if (typeof Swal !== "undefined") {
-      Swal.fire({ icon: data.success ? "success" : "error", title: data.message || (data.success ? "Salvo" : "Erro"), timer: data.success ? 2000 : 4000, showConfirmButton: !data.success });
+      Swal.fire({ icon: (resp.ok && data.success) ? "success" : "error", title: data.message || ((resp.ok && data.success) ? "Salvo" : "Erro"), timer: (resp.ok && data.success) ? 2000 : 4000, showConfirmButton: !(resp.ok && data.success) });
     }
   } catch (e) {
     if (typeof Swal !== "undefined") Swal.fire("Erro", (e && e.message) || "Falha ao salvar.", "error");
@@ -9602,7 +9647,7 @@ async function cfgPainelCarregarGrupos() {
     fz34AtualizarConferencia(0);
     fz34MostrarCarregamentoPermissoes();
     try {
-        const resp = await fetch(API_URL + '/grupos.json', {cache:'no-store'});
+        const resp = await fetch(apiProxyUrl('/grupos.json'), {cache:'no-store'});
         if (!resp.ok) throw new Error('Não foi possível carregar o catálogo de grupos (HTTP '+resp.status+').');
         let lista = await resp.json();
         if (!Array.isArray(lista)) lista = [];
@@ -9616,12 +9661,12 @@ async function cfgPainelCarregarGrupos() {
         fz31AvisarPermissao('loading','Encontrando suas robôs administradoras','Verificando os grupos em que suas sessões conectadas podem configurar recursos.');
         const avisoTempoDeLogin = fz31TokenTemporarioExpirou();
         try {
-            let respPerm = await fetch(API_URL + '/api/grupos/permissoes-conta', {
+            let respPerm = await fetch(apiProxyUrl('/api/grupos/permissoes-conta'), {
                 method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
                 body: JSON.stringify(cfgAuthBody())
             });
             if(respPerm.status===401 && await fz33AssegurarGrupoToken(true)){
-                respPerm=await fetch(API_URL + '/api/grupos/permissoes-conta', {
+                respPerm=await fetch(apiProxyUrl('/api/grupos/permissoes-conta'), {
                     method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
                     body:JSON.stringify(cfgAuthBody())
                 });
@@ -9955,7 +10000,7 @@ async function g1SalvarEstados() {
     try {
         await fz33AssegurarGrupoToken();
         const auth = (typeof cfgAuthBody === 'function') ? cfgAuthBody() : {};
-        const resp = await fetch(API_URL + '/alterarEstadosG1', {
+        const resp = await fetch(apiProxyUrl('/alterarEstadosG1'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -10008,31 +10053,17 @@ function cfgPainelIniciarListeners() {
             const authBody = (typeof cfgAuthBody === 'function') ? (cfgAuthBody() || {}) : {};
             const metaG = (cfgGruposAdmin || []).find(g => String(g.grupoID || g.groupId || g.id || '') === String(grupoID)) || {};
             const sessaoCfg = String(metaG.sessaoAdmin || metaG.sessao || metaG.session || '').replace(/\D/g, '');
-            fetch(API_URL + '/alterarConfig', {
+            fabiApiFetch('/alterarConfig', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({
+                body: {
                   grupoID,
                   [configName]: isChecked ? 'on' : 'off',
                   sessao: sessaoCfg || undefined,
                   ...authBody
-                })
-            })
-            .then(async r => {
-                const raw = await r.text();
-                let data = {};
-                try { data = raw ? JSON.parse(raw) : {}; } catch (_) {
-                  const low = String(raw || '').toLowerCase();
-                  if (r.status === 520 || low.includes('error code: 520') || low.includes('520')) {
-                    throw new Error('Servidor temporariamente indisponível (520). Aguarde 10–20s e tente de novo.');
-                  }
-                  if (r.status >= 500) throw new Error('Servidor com falha (' + r.status + '). Tente novamente em instantes.');
-                  throw new Error('Resposta inválida do servidor. Recarregue a página e tente outra vez.');
                 }
-                if (!r.ok || !data.success) throw new Error(data.message || ('Falha ao salvar (' + r.status + ')'));
-                return data;
             })
-            .then((data) => {
+            .then(({ resp, data }) => {
+                if (!resp.ok || !data.success) throw new Error(data.message || ('Falha ao salvar (' + resp.status + ')'));
                 if (typeof Swal !== 'undefined') Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000,
                     icon: 'success', title: `${friendlyName}: ${isChecked ? 'ativado' : 'desativado'}` });
                 else if (typeof toastr !== 'undefined') toastr.success(`${friendlyName}: ${isChecked ? 'ativado' : 'desativado'}`);
@@ -10145,7 +10176,7 @@ if (cfgIsAdmin) {
     const tituloForm = document.querySelector('.fz-cfg-form-card h3');
     if (tituloForm && cfgIsAdmin) {
         try {
-            const resp2 = await fetch(API_URL + "/grupos.json");
+            const resp2 = await fetch(apiProxyUrl('/grupos.json'));
             const dados2 = await resp2.json();
             const g = dados2.find(g => g.grupoID === grupoSelecionado);
             const nomeGrupo = g?.nome || grupoSelecionado;
@@ -10802,7 +10833,7 @@ async function carregarPainelAtividade(grupoId) {
                 console.log('🔍 Grupo não encontrado no countmsg.json, tentando buscar por nome...');
                 // Buscar o nome do grupo no grupos.json
                 try {
-                    const respGrupos = await fetch(API_URL + "/grupos.json");
+                    const respGrupos = await fetch(apiProxyUrl('/grupos.json'));
                     const grupos = await respGrupos.json();
                     const grupoInfo = grupos.find(g => 
                         String(g.grupoID || g.id || g.groupId || "") === String(grupoId) ||
