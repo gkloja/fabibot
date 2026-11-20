@@ -3925,126 +3925,78 @@ async function fabi57TokenFree(){
 }
 
 async function criarNovaSessao() {
+    const btn = $('#btnCriarSessao');
+    if (btn.data('fabi-busy')) return;
     const modo=fabi57Modo();
     if (modo==='pro' && Number((window.fabiConnectState && window.fabiConnectState.sessoes) || 0) < 1) {
         $('#novaSessaoModal').modal('hide');
         fabiAbrirSemPlanoModal('Seu plano atual não possui sessão disponível para criar uma nova conexão. Escolha um plano e tente novamente.');
         return;
     }
-    const numero = $('#inputNumero').val();
-    const nome = $('#inputNome').val() || numero;
+    const numero = String($('#inputNumero').val() || '').trim();
+    const nome = String($('#inputNome').val() || numero).trim();
     const modoPrivado = $('#modoPrivado') ? $('#modoPrivado').is(':checked') : false;
-    
-    if (!numero || !numero.match(/^[0-9]{10,13}$/)) {
-        toastr.error('Número inválido. Digite um número válido (10-13 dígitos).', 'Erro');
-        return;
+    if (!/^[0-9]{10,13}$/.test(numero)) {
+        toastr.error('Número inválido. Digite um número válido (10-13 dígitos).', 'Erro'); return;
     }
-    
     let tokenFree='';
     if(modo==='free'){
       tokenFree=await fabi57TokenFree();
       if(!tokenFree){toastr.warning('Para sua segurança, faça login novamente para autorizar a sessão gratuita.');location.href='/login?redirect=conectar';return;}
     }
+    btn.data('fabi-busy',true).prop('disabled',true).html('<span class="loading"></span> Criando...');
     $('#resultadoCriacao').show();
-    $('#btnCriarSessao').prop('disabled', true).html('<span class="loading"></span> Criando...');
-
-    fetch(apiUrl(modo==='free'?'/api/sessoes/nova-free':'/api/sessoes/nova'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ numero, nome, modoPrivado:modo==='pro'&&modoPrivado,
-          ...authBodyFields(), ...(modo==='free'?{fabiGrupoToken:tokenFree}:{}) })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Se modo privado foi ativado, configura
-            if (modoPrivado && data.botJid && typeof ativarModoPrivado === 'function') {
-                ativarModoPrivado(data.botJid);
-            }
-            
-            $('#mensagemStatus').html('<i class="fas fa-check-circle text-success"></i> Sessão criada! Buscando código...');
-            $('#detalhesResultado').html(`
-                <div class="alert alert-success">
-                    <strong>Sessão:</strong> ${data.session}<br>
-                    <strong>Status:</strong> ${data.message}
-                </div>
-                <div class="text-center">
-                    <div class="loading mx-auto"></div>
-                    <p class="mt-2">Aguardando código de pareamento...</p>
-                </div>
-            `);
-            
-            // Fecha o modal de criação após 1 segundo
-            setTimeout(() => {
-                $('#novaSessaoModal').modal('hide');
-            }, 1000);
-            
-            // Busca o código automaticamente
-            buscarMostrarCodigoImediato(data.session);
-            
-            // REMOVI O location.reload() QUE ESTAVA FECHANDO O MODAL!
-            // Apenas atualiza a lista de sessões sem recarregar a página
-            setTimeout(() => {
-                atualizarTodasEstatisticas();
-                carregarDadosAtualizados();
-            }, 3000);
-            
-        } else {
-            const mensagemErro = String(data.message || 'Erro ao criar sessão');
-            $('#mensagemStatus').html(`<i class="fas fa-times-circle text-danger"></i> ${mensagemErro}`);
-            $('#btnCriarSessao').prop('disabled', false).text(modo==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
-            if (modo==='pro' && /sess|plano|limite|saldo/i.test(mensagemErro)) {
-                setTimeout(() => {
-                    $('#novaSessaoModal').modal('hide');
-                    fabiAbrirSemPlanoModal('No momento sua conta não pode abrir uma nova sessão. Escolha um plano para liberar a conexão e tente de novo.');
-                }, 450);
-            }
-            setTimeout(() => {
-                $('#resultadoCriacao').hide();
-                $('#mensagemStatus').text('Criando sessão...');
-            }, 3000);
-        }
-    })
-    .catch(error => {
-        console.error('Erro:', error);
-        $('#mensagemStatus').html('<i class="fas fa-times-circle text-danger"></i> Erro de comunicação com o servidor');
-        $('#btnCriarSessao').prop('disabled', false).text(modo==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
-        setTimeout(() => {
-            $('#resultadoCriacao').hide();
-            $('#mensagemStatus').text('Criando sessão...');
-        }, 3000);
-        if (typeof verificarErroRede === 'function') verificarErroRede(error);
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(()=>controller.abort(), 25000);
+    try {
+      const response = await fetch(apiUrl(modo==='free'?'/api/sessoes/nova-free':'/api/sessoes/nova'), {
+        method:'POST', headers:{'Content-Type':'application/json'}, signal:controller.signal,
+        body:JSON.stringify({numero,nome,modoPrivado:modo==='pro'&&modoPrivado,...authBodyFields(),...(modo==='free'?{fabiGrupoToken:tokenFree}:{})})
+      });
+      const data=await response.json().catch(()=>({success:false,message:'Resposta inválida do servidor'}));
+      if(!response.ok || !data.success) throw new Error(data.message||data.error||('HTTP '+response.status));
+      if(modoPrivado&&data.botJid&&typeof ativarModoPrivado==='function') ativarModoPrivado(data.botJid);
+      $('#mensagemStatus').html('<i class="fas fa-check-circle text-success"></i> Sessão criada! Buscando código...');
+      $('#detalhesResultado').html(`<div class="alert alert-success"><strong>Sessão:</strong> ${String(data.session||'').replace(/[<>]/g,'')}<br><strong>Status:</strong> ${String(data.message||'Criada').replace(/[<>]/g,'')}</div><div class="text-center"><div class="loading mx-auto"></div><p class="mt-2">Aguardando código de pareamento...</p></div>`);
+      setTimeout(()=>$('#novaSessaoModal').modal('hide'),800);
+      buscarMostrarCodigoImediato(data.session);
+      setTimeout(()=>{try{atualizarTodasEstatisticas();carregarDadosAtualizados();}catch(e){console.warn('Atualização do painel:',e);}},2500);
+    } catch(error) {
+      console.error('Erro ao criar sessão:',error);
+      const msg=error.name==='AbortError'?'O servidor demorou demais para responder. Verifique o status antes de tentar novamente.':(error.message||'Falha de comunicação com o servidor');
+      $('#mensagemStatus').html('<i class="fas fa-times-circle text-danger"></i> '+msg.replace(/[<>]/g,''));
+      btn.prop('disabled',false).text(modo==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
+      if(typeof verificarErroRede==='function') verificarErroRede(error);
+    } finally {
+      clearTimeout(timeoutId); btn.data('fabi-busy',false);
+      if(!btn.prop('disabled')) return;
+      // Keep disabled only while the pairing-flow is underway; reset in the poller.
+    }
 }
 
-// Função para buscar o código automaticamente após criar a sessão
-function buscarMostrarCodigoImediato(sessionName) {
-    let tentativas = 0;
-    const maxTentativas = 35; // 35 * 2 segundos = 70 segundos
-    
+// Poll sequencial: não cria requisições concorrentes nem timer persistente.
+async function buscarMostrarCodigoImediato(sessionName) {
+    if (!sessionName) return;
     toastr.info('Gerando código de conexão...', 'Aguarde');
-    
-    const buscarInterval = setInterval(() => {
-        tentativas++;
-        
-        fetch(apiUrl(`/api/sessoes/${sessionName}/status`))
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.pairing && data.pairing.code) {
-                    clearInterval(buscarInterval);
-                    mostrarCodigoImediato(data.pairing.code, sessionName);
-                } else if (tentativas >= maxTentativas) {
-                    clearInterval(buscarInterval);
-                    toastr.warning('Tempo limite excedido. Clique em "Verificar" na sessão para obter o código.', 'Atenção');
-                }
-            })
-            .catch(() => {
-                if (tentativas >= maxTentativas) {
-                    clearInterval(buscarInterval);
-                    toastr.error('Erro ao buscar código. Tente clicar em "Verificar" na sessão.');
-                }
-            });
-    }, 2000); // Tenta a cada 2 segundos
+    const maxTentativas=35;
+    for(let tentativa=0;tentativa<maxTentativas;tentativa++){
+      if(document.visibilityState==='hidden') await new Promise(r=>setTimeout(r,1200));
+      try{
+        const controller=new AbortController(); const timeout=setTimeout(()=>controller.abort(),9000);
+        const response=await fetch(apiUrl(`/api/sessoes/${encodeURIComponent(sessionName)}/status`),{cache:'no-store',signal:controller.signal});
+        clearTimeout(timeout);
+        const data=await response.json().catch(()=>null);
+        if(data&&data.success&&data.pairing&&data.pairing.code){
+          mostrarCodigoImediato(data.pairing.code,sessionName); const btn=$('#btnCriarSessao'); btn.prop('disabled',false).text(fabi57Modo()==='free'?'Criar Fabi Free grátis':'Criar sessão Pro'); return;
+        }
+        if(data&&['connected','open'].includes(String(data.status||'').toLowerCase())){
+          toastr.success('A sessão já está conectada!'); return;
+        }
+      }catch(e){ if(tentativa===maxTentativas-1) console.warn('Status pareamento:',e.message||e); }
+      await new Promise(r=>setTimeout(r,2000));
+    }
+    toastr.warning('Não recebemos o código a tempo. Confira o status da sessão e use Verificar para tentar novamente.','Atenção');
+    const btn=$('#btnCriarSessao'); btn.prop('disabled',false).text(fabi57Modo()==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
 }
 
 // Substitua a função mostrarCodigoImediato por esta versão
@@ -4067,7 +4019,7 @@ function mostrarCodigoImediato(codigo, sessaoNome) {
     
     // Atualiza os elementos do modal
     document.getElementById('codigoImediatoNumero').textContent = codigo;
-    document.getElementById('sessaoNomeDisplayImediato').innerHTML = `<i class="fab fa-whatsapp me-1"></i> Sessão: ${sessaoNome}`;
+    document.getElementById('sessaoNomeDisplayImediato').textContent = 'Sessão: ' + String(sessaoNome || '').replace(/[<>]/g, '');
     document.getElementById('timerContador').textContent = segundosRestantes;
     
     // Armazena o código globalmente para cópia
