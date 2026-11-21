@@ -3965,7 +3965,7 @@ async function criarNovaSessao() {
       console.error('Erro ao criar sessão:',error);
       const msg=error.name==='AbortError'?'O servidor demorou demais para responder. Verifique o status antes de tentar novamente.':(error.message||'Falha de comunicação com o servidor');
       $('#mensagemStatus').html('<i class="fas fa-times-circle text-danger"></i> '+msg.replace(/[<>]/g,''));
-      btn.prop('disabled',false).text(modo==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
+      btn.prop('disabled',false).text(fabi57Modo()==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
       if(typeof verificarErroRede==='function') verificarErroRede(error);
     } finally {
       clearTimeout(timeoutId); btn.data('fabi-busy',false);
@@ -3975,26 +3975,33 @@ async function criarNovaSessao() {
 }
 
 // Poll sequencial: não cria requisições concorrentes nem timer persistente.
+const fabiPollCodigoTokens = window.fabiPollCodigoTokens || (window.fabiPollCodigoTokens = new Map());
 async function buscarMostrarCodigoImediato(sessionName) {
     if (!sessionName) return;
+    const pollToken = Symbol(String(sessionName));
+    fabiPollCodigoTokens.set(String(sessionName), pollToken);
+    const pollingAtivo = () => fabiPollCodigoTokens.get(String(sessionName)) === pollToken;
     toastr.info('Gerando código de conexão...', 'Aguarde');
     const maxTentativas=35;
     for(let tentativa=0;tentativa<maxTentativas;tentativa++){
+      if(!pollingAtivo()) return;
       if(document.visibilityState==='hidden') await new Promise(r=>setTimeout(r,1200));
       try{
         const controller=new AbortController(); const timeout=setTimeout(()=>controller.abort(),9000);
         const response=await fetch(apiUrl(`/api/sessoes/${encodeURIComponent(sessionName)}/status`),{cache:'no-store',signal:controller.signal});
         clearTimeout(timeout);
         const data=await response.json().catch(()=>null);
+        if(!pollingAtivo()) return;
         if(data&&data.success&&data.pairing&&data.pairing.code){
           mostrarCodigoImediato(data.pairing.code,sessionName); const btn=$('#btnCriarSessao'); btn.prop('disabled',false).text(fabi57Modo()==='free'?'Criar Fabi Free grátis':'Criar sessão Pro'); return;
         }
         if(data&&['connected','open'].includes(String(data.status||'').toLowerCase())){
-          toastr.success('A sessão já está conectada!'); return;
+          toastr.success('A sessão já está conectada!'); const btn=$('#btnCriarSessao'); btn.prop('disabled',false).text(fabi57Modo()==='free'?'Criar Fabi Free grátis':'Criar sessão Pro'); return;
         }
       }catch(e){ if(tentativa===maxTentativas-1) console.warn('Status pareamento:',e.message||e); }
       await new Promise(r=>setTimeout(r,2000));
     }
+    if(!pollingAtivo()) return;
     toastr.warning('Não recebemos o código a tempo. Confira o status da sessão e use Verificar para tentar novamente.','Atenção');
     const btn=$('#btnCriarSessao'); btn.prop('disabled',false).text(fabi57Modo()==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
 }
@@ -5396,7 +5403,7 @@ $(document).ready(function() {
         $('#resultadoCriacao').hide();
         $('#mensagemStatus').text('Criando sessão...');
         $('#detalhesResultado').empty();
-        $('#btnCriarSessao').prop('disabled', false).text(modo==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
+        $('#btnCriarSessao').prop('disabled', false).text(fabi57Modo()==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
     });
     
     $('#inputNumero').keypress(function(e) { 
