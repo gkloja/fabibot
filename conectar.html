@@ -2229,6 +2229,68 @@ body.light-mode .fb59-guide{color:#fff}body.light-mode .fb59-guide-message p{col
 #fb61ProWalletActions[hidden],#fb61FreeWalletActions[hidden],#fb61WalletIntro[hidden],#fb23SaldoAviso[hidden]{display:none!important}
 body[data-fabi-plan="free"] #fb61FreeWalletActions{margin:16px 0}
 </style>
+
+<style id="fb-session-actions-v50">
+.fb-session-actions{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  align-items: center;
+}
+.fb-session-actions .btn{
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+  padding: 7px 12px !important;
+  border: none !important;
+  transition: transform .15s, filter .15s, box-shadow .15s !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+.fb-session-actions .btn:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
+.fb-btn-codigo{
+  background: linear-gradient(135deg, #25d366, #128c7e) !important;
+  color: #fff !important;
+}
+.fb-btn-aluguel{
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+  color: #fff !important;
+}
+.fb-btn-pro{
+  background: linear-gradient(135deg, #7c3aed, #6d28d9) !important;
+  color: #fff !important;
+}
+.fb-btn-verificar{
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  color: #1c1408 !important;
+}
+.fb-btn-configurar{
+  background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+  color: #fff !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 5px;
+}
+.fb-btn-danger{
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: #fff !important;
+}
+/* Dark mode refinements */
+[data-theme="dark"] .fb-session-actions .btn,
+html[data-theme="dark"] .fb-session-actions .btn,
+body.dark-mode .fb-session-actions .btn{
+  box-shadow: 0 2px 10px rgba(0,0,0,.35);
+}
+@media (max-width: 576px){
+  .fb-session-actions{ justify-content: flex-start; }
+  .fb-session-actions .btn{ flex: 1 1 calc(50% - 6px); min-width: 0; justify-content: center; }
+}
+</style>
+
 </head>
 <body>
 <!--
@@ -3592,8 +3654,8 @@ function renderizarListaSessoes(sessoes) {
         const onlineBadge = isActive ? ' <span class="badge bg-success ms-2">ONLINE</span>' : ' <span class="badge bg-secondary ms-2">OFFLINE</span>';
         const pairing = s.pairingCode || (s.pairing && s.pairing.code) || s.code || '';
         const btnCodigo = pairing
-            ? `<button class="btn btn-sm btn-success mb-1" onclick="mostrarCodigo('${pairing}', '${name}')"><i class="fas fa-qrcode"></i> Código</button>`
-            : `<button class="btn btn-sm btn-success mb-1" onclick="verificarSessao('${name}')"><i class="fas fa-qrcode"></i> Código</button>`;
+            ? `<button class="btn btn-sm fb-btn-codigo mb-1" onclick="mostrarCodigo('${pairing}', '${name}')"><i class="fas fa-qrcode"></i> Código</button>`
+            : `<button class="btn btn-sm fb-btn-codigo mb-1" onclick="verificarSessao('${name}')"><i class="fas fa-qrcode"></i> Código</button>`;
         html += `
         <div class="card session-item mb-3" id="sessao-${name}">
             <div class="card-body">
@@ -3612,16 +3674,21 @@ function renderizarListaSessoes(sessoes) {
                         </p>
                     </div>
                     <div class="col-md-6 text-end">
-                        ${btnCodigo}
-                        ${free
-                          ? `<button class="btn btn-sm btn-success mb-1" onclick="fabi58UpgradePro('${name}')"><i class="fas fa-gem"></i> Transformar em Pro</button><span class="badge bg-secondary mb-1">Sem aluguel</span>`
-                          : `<button class="btn btn-sm btn-primary mb-1" onclick="abrirAlugueisSessao('${name}')"><i class="fas fa-clock"></i> Aluguéis dos grupos</button>`}
-                        <button class="btn btn-sm btn-warning mb-1" onclick="verificarSessao('${name}')">
-                            <i class="fas fa-sync-alt"></i> Verificar
-                        </button>
-                        <button class="btn btn-sm btn-danger mb-1" onclick="deletarSessao('${name}')">
-                            <i class="fas fa-trash"></i> Deletar
-                        </button>
+                        <div class="fb-session-actions">
+                          ${btnCodigo}
+                          ${free
+                            ? `<button class="btn btn-sm fb-btn-pro mb-1" onclick="fabi58UpgradePro('${name}')"><i class="fas fa-gem"></i> Transformar em Pro</button>`
+                            : `<button class="btn btn-sm fb-btn-aluguel mb-1" onclick="abrirAlugueisSessao('${name}')"><i class="fas fa-clock"></i> Aluguéis</button>`}
+                          <button class="btn btn-sm fb-btn-verificar mb-1" onclick="verificarSessao('${name}')">
+                              <i class="fas fa-sync-alt"></i> Verificar
+                          </button>
+                          <a href="index.html?configurar" class="btn btn-sm fb-btn-configurar mb-1" title="Configurar grupos desta sessão">
+                              <i class="fas fa-sliders-h"></i> Configurar
+                          </a>
+                          <button class="btn btn-sm fb-btn-danger mb-1" onclick="deletarSessao('${name}')">
+                              <i class="fas fa-trash"></i> Deletar
+                          </button>
+                        </div>
                     </div>
                 </div>
             </div>
