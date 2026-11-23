@@ -19,9 +19,9 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.fabibot.com.br/#organizacao","name":"Fabi Bot","url":"https://www.fabibot.com.br/"},{"@type":"CollectionPage","@id":"https://www.fabibot.com.br/grupos#pagina","name":"Robô grátis para grupo de WhatsApp | Fabi Free e catálogo Fabi Grupos","url":"https://www.fabibot.com.br/grupos","inLanguage":"pt-BR","description":"Conheça a Fabi Free para moderar grupos de WhatsApp sem mensalidade e divulgue grupos e canais gratuitamente.","isPartOf":{"@id":"https://www.fabibot.com.br/#organizacao"},"about":{"@id":"https://www.fabibot.com.br/grupos#fabi-free-app"}},{"@type":"SoftwareApplication","@id":"https://www.fabibot.com.br/grupos#fabi-free-app","name":"Fabi Free","applicationCategory":"CommunicationApplication","operatingSystem":"WhatsApp","description":"Robô com recursos gratuitos de moderação para grupos de WhatsApp elegíveis, sujeito à disponibilidade.","url":"https://www.fabibot.com.br/conectar#escolher-fabi","offers":{"@type":"Offer","price":"0","priceCurrency":"BRL","description":"Plano Free sem mensalidade; sujeito a vagas e condições de uso."},"publisher":{"@id":"https://www.fabibot.com.br/#organizacao"}},{"@type":"FAQPage","@id":"https://www.fabibot.com.br/grupos#perguntas","mainEntity":[{"@type":"Question","name":"Como ter uma robô grátis no meu grupo de WhatsApp?","acceptedAnswer":{"@type":"Answer","text":"Escolha entre conectar a Fabi Free ao seu próprio número para utilizá-la em vários grupos, ou solicitar atendimento gratuito para um único grupo sem conectar seu WhatsApp. Disponibilidade e análise se aplicam."}},{"@type":"Question","name":"Divulgar grupos e canais é realmente gratuito?","acceptedAnswer":{"@type":"Answer","text":"Sim. Grupos e canais podem ser cadastrados gratuitamente e publicados após aprovação. Patrocinar para ganhar destaque é opcional."}},{"@type":"Question","name":"Posso cadastrar um canal do WhatsApp?","acceptedAnswer":{"@type":"Answer","text":"Sim. Canais podem aparecer no catálogo após revisão, mas a Fabi Free é destinada a grupos, não a canais."}},{"@type":"Question","name":"Vou receber a Fabi Free automaticamente após cadastrar meu grupo?","acceptedAnswer":{"@type":"Answer","text":"Não. O cadastro no catálogo e a conexão da Fabi Free são processos diferentes. A divulgação exige revisão e a robô depende das condições e da disponibilidade do serviço."}},{"@type":"Question","name":"O que a Fabi Free faz?","acceptedAnswer":{"@type":"Answer","text":"A Fabi Free oferece recursos básicos de moderação, como anti-anúncio, anti-pagamento, proteções contra spam e lista negra global, conforme as funções liberadas para o plano."}}]}]}</script>
   <link rel="canonical" href="https://www.fabibot.com.br/grupos">
   <link rel="icon" href="/favicon-32x32.png">
-  <link rel="stylesheet" href="/assets/fabi-grupos-v49.css?v=62">
+  <link rel="stylesheet" href="/assets/fabi-grupos-v50.css?v=70">
   <script defer src="/assets/fabi-grupos-fotos-v2.js?v=4"></script>
-  <script defer src="/assets/fabi-grupos-v49.js?v=62"></script>
+  <script defer src="/assets/fabi-grupos-v50.js?v=70"></script>
 
   <style id="fabi-free-conversion-v60">
   .free-conversion{padding:clamp(26px,4vw,60px) 0;background:linear-gradient(180deg,transparent,rgba(109,83,251,.045))}
@@ -194,10 +194,27 @@ html[data-theme="dark"] .free-choice-option .free-choice-sub,html[data-theme="da
       </div>
     </section>
     <section class="container how-section" id="como-ganhar"><div class="how-intro"><span class="eyeline">COMO TER UMA ROBÔ FREE NO WHATSAPP</span><h2>Sua comunidade cresce.<br><span>A proteção também.</span></h2><p>São dois serviços gratuitos que se complementam: a Fabi Free para ajudar a moderar seu grupo, e o catálogo Fabi Grupos para divulgar sua comunidade.</p><a class="text-link" href="#escolher-fabi-free" data-free-choice="true">Ver opções de conexão Free <span aria-hidden="true">↗</span></a></div><div class="how-steps"><div class="how-step"><span class="step-no">01</span><div><h3>Conheça o plano gratuito</h3><p>Escolha conectar a Fabi ao seu próprio número ou solicitar a robô Free para um único grupo.</p></div></div><div class="how-step"><span class="step-no">02</span><div><h3>Conecte e configure a Fabi</h3><p>Com seu próprio WhatsApp conectado, gerencie vários grupos. Sem conectar, solicite atendimento a um grupo e aguarde análise.</p></div></div><div class="how-step"><span class="step-no">03</span><div><h3>Divulgue seu grupo, se quiser</h3><p>O catálogo é opcional. O cadastro passa por análise e autorização antes de tornar o convite público.</p></div></div></div></section>
-    <section class="catalog-section" id="explorar"><div class="container">
+    
+<section class="destaques-dia" id="destaques-dia" aria-labelledby="destaquesTitle">
+  <div class="container">
+    <div class="destaques-header">
+      <span class="eyeline">🔥 IMPULSIONADOS HOJE</span>
+      <h2 id="destaquesTitle">Destaques do Dia</h2>
+      <p>Comunidades que receberam impulso aparecem aqui em evidência e também como anúncios nativos no catálogo. Mais visibilidade, mais membros.</p>
+    </div>
+    <div id="destaquesGrid" class="destaques-grid" aria-live="polite">
+      <div class="destaques-empty">Carregando destaques…</div>
+    </div>
+    <div class="destaques-cta">
+      <p>Quer seu grupo entre os Destaques do Dia?</p>
+      <button type="button" class="btn-impulse" data-modal="submit">✦ Cadastrar e impulsionar meu grupo</button>
+    </div>
+  </div>
+</section>
+<section class="catalog-section" id="explorar"><div class="container">
       <div class="catalog-title"><div><span class="eyeline">ENCONTRE SUA GALERA</span><h2>Tem um grupo <span>pra você.</span></h2><p>Comunidades de verdade para conversar, aprender e conhecer pessoas.</p></div><div class="catalog-counter"><div><strong id="totalGroups">—</strong><span>grupos disponíveis</span></div><div><strong id="totalCategories">—</strong><span>categorias</span></div></div></div>
       <div class="search-shell"><div class="main-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="Busque por jogos, estudo, amizade..." autocomplete="off" aria-label="Pesquisar grupos"></div><label class="sort-control"><span>Ordenar</span><select id="sort" aria-label="Ordenar grupos"><option value="featured">Em destaque</option><option value="recent">Mais recentes</option><option value="members">Mais membros</option><option value="name">Nome A–Z</option></select></label><button type="button" class="filter-trigger" id="mobileFilterBtn">☷ Filtros</button></div>
-      <div class="catalog-layout"><aside class="filter-panel" aria-label="Filtros do catálogo"><div class="filter-heading"><strong>Filtrar grupos</strong><button type="button" id="closeMobileFilters" aria-label="Fechar filtros">×</button></div><div class="panel-block"><label class="field-label" for="category">Categoria</label><select id="category"><option value="">Todas as categorias</option></select></div><div class="panel-block"><span class="field-label">Navegar por interesse</span><div class="chips" id="chips"><button class="chip active" data-cat="" type="button">Todos</button></div></div><div class="filter-promo"><span class="promo-symbol">✳</span><h3>Seu grupo merece destaque!</h3><p>Divulgue gratuitamente no catálogo. Para proteger sua comunidade, conheça também a Fabi Free.</p><button type="button" class="btn btn-sun" data-modal="submit">Cadastrar grátis ↗</button></div></aside>
+      <div class="catalog-layout"><aside class="filter-panel" aria-label="Filtros do catálogo"><div class="filter-heading"><strong>Filtrar grupos</strong><button type="button" id="closeMobileFilters" aria-label="Fechar filtros">×</button></div><div class="panel-block"><label class="field-label" for="category">Categoria</label><select id="category"><option value="">Todas as categorias</option></select></div><div class="panel-block"><span class="field-label">Navegar por interesse</span><div class="chips" id="chips"><button class="chip active" data-cat="" type="button">Todos</button></div></div><div class="filter-promo impulse-promo"><span class="promo-symbol">🔥</span><h3>Impulsione e entre nos Destaques!</h3><p>Cadastre grátis e, se quiser, impulsione com Pix para aparecer no topo, como anúncio e nos Destaques do Dia. Mais olhos = mais membros.</p><button type="button" class="btn btn-sun" data-modal="submit">Cadastrar / Impulsionar ↗</button></div></aside>
       <div class="catalog-content"><div class="catalog-toolbar"><div><span class="eyeline">EXPLORE GRUPOS E CANAIS</span><h3>Comunidades para descobrir</h3><p id="resultsCount">Carregando catálogo…</p></div><div class="catalog-tools"><div class="type-tabs" id="typeFilters" role="group" aria-label="Tipo de comunidade"><button type="button" class="type-tab selected" data-type="" aria-pressed="true">Todos</button><button type="button" class="type-tab" data-type="group" aria-pressed="false">👥 Grupos</button><button type="button" class="type-tab" data-type="channel" aria-pressed="false">📢 Canais</button></div><button type="button" id="favoritesFilter" class="fav-filter" aria-pressed="false"><span aria-hidden="true">♡</span> Meus favoritos <span id="favoritesCount">0</span></button></div></div><div id="groups" class="cards-grid" aria-live="polite"><div class="loading-grid"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></div><div id="pagination" class="pagination"></div></div></div>
     </div></section>
     <section class="free-section" id="fabi-free"><div class="container free-shell"><div class="free-content"><span class="free-chip">✦ FABI FREE</span><h2>Robô para grupo de WhatsApp.<br><em>Grátis de verdade.</em></h2><p>Você escolhe como usar: conecte a Fabi Free ao seu próprio número para cuidar de vários grupos, ou solicite nossa robô gratuita para um único grupo, sem conectar o seu WhatsApp. Sujeito a vagas e análise.</p><div class="feature-list"><span>✓ Anti-anúncio e anti-pagamento</span><span>✓ Anti-flood e anti-trava</span><span>✓ Lista negra global</span><span>✓ Anti-link opcional</span></div><div class="free-conversion-actions"><a class="free-conversion-primary" href="#escolher-fabi-free" data-free-choice="true">Quero escolher minha Fabi Free ↗</a><button type="button" class="free-conversion-secondary" data-modal="submit">Cadastrar grupo no catálogo</button></div><p class="free-legal">*Conexão própria: sem limite de grupos imposto pela Fabi Free, respeitando limites técnicos e regras do WhatsApp. Sem conectar: uma solicitação de grupo por responsável. Ativação conforme autorização e disponibilidade.</p></div><div class="free-graphic" aria-hidden="true"><div class="graphic-ring"><div class="graphic-center">F<span>+</span></div></div><div class="graphic-bubble bubble-a">✓ Grupo protegido</div><div class="graphic-bubble bubble-b">✳ Fabi Free</div><div class="graphic-bubble bubble-c">♡ Mais tranquilidade</div></div></div></section>
@@ -230,7 +247,13 @@ html[data-theme="dark"] .free-choice-option .free-choice-sub,html[data-theme="da
 <p class="channel-explain hidden" id="channelExplainer">📢 Canais podem ser publicados e patrocinados, mas a Fabi Free só pode ser instalada em grupos.</p><button class="btn btn-primary full" id="submitBtn" type="submit">Enviar grupo para análise ↗</button>
 </form>
 <div class="modal-form hidden" id="boostForm">
-<div class="boost-group" id="boostName"></div><p class="boost-bonus">✦ Ganhe mais visibilidade no catálogo e mantenha seu grupo ou canal em destaque pelo período escolhido.</p>
+<div class="boost-group" id="boostName"></div><p class="boost-bonus">✦ Entre nos <strong>Destaques do Dia</strong>, apareça como <strong>anúncio</strong> no catálogo e ganhe prioridade de visibilidade.</p>
+<ul class="boost-benefits">
+  <li>Posição privilegiada nos Destaques do Dia</li>
+  <li>Card com selo de anúncio / patrocinado</li>
+  <li>Mais impressões e cliques de novos membros</li>
+  <li>Qualquer pessoa pode impulsionar (não vira admin)</li>
+</ul>
 <label>Escolha o destaque<select id="boostPlan"><option value="day">24 horas · R$ 3,90</option><option value="week">7 dias · R$ 9,90</option><option value="month">30 dias · R$ 24,90</option></select></label>
 <label class="pix-payer-label">E-mail para o pagamento Pix<input id="boostPayerEmail" type="email" autocomplete="email" maxlength="150" placeholder="seuemail@exemplo.com" required><small>Solicitado pelo Mercado Pago exclusivamente para processar o Pix.</small></label>
 <p class="subtle">Qualquer pessoa pode turbinar um grupo publicado. Isso não concede administração sobre ele.</p>
@@ -372,6 +395,11 @@ html[data-theme="dark"] .pix-state{color:#5eead4}
     <p class="pix-note">O destaque é ativado automaticamente somente depois da confirmação oficial do Mercado Pago. Não é preciso enviar comprovante.</p>
   </div>
 </div>
+
+
+<button type="button" class="float-impulse" data-modal="submit" aria-label="Impulsionar meu grupo">
+  🔥 Impulsionar grupo
+</button>
 
 <div class="free-choice-overlay" id="freeChoiceModal" aria-hidden="true">
  <section class="free-choice-dialog" role="dialog" aria-modal="true" aria-labelledby="freeChoiceTitle" aria-describedby="freeChoiceLead">

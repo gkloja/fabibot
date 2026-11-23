@@ -2248,6 +2248,7 @@ body[data-fabi-plan="free"] #fb61FreeWalletActions{margin:16px 0}
             </a>
             <div class="d-flex align-items-center gap-2 ms-auto" id="fbUserNav">
                 <a href="index.html" class="btn btn-nav-home btn-sm"><i class="fas fa-home"></i> <span class="d-none d-sm-inline">Início</span></a>
+                <a href="index.html?configurar" class="btn btn-nav-config btn-sm" title="Ir para configurar grupos" style="background:linear-gradient(135deg,#6a48e4,#8b5fea);color:#fff;border:none;font-weight:700;"><i class="fas fa-sliders-h"></i> <span class="d-none d-md-inline">Configurar Grupos</span></a>
                 <button type="button" id="fabiThemeToggle" class="fabi-theme-toggle fb62-theme-header-btn" aria-label="Alternar entre modo claro e escuro" title="Alternar tema" onclick="if(window.FabiTheme)window.FabiTheme.toggle();else if(window.toggleDarkMode)window.toggleDarkMode();"><svg class="fabi-theme-icon-sun" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg><svg class="fabi-theme-icon-moon" aria-hidden="true" viewBox="0 0 24 24"><path d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z"></path></svg></button>
                 <a href="login.html?redirect=conectar.html" class="btn btn-nav-login btn-sm"><i class="fas fa-sign-in-alt"></i> Login</a>
             </div>
@@ -2255,6 +2256,19 @@ body[data-fabi-plan="free"] #fb61FreeWalletActions{margin:16px 0}
     </nav>
     
     <!-- notificação sucesso dinâmica -->
+
+
+<div class="container mt-3" id="configurarAtalhoCard">
+  <div class="alert d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3" style="background:linear-gradient(120deg,#f5f3ff,#ede9fe);border:1px solid #c4b5fd;border-radius:16px;color:#3b2f6b;">
+    <div>
+      <strong style="font-size:15px;">⚙️ Já conectou a Fabi?</strong>
+      <p class="mb-0 mt-1" style="font-size:13.5px;opacity:.9;">Vá direto para a área de <strong>Configurar Grupo</strong> no painel principal e ative proteções, boas-vindas, anti-link e muito mais.</p>
+    </div>
+    <a href="index.html?configurar" class="btn btn-sm text-nowrap" style="background:linear-gradient(135deg,#6a48e4,#8b5fea);color:#fff;border:none;font-weight:700;padding:10px 16px;border-radius:12px;box-shadow:0 6px 18px rgba(106,72,228,.25);">
+      Configurar meus grupos →
+    </a>
+  </div>
+</div>
 
 <!-- Notificação se houver transações pendentes -->
 <div class="container mt-3" id="pendentesNotification" style="display: none;">
@@ -5467,7 +5481,7 @@ $(document).ready(function() {
     var el = document.getElementById("fbUserNav");
     if (!el) return;
     var themeButton = document.getElementById('fabiThemeToggle');
-    var home = '<a href="index.html" class="btn btn-nav-home btn-sm"><i class="fas fa-home"></i> <span class="d-none d-sm-inline">Início</span></a>';
+    var home = '<a href="index.html" class="btn btn-nav-home btn-sm"><i class="fas fa-home"></i> <span class="d-none d-sm-inline">Início</span></a><a href="index.html?configurar" class="btn btn-nav-config btn-sm" title="Ir para configurar grupos" style="background:linear-gradient(135deg,#6a48e4,#8b5fea);color:#fff;border:none;font-weight:700;"><i class="fas fa-sliders-h"></i> <span class="d-none d-md-inline">Configurar Grupos</span></a>';
     var s = getSess();
     var logado = !!(s && (s.logado || s.id || s.nome || s.username || s.numero));
     if (logado) {
