@@ -158,59 +158,6 @@ function filteredGroups(){
 }
 
 
-function isBoosted(g){
-  return Boolean(g.boostUntil && Date.parse(g.boostUntil) > Date.now());
-}
-function destaqueCard(group){
-  const article = el('article', 'destaque-card');
-  article.setAttribute('aria-label', 'Destaque do dia: ' + (group.name || 'Comunidade'));
-  const ribbon = el('span', 'destaque-ribbon', '🔥 DESTAQUE DO DIA');
-  const adLabel = el('span', 'destaque-ad-label', 'ANÚNCIO');
-  const cover = el('div', 'destaque-cover');
-  const backdrop = makePhotoBackdrop(group);
-  if (backdrop) cover.append(backdrop);
-  cover.append(el('div', 'cover-shade'));
-  const body = el('div', 'destaque-body');
-  const avatarWrap = el('div', 'destaque-avatar-wrap');
-  const avatar = imageOrIcon(group);
-  avatar.classList.add('destaque-avatar');
-  avatarWrap.append(avatar);
-  body.append(avatarWrap);
-  body.append(el('h3', 'destaque-title', group.name || 'Comunidade'));
-  body.append(el('p', 'destaque-desc', (group.description || 'Comunidade em destaque no catálogo Fabi Grupos.').slice(0, 140)));
-  const meta = el('div', 'destaque-meta');
-  if (group.members > 0) meta.append(el('span', '', '👥 ' + niceInt(group.members)));
-  meta.append(el('span', '', (group.category || 'Comunidade')));
-  if (group.managed) meta.append(el('span', '', group.plan === 'free' ? '🛡 Free' : group.plan === 'pro' ? '💎 Pro' : '✓ Fabi'));
-  body.append(meta);
-  const actions = el('div', 'destaque-actions');
-  const join = document.createElement('a');
-  join.href = joinUrl(group);
-  join.target = '_blank';
-  join.rel = 'noopener noreferrer';
-  join.className = 'destaque-join';
-  join.textContent = groupKind(group) === 'channel' ? 'Seguir ↗' : 'Entrar ↗';
-  const boostBtn = createButton(isBoosted(group) ? 'Renovar impulso' : 'Impulsionar', () => openModal('boost', group.id), 'destaque-boost');
-  actions.append(join, boostBtn);
-  body.append(actions);
-  article.append(ribbon, adLabel, cover, body);
-  return article;
-}
-function renderDestaques(){
-  const root = $('destaquesGrid');
-  if (!root) return;
-  const boosted = groups.filter(isBoosted).sort((a,b) => Date.parse(b.boostUntil||0) - Date.parse(a.boostUntil||0));
-  root.replaceChildren();
-  if (!boosted.length){
-    const empty = el('div', 'destaques-empty');
-    empty.innerHTML = '<strong>Nenhum destaque ativo no momento.</strong><br>Seja o primeiro a impulsionar sua comunidade e aparecer aqui como Destaque do Dia!';
-    root.append(empty);
-    return;
-  }
-  // Show up to 6, prefer variety
-  boosted.slice(0, 6).forEach(g => root.append(destaqueCard(g)));
-}
-
 function render(){
   const {list,cat,q}=filteredGroups();
   for(const chip of $('chips').children)chip.classList.toggle('active',chip.dataset.cat===cat);
@@ -220,7 +167,6 @@ function render(){
   if(!list.length){drawEmpty(root,onlyFavorites?'Nenhum favorito encontrado':q?'Nenhuma comunidade encontrada':'Nenhuma comunidade publicada ainda',onlyFavorites?'Salve grupos ou canais tocando no coração de cada card.':q?'Tente outras palavras ou categorias.':'Cadastre gratuitamente seu grupo ou canal para aparecer aqui.');$('pagination').replaceChildren();return}
   const per=12,pages=Math.max(1,Math.ceil(list.length/per));page=Math.min(page,pages);
   for(const g of list.slice((page-1)*per,page*per))root.append(card(g));
-  renderDestaques();
   const pager=$('pagination');pager.replaceChildren();
   if(pages>1){
     const prev=createButton('← Anterior',()=>{page--;render();document.querySelector('#explorar').scrollIntoView({block:'start'})});
@@ -229,6 +175,110 @@ function render(){
     next.disabled=page>=pages;
     pager.append(prev,el('span','',page+' de '+pages),next);
   }
+}
+
+
+/* ========== Anúncio rotativo de grupos impulsionados (V50.1) ========== */
+function isBoosted(g){
+  return Boolean(g && g.boostUntil && Date.parse(g.boostUntil) > Date.now());
+}
+let _fabiAdTimer = null;
+let _fabiAdHideTimer = null;
+let _fabiAdProgressTimer = null;
+let _fabiAdIndex = 0;
+let _fabiAdClosedUntil = 0;
+
+function getBoostedList(){
+  return (groups || []).filter(isBoosted).sort((a,b) => Date.parse(b.boostUntil||0) - Date.parse(a.boostUntil||0));
+}
+
+function showSponsoredAd(group){
+  const root = $('fabiSponsoredAd');
+  if (!root || !group) return;
+  if (Date.now() < _fabiAdClosedUntil) return;
+
+  const avatarEl = $('fabiAdAvatar');
+  avatarEl.replaceChildren();
+  const photo = imageOrIcon(group);
+  if (photo && photo.tagName === 'IMG') {
+    photo.style.width = '100%'; photo.style.height = '100%'; photo.style.objectFit = 'cover';
+    avatarEl.append(photo);
+  } else if (photo) {
+    avatarEl.append(photo);
+  } else {
+    avatarEl.textContent = (group.name || '?')[0].toUpperCase();
+  }
+
+  $('fabiAdName').textContent = group.name || 'Comunidade';
+  $('fabiAdDesc').textContent = (group.description || 'Comunidade impulsionada no catálogo Fabi Grupos.').slice(0, 110);
+  const meta = $('fabiAdMeta');
+  meta.replaceChildren();
+  if (group.members > 0) meta.append(el('span', '', '👥 ' + niceInt(group.members)));
+  if (group.category) meta.append(el('span', '', group.category));
+  meta.append(el('span', '', '✦ Impulsionado'));
+
+  const join = $('fabiAdJoin');
+  join.href = joinUrl(group);
+  join.textContent = (groupKind(group) === 'channel' ? 'Seguir canal ↗' : 'Entrar no grupo ↗');
+
+  $('fabiAdBoost').onclick = () => { hideSponsoredAd(true); openModal('boost', group.id); };
+
+  root.hidden = false;
+  requestAnimationFrame(() => root.classList.add('is-visible'));
+
+  // Progress bar (show for ~14s)
+  const bar = $('fabiAdProgress');
+  if (bar) {
+    bar.style.transition = 'none';
+    bar.style.transform = 'scaleX(1)';
+    requestAnimationFrame(() => {
+      bar.style.transition = 'transform 14s linear';
+      bar.style.transform = 'scaleX(0)';
+    });
+  }
+
+  clearTimeout(_fabiAdHideTimer);
+  _fabiAdHideTimer = setTimeout(() => hideSponsoredAd(false), 14500);
+}
+
+function hideSponsoredAd(userClosed){
+  const root = $('fabiSponsoredAd');
+  if (!root) return;
+  root.classList.remove('is-visible');
+  setTimeout(() => { root.hidden = true; }, 420);
+  clearTimeout(_fabiAdHideTimer);
+  if (userClosed) {
+    // user closed → wait longer before next
+    _fabiAdClosedUntil = Date.now() + 90000; // 90s
+  }
+}
+
+function scheduleNextSponsoredAd(){
+  clearTimeout(_fabiAdTimer);
+  const boosted = getBoostedList();
+  if (!boosted.length) return;
+
+  // First appearance after 8–14s, then every 28–42s
+  const delay = (_fabiAdIndex === 0) ? (8000 + Math.random()*6000) : (28000 + Math.random()*14000);
+  _fabiAdTimer = setTimeout(() => {
+    if (Date.now() < _fabiAdClosedUntil) {
+      scheduleNextSponsoredAd();
+      return;
+    }
+    const list = getBoostedList();
+    if (!list.length) return;
+    const group = list[_fabiAdIndex % list.length];
+    _fabiAdIndex++;
+    showSponsoredAd(group);
+    scheduleNextSponsoredAd();
+  }, delay);
+}
+
+function initSponsoredAds(){
+  const closeBtn = $('fabiAdClose');
+  if (closeBtn) closeBtn.onclick = () => hideSponsoredAd(true);
+  // Start after groups loaded
+  scheduleNextSponsoredAd();
 }
 
 async function loadGroups(){
@@ -241,7 +291,7 @@ async function loadGroups(){
     $('totalCategories').textContent=niceInt(catCount);
     configureCategories();
     render();
-    renderDestaques();
+    initSponsoredAds();
     const requested=new URLSearchParams(location.search).get('grupo');
     const sponsor=new URLSearchParams(location.search).get('patrocinar');if(sponsor){const found=groups.find(g=>String(g.id)===sponsor);if(found)openModal('boost',found.id);else showSiteToast('Comunidade indisponível ou não publicada.')}
     else if(requested){const found=groups.find(g=>String(g.id)===requested);if(found)openDetails(found.id,true);else showSiteToast('Comunidade indisponível ou não publicada.')}
