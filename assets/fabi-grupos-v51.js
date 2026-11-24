@@ -1,4 +1,4 @@
-/* Fabi Grupos V49 | Pódio real da Fabi, fotos imersivas, contato WhatsApp validado. */
+/* Fabi Grupos V52 | Mobile polish, Meus Grupos robusto, sync melhorado. */
 'use strict';
 (()=>{
 const API='/api/fabi-grupos';
@@ -932,56 +932,83 @@ function v51StatusClass(status){return ['published','pending','paused','rejected
 async function v51CarregarMeusGrupos(){
   const grid=$('myGroupsGrid'),sync=$('mgSync');
   if(!grid)return;
-  if(!v51Session()){v51MeusGrupos=[];return}
-  if(sync)sync.hidden=false;
+  if(!v51Session()){v51MeusGrupos=[];grid.replaceChildren();return}
+  // Skeleton enquanto sincroniza
+  if(sync){
+    sync.hidden=false;
+    sync.innerHTML='<span class="spin" aria-hidden="true"></span> Sincronizando seus grupos com a conta Fabi…';
+  }
+  if(!grid.querySelector('.mygroup-card') && !grid.querySelector('.mg-empty')){
+    const sk=document.createElement('div');
+    sk.className='mg-skeleton';
+    sk.id='mgSkeleton';
+    sk.innerHTML='<div class="mg-skel-card"></div><div class="mg-skel-card"></div><div class="mg-skel-card"></div>';
+    grid.replaceChildren(sk);
+  }
   try{
     const okToken=await v51AssegurarToken();
-    const token=sessionStorage.getItem('fabi_group_token')||'';
+    let token=sessionStorage.getItem('fabi_group_token')||'';
     if(!okToken&&!token)throw Error('sessao-expirada');
-    const response=await fetch(v51Proxy('/api/grupos/meus-grupos'),{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-fabi-grupo-token':token,'Accept':'application/json'},
-      cache:'no-store',
-      body:JSON.stringify({fabiGrupoToken:token})
-    });
-    const data=await response.json().catch(()=>({}));
+
+    async function fetchMeus(t){
+      const response=await fetch(v51Proxy('/api/grupos/meus-grupos'),{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-fabi-grupo-token':t,'Accept':'application/json'},
+        cache:'no-store',
+        body:JSON.stringify({fabiGrupoToken:t})
+      });
+      const data=await response.json().catch(()=>({}));
+      return {response,data};
+    }
+
+    let {response,data}=await fetchMeus(token);
+
     if(response.status===401){
-      // Tenta uma última renovação antes de pedir novo login.
       const retry=await v51AssegurarToken(true);
       if(!retry)throw Error('sessao-expirada');
-      const token2=sessionStorage.getItem('fabi_group_token')||'';
-      const again=await fetch(v51Proxy('/api/grupos/meus-grupos'),{
-        method:'POST',headers:{'Content-Type':'application/json','x-fabi-grupo-token':token2},cache:'no-store',
-        body:JSON.stringify({fabiGrupoToken:token2})
-      });
-      const data2=await again.json().catch(()=>({}));
-      if(!again.ok)throw Error(data2.message||'falha');
-      v51MeusGrupos=Array.isArray(data2.grupos)?data2.grupos:[];
-    }else if(!response.ok||data.success===false){
+      token=sessionStorage.getItem('fabi_group_token')||'';
+      ({response,data}=await fetchMeus(token));
+      if(response.status===401||!response.ok)throw Error('sessao-expirada');
+    }
+
+    if(!response.ok||data.success===false){
       if(response.status===404)throw Error('indisponivel');
       throw Error(data.message||'falha');
-    }else{
-      v51MeusGrupos=Array.isArray(data.grupos)?data.grupos:[];
     }
-    if(sync)sync.hidden=true;
+
+    // Aceita vários formatos de resposta do backend
+    const lista=Array.isArray(data.grupos)?data.grupos
+      :Array.isArray(data.groups)?data.groups
+      :Array.isArray(data.data)?data.data
+      :Array.isArray(data)?data:[];
+    v51MeusGrupos=lista.filter(Boolean);
+
+    if(sync){sync.hidden=true;sync.innerHTML='';}
+    $('mgSkeleton')?.remove();
     v51RenderMeusGrupos();
     v51RenderBoostPick();
     v51AtualizarBadgeMenu();
   }catch(err){
     console.warn('[Fabi Grupos V51] meus grupos:',err.message);
+    $('mgSkeleton')?.remove();
     if(sync){
-      sync.innerHTML='';
+      sync.hidden=false;
       const msg=err.message==='sessao-expirada'
-        ? 'Sua sessão expirou. <a href="/login?redirect=/grupos" style="color:var(--purple);font-weight:800">Entre novamente</a> para sincronizar seus grupos.'
+        ? 'Sua sessão expirou. <a href="/login?redirect=/grupos">Entre novamente</a> para sincronizar seus grupos.'
         : err.message==='indisponivel'
-          ? 'A sincronização de grupos está sendo ativada no servidor. Enquanto isso, você já pode cadastrar e divulgar normalmente.'
-          : 'Não foi possível sincronizar agora. <button type="button" id="mgRetry" style="border:0;background:none;color:var(--purple);font-weight:800;cursor:pointer">Tentar novamente</button>';
+          ? 'A sincronização ainda está sendo ativada no servidor. Você já pode cadastrar e divulgar normalmente.'
+          : 'Não foi possível sincronizar agora. <button type="button" id="mgRetry">Tentar novamente</button>';
       sync.innerHTML=msg;
-      $('mgRetry')?.addEventListener('click',()=>{sync.hidden=false;sync.innerHTML='<span class="spin" aria-hidden="true"></span> Sincronizando seus grupos com a conta Fabi…';v51CarregarMeusGrupos()});
+      $('mgRetry')?.addEventListener('click',()=>{
+        sync.hidden=false;
+        sync.innerHTML='<span class="spin" aria-hidden="true"></span> Sincronizando seus grupos com a conta Fabi…';
+        v51CarregarMeusGrupos();
+      });
     }
-    v51MeusGrupos=[];
-    v51RenderMeusGrupos();
+    // Mantém lista anterior se já tinha algo; senão mostra empty
+    if(!v51MeusGrupos.length)v51RenderMeusGrupos();
     v51RenderBoostPick();
+    v51AtualizarBadgeMenu();
   }
 }
 function v51RenderMeusGrupos(){
@@ -991,11 +1018,17 @@ function v51RenderMeusGrupos(){
   if(!v51MeusGrupos.length){
     const empty=el('div','mg-empty');
     empty.append(el('span','mg-empty-icon','🗂️'));
-    empty.append(el('strong','','Nenhuma comunidade por aqui ainda'));
-    empty.append(el('p','','Cadastre o link do seu grupo ou canal e acompanhe a aprovação direto neste painel. É grátis e leva menos de um minuto.'));
+    empty.append(el('strong','','Nenhuma comunidade vinculada ainda'));
+    empty.append(el('p','','Quando você cadastrar um grupo ou canal com o WhatsApp da sua conta Fabi, ele aparece aqui automaticamente — com status de análise, destaque e atalhos rápidos.'));
+    const row=el('div','mygroups-actions');
+    row.style.justifyContent='center';
     const cta=el('button','btn btn-primary','＋ Cadastrar meu primeiro grupo');
     cta.type='button';cta.addEventListener('click',()=>openModal('submit'));
-    empty.append(cta);
+    const free=el('a','btn btn-secondary','Quero a Fabi Free ↗');
+    free.href='#escolher-fabi-free';
+    free.setAttribute('data-free-choice','true');
+    row.append(cta,free);
+    empty.append(row);
     grid.append(empty);
     return;
   }
@@ -1012,7 +1045,8 @@ function v51RenderMeusGrupos(){
     meta.append(el('span','mg-tag',(g.type==='channel'?'📢 Canal':'👥 Grupo')+' · '+(g.category||'Outros')));
     if(g.requestFree)meta.append(el('span','mg-tag free','🛡 Solicitou Fabi Free'));
     if(g.boostUntil&&Date.parse(g.boostUntil)>Date.now())meta.append(el('span','mg-tag boost','✦ Em destaque'));
-    if(g.managed)meta.append(el('span','mg-tag free','✓ Fabi conectada'));
+    if(g.managed||g.freeEnabled)meta.append(el('span','mg-tag free','✓ Fabi conectada'));
+    if(Number(g.members)>0)meta.append(el('span','mg-tag',Number(g.members).toLocaleString('pt-BR')+' membros'));
     cardEl.append(meta);
     if(g.description)cardEl.append(el('p','mygroup-desc',String(g.description).slice(0,170)));
     const acts=el('div','mygroup-actions');
@@ -1027,7 +1061,7 @@ function v51RenderMeusGrupos(){
     }else if(status==='pending'){
       acts.append(el('span','mg-btn','⏳ Em análise pela equipe'));
     }else if(status==='rejected'){
-      const reenviar=createButton('Revisar cadastro',()=>openModal('submit'),'mg-btn');
+      const reenviar=createButton('Revisar cadastro',()=>openModal('submit'),'mg-btn primary');
       acts.append(reenviar);
     }else{
       const imp=createButton('Ver no catálogo',()=>{location.hash='#explorar'},'mg-btn');
@@ -1038,7 +1072,6 @@ function v51RenderMeusGrupos(){
         try{await navigator.clipboard.writeText(String(g.invite));showSiteToast('Convite copiado!')}
         catch{showSiteToast('Não foi possível copiar agora.')}
       },'mg-btn');
-      copiar.style.flex='0 0 auto';
       acts.append(copiar);
     }
     cardEl.append(acts);
