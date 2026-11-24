@@ -8985,7 +8985,7 @@ body.light-mode .fz34-community-meta{color:#395950}body.light-mode .fz34-check-s
 let cfgGruposOriginais = [];   // lista completa da API
 let cfgGruposAdmin = [];       // só onde o número logado é admin
 let cfgPlanoAtualV55 = 'pro';
-const CFG_FREE_V55 = new Set(['sistemGold','antinotas','x9','soinsta','soadm','visuUnica','soinstaface','antistatus','antiimg','antivideo','antiaudio','antisticker','antidoc','antictt','antiloc','antilinkgp','level','antilinkhard','antifake','antispam','nsfw','autosticker']);
+const CFG_FREE_V55 = new Set(['sistemGold','antinotas','x9','soinsta','soadm','visuUnica','soinstaface','antistatus','antiimg','antivideo','antiaudio','antisticker','antidoc','antictt','antiloc','antilinkgp','level','antilinkhard','antifake','antispam','nsfw','autosticker','autoSoundSticker']);
 let cfgGruposFiltrados = [];
 let cfgPaginaAtual = 1;
 let cfgFiltroAtual = 'todos';  // 'todos' | 'admin'
@@ -9174,6 +9174,7 @@ const CFG_NOMES = {
   fabidomal: "👨 Chatbot Voz Masculina",
   fabimeme: "🤡 Chatbot Voz Meme",
   autosticker: "🎉 Criar Figurinhas Automaticamente",
+  autoSoundSticker: "🔊 Sound Sticker automático (áudio ≤10s na figurinha)",
   jogos: "🎮 Ativar Jogos (use o /menujogos)",
   sistemGold: "🪙 Modo RPG (use: /menurpg)",
   pokemonAuto: "🎴 Pokémon Automático · Boss + Figurinhas",
@@ -9187,13 +9188,14 @@ const CFG_NOMES = {
   futebol: "⚽ Notícias de Futebol (ge.globo)"
 };
 // Ordem base igual ao EJS
-const CFG_ORDEM_BASE = ["sistemGold","pokemonAuto","visuUnica","x9","soadm","soinsta","sogrupo","soinstaface","modovoz","antipolitica","antirepeticoes","antistatus","antiimg","antivideo","antiaudio","antisticker","antidoc","antictt","antiloc","antilinkgp","level","antilinkhard","antifake","antispam","antinotas","antiporno","simi1","fabidomal","fabimeme","autosticker","autodl","Odelete","autoaudio","jogos","registrarFIGUS","jovempan","oliberal","futebol","nsfw"];
+const CFG_ORDEM_BASE = ["sistemGold","pokemonAuto","visuUnica","x9","soadm","soinsta","sogrupo","soinstaface","modovoz","antipolitica","antirepeticoes","antistatus","antiimg","antivideo","antiaudio","antisticker","antidoc","antictt","antiloc","antilinkgp","level","antilinkhard","antifake","antispam","antinotas","antiporno","simi1","fabidomal","fabimeme","autosticker","autoSoundSticker","autodl","Odelete","autoaudio","jogos","registrarFIGUS","jovempan","oliberal","futebol","nsfw"];
 // Selos: hot primeiro, depois novo (igual EJS)
 const CFG_BADGES = {
   antipolitica: "hot",
   antiporno: "hot",
   antinotas: "hot",
   autosticker: "hot",
+  autoSoundSticker: "hot",
   antirepeticoes: "hot",
   sogrupo: "novo",
   modovoz: "novo",

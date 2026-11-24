@@ -5,7 +5,7 @@ const ALLOWED=Object.freeze([
  'sistemGold','antinotas','x9','soinsta','soadm','visuUnica','soinstaface',
  'antistatus','antiimg','antivideo','antiaudio','antisticker','antidoc','antictt',
  'antiloc','antilinkgp','level','antilinkhard','antifake','antispam','nsfw',
- 'autosticker'
+ 'autosticker','autoSoundSticker'
 ]);
 const allowed=new Set(ALLOWED);
 const PRO_ONLY=Object.freeze([
