@@ -562,12 +562,44 @@ function showRequests(){
   if(!filtered.length){drawEmpty(root,'Sem solicitações','Nada para mostrar nesse filtro.');return}
   for(const g of filtered.slice(0,300)){
     const row=el('article','admin-entry'),info=el('div'),details=el('div','detail');
-    info.append(el('h4','',g.name),el('small','',(g.contact||'Sem contato')+' · '+(g.category||'Outros')));
-    details.append(createBadge(g.type==='channel'?'📢 Canal':'👥 Grupo'),createBadge(safeStatus(g.status)),createBadge(g.ownerApproved?'✓ Autorizado':'! Aguardando autorização'),createBadge(g.source||'novo'));
+    info.append(el('h4','',g.name||'Sem nome'),el('small','',(g.contact||'Sem contato')+' · '+(g.category||'Outros')+(g.createdAt?' · '+dateFmt(g.createdAt):'')));
+    details.append(createBadge(g.type==='channel'?'📢 Canal':'👥 Grupo'),createBadge(safeStatus(g.status)),createBadge(g.ownerApproved?'✓ Autorizado':'! Aguardando autorização'),createBadge(g.source||'cadastro'));
     if(g.requestFree)details.append(createBadge('✳ Solicitou Fabi Free'));
-    if(g.groupJid)details.append(createBadge('Grupo '+g.groupJid));
+    if(g.managed||g.freeEnabled)details.append(createBadge('🤖 Fabi conectada'));
+    if(g.groupJid)details.append(createBadge('JID '+String(g.groupJid).replace('@g.us','')));
     info.append(details);
+
+    // Link do convite sempre visível para a equipe analisar
+    const invite=String(g.invite||g.inviteLink||g.link||'').trim();
+    if(invite){
+      const linkRow=el('div','admin-invite-row');
+      const label=el('span','admin-invite-label','🔗 Convite');
+      const code=document.createElement('code');
+      code.className='admin-invite-code';
+      code.textContent=invite.length>64?invite.slice(0,60)+'…':invite;
+      code.title=invite;
+      linkRow.append(label,code);
+      info.append(linkRow);
+    }else{
+      info.append(el('p','admin-invite-missing','⚠ Este cadastro não tem link de convite salvo.'));
+    }
+    if(g.description){
+      const desc=el('p','admin-desc',String(g.description).slice(0,180));
+      info.append(desc);
+    }
+
     const acts=el('div','admin-actions');
+    if(invite){
+      const open=document.createElement('a');
+      open.href=invite; open.target='_blank'; open.rel='noopener noreferrer';
+      open.className='mini-btn admin-invite-open';
+      open.textContent=g.type==='channel'?'Abrir canal ↗':'Abrir grupo ↗';
+      acts.append(open);
+      acts.append(createButton('Copiar link',async()=>{
+        try{await navigator.clipboard.writeText(invite);adminToast('Link do convite copiado.');}
+        catch{adminToast(invite);}
+      },'mini-btn'));
+    }
     const waDigits=String(g.contact||'').replace(/\D/g,'');
     if(/^55[1-9][1-9]\d{8,9}$/.test(waDigits)){
       const notice='Olá! Aqui é da equipe Fabi Grupos. Recebemos o cadastro do '+(g.type==='channel'?'canal':'grupo')+' "'+String(g.name||'')+'" para analisar a divulgação.';
@@ -1037,10 +1069,29 @@ function v51RenderMeusGrupos(){
     const status=String(g.status||'pending');
     const cardEl=el('article','mygroup-card');
     cardEl.dataset.status=v51StatusClass(status);
+    // Cabeçalho com foto ao vivo (quando a robô sincronizou)
+    const head=el('div','mygroup-head');
+    const photoUrl=String(g.photo||'').trim();
+    const av=el('div','mygroup-avatar');
+    if(/^https?:\/\//i.test(photoUrl)||photoUrl.startsWith('/api/')){
+      const img=document.createElement('img');
+      img.src=photoUrl;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';
+      img.onerror=()=>{av.textContent=(g.name||'G').slice(0,1).toUpperCase()};
+      av.append(img);
+    }else{
+      av.textContent=(g.name||'G').slice(0,1).toUpperCase();
+    }
+    const headMain=el('div','mygroup-head-main');
     const top=el('div','mygroup-top');
     top.append(el('h3','',g.name||'Comunidade sem nome'));
     top.append(el('span','mg-status '+v51StatusClass(status),V51_STATUS[status]||status));
-    cardEl.append(top);
+    headMain.append(top);
+    if(g.updatedAt||g.verifiedAt){
+      const when=dateFmt(g.verifiedAt||g.updatedAt);
+      if(when)headMain.append(el('small','mygroup-updated','Atualizado '+when+(g.managed?' · via Fabi':'')));
+    }
+    head.append(av,headMain);
+    cardEl.append(head);
     const meta=el('div','mygroup-meta');
     meta.append(el('span','mg-tag',(g.type==='channel'?'📢 Canal':'👥 Grupo')+' · '+(g.category||'Outros')));
     if(g.requestFree)meta.append(el('span','mg-tag free','🛡 Solicitou Fabi Free'));
