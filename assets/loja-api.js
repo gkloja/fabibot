@@ -139,7 +139,11 @@
     if (!entry || entry.fingerprint !== item.fingerprint) return {};
     const result = {};
     for (const key of ['poster', 'preview', 'example']) {
-      if (typeof entry[key] === 'string' && /^assets\/figurinhas-(?:preview|exemplos)\/[a-zA-Z0-9_-]+\.(?:webp|mp4)$/.test(entry[key])) result[key] = localUrl(entry[key]);
+      const mediaPath = entry[key];
+      const allowed = typeof mediaPath === 'string' && (key === 'example'
+        ? /^exemplo\/fig_\d{4}\.mp4$/i.test(mediaPath)
+        : /^assets\/figurinhas-preview\/fig_\d{4}\.(?:webp|mp4)$/i.test(mediaPath));
+      if (allowed) result[key] = localUrl(mediaPath);
     }
     return result;
   }

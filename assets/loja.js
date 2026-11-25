@@ -11,7 +11,7 @@
   const orderKey = 'fabi_sticker_pending_order_v1';
   const fixedPriceCents = 20;
   const storeWhatsapp = String(config.storeWhatsapp || '5592985715119').replace(/\D/g, '');
-  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'recent', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, audioSource: '', activeOrderId: '', pollTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
+  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'recent', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
   try {
     const saved = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
     if (Array.isArray(saved)) state.favorites = new Set(saved.filter(id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,80}$/.test(id)).slice(0, 2000));
@@ -82,13 +82,6 @@
 
   function fallbackHTML(message) {
     return '<span class="media-fallback">' + icon('play') + '<span>' + escape(message) + '</span></span>';
-  }
-
-  function updateAudioDemoButton(playing) {
-    const button = $('#audioDemoButton');
-    if (!button) return;
-    button.setAttribute('aria-pressed', String(playing));
-    button.innerHTML = icon(playing ? 'sound' : 'play') + (playing ? 'Pausar figurinha com áudio' : 'Ouvir figurinha com áudio');
   }
 
   function bindImageFallbacks(scope) {
@@ -250,8 +243,6 @@
   }
 
   function stopMedia() {
-    $('#stickerAudio').pause();
-    updateAudioDemoButton(false);
     $('#previewMedia').querySelectorAll('video').forEach(video => { video.pause(); video.removeAttribute('src'); video.load(); });
   }
 
@@ -272,17 +263,28 @@
       const video = document.createElement('video');
       video.controls = true;
       video.playsInline = true;
-      video.preload = 'metadata';
+      video.autoplay = true;
+      video.muted = false;
+      video.preload = 'auto';
       video.src = media.example;
-      video.setAttribute('aria-label', 'Exemplo de uso no WhatsApp');
-      video.addEventListener('play', () => $('#stickerAudio').pause());
+      video.setAttribute('aria-label', 'Vídeo da conversa no WhatsApp com som');
       video.addEventListener('error', () => {
         if (state.current !== item || state.activeTab !== tab || state.mediaGeneration !== mediaGeneration || !container.contains(video)) return;
         showPreviewMedia('preview');
-        $('#previewMediaNote').textContent = 'O vídeo de conversa não está disponível agora. Veja a animação original e ouça o áudio junto.';
+        $('#previewMediaNote').textContent = 'Não foi possível carregar o vídeo da conversa. Confira se a pasta exemplo está junto ao site; a figurinha animada continua disponível.';
       }, { once: true });
       container.appendChild(video);
-      $('#previewMediaNote').textContent = 'Exemplo de conversa no WhatsApp. Toque em play para assistir.';
+      $('#previewMediaNote').textContent = 'Exemplo no WhatsApp com o áudio original. Se a reprodução automática for bloqueada, toque em play no vídeo.';
+      try {
+        const playback = video.play();
+        if (playback && typeof playback.catch === 'function') playback.catch(() => {
+          if (state.current === item && state.activeTab === tab && state.mediaGeneration === mediaGeneration && container.contains(video)) {
+            $('#previewMediaNote').textContent = 'Toque em play no vídeo para assistir e ouvir o exemplo no WhatsApp.';
+          }
+        });
+      } catch (_) {
+        $('#previewMediaNote').textContent = 'Toque em play no vídeo para assistir e ouvir o exemplo no WhatsApp.';
+      }
       return;
     }
     const source = state.source === 'live' ? api.mediaUrl(item) : media.poster;
@@ -318,15 +320,6 @@
     $('#previewBadges').innerHTML = [item.temAudio ? 'Com áudio' : 'Sem áudio', item.isAnimated ? 'Animada' : 'Estática', item.categoria].map(label => '<span>' + escape(label) + '</span>').join('');
     $('#previewMeta').textContent = [item.packname, item.tamanho ? Math.round(item.tamanho / 1024) + ' KB' : '', item.audioSeconds ? item.audioSeconds.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' s de áudio' : ''].filter(Boolean).join(' · ');
     $('#previewStatus').textContent = state.source !== 'live' ? 'Prévia do pacote local. O checkout exige conexão ativa com o catálogo do bot.' : '';
-    $('#audioSection').hidden = !item.temAudio;
-    $('#audioError').hidden = true;
-    $('#audioDemoButton').disabled = !item.temAudio;
-    updateAudioDemoButton(false);
-    const audio = $('#stickerAudio');
-    audio.pause();
-    state.audioSource = item.temAudio ? api.mediaUrl(item, 'audio') : '';
-    if (item.temAudio) audio.src = state.audioSource; else audio.removeAttribute('src');
-    audio.load();
     $('#exampleTab').disabled = !api.staticMedia(item, state.index).example;
     $('#previewAddToCart').setAttribute('aria-pressed', String(state.cart.has(item.id)));
     $('#previewAddToCart').textContent = state.cart.has(item.id) ? 'No carrinho · R$ 0,20' : 'Adicionar ao carrinho · R$ 0,20';
@@ -342,9 +335,6 @@
     ++state.previewGeneration;
     ++state.mediaGeneration;
     stopMedia();
-    state.audioSource = '';
-    $('#stickerAudio').removeAttribute('src');
-    $('#stickerAudio').load();
     document.body.classList.remove('modal-open');
     state.current = null;
     const focused = state.lastFocused;
@@ -420,7 +410,7 @@
     if (state.redeemCode) {
       $('#cartSummary').hidden = true; $('#cartEmpty').hidden = true; $('#checkoutPanel').hidden = false;
       $('#checkoutTitle').textContent = 'Pagamento confirmado';
-      $('#checkoutStatus').textContent = 'Código de resgate pronto para enviar no WhatsApp.';
+      $('#checkoutStatus').textContent = 'Código de uso único recuperado deste navegador. Envie no privado da Fabi Bot.';
       $('#redeemCode').textContent = state.redeemCode; $('#redeemCodeBox').hidden = false;
       $('#sendRedeemToWhatsApp').href = 'https://wa.me/' + storeWhatsapp + '?text=' + encodeURIComponent(state.redeemCode);
     } else if (state.activeOrderId && state.pendingCopy) {
@@ -468,12 +458,20 @@
     $('#redeemCode').textContent = code;
     $('#redeemCodeBox').hidden = false;
     $('#checkoutTitle').textContent = 'Pagamento confirmado';
-    $('#checkoutStatus').textContent = 'Seu código de resgate está pronto. Envie-o no privado da Fabi Bot.';
+    $('#checkoutStatus').textContent = 'Seu código de uso único está pronto. Envie-o no privado da Fabi Bot.';
     $('#sendRedeemToWhatsApp').href = 'https://wa.me/' + storeWhatsapp + '?text=' + encodeURIComponent(code);
     state.cart.clear();
     persistCart();
     renderCart();
-    try { localStorage.setItem(orderKey, JSON.stringify({ orderId: state.activeOrderId, qrCode: state.pendingQr, copyPaste: state.pendingCopy, redeemCode: code })); } catch (_) { /* Optional. */ }
+    let savedLocally = false;
+    try {
+      localStorage.setItem(orderKey, JSON.stringify({ orderId: state.activeOrderId, qrCode: state.pendingQr, copyPaste: state.pendingCopy, redeemCode: code }));
+      const saved = JSON.parse(localStorage.getItem(orderKey) || 'null');
+      savedLocally = Boolean(saved && saved.redeemCode === code);
+    } catch (_) { /* The customer can still copy the code for this visit. */ }
+    $('#checkoutStatus').textContent = savedLocally
+      ? 'Código de uso único salvo neste navegador. Envie-o no privado da Fabi Bot.'
+      : 'Código de uso único pronto. Copie-o e envie no privado da Fabi Bot para não perdê-lo.';
   }
 
   async function checkPaymentStatus() {
@@ -584,22 +582,6 @@
   $('#checkoutButton').addEventListener('click', startCheckout);
   $('#copyPixButton').addEventListener('click', () => copyText($('#pixCopyPaste').value, $('#checkoutStatus'), 'PIX copiado.'));
   $('#copyRedeemButton').addEventListener('click', () => copyText($('#redeemCode').textContent, $('#checkoutStatus'), 'Código de resgate copiado.'));
-  $('#stickerAudio').addEventListener('play', () => $('#previewMedia').querySelectorAll('video').forEach(video => video.pause()));
-  $('#audioDemoButton').addEventListener('click', async () => {
-    if (!state.current || !state.current.temAudio) return;
-    const audio = $('#stickerAudio');
-    if (!audio.paused) { audio.pause(); return; }
-    if (state.activeTab !== 'preview') showPreviewMedia('preview');
-    $('#audioError').hidden = true;
-    try { await audio.play(); }
-    catch (_) { $('#audioError').hidden = false; updateAudioDemoButton(false); }
-  });
-  $('#stickerAudio').addEventListener('play', () => updateAudioDemoButton(true));
-  $('#stickerAudio').addEventListener('pause', () => updateAudioDemoButton(false));
-  $('#stickerAudio').addEventListener('ended', () => updateAudioDemoButton(false));
-  $('#stickerAudio').addEventListener('error', event => {
-    if (state.current && state.current.temAudio && state.audioSource && event.currentTarget.currentSrc === state.audioSource) $('#audioError').hidden = false;
-  });
 
   window.addEventListener('storage', event => {
     if (event.key !== favoritesKey) return;

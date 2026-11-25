@@ -38,7 +38,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .topbar { position: sticky; top: 0; z-index: 20; background: rgba(16, 17, 15, .94); border-bottom: 1px solid var(--line); backdrop-filter: blur(16px); }
 .topbar-inner { min-height: 86px; display: flex; align-items: center; gap: 30px; justify-content: space-between; }
 .brand { display: inline-flex; align-items: center; gap: 11px; flex: 0 0 auto; line-height: .95; }
-.brand img { border-radius: 12px; width: 42px; height: 42px; }
+.brand img { border-radius: 12px; width: 42px; height: 42px; flex: 0 0 auto; object-fit: contain; }
 .brand > span { font-family: var(--display-font); font-size: 28px; font-weight: 800; letter-spacing: .01em; }
 .brand-bot { color: var(--green); }
 .brand small { display: block; font: 9px/1.8 var(--body-font); letter-spacing: .26em; color: var(--muted); }
@@ -194,7 +194,7 @@ code { color: var(--green); font-size: .95em; }
 .footer { border-top: 1px solid var(--line); padding-block: 28px; }
 .footer-inner { display: flex; align-items: center; gap: 25px; flex-wrap: wrap; }
 .footer .brand > span { font-size: 22px; }
-.footer .brand img { width: 36px; height: 36px; }
+.footer .brand img { width: 36px; height: 36px; flex: 0 0 auto; object-fit: contain; }
 .footer p { font-size: 11px; color: var(--muted); margin: 0; }
 .footer nav { display: flex; gap: 20px; margin-left: auto; color: var(--muted); font-size: 10px; }
 .footer nav a:hover { color: var(--green); }
@@ -218,10 +218,10 @@ code { color: var(--green); font-size: .95em; }
 .preview-badges span { font-size: 9px; color: var(--green); background: #2c3923; padding: 4px 8px; border-radius: 4px; }
 .preview-meta { color: var(--muted); font-size: 10px; margin: 14px 0; }
 .preview-help { color: #c3c9bd; font-size: 12px; line-height: 1.7; }
-.audio-section { margin-bottom: 16px; }
-.audio-section label, .command-box label { display: block; font-size: 8px; letter-spacing: .09em; color: var(--muted); margin-bottom: 8px; }
-.audio-section audio { width: 100%; max-width: 100%; height: 38px; }
-.audio-error { font-size: 10px; color: var(--orange); line-height: 1.6; margin: 8px 0 0; }
+
+.command-box label { display: block; font-size: 8px; letter-spacing: .09em; color: var(--muted); margin-bottom: 8px; }
+
+
 .preview-save { width: 100%; margin: 8px 0 15px; font-size: 11px; }
 .preview-save[aria-pressed=true] { color: var(--green); }
 .command-box { padding: 14px; border-radius: 9px; background: #10110f; border: 1px solid var(--line); }
@@ -462,7 +462,7 @@ code { color: var(--green); font-size: .95em; }
 }
 
 
-/* Prévia protegida e demonstração conjunta de som sticker. */
+/* Prévia protegida e identidade visual da galeria. */
 .watermark {
   color: rgb(16 17 15 / 48%);
   -webkit-text-stroke: .7px rgb(255 255 255 / 64%);
@@ -472,14 +472,6 @@ code { color: var(--green); font-size: .95em; }
 .card-preview .watermark { font-size: clamp(18px, 2vw, 30px); }
 .hero-card .watermark { font-size: clamp(20px, 2.2vw, 32px); }
 .preview-media .watermark { font-size: clamp(24px, 4.6vw, 40px); }
-.audio-demo-button {
-  width: 100%; min-height: 46px; display: inline-flex; align-items: center; justify-content: center;
-  gap: 9px; padding: 10px 14px; border: 1px solid #526b3b; border-radius: 8px;
-  background: #1e2519; color: var(--green); font-size: 11px; font-weight: 700;
-}
-.audio-demo-button:hover, .audio-demo-button[aria-pressed=true] { background: #2c3923; }
-.audio-demo-button .icon { width: 16px; height: 16px; }
-.audio-demo-copy { color: var(--muted); font-size: 10px; line-height: 1.6; margin: 8px 0 0; }
 .watermark-notice {
   margin: 14px 0 17px; padding: 11px 12px; border: 1px solid #46553a; border-radius: 8px;
   background: #171e13; color: #d1dac8; font-size: 10px; line-height: 1.65;
