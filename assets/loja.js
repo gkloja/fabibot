@@ -7,11 +7,23 @@
   const icon = name => '<svg class="icon" aria-hidden="true"><use href="#i-' + name + '"/></svg>';
   const fold = value => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const favoritesKey = 'fabi_sticker_favorites_v1';
-  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'recent', limit: config.pageSize, favorites: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, downloadBusy: false, previewGeneration: 0, mediaGeneration: 0, audioSource: '', downloadToken: 0 };
+  const cartKey = 'fabi_sticker_cart_v1';
+  const orderKey = 'fabi_sticker_pending_order_v1';
+  const fixedPriceCents = 20;
+  const storeWhatsapp = String(config.storeWhatsapp || '5592985715119').replace(/\D/g, '');
+  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'recent', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, audioSource: '', activeOrderId: '', pollTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
   try {
     const saved = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
     if (Array.isArray(saved)) state.favorites = new Set(saved.filter(id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,80}$/.test(id)).slice(0, 2000));
   } catch (_) { /* Local storage may be disabled. The gallery still works. */ }
+
+  try {
+    const savedCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
+    if (Array.isArray(savedCart)) state.cart = new Set(savedCart.filter(id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,80}$/.test(id)).slice(0, 40));
+  } catch (_) { /* Cart still works for this visit when storage is blocked. */ }
+
+  const formatMoney = cents => (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const prefersStill = () => matchMedia('(prefers-reduced-motion: reduce)').matches || Boolean(navigator.connection && navigator.connection.saveData);
 
   function toast(message) {
     clearTimeout(state.toastTimer);
@@ -28,8 +40,12 @@
     if (state.current) {
       const isSaved = state.favorites.has(state.current.id);
       $('#previewSave').setAttribute('aria-pressed', String(isSaved));
-      $('#previewSave').innerHTML = icon('heart') + (isSaved ? 'Salva nas favoritas' : 'Salvar nas favoritas');
+      $('#previewSave').innerHTML = icon('heart') + (isSaved ? 'Remover das favoritas' : 'Salvar nas favoritas');
     }
+  }
+
+  function persistCart() {
+    try { localStorage.setItem(cartKey, JSON.stringify([...state.cart])); } catch (_) { /* Optional persistence. */ }
   }
 
   function toggleFavorite(id) {
@@ -72,7 +88,10 @@
     scope.querySelectorAll('img[data-sticker-id]').forEach(image => {
       image.addEventListener('error', () => {
         const item = state.items.find(entry => entry.id === image.dataset.stickerId);
-        if (item && !image.dataset.retried && state.source === 'live') {
+        if (image.dataset.fallback && !image.dataset.fallbackUsed) {
+          image.dataset.fallbackUsed = '1';
+          image.src = image.dataset.fallback;
+        } else if (item && !image.dataset.retried && state.source === 'live') {
           image.dataset.retried = '1';
           image.src = api.mediaUrl(item);
         } else {
@@ -84,18 +103,21 @@
 
   function cardHTML(item) {
     const media = api.staticMedia(item, state.index);
-    const image = media.poster || (state.source === 'live' ? api.mediaUrl(item) : '');
+    const animated = state.source === 'live' && item.isAnimated && !prefersStill();
+    const image = animated ? api.mediaUrl(item) : (media.poster || (state.source === 'live' ? api.mediaUrl(item) : ''));
     const isSaved = state.favorites.has(item.id);
-    const price = item.priceCents === 0 ? 'GRÁTIS' : item.priceCents === null ? 'PRÉVIA' : 'PAGO';
+    const inCart = state.cart.has(item.id);
+    const fallback = media.poster || '';
     return '<article class="sticker-card" data-id="' + escape(item.id) + '">' +
-      '<button class="card-preview" type="button" data-action="preview" data-id="' + escape(item.id) + '" aria-label="Ver prévia de ' + escape(item.nome) + '"' + (media.preview ? ' data-preview="' + escape(media.preview) + '"' : '') + '>' +
-      (image ? '<img src="' + escape(image) + '" alt="' + escape(item.nome) + '" width="360" height="360" loading="lazy" decoding="async" data-sticker-id="' + escape(item.id) + '">' : fallbackHTML('Prévia disponível apenas pelo backend.')) +
-      '<span class="card-play">' + icon('play') + 'Ver prévia</span></button>' +
+      '<button class="card-preview" type="button" data-action="preview" data-id="' + escape(item.id) + '" aria-label="Ver prévia de ' + escape(item.nome) + '">' +
+      (image ? '<img src="' + escape(image) + '" alt="' + escape(item.nome) + '" width="360" height="360" loading="lazy" decoding="async" data-sticker-id="' + escape(item.id) + '" data-fallback="' + escape(fallback) + '"><span class="watermark" aria-hidden="true">FABI BOT</span>' : fallbackHTML('Prévia disponível apenas pelo backend.')) +
+      '<span class="card-play">' + icon('play') + 'Ver exemplo</span></button>' +
       '<button class="card-save" type="button" data-action="favorite" data-id="' + escape(item.id) + '" data-name="' + escape(item.nome) + '" aria-pressed="' + isSaved + '" aria-label="' + (isSaved ? 'Remover ' : 'Salvar ') + escape(item.nome) + (isSaved ? ' das favoritas' : ' nas favoritas') + '">' + icon('heart') + '</button>' +
-      '<div class="card-info"><div class="card-kicker"><span>' + escape(item.id.replace('_', ' #')) + '</span><span>' + escape(price) + '</span></div>' +
+      '<div class="card-info"><div class="card-kicker"><span>' + escape(item.id.replace('_', ' #')) + '</span><span>R$ 0,20</span></div>' +
       '<h3 class="card-title" title="' + escape(item.nome) + '">' + escape(item.nome) + '</h3><div class="card-bottom">' +
       '<span class="audio-badge">' + icon(item.temAudio ? 'sound' : 'play') + (item.temAudio ? 'Com áudio' : item.isAnimated ? 'Animada' : 'Estática') + '</span>' +
-      '<button class="card-view-button" type="button" data-action="preview" data-id="' + escape(item.id) + '">Ver detalhes' + icon('arrow') + '</button></div></div></article>';
+      '<button class="card-cart-button" type="button" data-action="cart-add" data-id="' + escape(item.id) + '" aria-pressed="' + inCart + '">' + (inCart ? 'No carrinho ✓' : '+ Carrinho') + '</button></div>' +
+      '<button class="card-view-button" type="button" data-action="preview" data-id="' + escape(item.id) + '">Ver detalhes' + icon('arrow') + '</button></div></article>';
   }
 
   function stopHoverVideos() {
@@ -151,11 +173,11 @@
     });
     if (state.source === 'error' && !state.items.length) {
       $('#emptyTitle').textContent = 'O catálogo não respondeu.';
-      $('#emptyDescription').textContent = 'Confira a conexão do backend e tente atualizar a galeria. Nenhum envio ou pagamento foi executado.';
+      $('#emptyDescription').textContent = 'Confira a conexão do backend e tente atualizar a galeria. Nenhum pedido foi enviado.';
       $('#resetButton').hidden = true;
     } else if (!state.items.length) {
       $('#emptyTitle').textContent = 'O catálogo ainda está vazio.';
-      $('#emptyDescription').textContent = 'Salve uma figurinha com o comando do bot e atualize a página para vê-la aqui.';
+      $('#emptyDescription').textContent = 'O catálogo do bot ainda não tem figurinhas para exibir.';
       $('#resetButton').hidden = true;
     } else {
       $('#emptyTitle').textContent = state.filter === 'favorites' ? 'Sua coleção começa com um coração.' : 'Nenhuma reação com esse filtro.';
@@ -164,11 +186,11 @@
     }
     updateSavedCount();
     bindImageFallbacks(grid);
-    bindHoverPreviews();
   }
 
   function renderHero() {
-    const preferred = state.items.filter(item => api.staticMedia(item, state.index).poster);
+    const animatedItems = state.source === 'live' ? state.items.filter(item => item.isAnimated) : [];
+    const preferred = animatedItems.length ? animatedItems : state.items.filter(item => api.staticMedia(item, state.index).poster);
     const items = preferred.length ? preferred : state.items;
     const selected = [items[0], items[Math.min(3, items.length - 1)]].filter(Boolean);
     const collage = $('#heroCollage');
@@ -177,14 +199,15 @@
     } else {
       collage.innerHTML = selected.map((item, position) => {
         const media = api.staticMedia(item, state.index);
-        const image = media.poster || (state.source === 'live' ? api.mediaUrl(item) : '');
+        const animated = state.source === 'live' && item.isAnimated && !prefersStill();
+        const image = animated ? api.mediaUrl(item) : (media.poster || (state.source === 'live' ? api.mediaUrl(item) : ''));
         return '<button class="hero-card ' + (position ? 'hero-card-back' : 'hero-card-main') + '" type="button" data-action="preview" data-id="' + escape(item.id) + '" aria-label="Ver ' + escape(item.nome) + '">' +
-          (image ? '<img src="' + escape(image) + '" alt="' + escape(item.nome) + '" width="360" height="360" data-sticker-id="' + escape(item.id) + '">' : fallbackHTML(item.nome)) +
-          '<span class="hero-card-label">' + (item.temAudio ? 'DÊ PLAY NA PRÉVIA' : 'VEJA ESSA REAÇÃO') + '</span></button>';
+          (image ? '<img src="' + escape(image) + '" alt="' + escape(item.nome) + '" width="360" height="360" loading="eager" data-sticker-id="' + escape(item.id) + '" data-fallback="' + escape(media.poster || '') + '"><span class="watermark" aria-hidden="true">FABI BOT</span>' : fallbackHTML(item.nome)) +
+          '<span class="hero-card-label">R$ 0,20 · ADICIONE</span></button>';
       }).join('');
       bindImageFallbacks(collage);
     }
-    $('#heroCount').textContent = state.items.length ? state.items.length + ' figurinhas no catálogo' : 'Seu próximo meme está aqui';
+    $('#heroCount').textContent = state.items.length ? state.items.length + ' figurinhas · R$ 0,20 cada' : 'Seu próximo meme está aqui';
     $('#surpriseButton').disabled = !state.items.length;
   }
 
@@ -210,6 +233,7 @@
     select.value = state.category;
     render();
     renderHero();
+    renderCart();
   }
 
   function setFilter(filter) {
@@ -230,41 +254,47 @@
     stopMedia();
     state.activeTab = tab;
     const media = api.staticMedia(item, state.index);
-    const url = tab === 'example' ? media.example : media.preview;
     const container = $('#previewMedia');
     container.replaceChildren();
     $('#previewTab').classList.toggle('active', tab === 'preview');
     $('#previewTab').setAttribute('aria-pressed', String(tab === 'preview'));
     $('#exampleTab').classList.toggle('active', tab === 'example');
     $('#exampleTab').setAttribute('aria-pressed', String(tab === 'example'));
-    if (url) {
+    if (tab === 'example' && media.example) {
       const video = document.createElement('video');
       video.controls = true;
       video.playsInline = true;
       video.preload = 'metadata';
-      video.src = url;
-      if (media.poster && tab === 'preview') video.poster = media.poster;
-      video.setAttribute('aria-label', tab === 'example' ? 'Exemplo de uso no WhatsApp' : 'Vídeo de prévia da figurinha');
+      video.src = media.example;
+      video.setAttribute('aria-label', 'Exemplo de uso no WhatsApp');
       video.addEventListener('play', () => $('#stickerAudio').pause());
       video.addEventListener('error', () => {
         if (state.current !== item || state.activeTab !== tab || state.mediaGeneration !== mediaGeneration || !container.contains(video)) return;
-        container.innerHTML = fallbackHTML('Não foi possível carregar esse vídeo.');
-        $('#previewMediaNote').textContent = 'A cópia de vídeo não respondeu. O download do arquivo original depende do backend.';
+        container.innerHTML = fallbackHTML('Não foi possível carregar esse exemplo.');
+        $('#previewMediaNote').textContent = 'O vídeo de exemplo não respondeu. A figurinha original continua disponível na outra aba.';
       }, { once: true });
       container.appendChild(video);
-      $('#previewMediaNote').textContent = tab === 'example' ? 'Exemplo de conversa enviado ao site. Toque em play para assistir.' : 'Prévia em vídeo enviada ao site. Use o play e os controles de áudio.';
-    } else if (state.source === 'live' && tab === 'preview') {
+      $('#previewMediaNote').textContent = 'Exemplo de conversa no WhatsApp. Toque em play para assistir.';
+      return;
+    }
+    const source = state.source === 'live' ? api.mediaUrl(item) : media.poster;
+    if (source) {
       const image = document.createElement('img');
-      image.src = api.mediaUrl(item);
+      image.src = source;
       image.alt = item.nome;
       image.addEventListener('error', () => {
-        if (state.current === item && state.activeTab === tab && state.mediaGeneration === mediaGeneration && container.contains(image)) container.innerHTML = fallbackHTML('O arquivo de prévia não respondeu.');
+        if (state.current === item && state.activeTab === tab && state.mediaGeneration === mediaGeneration && container.contains(image)) container.innerHTML = fallbackHTML('A prévia da figurinha não respondeu.');
       }, { once: true });
       container.appendChild(image);
-      $('#previewMediaNote').textContent = item.isAnimated ? 'WebP animado do backend. Ouça o áudio separadamente abaixo.' : 'Arquivo original da figurinha servido pelo backend.';
+      const watermark = document.createElement('span');
+      watermark.className = 'watermark';
+      watermark.setAttribute('aria-hidden', 'true');
+      watermark.textContent = 'FABI BOT';
+      container.appendChild(watermark);
+      $('#previewMediaNote').textContent = item.isAnimated ? 'WebP animado original. A marca-d’água aparece apenas nesta prévia.' : 'Prévia estática da figurinha original.';
     } else {
-      container.innerHTML = fallbackHTML('Não há vídeo disponível para esta figurinha.');
-      $('#previewMediaNote').textContent = 'As prévias locais são associadas ao ID e à versão do registro do catálogo.';
+      container.innerHTML = fallbackHTML('Não há prévia disponível para esta figurinha.');
+      $('#previewMediaNote').textContent = 'As prévias locais estão associadas ao ID e à versão do registro do catálogo.';
     }
   }
 
@@ -279,24 +309,20 @@
     $('#previewTitle').textContent = item.nome;
     $('#previewBadges').innerHTML = [item.temAudio ? 'Com áudio' : 'Sem áudio', item.isAnimated ? 'Animada' : 'Estática', item.categoria].map(label => '<span>' + escape(label) + '</span>').join('');
     $('#previewMeta').textContent = [item.packname, item.tamanho ? Math.round(item.tamanho / 1024) + ' KB' : '', item.audioSeconds ? item.audioSeconds.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' s de áudio' : ''].filter(Boolean).join(' · ');
-    $('#previewStatus').textContent = state.source !== 'live' ? 'Você está consultando uma prévia do site. Downloads e áudio original exigem que o backend esteja disponível.' : item.priceCents !== 0 ? 'Este item não tem download liberado: o backend não possui uma integração de compra.' : '';
+    $('#previewStatus').textContent = state.source !== 'live' ? 'Prévia do pacote local. O checkout exige conexão ativa com o catálogo do bot.' : '';
     $('#audioSection').hidden = !item.temAudio;
-    $('#downloadAudio').hidden = !item.temAudio;
     $('#audioError').hidden = true;
     const audio = $('#stickerAudio');
     audio.pause();
     state.audioSource = item.temAudio ? api.mediaUrl(item, 'audio') : '';
     if (item.temAudio) audio.src = state.audioSource; else audio.removeAttribute('src');
     audio.load();
-    state.downloadBusy = false;
-    $('#downloadSticker').disabled = item.priceCents !== 0;
-    $('#downloadAudio').disabled = item.priceCents !== 0;
-    $('#downloadSticker').innerHTML = icon('download') + (item.priceCents === 0 ? 'Baixar figurinha WebP' : 'Download não liberado');
-    $('#downloadAudio').innerHTML = icon('sound') + 'Baixar áudio ' + (item.arquivoAudio.split('.').pop() || 'OGG').toUpperCase();
-    $('#botCommand').value = config.commandPrefix + config.sendCommand + ' ' + item.id;
     $('#exampleTab').disabled = !api.staticMedia(item, state.index).example;
+    $('#previewAddToCart').setAttribute('aria-pressed', String(state.cart.has(item.id)));
+    $('#previewAddToCart').textContent = state.cart.has(item.id) ? 'No carrinho · R$ 0,20' : 'Adicionar ao carrinho · R$ 0,20';
     updateSavedCount();
-    showPreviewMedia('preview');
+    const initialTab = api.staticMedia(item, state.index).example ? 'example' : 'preview';
+    showPreviewMedia(initialTab);
     if (!$('#previewDialog').open) $('#previewDialog').showModal();
     document.body.classList.add('modal-open');
     $('#closePreview').focus();
@@ -311,37 +337,191 @@
     $('#stickerAudio').load();
     document.body.classList.remove('modal-open');
     state.current = null;
-    state.downloadBusy = false;
     const focused = state.lastFocused;
     if (focused && focused.isConnected) focused.focus();
   }
 
-  async function download(kind, button) {
-    if (!state.current || state.downloadBusy) return;
-    const item = state.current;
-    const oldHTML = button.innerHTML;
-    const token = ++state.downloadToken;
-    const generation = state.previewGeneration;
-    const isCurrent = () => state.current === item && state.previewGeneration === generation && state.downloadToken === token;
-    state.downloadBusy = true;
-    $('#downloadSticker').disabled = true;
-    $('#downloadAudio').disabled = true;
-    button.textContent = 'Preparando arquivo…';
-    $('#previewStatus').textContent = 'Buscando o arquivo original no backend…';
+
+  function updateCartButtons() {
+    document.querySelectorAll('[data-action="cart-add"]').forEach(button => {
+      const inCart = state.cart.has(button.dataset.id);
+      button.setAttribute('aria-pressed', String(inCart));
+      button.textContent = inCart ? 'No carrinho ✓' : '+ Carrinho';
+    });
+    if (state.current) {
+      const inCart = state.cart.has(state.current.id);
+      $('#previewAddToCart').setAttribute('aria-pressed', String(inCart));
+      $('#previewAddToCart').textContent = inCart ? 'No carrinho · R$ 0,20' : 'Adicionar ao carrinho · R$ 0,20';
+    }
+  }
+
+  function renderCart() {
+    const validIds = new Set(state.items.map(item => item.id));
+    state.cart = new Set([...state.cart].filter(id => validIds.has(id)));
+    persistCart();
+    const items = [...state.cart].map(id => state.items.find(item => item.id === id)).filter(Boolean);
+    $('#cartCount').textContent = String(items.length);
+    $('#cartEmpty').hidden = items.length > 0;
+    $('#cartSummary').hidden = items.length === 0;
+    $('#checkoutButton').disabled = items.length === 0 || state.source !== 'live';
+    $('#cartQuantityText').textContent = items.length + (items.length === 1 ? ' figurinha' : ' figurinhas');
+    $('#cartTotal').textContent = formatMoney(items.length * fixedPriceCents);
+    $('#cartItems').innerHTML = items.map(item => {
+      const media = api.staticMedia(item, state.index);
+      const image = media.poster || (state.source === 'live' ? api.mediaUrl(item) : '');
+      return '<div class="cart-line"><div class="cart-thumb">' + (image ? '<img src="' + escape(image) + '" alt="" loading="lazy"><span class="watermark" aria-hidden="true">FABI BOT</span>' : '') + '</div><div class="cart-line-info"><strong>' + escape(item.nome) + '</strong><small>' + escape(item.id) + ' · R$ 0,20</small></div><button class="cart-remove" type="button" data-action="cart-remove" data-id="' + escape(item.id) + '" aria-label="Remover ' + escape(item.nome) + '">Remover</button></div>';
+    }).join('');
+    if (state.source !== 'live') $('#checkoutStatus').textContent = 'Checkout indisponível: conecte-se ao catálogo ao vivo do bot.';
+    updateCartButtons();
+  }
+
+  function addToCart(id) {
+    const item = state.items.find(entry => entry.id === id);
+    if (!item) return;
+    if (state.cart.has(id)) { toast('Essa figurinha já está no carrinho.'); return; }
+    if (state.cart.size >= 40) { toast('O carrinho aceita até 40 figurinhas por pedido.'); return; }
+    state.cart.add(id);
+    renderCart();
+    render();
+    toast('Adicionada ao carrinho · R$ 0,20.');
+  }
+
+  function removeFromCart(id) {
+    state.cart.delete(id);
+    renderCart();
+    render();
+  }
+
+  function restorePendingOrder() {
     try {
-      const result = await api.download(item, kind);
-      if (isCurrent()) $('#previewStatus').textContent = 'Arquivo recebido: ' + result.name + '. O navegador iniciou o download; a importação no WhatsApp é um passo separado.';
-      toast('Arquivo recebido. Confira os downloads do navegador.');
+      const saved = JSON.parse(localStorage.getItem(orderKey) || 'null');
+      if (!saved || !/^[a-f0-9-]{36}$/i.test(saved.orderId || '')) return;
+      state.activeOrderId = saved.orderId;
+      state.pendingQr = saved.qrCode || '';
+      state.pendingCopy = saved.copyPaste || '';
+      state.redeemCode = typeof saved.redeemCode === 'string' ? saved.redeemCode : '';
+    } catch (_) { /* Ignore corrupt local order data. */ }
+  }
+
+  function openCart() {
+    if (!$('#cartDialog').open) $('#cartDialog').showModal();
+    document.body.classList.add('modal-open');
+    $('#closeCart').focus();
+    if (state.redeemCode) {
+      $('#cartSummary').hidden = true; $('#cartEmpty').hidden = true; $('#checkoutPanel').hidden = false;
+      $('#checkoutTitle').textContent = 'Pagamento confirmado';
+      $('#checkoutStatus').textContent = 'Código de resgate pronto para enviar no WhatsApp.';
+      $('#redeemCode').textContent = state.redeemCode; $('#redeemCodeBox').hidden = false;
+      $('#sendRedeemToWhatsApp').href = 'https://wa.me/' + storeWhatsapp + '?text=' + encodeURIComponent(state.redeemCode);
+    } else if (state.activeOrderId && state.pendingCopy) {
+      $('#cartSummary').hidden = true; $('#cartEmpty').hidden = true; $('#checkoutPanel').hidden = false;
+      $('#checkoutTitle').textContent = 'Aguardando pagamento';
+      $('#checkoutStatus').textContent = 'PIX pendente. O código de resgate só aparece após a confirmação.';
+      $('#pixCopyPaste').value = state.pendingCopy;
+      let qrSrc = state.pendingQr;
+      if (!/^(?:data:image\/|https?:\/\/)/i.test(qrSrc) && /^[A-Za-z0-9+/=]+$/.test(qrSrc)) qrSrc = 'data:image/png;base64,' + qrSrc;
+      $('#pixQrImage').src = qrSrc; $('#pixQrImage').hidden = !qrSrc;
+      if (!state.pollTimer) { state.pollAttempts = 0; state.pollTimer = setInterval(checkPaymentStatus, 5000); checkPaymentStatus(); }
+    }
+  }
+
+  function closeCart() { document.body.classList.remove('modal-open'); }
+
+  function makeRequestId() {
+    if (!window.crypto || !window.crypto.getRandomValues) return '';
+    const bytes = new Uint8Array(16);
+    window.crypto.getRandomValues(bytes);
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const hex = [...bytes].map(value => value.toString(16).padStart(2, '0')).join('');
+    return hex.slice(0, 8) + '-' + hex.slice(8, 12) + '-' + hex.slice(12, 16) + '-' + hex.slice(16, 20) + '-' + hex.slice(20);
+  }
+
+  async function copyText(text, statusNode, success) {
+    try {
+      if (!navigator.clipboard || !window.isSecureContext) throw new Error('clipboard-unavailable');
+      await navigator.clipboard.writeText(text);
+      statusNode.textContent = success;
+    } catch (_) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text; textarea.setAttribute('readonly', ''); textarea.className = 'copy-fallback';
+      document.body.appendChild(textarea); textarea.select();
+      const copied = document.execCommand('copy'); textarea.remove();
+      statusNode.textContent = copied ? success : 'A cópia automática foi bloqueada. Selecione e copie o texto manualmente.';
+    }
+  }
+
+  function showRedeemCode(code) {
+    clearInterval(state.pollTimer);
+    state.pollTimer = null;
+    state.redeemCode = code;
+    $('#redeemCode').textContent = code;
+    $('#redeemCodeBox').hidden = false;
+    $('#checkoutTitle').textContent = 'Pagamento confirmado';
+    $('#checkoutStatus').textContent = 'Seu código de resgate está pronto. Envie-o no privado da Fabi Bot.';
+    $('#sendRedeemToWhatsApp').href = 'https://wa.me/' + storeWhatsapp + '?text=' + encodeURIComponent(code);
+    state.cart.clear();
+    persistCart();
+    renderCart();
+    try { localStorage.setItem(orderKey, JSON.stringify({ orderId: state.activeOrderId, qrCode: state.pendingQr, copyPaste: state.pendingCopy, redeemCode: code })); } catch (_) { /* Optional. */ }
+  }
+
+  async function checkPaymentStatus() {
+    if (!state.activeOrderId || state.pollAttempts >= 360) { clearInterval(state.pollTimer); state.pollTimer = null; return; }
+    state.pollAttempts += 1;
+    try {
+      const result = await api.checkStickerPayment(state.activeOrderId);
+      const code = result.redeemCode || result.code;
+      if (result.approved === true && typeof code === 'string' && /^FABI-[A-F0-9]{20,32}$/.test(code)) { showRedeemCode(code); return; }
+      $('#checkoutStatus').textContent = result.status === 'rejected' ? 'O pagamento não foi aprovado. Gere um novo PIX pelo carrinho.' : 'Aguardando confirmação do Mercado Pago…';
     } catch (error) {
-      if (isCurrent()) $('#previewStatus').textContent = error.message;
-      toast(error.message);
+      $('#checkoutStatus').textContent = 'Não foi possível atualizar o status agora: ' + error.message + ' A página tentará novamente.';
+    }
+  }
+
+  async function startCheckout() {
+    if (state.source !== 'live' || state.cart.size === 0) { $('#checkoutStatus').textContent = 'Checkout indisponível: confira a conexão do catálogo e tente novamente.'; return; }
+    const email = $('#payerEmail').value.trim();
+    if (!$('#payerEmail').reportValidity()) return;
+    const requestId = makeRequestId();
+    if (!requestId) { $('#checkoutStatus').textContent = 'Este navegador não oferece geração segura de identificadores. Atualize-o e tente novamente.'; return; }
+    $('#checkoutButton').disabled = true;
+    $('#cartSummary').hidden = true;
+    $('#cartEmpty').hidden = true;
+    $('#checkoutPanel').hidden = false;
+    $('#backToCart').hidden = true;
+    $('#redeemCodeBox').hidden = true;
+    $('#pixQrImage').hidden = true;
+    $('#pixCopyPaste').value = '';
+    $('#checkoutTitle').textContent = 'Gerando PIX';
+    $('#checkoutStatus').textContent = 'Solicitando o PIX ao servidor seguro…';
+    try {
+      const result = await api.createStickerOrder([...state.cart], email, requestId);
+      const orderId = result.orderId || result.transactionId;
+      const qrCode = String(result.qrCode || result.qr_code || '');
+      const copyPaste = String(result.copyPaste || result.copy_paste || '');
+      if (!/^[a-f0-9-]{36}$/i.test(String(orderId || '')) || !qrCode || !copyPaste) throw new Error('O servidor não retornou um pedido PIX completo. Nenhuma entrega foi liberada.');
+      state.activeOrderId = orderId;
+      state.redeemCode = '';
+      state.pendingQr = qrCode;
+      state.pendingCopy = copyPaste;
+      state.pollAttempts = 0;
+      let qrSrc = qrCode;
+      if (!/^(?:data:image\/|https?:\/\/)/i.test(qrSrc) && /^[A-Za-z0-9+/=]+$/.test(qrSrc)) qrSrc = 'data:image/png;base64,' + qrSrc;
+      $('#pixQrImage').src = qrSrc;
+      $('#pixQrImage').hidden = false;
+      $('#pixCopyPaste').value = copyPaste;
+      $('#checkoutTitle').textContent = 'Pague com PIX';
+      $('#checkoutStatus').textContent = 'Escaneie o QR Code ou copie o PIX. O código de resgate só aparece após a confirmação.';
+      try { localStorage.setItem(orderKey, JSON.stringify({ orderId, qrCode, copyPaste })); } catch (_) { /* Optional. */ }
+      await checkPaymentStatus();
+      if (!state.redeemCode && !state.pollTimer) state.pollTimer = setInterval(checkPaymentStatus, 5000);
+    } catch (error) {
+      $('#checkoutTitle').textContent = 'Não foi possível gerar o PIX';
+      $('#checkoutStatus').textContent = error.message + ' Nenhuma figurinha foi enviada.';
+      $('#backToCart').hidden = false;
     } finally {
-      if (isCurrent()) {
-        state.downloadBusy = false;
-        $('#downloadSticker').disabled = item.priceCents !== 0;
-        $('#downloadAudio').disabled = item.priceCents !== 0;
-        button.innerHTML = oldHTML;
-      }
+      $('#checkoutButton').disabled = false;
     }
   }
 
@@ -350,6 +530,8 @@
     if (!button) return;
     if (button.dataset.action === 'favorite') toggleFavorite(button.dataset.id);
     if (button.dataset.action === 'preview') openPreview(button.dataset.id);
+    if (button.dataset.action === 'cart-add') addToCart(button.dataset.id);
+    if (button.dataset.action === 'cart-remove') removeFromCart(button.dataset.id);
   });
   document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
   $('#savedButton').addEventListener('click', () => { setFilter(state.filter === 'favorites' ? 'all' : 'favorites'); $('#catalogo').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
@@ -378,23 +560,25 @@
   $('#previewTab').addEventListener('click', () => showPreviewMedia('preview'));
   $('#exampleTab').addEventListener('click', () => showPreviewMedia('example'));
   $('#previewSave').addEventListener('click', () => { if (state.current) toggleFavorite(state.current.id); });
-  $('#downloadSticker').addEventListener('click', event => download('sticker', event.currentTarget));
-  $('#downloadAudio').addEventListener('click', event => download('audio', event.currentTarget));
+  $('#previewAddToCart').addEventListener('click', () => { if (state.current) { addToCart(state.current.id); $('#previewDialog').close(); openCart(); } });
+  $('#cartButton').addEventListener('click', openCart);
+  $('#closeCart').addEventListener('click', () => $('#cartDialog').close());
+  $('#cartDialog').addEventListener('close', closeCart);
+  $('#cartDialog').addEventListener('click', event => {
+    if (event.target !== $('#cartDialog')) return;
+    const rect = $('#cartDialog').getBoundingClientRect();
+    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) $('#cartDialog').close();
+  });
+  $('#continueShopping').addEventListener('click', () => $('#cartDialog').close());
+  $('#backToCart').addEventListener('click', () => { $('#checkoutPanel').hidden = true; renderCart(); });
+  $('#checkoutButton').addEventListener('click', startCheckout);
+  $('#copyPixButton').addEventListener('click', () => copyText($('#pixCopyPaste').value, $('#checkoutStatus'), 'PIX copiado.'));
+  $('#copyRedeemButton').addEventListener('click', () => copyText($('#redeemCode').textContent, $('#checkoutStatus'), 'Código de resgate copiado.'));
   $('#stickerAudio').addEventListener('play', () => $('#previewMedia').querySelectorAll('video').forEach(video => video.pause()));
   $('#stickerAudio').addEventListener('error', event => {
     if (state.current && state.current.temAudio && state.audioSource && event.currentTarget.currentSrc === state.audioSource) $('#audioError').hidden = false;
   });
-  $('#copyCommand').addEventListener('click', async () => {
-    const input = $('#botCommand');
-    try {
-      if (!navigator.clipboard || !window.isSecureContext) throw new Error('clipboard-unavailable');
-      await navigator.clipboard.writeText(input.value);
-      $('#previewStatus').textContent = 'Comando copiado. Somente o dono pode executá-lo no bot.';
-    } catch (_) {
-      input.focus(); input.select();
-      $('#previewStatus').textContent = 'O navegador bloqueou a cópia automática. O comando está selecionado: copie-o manualmente.';
-    }
-  });
+
   window.addEventListener('storage', event => {
     if (event.key !== favoritesKey) return;
     try {
@@ -404,6 +588,7 @@
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden) { stopMedia(); stopHoverVideos(); } });
   $('#currentYear').textContent = String(new Date().getFullYear());
+  restorePendingOrder();
   updateSavedCount();
   loadCatalog().catch(error => {
     state.loading = false;

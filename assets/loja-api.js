@@ -12,7 +12,9 @@
 
   function proxyUrl(path) {
     const target = new URL(path, backend);
-    if (target.origin !== backend.origin || !/^\/figurinhas_loja(?:\.json$|\/)/.test(target.pathname)) throw new Error('Caminho de mídia não permitido.');
+    const allowedMedia = /^\/figurinhas_loja(?:\.json|\/[a-zA-Z0-9_-]+\.(?:webp|ogg))$/i.test(target.pathname);
+    const allowedStoreApi = /^\/api\/figurinhas\/(?:gerar-pix|verificar-pagamento\/[a-f0-9-]{36})$/i.test(target.pathname);
+    if (target.origin !== backend.origin || (!allowedMedia && !allowedStoreApi) || target.search || target.hash) throw new Error('Caminho de mídia ou checkout não permitido.');
     return config.proxy.replace(/\/$/, '') + '/' + backend.host + '/proxy?url=' + encodeURIComponent(target.href);
   }
 
@@ -22,41 +24,15 @@
     return target.href;
   }
 
-  async function request(url, consume, timeoutMs = config.timeoutMs) {
-    const controller = new AbortController();
-    let timer;
-    const timeout = new Promise((_, reject) => {
-      timer = setTimeout(() => {
-        controller.abort();
-        reject(new Error('O servidor demorou demais para responder. Tente novamente.'));
-      }, timeoutMs);
-    });
-    const work = async () => {
-      const response = await fetch(url, { signal: controller.signal, cache: 'no-store', credentials: 'omit' });
-      if (!response.ok) {
-        const error = new Error(response.status === 403 ? 'O proxy recusou a conexão (HTTP 403).' : 'O servidor respondeu HTTP ' + response.status + '.');
-        error.status = response.status;
-        throw error;
-      }
-      return consume(response, controller.signal);
-    };
-    try { return await Promise.race([work(), timeout]); }
-    catch (error) {
-      if (controller.signal.aborted || error.name === 'AbortError') throw new Error('O servidor demorou demais para responder. Tente novamente.');
-      if (error instanceof TypeError) throw new Error('Não foi possível acessar o backend. Confira a conexão e o proxy.');
-      throw error;
-    } finally { clearTimeout(timer); }
-  }
-
   async function limitedBytes(response, maxBytes, signal) {
     const length = Number(response.headers.get('content-length'));
     if (Number.isFinite(length) && length > maxBytes) {
       if (response.body) await response.body.cancel();
-      throw new Error('O arquivo excede o limite de tamanho permitido.');
+      throw new Error('A resposta excede o limite permitido.');
     }
     if (!response.body || typeof response.body.getReader !== 'function') {
       const buffer = new Uint8Array(await response.arrayBuffer());
-      if (buffer.byteLength > maxBytes) throw new Error('O arquivo excede o limite de tamanho permitido.');
+      if (buffer.byteLength > maxBytes) throw new Error('A resposta excede o limite permitido.');
       return buffer;
     }
     const reader = response.body.getReader();
@@ -71,7 +47,7 @@
         if (signal.aborted) throw new Error('A leitura foi interrompida.');
         if (done) break;
         total += value.byteLength;
-        if (total > maxBytes) { await reader.cancel(); throw new Error('O arquivo excede o limite de tamanho permitido.'); }
+        if (total > maxBytes) { await reader.cancel(); throw new Error('A resposta excede o limite permitido.'); }
         chunks.push(value);
       }
       const result = new Uint8Array(total);
@@ -84,13 +60,34 @@
     }
   }
 
-  function jsonRequest(url) {
-    return request(url, async (response, signal) => {
-      const bytes = await limitedBytes(response, 2 * 1024 * 1024, signal);
-      try { return JSON.parse(new TextDecoder().decode(bytes)); }
-      catch (_) { throw new Error('A resposta não é um JSON válido. Confira o catálogo e o proxy.'); }
+  async function request(url, options = {}, timeoutMs = config.timeoutMs) {
+    const controller = new AbortController();
+    let timer;
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => { controller.abort(); reject(new Error('O servidor demorou demais para responder. Tente novamente.')); }, timeoutMs);
     });
+    const work = async () => {
+      const response = await fetch(url, { ...options, signal: controller.signal, cache: 'no-store', credentials: 'omit' });
+      const bytes = await limitedBytes(response, 2 * 1024 * 1024, controller.signal);
+      let payload;
+      try { payload = JSON.parse(new TextDecoder().decode(bytes)); }
+      catch (_) { throw new Error('A resposta do servidor não é um JSON válido.'); }
+      if (!response.ok) {
+        const error = new Error(cleanText(payload.error || payload.message || ('O servidor respondeu HTTP ' + response.status + '.'), 240));
+        error.status = response.status;
+        throw error;
+      }
+      return payload;
+    };
+    try { return await Promise.race([work(), timeout]); }
+    catch (error) {
+      if (controller.signal.aborted || error.name === 'AbortError') throw new Error('O servidor demorou demais para responder. Tente novamente.');
+      if (error instanceof TypeError) throw new Error('Não foi possível acessar o backend. Confira a conexão e o proxy.');
+      throw error;
+    } finally { clearTimeout(timer); }
   }
+
+  async function jsonRequest(url) { return request(url); }
 
   function normalizeCatalog(raw) {
     const rows = Array.isArray(raw) ? raw : (raw && (raw.figurinhas || raw.data));
@@ -102,8 +99,6 @@
       if (!/^[a-zA-Z0-9_-]{1,80}$/.test(id) || !arquivo || seen.has(id)) return null;
       seen.add(id);
       const audio = fileName(row.arquivoAudio, 'audio');
-      const price = Number(row.preco);
-      const priceCents = row.preco !== undefined && row.preco !== null && row.preco !== '' && Number.isFinite(price) && price >= 0 ? Math.round(price * 100) : null;
       return {
         id, nome: cleanText(row.nome || 'Figurinha ' + id), arquivo, arquivoAudio: audio,
         categoria: cleanText(row.categoria || 'geral', 60),
@@ -112,7 +107,7 @@
         packname: cleanText(row.packname || 'Fabi Loja', 80),
         temAudio: bool(row.temAudio) && !!audio, isAnimated: bool(row.isAnimated),
         audioSeconds: Math.max(0, Number(row.audioSeconds) || 0), tamanho: Math.max(0, Number(row.tamanho) || 0),
-        criadoEm: cleanText(row.criadoEm, 40), priceCents,
+        criadoEm: cleanText(row.criadoEm, 40), priceCents: 20,
         fingerprint: cleanText(row.criadoEm, 40) + ':' + (Number(row.tamanho) || 0)
       };
     }).filter(Boolean);
@@ -121,7 +116,7 @@
   }
 
   async function catalog() {
-    try { return { items: normalizeCatalog(await jsonRequest(proxyUrl(config.catalogPath))), source: 'live', loadedAt: Date.now(), error: '' }; }
+    try { return { items: normalizeCatalog(await jsonRequest(proxyUrl('/figurinhas_loja.json'))), source: 'live', loadedAt: Date.now(), error: '' }; }
     catch (error) {
       try { return { items: normalizeCatalog(await jsonRequest(localUrl(config.snapshotPath))), source: 'snapshot', loadedAt: Date.now(), error: error.message }; }
       catch (_) { return { items: [], source: 'error', loadedAt: Date.now(), error: error.message }; }
@@ -149,27 +144,30 @@
     return result;
   }
 
-  async function download(item, kind = 'sticker') {
-    if (item.priceCents !== 0) throw new Error('O backend não possui checkout para esse item. Apenas a prévia está disponível.');
-    const name = fileName(kind === 'audio' ? item.arquivoAudio : item.arquivo, kind);
-    if (!name) throw new Error('O download aceita apenas figurinha WebP e áudio OGG.');
-    const bytes = await request(mediaUrl(item, kind), async (response, signal) => {
-      const contentType = (response.headers.get('content-type') || '').toLowerCase();
-      if (/text\/|json|xml|html/.test(contentType)) throw new Error('O proxy retornou uma página em vez do arquivo. O download foi cancelado.');
-      return limitedBytes(response, 30 * 1024 * 1024, signal);
-    }, config.downloadTimeoutMs);
-    if (!bytes.length) throw new Error('O arquivo recebido está vazio.');
-    const ascii = String.fromCharCode(...bytes.slice(0, 16));
-    if (kind === 'sticker' && !(ascii.startsWith('RIFF') && ascii.slice(8, 12) === 'WEBP')) throw new Error('A resposta não contém uma figurinha WebP válida.');
-    if (kind === 'audio' && !ascii.startsWith('OggS')) throw new Error('A resposta não contém um áudio OGG válido.');
-    const blob = new Blob([bytes], { type: kind === 'audio' ? 'audio/ogg' : 'image/webp' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url; anchor.download = name; anchor.rel = 'noopener';
-    document.body.appendChild(anchor); anchor.click(); anchor.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
-    return { name, bytes: blob.size };
+  function jsonApi(path, method, body) {
+    return request(proxyUrl(path), {
+      method,
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined
+    }, 30000);
   }
 
-  window.FabiStickerApi = { catalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, download };
+  async function createStickerOrder(items, payerEmail, requestId) {
+    if (!Array.isArray(items) || items.length < 1 || items.length > 40) throw new Error('Selecione de 1 a 40 figurinhas.');
+    const ids = [...new Set(items.map(id => String(id)))];
+    if (ids.length !== items.length || ids.some(id => !/^[a-zA-Z0-9_-]{1,80}$/.test(id))) throw new Error('O carrinho contém IDs inválidos ou repetidos.');
+    const email = String(payerEmail || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) throw new Error('Informe um e-mail válido para o pagamento.');
+    const idempotencyRequest = String(requestId || '');
+    if (!/^[a-f0-9-]{36}$/i.test(idempotencyRequest)) throw new Error('A solicitação do PIX expirou. Tente novamente.');
+    return jsonApi('/api/figurinhas/gerar-pix', 'POST', { items: ids, payerEmail: email, requestId: idempotencyRequest });
+  }
+
+  async function checkStickerPayment(orderId) {
+    const id = String(orderId || '');
+    if (!/^[a-f0-9-]{36}$/i.test(id)) throw new Error('Identificador de pagamento inválido.');
+    return jsonApi('/api/figurinhas/verificar-pagamento/' + encodeURIComponent(id), 'GET');
+  }
+
+  window.FabiStickerApi = { catalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, createStickerOrder, checkStickerPayment };
 })();

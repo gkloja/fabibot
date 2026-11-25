@@ -11,9 +11,8 @@
     snapshotPath: 'assets/figurinhas-preview/catalogo.json',
     mediaIndexPath: 'assets/figurinhas-preview/media-index.json',
     timeoutMs: 18000,
-    downloadTimeoutMs: 30000,
     pageSize: 24,
-    commandPrefix: '/',
-    sendCommand: 'enviafig'
+    priceCents: 20,
+    storeWhatsapp: '5592985715119'
   }, window.FABI_FIGURINHAS_CONFIG || {});
 })();
