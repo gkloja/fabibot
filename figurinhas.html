@@ -1,127 +1,788 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script>
-(function(){
-  try{
-    var t=localStorage.getItem("theme");
-    if(t!=="light"&&t!=="dark"){
-      var d=localStorage.getItem("darkMode");
-      if(d==="false") t="light";
-      else t="dark";
-    }
-    document.documentElement.setAttribute("data-theme",t);
-    document.documentElement.style.colorScheme=t==="light"?"light":"dark";
-    if(t==="light") document.documentElement.classList.add("light-mode");
-  }catch(_){
-    document.documentElement.setAttribute("data-theme","dark");
-    document.documentElement.style.colorScheme="dark";
-  }
-})();
-</script>
-<link rel="stylesheet" href="/assets/fabi-theme.css?v=20261011c">
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Bot de figurinhas para WhatsApp | Como usar a Fabi Bot</title>
-<meta name="description" content="Veja como criar figurinhas no WhatsApp com a Fabi Bot, quais mídias são compatíveis e boas práticas para obter resultados melhores.">
-<meta name="robots" content="index,follow,max-image-preview:large">
-<meta name="theme-color" content="#07100c">
-<link rel="canonical" href="https://www.fabibot.com.br/figurinhas">
-<meta property="og:title" content="Bot de figurinhas para WhatsApp | Como usar a Fabi Bot">
-<meta property="og:description" content="Veja como criar figurinhas no WhatsApp com a Fabi Bot, quais mídias são compatíveis e boas práticas para obter resultados melhores.">
-<meta property="og:image" content="https://www.fabibot.com.br/og-image.jpg">
-<meta property="og:url" content="https://www.fabibot.com.br/figurinhas">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="pt_BR">
-<meta property="og:site_name" content="Fabi Bot">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://www.fabibot.com.br/og-image.jpg">
-<link rel="icon" href="/favicon-32x32.png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="manifest" href="/site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="/assets/fabi-v2.css?v=20261007">
-<link rel="stylesheet" href="/assets/adsense-ready.css?v=20261007">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Fabi Bot - Loja de Figurinhas</title>
+  <link rel="icon" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/loja.css">
 </head>
-<body class="fabi-v2-page">
-<a class="fabi-skip" href="#conteudo-principal">Pular para o conteúdo</a>
-<header class="fabi-topbar">
-  <div class="fabi-shell fabi-topbar-in">
-    <a class="fabi-brand" href="/"><img src="/flogo.jpg" alt="" width="36" height="36"><span>Fabi Bot</span></a>
-    <nav class="fabi-nav" aria-label="Principal">
-      <a href="/">Início</a>
-      <a href="/conectar">Conectar</a>
-      <a href="/comandos">Comandos</a>
-      <a href="/figurinhas">Figurinhas</a>
-      <a href="/downloads">Downloads</a>
-      <a href="/sobre">Sobre</a>
-    </nav>
-    <a class="fabi-btn fabi-btn-primary" href="/conectar">Conectar</a>
-  </div>
-</header>
+<body>
 
-<main id="conteudo-principal" tabindex="-1">
-<section class="fabi-section"><div class="fabi-shell editorial-wrap">
-<div class="fabi-section-head">
-  <span class="fabi-badge">Figurinhas</span>
-  <h1 class="fabi-title">Transforme sua mídia em <span>figurinha.</span></h1>
-  <p>A criação de stickers é um dos recursos mais simples da Fabi: você envia ou responde uma mídia compatível e usa o comando disponível na sua sessão.</p>
-</div>
+  <!-- Skip Link -->
+  <a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
 
-<div class="editorial-prose">
-<h2>Como criar uma figurinha</h2>
-<ol>
-<li>Envie uma imagem, vídeo curto ou GIF compatível no grupo.</li>
-<li>Responda à mensagem com o comando de figurinha disponível na sua sessão.</li>
-<li>A Fabi processa o arquivo e devolve o sticker no próprio grupo.</li>
-</ol>
-<p>A lista de comandos pode mudar conforme a versão da sessão. Por isso, quando houver dúvida, consulte a <a href="/comandos">Central de Comandos</a> ou use o menu do próprio bot.</p>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="navbar-logo">
+        <img src="/flogo.jpg" alt="Fabi Bot" width="32" height="32"> <span>Fabi Loja</span>
+      </a>
+      <nav class="navbar-nav">
+        <a href="/" class="navbar-link"><i class="fas fa-home"></i> Início</a>
+        <a href="/comandos" class="navbar-link"><i class="fas fa-list"></i> Comandos</a>
+        <a href="/conectar" class="navbar-link"><i class="fas fa-qr"></i> Conectar</a>
+      </nav>
+      <div class="navbar-actions">
+        <a href="#" class="navbar-link navbar-link--cart">
+          <i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span>
+          <span>R$ 0,00</span>
+        </a>
+      </div>
+    </div>
+  </header>
 
-<h2>Que tipo de mídia funciona melhor?</h2>
-<p>Imagens com boa iluminação, assunto centralizado e resolução razoável costumam gerar resultados mais nítidos. Para vídeos e GIFs, arquivos muito longos ou grandes podem precisar de redução para caber nos limites do formato de figurinha.</p>
-<p>Se uma mídia não for processada, tente um arquivo menor ou outro formato. Falhas também podem acontecer quando a origem do arquivo está corrompida.</p>
+  <!-- Main Content -->
+  <main id="main-content">
+    <section class="catalog-section" id="catalog-section">
+      <div class="container">
+        <div class="section-header">
+          <h2><i class="fas fa-gift"></i> Catálogo de Figurinhas</h2>
+          <p>Cada figurinha custa <span class="price-tag">15¢</span></p>
+        </div>
+        <div class="catalog-grid" id="catalog-grid">
+          <!-- Figurinhas serão inseridas pelo JavaScript -->
+        </div>
+      </div>
+    </section>
 
-<div class="editorial-grid">
-  <div class="editorial-card"><h3>Imagem</h3><p>Fotos, memes e artes são os casos mais diretos. Recortes simples e fundos limpos costumam ficar melhores.</p></div>
-  <div class="editorial-card"><h3>Vídeo e GIF</h3><p>Arquivos curtos funcionam melhor. Quanto maior a duração, maior o trabalho de conversão e a chance de exceder limites.</p></div>
-</div>
+    <!-- Cart Section -->
+    <section class="cart-section" id="cart-section">
+      <div class="container">
+        <div class="section-header">
+          <h2><i class="fas fa-shopping-cart"></i> Meu Carrinho</h2>
+          <button class="btn btn-secondary btn-close-cart" title="Fechar carrinho">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="cart-empty" id="cart-empty">
+          <i class="fas fa-shopping-basket"></i>
+          <p>Nenhuma figurinha selecionada</p>
+        </div>
+        <div class="cart-items" id="cart-items">
+          <!-- Itens do carrinho -->
+        </div>
+        <div class="cart-footer">
+          <div class="cart-total">
+            <span>Total:</span>
+            <strong><span id="cart-total">R$ 0,00</span></strong>
+          </div>
+          <button class="btn btn-primary btn-checkout" disabled>
+            <i class="fas fa-hand-holding-usd"></i> Finalizar Compra
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
 
-<h2>Qualidade e compatibilidade</h2>
-<p>A Fabi tenta devolver um arquivo compatível com o WhatsApp. Ainda assim, qualidade, tamanho e duração da mídia de origem influenciam o resultado. O processamento também pode depender de bibliotecas e recursos de conversão disponíveis no servidor.</p>
-
-<h2>Direitos autorais e uso responsável</h2>
-<p>Crie e compartilhe figurinhas apenas com conteúdo que você tenha direito de usar. Evite material que viole privacidade, direitos autorais ou regras do grupo. Administradores podem definir regras próprias para stickers e mídia.</p>
-
-<h2>Problemas comuns</h2>
-<h3>A figurinha não foi criada</h3>
-<p>Confirme se você respondeu à mídia correta, se o comando está ativo no grupo e se o arquivo é compatível. Quando necessário, tente novamente com uma imagem ou vídeo menor.</p>
-<h3>O vídeo ficou pesado</h3>
-<p>Prefira trechos curtos e evite arquivos com resolução muito acima do necessário para uma figurinha.</p>
-
-<div class="editorial-links">
-  <a href="/conectar">Conectar a Fabi</a>
-  <a href="/comandos">Central de Comandos</a>
-  <a href="/downloads">Ferramentas de mídia</a>
-</div>
-</div>
-</div></section>
-</main>
-<footer class="fabi-footer">
-  <div class="fabi-shell fabi-footer-row">
-    <div>© 2026 Fabi Bot · Projeto independente.</div>
-    <div>
-      <a href="/sobre">Sobre</a> ·
-      <a href="/contato">Contato</a> ·
-      <a href="/privacidade">Privacidade</a> ·
-      <a href="/termos">Termos</a>
+  <!-- Modal de Confirmation -->
+  <div class="modal" id="checkout-modal">
+    <div class="modal-overlay" onclick="fecharModal()"></div>
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h2><i class="fas fa-check-circle"></i> Compra Finalizada</h2>
+      <p>Obrigado pela sua compra! 🎉</p>
+      <p>Total pago: <strong id="modal-total">R$ 0,00</strong></p>
+      <p>Figurinhas compradas: <strong id="modal-qtd">0</strong></p>
+      <button class="btn btn-primary btn-new-shop" onclick="novaCompra()">Continuar Comprando</button>
     </div>
   </div>
-</footer>
-<script src="/assets/fabi-v2.js?v=20261007" defer></script>
-<script src="/assets/fabi-theme.js?v=20261011c" defer></script>
+
+  <script>
+    // Cart state
+    let carrinho = [];
+    let figurinhas = [];
+
+    // Load figurinhas from JSON
+    async function carregarFigurinhas() {
+      try {
+        const response = await fetch('figurinhas_loja.json');
+        figurinhas = await response.json();
+        
+        if (!Array.isArray(figurinhas) || figurinhas.length === 0) {
+          document.getElementById('catalog-grid').innerHTML = '<p style="text-align:center;color:#666;padding:20px;">Nenhuma figurinha disponível na loja ainda.</p>';
+          return;
+        }
+        
+        exibirFigurinhas(figurinhas);
+      } catch (error) {
+        console.error('Erro ao carregar figurinhas:', error);
+        document.getElementById('catalog-grid').innerHTML = '<p style="text-align:center;color:#666;padding:20px;">Erro ao carregar catálogo.</p>';
+      }
+    }
+    
+    // Display figurinhas in grid
+    function exibirFigurinhas(figs) {
+      const grid = document.getElementById('catalog-grid');
+      grid.innerHTML = '';
+      
+      figs.forEach((fig, index) => {
+        const card = document.createElement('div');
+        card.className = 'catalog-card';
+        card.innerHTML = `
+          <div class="card-preview" data-id="${fig.id}" data-arquivo="${fig.arquivo}" data-temAudio="${fig.temAudio}">
+            <img src="figurinhas_loja/previa/${fig.arquivo}" alt="${fig.nome || 'Figurinha'}" loading="lazy" class="card-img">
+            <div class="card-overlay">
+              <button class="btn-add" data-index="${index}">
+                <i class="fas fa-plus"></i> Adicionar
+              </button>
+            </div>
+          </div>
+          <div class="card-info">
+            <h3 class="card-title">${fig.nome || 'Figurinha ' + fig.id}</h3>
+            <p class="card-price">15¢</p>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      
+      // Add event listeners for add buttons
+      document.querySelectorAll('.btn-add').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const index = this.dataset.index;
+          adicionarAoCarrinho(index);
+        });
+      });
+      
+      // Preview click to switch to exemplo view
+      document.querySelectorAll('.card-preview').forEach(card => {
+        card.addEventListener('click', function() {
+          const arquivo = this.dataset.arquivo;
+          const temAudio = this.dataset.temAudio === 'true';
+          mostrarExemplo(arquivo, temAudio);
+        });
+      });
+    }
+    
+    // Add to cart
+    function adicionarAoCarrinho(index) {
+      const fig = figurinhas[index];
+      if (!fig) return;
+      
+      // Check if already in cart
+      if (carrinho.some(item => item.id === fig.id)) {
+        mostrarToast('Esta figurinha já está no carrinho!');
+        return;
+      }
+      
+      carrinho.push({
+        id: fig.id,
+        nome: fig.nome || 'Figurinha ' + fig.id,
+        arquivo: fig.arquivo,
+        preco: 0.15
+      });
+      
+      atualizarCarrinho();
+    }
+    
+    // Remove from cart
+    function removerDoCarrinho(id) {
+      carrinho = carrinho.filter(item => item.id !== id);
+      atualizarCarrinho();
+    }
+    
+    // Update cart UI
+    function atualizarCarrinho() {
+      const cartCount = document.getElementById('cart-count');
+      const cartItems = document.getElementById('cart-items');
+      const cartTotal = document.getElementById('cart-total');
+      const cartEmpty = document.getElementById('cart-empty');
+      const checkoutBtn = document.querySelector('.btn-checkout');
+      
+      const total = carrinho.reduce((sum, item) => sum + item.preco, 0);
+      const formattedTotal = total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+      
+      cartCount.textContent = carrinho.length;
+      cartTotal.textContent = formattedTotal.replace('R$ ', 'R$ ');
+      
+      // Update checkout button state
+      checkoutBtn.disabled = carrinho.length === 0;
+      
+      if (carrinho.length === 0) {
+        cartEmpty.style.display = 'block';
+        cartItems.innerHTML = '';
+      } else {
+        cartEmpty.style.display = 'none';
+        cartItems.innerHTML = carrinho.map((item, i) => `
+          <div class="cart-item">
+            <img src="figurinhas_loja/exemplo/${item.arquivo}" alt="${item.nome}" class="cart-img">
+            <div class="cart-item-info">
+              <h4 class="cart-item-name">${item.nome}</h4>
+              <p class="cart-item-price">${item.preco}¢</p>
+            </div>
+            <button class="btn-remove" data-index="${i}" title="Remover">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `).join('');
+        
+        // Add remove event listeners
+        cartItems.querySelectorAll('.btn-remove').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const index = this.dataset.index;
+            removerDoCarrinho(carrinho[index].id);
+          });
+        });
+      }
+    }
+    
+    // Show exemplo view
+    function mostrarExemplo(arquivo, temAudio) {
+      const catalogSection = document.getElementById('catalog-section');
+      const cartSection = document.getElementById('cart-section');
+      
+      // Hide catalog, show cart
+      catalogSection.style.display = 'none';
+      cartSection.style.display = 'block';
+      
+      // Set the exemplo image
+      const exemploImg = cartSection.querySelector('.main-img');
+      if (exemploImg) {
+        exemploImg.src = `figurinhas_loja/exemplo/${arquivo}`;
+      }
+      
+      // Add this specific item to cart
+      const index = figurinhas.findIndex(f => f.arquivo === arquivo);
+      if (index >= 0) {
+        adicionarAoCarrinho(index);
+      }
+    }
+    
+    // Close cart
+    function fecharCarrinho() {
+      const catalogSection = document.getElementById('catalog-section');
+      const cartSection = document.getElementById('cart-section');
+      
+      catalogSection.style.display = 'block';
+      cartSection.style.display = 'none';
+      document.getElementById('cart-empty').style.display = 'block';
+      document.getElementById('cart-items').innerHTML = '';
+    }
+    
+    // Checkout
+    function finalizarCompra() {
+      if (carrinho.length === 0) return;
+      
+      const total = carrinho.reduce((sum, item) => sum + item.preco, 0);
+      document.getElementById('modal-total').textContent = total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+      document.getElementById('modal-qtd').textContent = carrinho.length;
+      
+      document.getElementById('checkout-modal').style.display = 'block';
+    }
+    
+    // New game
+    function novaCompra() {
+      carrinho = [];
+      atualizarCarrinho();
+      document.getElementById('checkout-modal').style.display = 'none';
+    }
+    
+    // Toast
+    function mostrarToast(mensagem) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = mensagem;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      carregarFigurinhas();
+      
+      // Close cart on esc key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          fecharCarrinho();
+        }
+      });
+      
+      // Checkout button
+      document.querySelector('.btn-checkout').addEventListener('click', finalizarCompra);
+      
+      // Close modal buttons
+      document.querySelector('.btn-new-shop').addEventListener('click', novaCompra);
+    });
+  </script>
+
+  <style>
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      padding: 0;
+      white-space: nowrap;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      transition: left 0.2s;
+    }
+    
+    .skip-link:focus {
+      left: 0;
+      width: auto;
+      height: auto;
+      padding: 0.5rem;
+      background: #25D366;
+      color: #000;
+      z-index: 9999;
+    }
+    
+    /* Navbar */
+    .navbar {
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    
+    .navbar-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      text-decoration: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+    
+    .navbar-logo img {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+    }
+    
+    .navbar-nav {
+      display: flex;
+      gap: 30px;
+    }
+    
+    .navbar-nav a {
+      color: #a0a0c0;
+      text-decoration: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .navbar-nav a:hover {
+      color: #fff;
+    }
+    
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .navbar-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #a0a0c0;
+      text-decoration: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+    
+    .navbar-link:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+    
+    .navbar-link--cart {
+      position: relative;
+      background: #ff6b6b;
+      color: #fff;
+    }
+    
+    .navbar-link--cart:hover {
+      background: #ff5252;
+    }
+    
+    .navbar-link--cart span {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: #ff5252;
+      color: #fff;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 0.625rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #fff;
+    }
+    
+    /* Main Sections */
+    .main {
+      margin-top: 70px;
+      min-height: calc(100vh - 70px);
+    }
+    
+    /* Catalog Section */
+    .catalog-section {
+      padding: 100px 20px 40px;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .section-header h2 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #1a1a3e;
+      margin-bottom: 10px;
+    }
+    
+    .section-header h2 span {
+      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .section-header p {
+      color: #666;
+      font-size: 1rem;
+    }
+    
+    .price-tag {
+      color: #ff6b6b;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+    
+    /* Catalog Grid */
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .catalog-card {
+      background: #1a1a3e;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      height: 350px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .catalog-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+    }
+    
+    .card-preview {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+    }
+    
+    .card-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    
+    .catalog-card:hover .card-preview img {
+      transform: scale(1.05);
+    }
+    
+    .card-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      padding: 15px;
+    }
+    
+    .btn-add {
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    
+    .btn-add:hover {
+      background: #ff5252;
+    }
+    
+    .card-info {
+      padding: 20px 15px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    
+    .card-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .card-price {
+      color: #ff6b6b;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    /* Cart Section */
+    .cart-section {
+      padding: 100px 20px 40px;
+      display: none;
+    }
+    
+    .cart-section.active {
+      display: block;
+    }
+    
+    .cart-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+    
+    .cart-empty i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      opacity: 0.5;
+    }
+    
+    .cart-items {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid #333;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+    
+    .cart-item img {
+      width: 60px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    
+    .cart-item-info {
+      flex: 1;
+    }
+    
+    .cart-item-name {
+      font-weight: 600;
+      color: #fff;
+      font-size: 0.875rem;
+      margin-bottom: 4px;
+    }
+    
+    .cart-item-price {
+      color: #ff6b6b;
+      font-size: 0.75rem;
+    }
+    
+    .btn-remove {
+      background: none;
+      border: none;
+      color: #ff5252;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    
+    .btn-remove:hover {
+      background: rgba(255,82,82,0.2);
+    }
+    
+    .cart-footer {
+      margin-top: 25px;
+      padding-top: 25px;
+      border-top: 1px solid #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .cart-total span {
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    
+    .btn-checkout {
+      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .btn-checkout:hover {
+      transform: translateY(-2px);
+    }
+    
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+    
+    .modal-content {
+      background: #1a1a3e;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      color: #fff;
+    }
+    
+    .modal-content h2 {
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+    
+    .modal-content p {
+      margin-bottom: 30px;
+      font-size: 1rem;
+    }
+    
+    .btn-new-shop {
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .navbar-nav {
+        display: none;
+      }
+      
+      .section-header h2 {
+        font-size: 2rem;
+      }
+      
+      .catalog-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 15px;
+      }
+      
+      .catalog-card {
+        height: 300px;
+      }
+      
+      .card-preview {
+        height: 180px;
+      }
+      
+      .cart-item {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .cart-item img {
+        width: 80px;
+        height: 80px;
+      }
+    }
+  </style>
 </body>
 </html>

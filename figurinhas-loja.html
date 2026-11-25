@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Fabi Bot - Loja de Figurinhas</title>
+  <link rel="icon" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/assets/fabi-v2.css?v=20261007">
+  <link rel="stylesheet" href="/assets/loja.css?v=20261124">
+</head>
+<body>
+  <a class="fabi-skip" href="#main-content">Pular para o conteúdo</a>
+
+  <!-- Navbar -->
+  <header class="fabi-topbar">
+    <div class="fabi-shell fabi-topbar-in">
+      <a href="/" class="fabi-brand">
+        <img src="/flogo.jpg" alt="" width="36" height="36"> <span>Fabi Loja</span>
+      </a>
+      <nav class="fabi-nav" aria-label="Principal">
+        <a href="/" class="fabi-nav-link"><i class="fas fa-home"></i> Início</a>
+        <a href="/comandos" class="fabi-nav-link"><i class="fas fa-list"></i> Comandos</a>
+        <a href="/conectar" class="fabi-nav-link"><i class="fas fa-qr"></i> Conectar</a>
+      </nav>
+      <a href="/figurinhas" class="fabi-btn fabi-btn-primary">Figurinhas</a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    <section class="fabi-section">
+      <div class="fabi-shell editorial-wrap">
+        <div class="fabi-section-head">
+          <span class="fabi-badge">Figurinhas</span>
+          <h1 class="fabi-title">Transforme mídia em <span>figurinha.</span></h1>
+          <p>A criação de stickers é um dos recursos mais simples da Fabi Bot.</p>
+        </div>
+
+        <div class="editorial-prose">
+          <h2>Como funciona a Loja de Figurinhas</h2>
+          
+          <ol>
+            <li>Envie uma imagem, vídeo ou GIF no grupo WhatsApp.</li>
+            <li>Responda à mensagem com <strong>/salvarfig</strong> para gravar na loja.</li>
+            <li>Acesse a loja virtual para visualizar suas figurinhas.</li>
+            <li>Selecione as figurinhas e adicione ao carrinho (15¢ cada).</li>
+            <li>Finalize a compra e receba as figurinhas no grupo.</li>
+          </ol>
+
+          <h2>Cada figurinha custa <span class="price-tag">15¢</span></h2>
+
+          <p>O pagamento é simulado no site. Após a confirmação, as figurinhas selecionadas são enviadas via comando <strong>/enviafig</strong> para o dono do grupo.</p>
+
+          <div class="editorial-grid">
+            <div class="editorial-card">
+              <h3>📁 Pré-visualização Automática</h3>
+              <p>Ao carregar a página, as miniatura das figurinhas já aparecem na view "previa". Clique na figurinha para ver o visual "exemplo".</p>
+            </div>
+            <div class="editorial-card">
+              <h3>🛒 Carrinho Inteligente</h3>
+              <p>Selecione múltiplas figurinhas. O carrinho acumula o total (15¢ por figurinha) e permite remover itens antes do checkout.</p>
+            </div>
+            <div class="editorial-card">
+              <h3>🔐 Apenas para o Dono</h3>
+              <p>Os comandos <strong>/salvarfig</strong> e <strong>/enviafig</strong> só funcionam para o dono do grupo (configurado no backend).</p>
+            </div>
+          </div>
+
+          <h2>Comandos Disponíveis</h2>
+          <ul>
+            <li><strong>/salvarfig</strong> - Salva a figurinha respondendo a uma mídia (grava áudio se houver)</li>
+            <li><strong>/enviafig</strong> - Envia as figurinhas da loja uma por uma para o dono</li>
+            <li><strong>/testpack</strong> - Teste de pack nativo de figurinhas</li>
+          </ul>
+
+          <div class="editorial-links">
+            <a href="/comandos">Ver todos os comandos</a>
+            <a href="/conectar">Conectar o bot</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="fabi-footer">
+    <div class="fabi-shell fabi-footer-row">
+      <div>© 2026 Fabi Bot · Projeto independente.</div>
+      <div>
+        <a href="/sobre">Sobre</a> ·
+        <a href="/contato">Contato</a> ·
+        <a href="/privacidade">Privacidade</a> ·
+        <a href="/termos">Termos</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize theme from localStorage
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        var t = localStorage.getItem("theme");
+        if (t !== "light" && t !== "dark") {
+          var d = localStorage.getItem("darkMode");
+          if (d === "false") t = "light";
+          else t = "dark";
+        }
+        document.documentElement.setAttribute("data-theme", t);
+        document.documentElement.style.colorScheme = t === "light" ? "light" : "dark";
+        if (t === "light") document.documentElement.classList.add("light-mode");
+      } catch (_) {
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.style.colorScheme = "dark";
+      }
+    });
+  </script>
+</body>
+</html>
