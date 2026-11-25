@@ -2,879 +2,126 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Fabi Bot - Loja Oficial de Figurinhas</title>
-  <link rel="icon" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Figurinhas com áudio — Fabi Bot</title>
+  <meta name="description" content="Explore as figurinhas da Fabi Bot, veja a animação, ouça o áudio e salve suas favoritas. Catálogo conectado ao bot, com prévias reais para WhatsApp.">
+  <meta name="theme-color" content="#10110f">
+  <link rel="canonical" href="https://www.fabibot.com.br/figurinhas">
+  <meta property="og:title" content="Figurinhas que falam por você. — Fabi Bot">
+  <meta property="og:description" content="Dê play na prévia, encontre sua próxima reação e leve mais personalidade para a conversa.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:image" content="https://www.fabibot.com.br/og-image.jpg">
+  <meta property="og:url" content="https://www.fabibot.com.br/figurinhas">
+  <link rel="icon" type="image/png" href="./assets/fabi-favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Proxy e configuração de backend (igual ao conectar.html) -->
-  <script>
-    window.PROXY_HOST = window.PROXY_HOST || "https://orange-hill-2e61.gbscabral15.workers.dev";
-    window.API_BACKEND = window.API_BACKEND || "http://br2.bronxyshost.com:4009";
-
-    function apiUrl(path) {
-      let target;
-      if (!path) {
-        target = window.API_BACKEND;
-      } else if (path.startsWith("http://") || path.startsWith("https://")) {
-        target = path;
-      } else if (path.startsWith("/")) {
-        target = window.API_BACKEND.replace(/\/$/, "") + path;
-      } else {
-        target = window.API_BACKEND.replace(/^https?:\/\//, "") + "/" + path;
-      }
-      const hostPath = window.API_BACKEND.replace(/^https?:\/\//, "");
-      return window.PROXY_HOST + "/" + hostPath + "/proxy?url=" + encodeURIComponent(target);
-    }
-  </script>
-  <link rel="stylesheet" href="assets/loja.css">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/loja.css?v=20261125b">
+  <script defer src="./assets/loja-config.js?v=20261125b"></script>
+  <script defer src="./assets/loja-api.js?v=20261125b"></script>
+  <script defer src="./assets/loja.js?v=20261125b"></script>
 </head>
 <body>
-
-  <!-- ========== HERO SECTION ========== -->
-  <header class="hero">
-    <div class="hero-content">
-      <div class="hero-badge"><i class="fas fa-gift"></i> Figurinhas</div>
-      <h1>Transforme sua mídia em <span>figurinha</span></h1>
-      <p>Cada figurinha custa <span class="price">15¢</span></p>
-      <a href="#catalog" class="btn-hero"><i class="fas fa-shopping-cart"></i> Ver Catálogo</a>
+  <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="m11 4-6 5H2v6h3l6 5V4Zm4 4a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 13 8-13 8V4Z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m5 5 14 14M19 5 5 19"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 3v6h-6M3 21v-6h6M20 9a8 8 0 0 0-14-4L3 9m18 6-3 4A8 8 0 0 1 4 15"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><path d="M8 8h13v13H8zM16 3H3v13"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M3 5h3c5 0 7 14 12 14h3m-4-4 4 4-4 4M3 19h3c2 0 4-3 6-7s4-7 6-7h3m-4-4 4 4-4 4"/></symbol>
+  </svg>
+  <a class="skip-link" href="#catalogo">Pular para as figurinhas</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="./" aria-label="Fabi Bot — início">
+        <img src="./assets/fabi-logo.webp" alt="" width="42" height="42">
+        <span>FABI<span class="brand-bot">BOT</span><small>FIGURINHAS</small></span>
+      </a>
+      <nav class="desktop-nav" aria-label="Navegação principal">
+        <a class="active" href="#catalogo">Explorar</a>
+        <a href="#como-funciona">Como usar</a>
+        <a href="#duvidas">Dúvidas</a>
+      </nav>
+      <div class="header-actions">
+        <button class="saved-button" id="savedButton" type="button" aria-pressed="false"><svg class="icon"><use href="#i-heart"/></svg><span>Favoritas</span><b id="savedCount">0</b></button>
+        <a class="button button-small connect-link" href="./conectar.html">Conectar bot<svg class="icon"><use href="#i-arrow"/></svg></a>
+        <button class="icon-button mobile-menu-button" type="button" id="menuButton" aria-label="Abrir menu" aria-controls="mobileMenu" aria-expanded="false"><svg class="icon"><use href="#i-menu"/></svg></button>
+      </div>
     </div>
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Navegação no celular" hidden>
+      <a href="#catalogo">Explorar figurinhas</a><a href="#como-funciona">Como usar</a><a href="#duvidas">Dúvidas</a><a href="./conectar.html">Conectar Fabi Bot</a>
+    </nav>
   </header>
 
-  <!-- ========== CATÁLOGO ========== -->
   <main>
-    <section class="catalog" id="catalog">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-badge">Catálogo</span>
-          <h2>Nossas Figurinhas</h2>
+    <section class="hero shell" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot"></span> A CONVERSA MERECE UMA REAÇÃO À ALTURA</p>
+        <h1 id="heroTitle">FIGURINHAS<br>QUE <span class="hero-highlight">FALAM</span><br>POR VOCÊ<span class="title-dot">.</span></h1>
+        <p class="hero-description">Tem coisa que só uma figurinha resolve.<br>Explore, dê play e encontre a sua próxima reação favorita.</p>
+        <div class="hero-actions">
+          <a class="button" href="#catalogo">Encontrar minha figurinha<svg class="icon"><use href="#i-arrow"/></svg></a>
+          <button class="text-button" type="button" id="surpriseButton"><svg class="icon"><use href="#i-shuffle"/></svg>Me surpreenda</button>
         </div>
-        
-        <div class="catalog-filters">
-          <div class="filter-all active" data-filter="all">Todos</div>
-          <!-- Filters will be generated dynamically -->
-        </div>
-        
-        <div class="catalog-grid" id="catalogGrid">
-          <!-- Figurinhas serão inseridas pelo JavaScript -->
-        </div>
+        <div class="hero-proof"><span class="proof-icon"><svg class="icon"><use href="#i-sound"/></svg></span><span><strong id="heroCount">Seu próximo meme está aqui</strong><small>Prévias de verdade. Sem adivinhação.</small></span></div>
+      </div>
+      <div class="hero-stage" id="heroStage" aria-label="Destaques do catálogo">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <span class="stage-label stage-label-top"><svg class="icon"><use href="#i-sound"/></svg>ESSA TEM SOM.</span>
+        <div class="hero-collage" id="heroCollage"><div class="hero-card hero-card-main skeleton"></div><div class="hero-card hero-card-back skeleton"></div></div>
+        <span class="stage-sticker">O GRUPO<br><b>VAI OUVIR.</b></span>
+        <div class="stage-caption"><span class="status-dot"></span> FABI BOT · MEMES EM MOVIMENTO</div>
       </div>
     </section>
+
+    <div class="ticker" aria-hidden="true"><div>PRÉVIAS COM ÁUDIO <span>✦</span> ESCOLHA SUA REAÇÃO <span>✦</span> DIRETO DO CATÁLOGO FABI <span>✦</span> MEMES EM MOVIMENTO <span>✦</span> PRÉVIAS COM ÁUDIO <span>✦</span> ESCOLHA SUA REAÇÃO <span>✦</span> DIRETO DO CATÁLOGO FABI <span>✦</span></div></div>
+
+    <section class="catalog-section shell" id="catalogo" aria-labelledby="catalogTitle">
+      <div class="section-heading"><div><p class="eyebrow">A VITRINE DA FABI</p><h2 id="catalogTitle">ESCOLHA A SUA <span>REAÇÃO.</span></h2></div><p>Um toque para ver. Um play para ouvir.<br>Uma figurinha para cada conversa.</p></div>
+      <div class="connection-box" id="connectionBox" role="status" aria-live="polite"><span class="status-dot"></span><span id="connectionText">Conectando ao catálogo do bot…</span><button class="inline-button" id="reloadButton" type="button" disabled><svg class="icon"><use href="#i-refresh"/></svg>Atualizar</button></div>
+      <div class="catalog-toolbar">
+        <div class="type-filters" role="group" aria-label="Tipo de figurinha">
+          <button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">Todas</button>
+          <button class="filter-chip" type="button" data-filter="audio" aria-pressed="false"><svg class="icon"><use href="#i-sound"/></svg>Com áudio</button>
+          <button class="filter-chip" type="button" data-filter="animated" aria-pressed="false">Animadas</button>
+          <button class="filter-chip" type="button" data-filter="favorites" aria-pressed="false"><svg class="icon"><use href="#i-heart"/></svg>Favoritas</button>
+        </div>
+        <label class="search-field"><svg class="icon"><use href="#i-search"/></svg><span class="sr-only">Buscar por nome, ID ou tag</span><input id="searchInput" type="search" placeholder="Buscar nome, ID ou tag…" autocomplete="off"><button type="button" class="search-clear" id="searchClear" aria-label="Limpar busca" hidden><svg class="icon"><use href="#i-close"/></svg></button></label>
+      </div>
+      <div class="catalog-subtoolbar"><label class="category-control">Categoria<select id="categorySelect"><option value="all">Todas as categorias</option></select></label><p id="resultCount" aria-live="polite">Carregando figurinhas…</p><label class="sort-control"><span class="sr-only">Ordenar figurinhas</span><select id="sortSelect"><option value="recent">Mais recentes</option><option value="oldest">Mais antigas</option><option value="name">Nome: A–Z</option></select></label></div>
+      <div class="catalog-grid" id="catalogGrid" aria-busy="true"><div class="loading-placeholder skeleton"></div><div class="loading-placeholder skeleton"></div><div class="loading-placeholder skeleton"></div><div class="loading-placeholder skeleton"></div></div>
+      <div class="catalog-empty" id="catalogEmpty" hidden><span class="empty-icon"><svg class="icon"><use href="#i-search"/></svg></span><h3 id="emptyTitle">Nenhuma figurinha por aqui.</h3><p id="emptyDescription">Tente outro nome ou filtro para encontrar uma reação.</p><button class="button button-secondary" type="button" id="resetButton">Limpar os filtros<svg class="icon"><use href="#i-refresh"/></svg></button></div>
+      <button class="button button-secondary load-more" type="button" id="loadMoreButton" hidden>Ver mais figurinhas<svg class="icon"><use href="#i-arrow"/></svg></button>
+      <p class="catalog-note">O catálogo é lido do seu bot. Os arquivos e a disponibilidade de áudio dependem do backend.</p>
+    </section>
+
+    <section class="how-section" id="como-funciona" aria-labelledby="howTitle"><div class="shell">
+      <div class="section-heading"><div><p class="eyebrow">DO PLAY À CONVERSA</p><h2 id="howTitle">MENOS TEXTO.<br><span>MAIS PERSONALIDADE.</span></h2></div><p>Veja antes de salvar.<br>É simples assim.</p></div>
+      <div class="steps"><article><span class="step-number">01</span><h3>Encontre sua reação</h3><p>Navegue pelo catálogo, filtre as figurinhas com áudio e salve as melhores nas favoritas.</p></article><article><span class="step-number">02</span><h3>Veja e ouça a prévia</h3><p>Abra a figurinha para ver a animação ou o exemplo no WhatsApp. O som só toca quando você escolhe.</p></article><article><span class="step-number">03</span><h3>Leve para a conversa</h3><p>Baixe o WebP e o áudio separadamente. Para receber o formato nativo, o dono pode usar o comando de envio no bot.</p></article></div>
+      <div class="bot-callout"><span class="callout-icon"><svg class="icon"><use href="#i-sound"/></svg></span><div><h3>O áudio faz parte da graça.</h3><p>O download pelo navegador não instala um sound sticker automaticamente. O envio pelo bot preserva o fluxo que você já configurou.</p></div><a class="button button-secondary" href="./conectar.html">Conhecer o bot<svg class="icon"><use href="#i-arrow"/></svg></a></div>
+    </div></section>
+
+    <section class="faq-section shell" id="duvidas" aria-labelledby="faqTitle"><div class="faq-intro"><p class="eyebrow">SEM COMPLICAÇÃO</p><h2 id="faqTitle">ANTES DO<br><span>PRÓXIMO PLAY.</span></h2><p>As respostas para usar a galeria do jeito certo.</p></div><div class="faq-list">
+      <details><summary>Como ouvir uma figurinha?<span>+</span></summary><p>Abra a prévia e use o play do player “Áudio original do bot”. Quando há um vídeo de prévia, você também pode usar os controles do vídeo. Nenhum áudio é iniciado automaticamente.</p></details>
+      <details><summary>Baixar já adiciona ao meu WhatsApp?<span>+</span></summary><p>Não. O botão baixa o arquivo WebP, e o áudio OGG tem um download separado. A importação depende do WhatsApp ou de um aplicativo compatível. Para sound stickers, use o envio nativo do bot quando disponível no seu cliente.</p></details>
+      <details><summary>Posso receber as figurinhas pelo bot?<span>+</span></summary><p>O backend atual tem o comando <code>/enviafig ID</code>, restrito ao dono do bot. Você pode copiar o comando na prévia, mas a página não o executa nem envia mensagens por você. O prefixo deve corresponder ao configurado no bot.</p></details>
+      <details><summary>O catálogo é atualizado automaticamente?<span>+</span></summary><p>A página busca o JSON do servidor ao abrir. Depois de salvar novas figurinhas no bot, use “Atualizar”. Se o servidor falhar, a galeria mostra explicitamente o catálogo de prévias incluído no site, que pode estar desatualizado.</p></details>
+      <details><summary>Tem compra ou pagamento nesta galeria?<span>+</span></summary><p>Não há checkout de figurinhas no backend enviado. Os itens do catálogo atual têm preço zero. Se um registro passar a ter preço, seus downloads ficam indisponíveis nesta galeria até existir uma integração de compra real.</p></details>
+      <details><summary>Onde ficam minhas favoritas?<span>+</span></summary><p>Elas são salvas apenas neste navegador. Não exigem login, não são enviadas ao bot e podem desaparecer se você limpar os dados do site ou trocar de aparelho.</p></details>
+    </div></section>
   </main>
 
-  <!-- ========== CARRINHO ========== -->
-  <section class="cart-overlay" id="cartOverlay">
-    <div class="cart-panel">
-      <button class="cart-close"><i class="fas fa-times"></i></button>
-      <h2><i class="fas fa-shopping-cart"></i> Meu Carrinho</h2>
-      <div class="cart-item-empty" id="cartEmpty">
-        <i class="fas fa-shopping-basket"></i>
-        <p>Nenhuma figurinha selecionada</p>
-      </div>
-      <div class="cart-items" id="cartItems">
-        <!-- Cart items -->
-      </div>
-      <div class="cart-summary">
-        <p>Total de itens: <span id="cartCount">0</span></p>
-        <p>Total: <strong id="cartTotal">R$ 0,00</strong></p>
-      </div>
-      <button class="btn-continue btn-block" id="checkoutBtn" disabled>
-        <i class="fas fa-hand-holding-usd"></i> Finalizar Compra
-      </button>
-    </div>
-  </section>
+  <footer class="footer"><div class="shell footer-inner"><a class="brand" href="./"><img src="./assets/fabi-logo.webp" alt="" width="36" height="36"><span>FABI<span class="brand-bot">BOT</span><small>FIGURINHAS</small></span></a><p>Sua próxima reação favorita está aqui.</p><nav aria-label="Links do rodapé"><a href="./contato.html">Contato</a><a href="./privacidade.html">Privacidade</a><a href="./termos.html">Termos</a></nav><small>© <span id="currentYear">2026</span> Fabi Bot · Projeto independente.</small></div></footer>
 
-  <!-- ========== MODAL DE CHECKOUT ========== -->
-  <div class="modal-overlay" id="modalOverlay" onclick="fecharModal()"></div>
-  <div class="modal-container" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      <h2><i class="fas fa-check-circle"></i> Compra Finalizada</h2>
-      <button class="modal-close" onclick="fecharModal()">&times;</button>
-    </div>
-    <div class="modal-body">
-      <p>Obrigado pela sua compra! 🎉</p>
-      <p>Total pago: <strong id="modalTotal">R$ 0,00</strong></p>
-      <p>Figurinhas compradas: <strong id="modalQtd">0</strong></p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-continuar" onclick="novaCompra()">Continuar Comprando</button>
-    </div>
-  </div>
-
-  <script>
-    // Cart state
-    let carrinho = [];
-    let figurinhas = [];
-
-    // Initialize theme
-    document.addEventListener('DOMContentLoaded', function() {
-      try {
-        var t = localStorage.getItem("theme");
-        if (t !== "light" && t !== "dark") {
-          var d = localStorage.getItem("darkMode");
-          if (d === "false") t = "light";
-          else t = "dark";
-        }
-        document.documentElement.setAttribute("data-theme", t);
-        document.documentElement.style.colorScheme = t === "light" ? "light" : "dark";
-        if (t === "light") document.documentElement.classList.add("light-mode");
-      } catch (_) {
-        document.documentElement.setAttribute("data-theme", "dark");
-        document.documentElement.style.colorScheme = "dark";
-      }
-    });
-
-    // Load figurinhas from JSON via API
-    async function carregarFigurinhas() {
-      try {
-        const response = await fetch(apiUrl('figurinhas_loja.json'));
-        figurinhas = await response.json();
-        
-        if (!Array.isArray(figurinhas) || figurinhas.length === 0) {
-          document.getElementById('catalogGrid').innerHTML = `
-            <div class="no-figurinhas">
-              <i class="fas fa-gift"></i>
-              <h3>Nenhuma figurinha disponível</h3>
-              <p>O catálogo está vazio. Use o comando /salvarfig no bot para adicionar figurinhas.</p>
-            </div>`;
-          return;
-        }
-        
-        exibirFigurinhas(figurinhas);
-        // Atualizar contagem no header
-        atualizarContadorHeader();
-      } catch (error) {
-        console.error('Erro ao carregar figurinhas:', error);
-        document.getElementById('catalogGrid').innerHTML = `
-          <div class="error-message">
-            <i class="fas fa-exclamation-triangle"></i>
-            <h3>Erro ao carregar catálogo</h3>
-            <p>Não foi possível carregar as figurinhas. Tente novamente mais tarde.</p>
-          </div>`;
-      }
-    }
-    
-    // Display figurinhas in grid
-    function exibirFigurinhas(figs) {
-      const grid = document.getElementById('catalogGrid');
-      grid.innerHTML = '';
-      
-      // Filters
-      const filtersDiv = document.querySelector('.catalog-filters');
-      filtersDiv.innerHTML = `
-        <button class="filter-btn active" data-filter="all">Todos</button>
-      `;
-      
-      const categorias = new Set();
-      figs.forEach(fig => {
-        const filtro = fig.categoria || 'geral';
-        categorias.add(filtro);
-        if (!document.querySelector(`[data-filter="${filtro}"]`)) {
-          const btn = document.createElement('button');
-          btn.className = 'filter-btn' ;
-          btn.setAttribute('data-filter', filtro);
-          btn.textContent = filtro.charAt(0).toUpperCase() + filtro.slice(1);
-          filtersDiv.appendChild(btn);
-          btn.addEventListener('click', function() {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            filtrarFigurinhas(filtro);
-          });
-        }
-      });
-      
-      // Add "Todos" button active state
-      document.querySelector('.filter-btn').classList.add('active');
-      
-      // Crie um mapa de categoria para cada figurinha
-      figs.forEach((fig, index) => {
-        const card = document.createElement('div');
-        card.className = 'catalog-card';
-        const hasAudio = fig.temAudio === true || fig.temAudio === 'true' || fig.isAnimated === true;
-        card.innerHTML = `
-          <div class="card-preview" data-id="${fig.id}" data-arquivo="${fig.arquivo}" data-categoria="${fig.categoria || 'geral'}" data-temAudio="${hasAudio}">
-            <div class="card-image">
-              <img src="figurinhas_loja/previa/${fig.arquivo}" alt="${fig.nome || 'Figurinha'}" loading="lazy" class="card-img">
-              ${hasAudio ? '<div class="card-audio-icon"><i class="fas fa-headphones"></i></div>' : ''}
-            </div>
-            <div class="card-overlay">
-              <button class="btn-add" data-index="${index}">
-                <i class="fas fa-plus"></i> Adicionar
-              </button>
-            </div>
-          </div>
-          <div class="card-info">
-            <h3 class="card-title">${fig.nome || 'Figurinha ' + fig.id}</h3>
-            <p class="card-price">15¢</p>
-            ${hasAudio ? '<span class="audio-tag">🔊 Áudio</span>' : ''}
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-      
-      // Add event listeners for add buttons
-      document.querySelectorAll('.btn-add').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          const index = this.dataset.index;
-          adicionarAoCarrinho(index);
-        });
-      });
-      
-      // Preview click to switch to exemplo view
-      document.querySelectorAll('.card-preview').forEach(card => {
-        card.addEventListener('click', function() {
-          const arquivo = this.dataset.arquivo;
-          const temAudio = this.dataset.temAudio === 'true';
-          mostrarExemplo(arquivo, temAudio);
-        });
-      });
-    }
-    
-    // Filter figurinhas
-    function filtrarFigurinhas(categoria) {
-      const grid = document.getElementById('catalogGrid');
-      const cards = grid.querySelectorAll('.catalog-card');
-      
-      grid.innerHTML = '';
-      
-      const categoriaLower = categoria.toLowerCase();
-      
-      // Re-add the filter buttons with active state
-      const filtersDiv = document.querySelector('.catalog-filters');
-      const buttons = filtersDiv.querySelectorAll('.filter-btn');
-      filtersDiv.innerHTML = '<button class="filter-btn active" data-filter="all">Todos</button>';
-      
-      // Re-add other filter buttons (simplified)
-      // For now, show all or filter by categoria
-      const cardsFiltradas = categoria === 'all' ? cards : Array.from(cards).filter(card => {
-        return card.dataset.categoria && card.dataset.categoria.toLowerCase() === categoriaLower;
-      });
-      
-      cardsFiltradas.forEach(card => grid.appendChild(card));
-      
-      // Re-add event listeners
-      document.querySelectorAll('.btn-add').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          const index = ... // need index, need to rethink
-        });
-      });
-    }
-    
-    // Add to cart
-    function adicionarAoCarrinho(index) {
-      const fig = figurinhas[index];
-      if (!fig) return;
-      
-      // Check if already in cart
-      if (carrinho.some(item => item.id === fig.id)) {
-        mostrarToast('Esta figurinha já está no carrinho!');
-        return;
-      }
-      
-      carrinho.push({
-        id: fig.id,
-        nome: fig.nome || 'Figurinha ' + fig.id,
-        arquivo: fig.arquivo,
-        preco: 0.15,
-        temAudio: fig.temAudio === true || fig.temAudio === 'true' || fig.isAnimated === true
-      });
-      
-      atualizarCarrinho();
-    }
-    
-    // Remove from cart
-    function removerDoCarrinho(id) {
-      carrinho = carrinho.filter(item => item.id !== id);
-      atualizarCarrinho();
-    }
-    
-    // Update cart UI
-    function atualizarCarrinho() {
-      const cartCount = document.getElementById('cartCount');
-      const cartItems = document.getElementById('cartItems');
-      const cartTotal = document.getElementById('cartTotal');
-      const cartEmpty = document.getElementById('cartEmpty');
-      const checkoutBtn = document.getElementById('checkoutBtn');
-      
-      const total = carrinho.reduce((sum, item) => sum + item.preco, 0);
-      const formattedTotal = total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-      
-      cartCount.textContent = carrinho.length;
-      cartTotal.textContent = formattedTotal.replace('R$ ', 'R$ ');
-      
-      // Update checkout button state
-      checkoutBtn.disabled = carrinho.length === 0;
-      
-      if (carrinho.length === 0) {
-        cartEmpty.style.display = 'block';
-        cartItems.innerHTML = '';
-      } else {
-        cartEmpty.style.display = 'none';
-        cartItems.innerHTML = carrinho.map((item, i) => `
-          <div class="cart-item">
-            <img src="figurinhas_loja/exemplo/${item.arquivo}" alt="${item.nome}" class="cart-img">
-            <div class="cart-item-info">
-              <h4 class="cart-item-name">${item.nome}</h4>
-              <p class="cart-item-price">${item.preco}¢ ${item.temAudio ? '<span class="audio-icon">🔊</span>' : ''}</p>
-            </div>
-            <button class="btn-remove" data-index="${i}" title="Remover">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        `).join('');
-        
-        // Add remove event listeners
-        cartItems.querySelectorAll('.btn-remove').forEach(btn => {
-          btn.addEventListener('click', function() {
-            const index = ...; // need proper index
-            removerDoCarrinho(carrinho[index].id);
-          });
-        });
-      }
-    }
-    
-    // Show exemplo view
-    function mostrarExemplo(arquivo, temAudio) {
-      const catalogSection = document.querySelector('.catalog');
-      const cartSection = document.querySelector('.cart-overlay');
-      
-      // Hide catalog, show cart
-      catalogSection.style.display = 'none';
-      cartSection.style.display = 'block';
-      
-      // Set the exemplo image
-      const exemploImg = cartSection.querySelector('.main-img');
-      if (exemploImg) {
-        exemploImg.src = `figurinhas_loja/exemplo/${arquivo}`;
-      }
-      
-      // Add this specific item to cart
-      const index = figurinhas.findIndex(f => f.arquivo === arquivo);
-      if (index >= 0) {
-        adicionarAoCarrinho(index);
-      }
-    }
-    
-    // Close cart
-    function fecharCarrinho() {
-      const catalogSection = document.querySelector('.catalog');
-      const cartSection = document.querySelector('.cart-overlay');
-      
-      catalogSection.style.display = 'block';
-      cartSection.style.display = 'none';
-      document.getElementById('cartEmpty').style.display = 'block';
-      document.getElementById('cartItems').innerHTML = '';
-    }
-    
-    // Checkout
-    function finalizarCompra() {
-      if (carrinho.length === 0) return;
-      
-      document.getElementById('modalTotal').textContent = carrinho.reduce((sum, item) => sum + item.preco, 0).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-      document.getElementById('modalQtd').textContent = carrinho.length;
-      document.getElementById('modalOverlay').style.display = 'block';
-    }
-    
-    // New game
-    function novaCompra() {
-      carrinho = [];
-      atualizarCarrinho();
-      document.getElementById('modalOverlay').style.display = 'none';
-      document.querySelector('.catalog').style.display = 'block';
-    }
-    
-    // Toast
-    function mostrarToast(mensagem) {
-      const toast = document.createElement('div');
-      toast.className = 'toast';
-      toast.textContent = mensagem;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    }
-    
-    // Initialize
-    document.addEventListener('DOMContentLoaded', carregarFigurinhas);
-  </script>
-
-  <style>
-    /* ========== VARIÁVEIS CSS ========== */
-    :root {
-      --primary: #e91e63;
-      --primary-dark: #c2185b;
-      --bg: #0d0d0d;
-      --bg-light: #1a1a1a;
-      --card: #1f1f1f;
-      --border: #333;
-      --text: #fff;
-      --text-secondary: #b0b0b0;
-      --success: #4caf50;
-    }
-    
-    body.light-mode {
-      --bg: #fafafa;
-      --bg-light: #fff;
-      --card: #fff;
-      --border: #e0e0e0;
-      --text: #111;
-      --text-secondary: #444;
-    }
-    
-    /* ========== HERO SECTION ========== */
-    .hero {
-      position: relative;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: var(--text);
-      padding: 80px 20px;
-      text-align: center;
-    }
-    
-    .hero::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, transparent, var(--primary), transparent);
-    }
-    
-    .hero-content {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    
-    .hero-badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.2);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 20px;
-    }
-    
-    .hero h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 3rem;
-      font-weight: 800;
-      line-height: 1.2;
-      margin-bottom: 15px;
-    }
-    
-    .hero h1 span {
-      color: #fff;
-      background: none;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .price {
-      background: var(--primary);
-      color: var(--text);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 1.5rem;
-    }
-    
-    .btn-hero {
-      background: var(--text);
-      color: var(--primary);
-      padding: 12px 30px;
-      border-radius: 25px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .btn-hero:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(233,30,99,0.3);
-    }
-    
-    /* ========== CATÁLOGO ========== */
-    .catalog {
-      padding: 60px 20px;
-      background: var(--bg);
-    }
-    
-    .catalog .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    
-    .section-header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    
-    .section-header .section-badge {
-      display: inline-block;
-      background: var(--primary);
-      color: var(--text);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 15px;
-    }
-    
-    .section-header h2 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-    
-    /* Catalog filters */
-    .catalog-filters {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
-    
-    .filter-btn {
-      background: var(--card);
-      color: var(--text-secondary);
-      border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .filter-btn.active {
-      background: var(--primary);
-      color: var(--text);
-    }
-    
-    .filter-btn:hover:not(.active) {
-      background: var(--card);
-    }
-    
-    /* Catalog grid */
-    .catalog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-    }
-    
-    .catalog-card {
-      background: var(--card);
-      border-radius: 16px;
-      overflow: hidden;
-      transition: transform 0.2s, box-shadow 0.2s;
-      cursor: pointer;
-    }
-    
-    .catalog-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 16px 35px rgba(0,0,0,0.3);
-    }
-    
-    body.light-mode .catalog-card:hover {
-      box-shadow: 0 16px 35px rgba(0,0,0,0.05);
-    }
-    
-    .card-preview {
-      position: relative;
-      height: 200px;
-      overflow: hidden;
-    }
-    
-    .card-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s;
-    }
-    
-    .catalog-card:hover .card-preview img {
-      transform: scale(1.08);
-    }
-    
-    /* Audio icon */
-    .card-audio-icon {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: var(--primary);
-      color: var(--text);
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-    }
-    
-    .card-info {
-      padding: 15px;
-    }
-    
-    .card-title {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 4px;
-      line-height: 1.3;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    
-    .card-price {
-      color: var(--primary);
-      font-weight: 700;
-      font-size: 0.75rem;
-    }
-    
-    .audio-tag {
-      background: var(--primary);
-      color: var(--text);
-      padding: 2px 6px;
-      border-radius: 10px;
-      font-size: 0.65rem;
-      font-weight: 600;
-      margin-left: 6px;
-    }
-    
-    /* ========== CARRINHO ========== */
-    .cart-overlay {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 320px;
-      background: var(--bg-light);
-      z-index: 100;
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-      border-left: 4px solid var(--primary);
-    }
-    
-    .cart-overlay.active {
-      transform: translateX(0);
-    }
-    
-    .cart-panel {
-      padding: 20px;
-    }
-    
-    .cart-close {
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      float: right;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-    
-    .cart-item-empty {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-secondary);
-    }
-    
-    .cart-item-empty i {
-      font-size: 2rem;
-      margin-bottom: 10px;
-    }
-    
-    .cart-items {
-      max-height: 300px;
-      overflow-y: auto;
-    }
-    
-    .cart-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    
-    .cart-item:last-child {
-      border-bottom: none;
-    }
-    
-    .cart-item img {
-      width: 50px;
-      height: 65px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-    
-    .cart-item-info {
-      flex: 1;
-    }
-    
-    .cart-item-name {
-      font-weight: 600;
-      color: var(--text);
-      font-size: 0.875rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .cart-item-price {
-      color: var(--primary);
-      font-size: 0.75rem;
-    }
-    
-    .audio-icon {
-      color: var(--primary);
-      font-size: 10px;
-      margin-left: 4px;
-    }
-    
-    .btn-remove {
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      padding: 4px;
-      cursor: pointer;
-    }
-    
-    .cart-summary {
-      background: var(--card);
-      padding: 15px;
-      margin-top: 15px;
-    }
-    
-    .cart-total {
-      font-size: 1rem;
-      color: var(--text);
-    }
-    
-    .cart-total strong {
-      color: var(--primary);
-    }
-    
-    .btn-continue {
-      width: 100%;
-      padding: 12px;
-      background: var(--primary);
-      color: var(--text);
-      border: none;
-      border-radius: 25px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    
-    /* ========== MODAL ========== */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      z-index: 1000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .modal-overlay.active {
-      display: flex;
-    }
-    
-    .modal-container {
-      background: var(--card);
-      padding: 40px;
-      border-radius: 20px;
-      text-align: center;
-      max-width: 400px;
-      width: 90%;
-    }
-    
-    .modal-header {
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 20px;
-    }
-    
-    .modal-header h2 {
-      color: var(--primary);
-      margin-bottom: 10px;
-    }
-    
-    .modal-close {
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      float: right;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-    
-    .modal-body {
-      margin: 20px 0;
-    }
-    
-    .modal-footer {
-      border-top: 1px solid var(--border);
-      padding-top: 20px;
-    }
-    
-    .btn-continuar {
-      width: 100%;
-      padding: 12px;
-      background: var(--primary);
-      color: var(--text);
-      border: none;
-      border-radius: 25px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    
-    /* ========== RESPONSIVE ========== */
-    @media (max-width: 768px) {
-      .hero {
-        padding: 40px 20px;
-      }
-      
-      .hero h1 {
-        font-size: 2rem;
-      }
-      
-      .catalog {
-        padding: 40px 10px;
-      }
-      
-      .catalog-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    @media (max-width: 430px) {
-      .cart-overlay {
-        width: 100%;
-      }
-    }
-  </style>
+  <dialog class="preview-dialog" id="previewDialog" aria-labelledby="previewTitle"><div class="preview-shell"><div class="preview-media-side"><div class="preview-top"><span class="eyebrow">DÊ PLAY NA REAÇÃO</span><button class="icon-button" type="button" id="closePreview" aria-label="Fechar prévia"><svg class="icon"><use href="#i-close"/></svg></button></div><div class="preview-tabs" role="group" aria-label="Tipo de prévia"><button type="button" class="active" id="previewTab" aria-pressed="true">Figurinha</button><button type="button" id="exampleTab" aria-pressed="false">No WhatsApp</button></div><div class="preview-media" id="previewMedia"></div><p id="previewMediaNote" class="preview-media-note">Use os controles para reproduzir.</p></div><div class="preview-info-side"><p class="eyebrow" id="previewId">FIGURINHA</p><h2 id="previewTitle">Sua reação</h2><div id="previewBadges" class="preview-badges"></div><p id="previewMeta" class="preview-meta"></p><p class="preview-help">Veja a animação, ouça o áudio do catálogo e escolha como salvar.</p><div class="audio-section" id="audioSection" hidden><label for="stickerAudio">ÁUDIO ORIGINAL DO BOT</label><audio id="stickerAudio" controls preload="none"></audio><p class="audio-error" id="audioError" role="status" hidden>Não foi possível reproduzir o áudio. Tente baixar o arquivo OGG ou confira o backend.</p></div><button class="button button-full" type="button" id="downloadSticker"><svg class="icon"><use href="#i-download"/></svg>Baixar figurinha WebP</button><button class="button button-secondary button-full" type="button" id="downloadAudio" hidden><svg class="icon"><use href="#i-sound"/></svg>Baixar áudio OGG</button><button class="preview-save text-button" type="button" id="previewSave" aria-pressed="false"><svg class="icon"><use href="#i-heart"/></svg>Salvar nas favoritas</button><div class="command-box"><label for="botCommand">PARA O DONO ENVIAR PELO BOT</label><div><input id="botCommand" readonly aria-label="Comando de envio pelo bot"><button class="icon-button" type="button" id="copyCommand" aria-label="Copiar comando do bot"><svg class="icon"><use href="#i-copy"/></svg></button></div><small>Copie e envie no WhatsApp do bot. A página não executa comandos.</small></div><div class="preview-status" id="previewStatus" role="status" aria-live="polite"></div></div></div></dialog>
+  <div class="toast-stack" id="toastStack" role="status" aria-live="polite" aria-atomic="true"></div>
+  <noscript><div class="no-script">Ative o JavaScript para carregar o catálogo e usar os controles de figurinhas.</div></noscript>
 </body>
 </html>

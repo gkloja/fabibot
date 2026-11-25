@@ -2,121 +2,126 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Fabi Bot - Loja de Figurinhas</title>
-  <link rel="icon" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Figurinhas com áudio — Fabi Bot</title>
+  <meta name="description" content="Explore as figurinhas da Fabi Bot, veja a animação, ouça o áudio e salve suas favoritas. Catálogo conectado ao bot, com prévias reais para WhatsApp.">
+  <meta name="theme-color" content="#10110f">
+  <link rel="canonical" href="https://www.fabibot.com.br/figurinhas">
+  <meta property="og:title" content="Figurinhas que falam por você. — Fabi Bot">
+  <meta property="og:description" content="Dê play na prévia, encontre sua próxima reação e leve mais personalidade para a conversa.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:image" content="https://www.fabibot.com.br/og-image.jpg">
+  <meta property="og:url" content="https://www.fabibot.com.br/figurinhas">
+  <link rel="icon" type="image/png" href="./assets/fabi-favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="/assets/fabi-v2.css?v=20261007">
-  <link rel="stylesheet" href="/assets/loja.css?v=20261124">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/loja.css?v=20261125b">
+  <script defer src="./assets/loja-config.js?v=20261125b"></script>
+  <script defer src="./assets/loja-api.js?v=20261125b"></script>
+  <script defer src="./assets/loja.js?v=20261125b"></script>
 </head>
 <body>
-  <a class="fabi-skip" href="#main-content">Pular para o conteúdo</a>
-
-  <!-- Navbar -->
-  <header class="fabi-topbar">
-    <div class="fabi-shell fabi-topbar-in">
-      <a href="/" class="fabi-brand">
-        <img src="/flogo.jpg" alt="" width="36" height="36"> <span>Fabi Loja</span>
+  <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="m11 4-6 5H2v6h3l6 5V4Zm4 4a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 13 8-13 8V4Z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m5 5 14 14M19 5 5 19"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 3v6h-6M3 21v-6h6M20 9a8 8 0 0 0-14-4L3 9m18 6-3 4A8 8 0 0 1 4 15"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><path d="M8 8h13v13H8zM16 3H3v13"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M3 5h3c5 0 7 14 12 14h3m-4-4 4 4-4 4M3 19h3c2 0 4-3 6-7s4-7 6-7h3m-4-4 4 4-4 4"/></symbol>
+  </svg>
+  <a class="skip-link" href="#catalogo">Pular para as figurinhas</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="./" aria-label="Fabi Bot — início">
+        <img src="./assets/fabi-logo.webp" alt="" width="42" height="42">
+        <span>FABI<span class="brand-bot">BOT</span><small>FIGURINHAS</small></span>
       </a>
-      <nav class="fabi-nav" aria-label="Principal">
-        <a href="/" class="fabi-nav-link"><i class="fas fa-home"></i> Início</a>
-        <a href="/comandos" class="fabi-nav-link"><i class="fas fa-list"></i> Comandos</a>
-        <a href="/conectar" class="fabi-nav-link"><i class="fas fa-qr"></i> Conectar</a>
+      <nav class="desktop-nav" aria-label="Navegação principal">
+        <a class="active" href="#catalogo">Explorar</a>
+        <a href="#como-funciona">Como usar</a>
+        <a href="#duvidas">Dúvidas</a>
       </nav>
-      <a href="/figurinhas" class="fabi-btn fabi-btn-primary">Figurinhas</a>
+      <div class="header-actions">
+        <button class="saved-button" id="savedButton" type="button" aria-pressed="false"><svg class="icon"><use href="#i-heart"/></svg><span>Favoritas</span><b id="savedCount">0</b></button>
+        <a class="button button-small connect-link" href="./conectar.html">Conectar bot<svg class="icon"><use href="#i-arrow"/></svg></a>
+        <button class="icon-button mobile-menu-button" type="button" id="menuButton" aria-label="Abrir menu" aria-controls="mobileMenu" aria-expanded="false"><svg class="icon"><use href="#i-menu"/></svg></button>
+      </div>
     </div>
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Navegação no celular" hidden>
+      <a href="#catalogo">Explorar figurinhas</a><a href="#como-funciona">Como usar</a><a href="#duvidas">Dúvidas</a><a href="./conectar.html">Conectar Fabi Bot</a>
+    </nav>
   </header>
 
-  <!-- Main Content -->
-  <main id="main-content">
-    <section class="fabi-section">
-      <div class="fabi-shell editorial-wrap">
-        <div class="fabi-section-head">
-          <span class="fabi-badge">Figurinhas</span>
-          <h1 class="fabi-title">Transforme mídia em <span>figurinha.</span></h1>
-          <p>A criação de stickers é um dos recursos mais simples da Fabi Bot.</p>
+  <main>
+    <section class="hero shell" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot"></span> A CONVERSA MERECE UMA REAÇÃO À ALTURA</p>
+        <h1 id="heroTitle">FIGURINHAS<br>QUE <span class="hero-highlight">FALAM</span><br>POR VOCÊ<span class="title-dot">.</span></h1>
+        <p class="hero-description">Tem coisa que só uma figurinha resolve.<br>Explore, dê play e encontre a sua próxima reação favorita.</p>
+        <div class="hero-actions">
+          <a class="button" href="#catalogo">Encontrar minha figurinha<svg class="icon"><use href="#i-arrow"/></svg></a>
+          <button class="text-button" type="button" id="surpriseButton"><svg class="icon"><use href="#i-shuffle"/></svg>Me surpreenda</button>
         </div>
-
-        <div class="editorial-prose">
-          <h2>Como funciona a Loja de Figurinhas</h2>
-          
-          <ol>
-            <li>Envie uma imagem, vídeo ou GIF no grupo WhatsApp.</li>
-            <li>Responda à mensagem com <strong>/salvarfig</strong> para gravar na loja.</li>
-            <li>Acesse a loja virtual para visualizar suas figurinhas.</li>
-            <li>Selecione as figurinhas e adicione ao carrinho (15¢ cada).</li>
-            <li>Finalize a compra e receba as figurinhas no grupo.</li>
-          </ol>
-
-          <h2>Cada figurinha custa <span class="price-tag">15¢</span></h2>
-
-          <p>O pagamento é simulado no site. Após a confirmação, as figurinhas selecionadas são enviadas via comando <strong>/enviafig</strong> para o dono do grupo.</p>
-
-          <div class="editorial-grid">
-            <div class="editorial-card">
-              <h3>📁 Pré-visualização Automática</h3>
-              <p>Ao carregar a página, as miniatura das figurinhas já aparecem na view "previa". Clique na figurinha para ver o visual "exemplo".</p>
-            </div>
-            <div class="editorial-card">
-              <h3>🛒 Carrinho Inteligente</h3>
-              <p>Selecione múltiplas figurinhas. O carrinho acumula o total (15¢ por figurinha) e permite remover itens antes do checkout.</p>
-            </div>
-            <div class="editorial-card">
-              <h3>🔐 Apenas para o Dono</h3>
-              <p>Os comandos <strong>/salvarfig</strong> e <strong>/enviafig</strong> só funcionam para o dono do grupo (configurado no backend).</p>
-            </div>
-          </div>
-
-          <h2>Comandos Disponíveis</h2>
-          <ul>
-            <li><strong>/salvarfig</strong> - Salva a figurinha respondendo a uma mídia (grava áudio se houver)</li>
-            <li><strong>/enviafig</strong> - Envia as figurinhas da loja uma por uma para o dono</li>
-            <li><strong>/testpack</strong> - Teste de pack nativo de figurinhas</li>
-          </ul>
-
-          <div class="editorial-links">
-            <a href="/comandos">Ver todos os comandos</a>
-            <a href="/conectar">Conectar o bot</a>
-          </div>
-        </div>
+        <div class="hero-proof"><span class="proof-icon"><svg class="icon"><use href="#i-sound"/></svg></span><span><strong id="heroCount">Seu próximo meme está aqui</strong><small>Prévias de verdade. Sem adivinhação.</small></span></div>
+      </div>
+      <div class="hero-stage" id="heroStage" aria-label="Destaques do catálogo">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <span class="stage-label stage-label-top"><svg class="icon"><use href="#i-sound"/></svg>ESSA TEM SOM.</span>
+        <div class="hero-collage" id="heroCollage"><div class="hero-card hero-card-main skeleton"></div><div class="hero-card hero-card-back skeleton"></div></div>
+        <span class="stage-sticker">O GRUPO<br><b>VAI OUVIR.</b></span>
+        <div class="stage-caption"><span class="status-dot"></span> FABI BOT · MEMES EM MOVIMENTO</div>
       </div>
     </section>
+
+    <div class="ticker" aria-hidden="true"><div>PRÉVIAS COM ÁUDIO <span>✦</span> ESCOLHA SUA REAÇÃO <span>✦</span> DIRETO DO CATÁLOGO FABI <span>✦</span> MEMES EM MOVIMENTO <span>✦</span> PRÉVIAS COM ÁUDIO <span>✦</span> ESCOLHA SUA REAÇÃO <span>✦</span> DIRETO DO CATÁLOGO FABI <span>✦</span></div></div>
+
+    <section class="catalog-section shell" id="catalogo" aria-labelledby="catalogTitle">
+      <div class="section-heading"><div><p class="eyebrow">A VITRINE DA FABI</p><h2 id="catalogTitle">ESCOLHA A SUA <span>REAÇÃO.</span></h2></div><p>Um toque para ver. Um play para ouvir.<br>Uma figurinha para cada conversa.</p></div>
+      <div class="connection-box" id="connectionBox" role="status" aria-live="polite"><span class="status-dot"></span><span id="connectionText">Conectando ao catálogo do bot…</span><button class="inline-button" id="reloadButton" type="button" disabled><svg class="icon"><use href="#i-refresh"/></svg>Atualizar</button></div>
+      <div class="catalog-toolbar">
+        <div class="type-filters" role="group" aria-label="Tipo de figurinha">
+          <button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">Todas</button>
+          <button class="filter-chip" type="button" data-filter="audio" aria-pressed="false"><svg class="icon"><use href="#i-sound"/></svg>Com áudio</button>
+          <button class="filter-chip" type="button" data-filter="animated" aria-pressed="false">Animadas</button>
+          <button class="filter-chip" type="button" data-filter="favorites" aria-pressed="false"><svg class="icon"><use href="#i-heart"/></svg>Favoritas</button>
+        </div>
+        <label class="search-field"><svg class="icon"><use href="#i-search"/></svg><span class="sr-only">Buscar por nome, ID ou tag</span><input id="searchInput" type="search" placeholder="Buscar nome, ID ou tag…" autocomplete="off"><button type="button" class="search-clear" id="searchClear" aria-label="Limpar busca" hidden><svg class="icon"><use href="#i-close"/></svg></button></label>
+      </div>
+      <div class="catalog-subtoolbar"><label class="category-control">Categoria<select id="categorySelect"><option value="all">Todas as categorias</option></select></label><p id="resultCount" aria-live="polite">Carregando figurinhas…</p><label class="sort-control"><span class="sr-only">Ordenar figurinhas</span><select id="sortSelect"><option value="recent">Mais recentes</option><option value="oldest">Mais antigas</option><option value="name">Nome: A–Z</option></select></label></div>
+      <div class="catalog-grid" id="catalogGrid" aria-busy="true"><div class="loading-placeholder skeleton"></div><div class="loading-placeholder skeleton"></div><div class="loading-placeholder skeleton"></div><div class="loading-placeholder skeleton"></div></div>
+      <div class="catalog-empty" id="catalogEmpty" hidden><span class="empty-icon"><svg class="icon"><use href="#i-search"/></svg></span><h3 id="emptyTitle">Nenhuma figurinha por aqui.</h3><p id="emptyDescription">Tente outro nome ou filtro para encontrar uma reação.</p><button class="button button-secondary" type="button" id="resetButton">Limpar os filtros<svg class="icon"><use href="#i-refresh"/></svg></button></div>
+      <button class="button button-secondary load-more" type="button" id="loadMoreButton" hidden>Ver mais figurinhas<svg class="icon"><use href="#i-arrow"/></svg></button>
+      <p class="catalog-note">O catálogo é lido do seu bot. Os arquivos e a disponibilidade de áudio dependem do backend.</p>
+    </section>
+
+    <section class="how-section" id="como-funciona" aria-labelledby="howTitle"><div class="shell">
+      <div class="section-heading"><div><p class="eyebrow">DO PLAY À CONVERSA</p><h2 id="howTitle">MENOS TEXTO.<br><span>MAIS PERSONALIDADE.</span></h2></div><p>Veja antes de salvar.<br>É simples assim.</p></div>
+      <div class="steps"><article><span class="step-number">01</span><h3>Encontre sua reação</h3><p>Navegue pelo catálogo, filtre as figurinhas com áudio e salve as melhores nas favoritas.</p></article><article><span class="step-number">02</span><h3>Veja e ouça a prévia</h3><p>Abra a figurinha para ver a animação ou o exemplo no WhatsApp. O som só toca quando você escolhe.</p></article><article><span class="step-number">03</span><h3>Leve para a conversa</h3><p>Baixe o WebP e o áudio separadamente. Para receber o formato nativo, o dono pode usar o comando de envio no bot.</p></article></div>
+      <div class="bot-callout"><span class="callout-icon"><svg class="icon"><use href="#i-sound"/></svg></span><div><h3>O áudio faz parte da graça.</h3><p>O download pelo navegador não instala um sound sticker automaticamente. O envio pelo bot preserva o fluxo que você já configurou.</p></div><a class="button button-secondary" href="./conectar.html">Conhecer o bot<svg class="icon"><use href="#i-arrow"/></svg></a></div>
+    </div></section>
+
+    <section class="faq-section shell" id="duvidas" aria-labelledby="faqTitle"><div class="faq-intro"><p class="eyebrow">SEM COMPLICAÇÃO</p><h2 id="faqTitle">ANTES DO<br><span>PRÓXIMO PLAY.</span></h2><p>As respostas para usar a galeria do jeito certo.</p></div><div class="faq-list">
+      <details><summary>Como ouvir uma figurinha?<span>+</span></summary><p>Abra a prévia e use o play do player “Áudio original do bot”. Quando há um vídeo de prévia, você também pode usar os controles do vídeo. Nenhum áudio é iniciado automaticamente.</p></details>
+      <details><summary>Baixar já adiciona ao meu WhatsApp?<span>+</span></summary><p>Não. O botão baixa o arquivo WebP, e o áudio OGG tem um download separado. A importação depende do WhatsApp ou de um aplicativo compatível. Para sound stickers, use o envio nativo do bot quando disponível no seu cliente.</p></details>
+      <details><summary>Posso receber as figurinhas pelo bot?<span>+</span></summary><p>O backend atual tem o comando <code>/enviafig ID</code>, restrito ao dono do bot. Você pode copiar o comando na prévia, mas a página não o executa nem envia mensagens por você. O prefixo deve corresponder ao configurado no bot.</p></details>
+      <details><summary>O catálogo é atualizado automaticamente?<span>+</span></summary><p>A página busca o JSON do servidor ao abrir. Depois de salvar novas figurinhas no bot, use “Atualizar”. Se o servidor falhar, a galeria mostra explicitamente o catálogo de prévias incluído no site, que pode estar desatualizado.</p></details>
+      <details><summary>Tem compra ou pagamento nesta galeria?<span>+</span></summary><p>Não há checkout de figurinhas no backend enviado. Os itens do catálogo atual têm preço zero. Se um registro passar a ter preço, seus downloads ficam indisponíveis nesta galeria até existir uma integração de compra real.</p></details>
+      <details><summary>Onde ficam minhas favoritas?<span>+</span></summary><p>Elas são salvas apenas neste navegador. Não exigem login, não são enviadas ao bot e podem desaparecer se você limpar os dados do site ou trocar de aparelho.</p></details>
+    </div></section>
   </main>
 
-  <footer class="fabi-footer">
-    <div class="fabi-shell fabi-footer-row">
-      <div>© 2026 Fabi Bot · Projeto independente.</div>
-      <div>
-        <a href="/sobre">Sobre</a> ·
-        <a href="/contato">Contato</a> ·
-        <a href="/privacidade">Privacidade</a> ·
-        <a href="/termos">Termos</a>
-      </div>
-    </div>
-  </footer>
+  <footer class="footer"><div class="shell footer-inner"><a class="brand" href="./"><img src="./assets/fabi-logo.webp" alt="" width="36" height="36"><span>FABI<span class="brand-bot">BOT</span><small>FIGURINHAS</small></span></a><p>Sua próxima reação favorita está aqui.</p><nav aria-label="Links do rodapé"><a href="./contato.html">Contato</a><a href="./privacidade.html">Privacidade</a><a href="./termos.html">Termos</a></nav><small>© <span id="currentYear">2026</span> Fabi Bot · Projeto independente.</small></div></footer>
 
-  <script>
-    // Initialize theme from localStorage
-    document.addEventListener('DOMContentLoaded', function() {
-      try {
-        var t = localStorage.getItem("theme");
-        if (t !== "light" && t !== "dark") {
-          var d = localStorage.getItem("darkMode");
-          if (d === "false") t = "light";
-          else t = "dark";
-        }
-        document.documentElement.setAttribute("data-theme", t);
-        document.documentElement.style.colorScheme = t === "light" ? "light" : "dark";
-        if (t === "light") document.documentElement.classList.add("light-mode");
-      } catch (_) {
-        document.documentElement.setAttribute("data-theme", "dark");
-        document.documentElement.style.colorScheme = "dark";
-      }
-    });
-  </script>
+  <dialog class="preview-dialog" id="previewDialog" aria-labelledby="previewTitle"><div class="preview-shell"><div class="preview-media-side"><div class="preview-top"><span class="eyebrow">DÊ PLAY NA REAÇÃO</span><button class="icon-button" type="button" id="closePreview" aria-label="Fechar prévia"><svg class="icon"><use href="#i-close"/></svg></button></div><div class="preview-tabs" role="group" aria-label="Tipo de prévia"><button type="button" class="active" id="previewTab" aria-pressed="true">Figurinha</button><button type="button" id="exampleTab" aria-pressed="false">No WhatsApp</button></div><div class="preview-media" id="previewMedia"></div><p id="previewMediaNote" class="preview-media-note">Use os controles para reproduzir.</p></div><div class="preview-info-side"><p class="eyebrow" id="previewId">FIGURINHA</p><h2 id="previewTitle">Sua reação</h2><div id="previewBadges" class="preview-badges"></div><p id="previewMeta" class="preview-meta"></p><p class="preview-help">Veja a animação, ouça o áudio do catálogo e escolha como salvar.</p><div class="audio-section" id="audioSection" hidden><label for="stickerAudio">ÁUDIO ORIGINAL DO BOT</label><audio id="stickerAudio" controls preload="none"></audio><p class="audio-error" id="audioError" role="status" hidden>Não foi possível reproduzir o áudio. Tente baixar o arquivo OGG ou confira o backend.</p></div><button class="button button-full" type="button" id="downloadSticker"><svg class="icon"><use href="#i-download"/></svg>Baixar figurinha WebP</button><button class="button button-secondary button-full" type="button" id="downloadAudio" hidden><svg class="icon"><use href="#i-sound"/></svg>Baixar áudio OGG</button><button class="preview-save text-button" type="button" id="previewSave" aria-pressed="false"><svg class="icon"><use href="#i-heart"/></svg>Salvar nas favoritas</button><div class="command-box"><label for="botCommand">PARA O DONO ENVIAR PELO BOT</label><div><input id="botCommand" readonly aria-label="Comando de envio pelo bot"><button class="icon-button" type="button" id="copyCommand" aria-label="Copiar comando do bot"><svg class="icon"><use href="#i-copy"/></svg></button></div><small>Copie e envie no WhatsApp do bot. A página não executa comandos.</small></div><div class="preview-status" id="previewStatus" role="status" aria-live="polite"></div></div></div></dialog>
+  <div class="toast-stack" id="toastStack" role="status" aria-live="polite" aria-atomic="true"></div>
+  <noscript><div class="no-script">Ative o JavaScript para carregar o catálogo e usar os controles de figurinhas.</div></noscript>
 </body>
 </html>
