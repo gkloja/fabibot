@@ -84,6 +84,13 @@
     return '<span class="media-fallback">' + icon('play') + '<span>' + escape(message) + '</span></span>';
   }
 
+  function updateAudioDemoButton(playing) {
+    const button = $('#audioDemoButton');
+    if (!button) return;
+    button.setAttribute('aria-pressed', String(playing));
+    button.innerHTML = icon(playing ? 'sound' : 'play') + (playing ? 'Pausar figurinha com áudio' : 'Ouvir figurinha com áudio');
+  }
+
   function bindImageFallbacks(scope) {
     scope.querySelectorAll('img[data-sticker-id]').forEach(image => {
       image.addEventListener('error', () => {
@@ -244,6 +251,7 @@
 
   function stopMedia() {
     $('#stickerAudio').pause();
+    updateAudioDemoButton(false);
     $('#previewMedia').querySelectorAll('video').forEach(video => { video.pause(); video.removeAttribute('src'); video.load(); });
   }
 
@@ -270,8 +278,8 @@
       video.addEventListener('play', () => $('#stickerAudio').pause());
       video.addEventListener('error', () => {
         if (state.current !== item || state.activeTab !== tab || state.mediaGeneration !== mediaGeneration || !container.contains(video)) return;
-        container.innerHTML = fallbackHTML('Não foi possível carregar esse exemplo.');
-        $('#previewMediaNote').textContent = 'O vídeo de exemplo não respondeu. A figurinha original continua disponível na outra aba.';
+        showPreviewMedia('preview');
+        $('#previewMediaNote').textContent = 'O vídeo de conversa não está disponível agora. Veja a animação original e ouça o áudio junto.';
       }, { once: true });
       container.appendChild(video);
       $('#previewMediaNote').textContent = 'Exemplo de conversa no WhatsApp. Toque em play para assistir.';
@@ -312,6 +320,8 @@
     $('#previewStatus').textContent = state.source !== 'live' ? 'Prévia do pacote local. O checkout exige conexão ativa com o catálogo do bot.' : '';
     $('#audioSection').hidden = !item.temAudio;
     $('#audioError').hidden = true;
+    $('#audioDemoButton').disabled = !item.temAudio;
+    updateAudioDemoButton(false);
     const audio = $('#stickerAudio');
     audio.pause();
     state.audioSource = item.temAudio ? api.mediaUrl(item, 'audio') : '';
@@ -575,6 +585,18 @@
   $('#copyPixButton').addEventListener('click', () => copyText($('#pixCopyPaste').value, $('#checkoutStatus'), 'PIX copiado.'));
   $('#copyRedeemButton').addEventListener('click', () => copyText($('#redeemCode').textContent, $('#checkoutStatus'), 'Código de resgate copiado.'));
   $('#stickerAudio').addEventListener('play', () => $('#previewMedia').querySelectorAll('video').forEach(video => video.pause()));
+  $('#audioDemoButton').addEventListener('click', async () => {
+    if (!state.current || !state.current.temAudio) return;
+    const audio = $('#stickerAudio');
+    if (!audio.paused) { audio.pause(); return; }
+    if (state.activeTab !== 'preview') showPreviewMedia('preview');
+    $('#audioError').hidden = true;
+    try { await audio.play(); }
+    catch (_) { $('#audioError').hidden = false; updateAudioDemoButton(false); }
+  });
+  $('#stickerAudio').addEventListener('play', () => updateAudioDemoButton(true));
+  $('#stickerAudio').addEventListener('pause', () => updateAudioDemoButton(false));
+  $('#stickerAudio').addEventListener('ended', () => updateAudioDemoButton(false));
   $('#stickerAudio').addEventListener('error', event => {
     if (state.current && state.current.temAudio && state.audioSource && event.currentTarget.currentSrc === state.audioSource) $('#audioError').hidden = false;
   });

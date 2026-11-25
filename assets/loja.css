@@ -460,3 +460,31 @@ code { color: var(--green); font-size: .95em; }
   .cart-thumb { width: 50px; height: 50px; }
   .cart-remove { padding: 6px 2px; font-size: 9px; }
 }
+
+
+/* Prévia protegida e demonstração conjunta de som sticker. */
+.watermark {
+  color: rgb(16 17 15 / 48%);
+  -webkit-text-stroke: .7px rgb(255 255 255 / 64%);
+  text-shadow: 0 1px 4px rgb(255 255 255 / 40%);
+  font-weight: 900;
+}
+.card-preview .watermark { font-size: clamp(18px, 2vw, 30px); }
+.hero-card .watermark { font-size: clamp(20px, 2.2vw, 32px); }
+.preview-media .watermark { font-size: clamp(24px, 4.6vw, 40px); }
+.audio-demo-button {
+  width: 100%; min-height: 46px; display: inline-flex; align-items: center; justify-content: center;
+  gap: 9px; padding: 10px 14px; border: 1px solid #526b3b; border-radius: 8px;
+  background: #1e2519; color: var(--green); font-size: 11px; font-weight: 700;
+}
+.audio-demo-button:hover, .audio-demo-button[aria-pressed=true] { background: #2c3923; }
+.audio-demo-button .icon { width: 16px; height: 16px; }
+.audio-demo-copy { color: var(--muted); font-size: 10px; line-height: 1.6; margin: 8px 0 0; }
+.watermark-notice {
+  margin: 14px 0 17px; padding: 11px 12px; border: 1px solid #46553a; border-radius: 8px;
+  background: #171e13; color: #d1dac8; font-size: 10px; line-height: 1.65;
+}
+.watermark-notice strong { color: var(--green); }
+@media (max-width: 600px) {
+  .card-preview .watermark { font-size: clamp(17px, 4.2vw, 23px); }
+}
