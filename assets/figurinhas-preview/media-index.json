@@ -1,73 +1,73 @@
 {
   "fig_0001": {
     "preview": "assets/figurinhas-preview/fig_0001.mp4",
-    "example": "exemplo/fig_0011.mp4",
+    "example": "exemplo/fig_0001.mp4",
     "poster": "assets/figurinhas-preview/fig_0001.webp",
     "fingerprint": "2026-11-25T01:48:07.139Z:415924"
   },
   "fig_0002": {
     "preview": "assets/figurinhas-preview/fig_0002.mp4",
-    "example": "exemplo/fig_0012.mp4",
+    "example": "exemplo/fig_0002.mp4",
     "poster": "assets/figurinhas-preview/fig_0002.webp",
     "fingerprint": "2026-11-25T01:48:20.401Z:440278"
   },
   "fig_0003": {
     "preview": "assets/figurinhas-preview/fig_0003.mp4",
-    "example": "exemplo/fig_0002.mp4",
+    "example": "exemplo/fig_0003.mp4",
     "poster": "assets/figurinhas-preview/fig_0003.webp",
     "fingerprint": "2026-11-25T01:48:47.118Z:477022"
   },
   "fig_0004": {
     "preview": "assets/figurinhas-preview/fig_0004.mp4",
-    "example": "exemplo/fig_0003.mp4",
+    "example": "exemplo/fig_0004.mp4",
     "poster": "assets/figurinhas-preview/fig_0004.webp",
     "fingerprint": "2026-11-25T01:48:52.211Z:750568"
   },
   "fig_0005": {
     "preview": "assets/figurinhas-preview/fig_0005.mp4",
-    "example": "exemplo/fig_0007.mp4",
+    "example": "exemplo/fig_0005.mp4",
     "poster": "assets/figurinhas-preview/fig_0005.webp",
     "fingerprint": "2026-11-25T01:48:52.724Z:425228"
   },
   "fig_0006": {
     "preview": "assets/figurinhas-preview/fig_0006.mp4",
-    "example": "exemplo/fig_0009.mp4",
+    "example": "exemplo/fig_0006.mp4",
     "poster": "assets/figurinhas-preview/fig_0006.webp",
     "fingerprint": "2026-11-25T01:48:52.816Z:391006"
   },
   "fig_0007": {
     "preview": "assets/figurinhas-preview/fig_0007.mp4",
-   "example": "exemplo/fig_0004.mp4",
+   "example": "exemplo/fig_0007.mp4",
     "poster": "assets/figurinhas-preview/fig_0007.webp",
     "fingerprint": "2026-11-25T01:48:59.724Z:457852"
   },
   "fig_0008": {
     "preview": "assets/figurinhas-preview/fig_0008.mp4",
-    "example": "exemplo/fig_0011.mp4",
+    "example": "exemplo/fig_0008.mp4",
     "poster": "assets/figurinhas-preview/fig_0008.webp",
     "fingerprint": "2026-11-25T01:49:02.880Z:356474"
   },
   "fig_0009": {
     "preview": "assets/figurinhas-preview/fig_0009.mp4",
-    "example": "exemplo/fig_0010.mp4",
+    "example": "exemplo/fig_0009.mp4",
     "poster": "assets/figurinhas-preview/fig_0009.webp",
     "fingerprint": "2026-11-25T01:49:07.118Z:409548"
   },
   "fig_0010": {
     "preview": "assets/figurinhas-preview/fig_0010.mp4",
-    "example": "exemplo/fig_0009.mp4",
+    "example": "exemplo/fig_0010.mp4",
     "poster": "assets/figurinhas-preview/fig_0010.webp",
     "fingerprint": "2026-11-25T01:49:08.172Z:335058"
   },
   "fig_0011": {
     "preview": "assets/figurinhas-preview/fig_0011.mp4",
-    "example": "exemplo/fig_0008.mp4",
+    "example": "exemplo/fig_0011.mp4",
     "poster": "assets/figurinhas-preview/fig_0011.webp",
     "fingerprint": "2026-11-25T01:49:13.608Z:373416"
   },
   "fig_0012": {
     "preview": "assets/figurinhas-preview/fig_0012.mp4",
-    "example": "exemplo/fig_0006.mp4",
+    "example": "exemplo/fig_0012.mp4",
     "poster": "assets/figurinhas-preview/fig_0012.webp",
     "fingerprint": "2026-11-25T01:49:28.774Z:490086"
   }
