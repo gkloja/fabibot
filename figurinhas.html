@@ -10,6 +10,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Proxy e configuração de backend (igual ao conectar.html) -->
+  <script>
+    window.PROXY_HOST = window.PROXY_HOST || "https://orange-hill-2e61.gbscabral15.workers.dev";
+    window.API_BACKEND = window.API_BACKEND || "http://br2.bronxyshost.com:4009";
+
+    function apiUrl(path) {
+      let target;
+      if (!path) {
+        target = window.API_BACKEND;
+      } else if (path.startsWith("http://") || path.startsWith("https://")) {
+        target = path;
+      } else if (path.startsWith("/")) {
+        target = window.API_BACKEND.replace(/\/$/, "") + path;
+      } else {
+        target = window.API_BACKEND.replace(/^https?:\/\//, "") + "/" + path;
+      }
+      const hostPath = window.API_BACKEND.replace(/^https?:\/\//, "");
+      return window.PROXY_HOST + "/" + hostPath + "/proxy?url=" + encodeURIComponent(target);
+    }
+  </script>
   <link rel="stylesheet" href="assets/loja.css">
 </head>
 <body>
@@ -18,66 +38,94 @@
   <a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
 
   <!-- Navbar -->
-  <header class="navbar">
-    <div class="navbar-container">
-      <a href="/" class="navbar-logo">
-        <img src="/flogo.jpg" alt="Fabi Bot" width="32" height="32"> <span>Fabi Loja</span>
+  <header class="fabi-topbar">
+    <div class="fabi-shell fabi-topbar-in">
+      <a href="/" class="fabi-brand">
+        <img src="/flogo.jpg" alt="" width="36" height="36"> <span>Fabi Loja</span>
       </a>
-      <nav class="navbar-nav">
-        <a href="/" class="navbar-link"><i class="fas fa-home"></i> Início</a>
-        <a href="/comandos" class="navbar-link"><i class="fas fa-list"></i> Comandos</a>
-        <a href="/conectar" class="navbar-link"><i class="fas fa-qr"></i> Conectar</a>
+      <nav class="fabi-nav" aria-label="Principal">
+        <a href="/" class="fabi-nav-link"><i class="fas fa-home"></i> Início</a>
+        <a href="/comandos" class="fabi-nav-link"><i class="fas fa-list"></i> Comandos</a>
+        <a href="/conectar" class="fabi-nav-link"><i class="fas fa-qr"></i> Conectar</a>
       </nav>
       <div class="navbar-actions">
-        <a href="#" class="navbar-link navbar-link--cart">
-          <i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span>
-          <span>R$ 0,00</span>
-        </a>
+        <a href="/figurinhas" class="fabi-btn fabi-btn-primary">Figurinhas</a>
       </div>
     </div>
   </header>
 
   <!-- Main Content -->
   <main id="main-content">
-    <section class="catalog-section" id="catalog-section">
-      <div class="container">
-        <div class="section-header">
-          <h2><i class="fas fa-gift"></i> Catálogo de Figurinhas</h2>
-          <p>Cada figurinha custa <span class="price-tag">15¢</span></p>
+    <section class="fabi-section">
+      <div class="fabi-shell editorial-wrap">
+        <div class="fabi-section-head">
+          <span class="fabi-badge">Figurinhas</span>
+          <h1 class="fabi-title">Transforme mídia em <span>figurinha.</span></h1>
+          <p>A criação de stickers é um dos recursos mais simples da Fabi.</p>
         </div>
-        <div class="catalog-grid" id="catalog-grid">
-          <!-- Figurinhas serão inseridas pelo JavaScript -->
-        </div>
-      </div>
-    </section>
 
-    <!-- Cart Section -->
-    <section class="cart-section" id="cart-section">
-      <div class="container">
-        <div class="section-header">
-          <h2><i class="fas fa-shopping-cart"></i> Meu Carrinho</h2>
-          <button class="btn btn-secondary btn-close-cart" title="Fechar carrinho">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="cart-empty" id="cart-empty">
-          <i class="fas fa-shopping-basket"></i>
-          <p>Nenhuma figurinha selecionada</p>
-        </div>
-        <div class="cart-items" id="cart-items">
-          <!-- Itens do carrinho -->
-        </div>
-        <div class="cart-footer">
-          <div class="cart-total">
-            <span>Total:</span>
-            <strong><span id="cart-total">R$ 0,00</span></strong>
+        <div class="editorial-prose">
+          <h2>Loja de Figurinhas</h2>
+          
+          <p>Cada figurinha custa <strong>15¢</strong>. Selecione as que deseja e adicione ao carrinho. As figurinhas com áudio serão enviadas com o som embutido.</p>
+
+          <div class="editorial-grid">
+            <div class="editorial-card">
+              <h3>📁 Prévia Automática</h3>
+              <p>Ao carregar, as miniatura das figurinhas já aparecem. Clique para ver o visual "Exemplo" completo.</p>
+            </div>
+            <div class="editorial-card">
+              <h3>🛒 Carrinho Inteligente</h3>
+              <p>Selecione múltiplas figurinhas. O carrinho acumula 15¢ por figurinha e permite remover itens.</p>
+            </div>
+            <div class="editorial-card">
+              <h3>🔊 Áudio Embutido</h3>
+              <p>Figurinhas com áudio serão enviadas com o som. O backend grava áudio quando presente via comando /salvarfig.</p>
+            </div>
           </div>
-          <button class="btn btn-primary btn-checkout" disabled>
-            <i class="fas fa-hand-holding-usd"></i> Finalizar Compra
-          </button>
+
+          <h2>Comandos do Backend</h2>
+          <ul>
+            <li><strong>/salvarfig</strong> - Salva a figurinha respondendo a uma mídia (grava áudio se houver)</li>
+            <li><strong>/enviafig</strong> - Envia as figurinhas da loja uma por uma para o dono (apenas SoDono)</li>
+            <li><strong>/testpack</strong> - Teste de pack nativo de figurinhas</li>
+          </ul>
+
+          <div class="editorial-links">
+            <a href="/comandos">Ver todos os comandos</a>
+            <a href="/conectar">Conectar o bot</a>
+          </div>
         </div>
       </div>
     </section>
+  </section>
+  <!-- Cart Section -->
+  <section class="cart-section" id="cart-section">
+    <div class="fabi-shell">
+      <div class="section-header">
+        <h2><i class="fas fa-shopping-cart"></i> Meu Carrinho</h2>
+        <button class="btn btn-secondary btn-close-cart" title="Fechar carrinho">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="cart-empty" id="cart-empty">
+        <i class="fas fa-shopping-basket"></i>
+        <p>Nenhuma figurinha selecionada</p>
+      </div>
+      <div class="cart-items" id="cart-items">
+        <!-- Cart items will be inserted here -->
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total">
+          <span>Total:</span>
+          <strong><span id="cart-total">R$ 0,00</span></strong>
+        </div>
+        <button class="btn btn-primary btn-checkout" disabled>
+          <i class="fas fa-hand-holding-usd"></i> Finalizar Compra
+        </button>
+      </div>
+    </div>
+  </section>
   </main>
 
   <!-- Modal de Confirmation -->
@@ -97,10 +145,28 @@
     let carrinho = [];
     let figurinhas = [];
 
-    // Load figurinhas from JSON
+    // Initialize theme
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        var t = localStorage.getItem("theme");
+        if (t !== "light" && t !== "dark") {
+          var d = localStorage.getItem("darkMode");
+          if (d === "false") t = "light";
+          else t = "dark";
+        }
+        document.documentElement.setAttribute("data-theme", t);
+        document.documentElement.style.colorScheme = t === "light" ? "light" : "dark";
+        if (t === "light") document.documentElement.classList.add("light-mode");
+      } catch (_) {
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.style.colorScheme = "dark";
+      }
+    });
+
+    // Load figurinhas from JSON via API
     async function carregarFigurinhas() {
       try {
-        const response = await fetch('figurinhas_loja.json');
+        const response = await fetch(apiUrl('figurinhas_loja.json'));
         figurinhas = await response.json();
         
         if (!Array.isArray(figurinhas) || figurinhas.length === 0) {
@@ -123,8 +189,9 @@
       figs.forEach((fig, index) => {
         const card = document.createElement('div');
         card.className = 'catalog-card';
+        const hasAudio = fig.temAudio === true || fig.temAudio === 'true';
         card.innerHTML = `
-          <div class="card-preview" data-id="${fig.id}" data-arquivo="${fig.arquivo}" data-temAudio="${fig.temAudio}">
+          <div class="card-preview" data-id="${fig.id}" data-arquivo="${fig.arquivo}" data-temAudio="${hasAudio}">
             <img src="figurinhas_loja/previa/${fig.arquivo}" alt="${fig.nome || 'Figurinha'}" loading="lazy" class="card-img">
             <div class="card-overlay">
               <button class="btn-add" data-index="${index}">
@@ -135,6 +202,7 @@
           <div class="card-info">
             <h3 class="card-title">${fig.nome || 'Figurinha ' + fig.id}</h3>
             <p class="card-price">15¢</p>
+            ${hasAudio ? '<span class="audio-tag">🔊 Áudio</span>' : ''}
           </div>
         `;
         grid.appendChild(card);
@@ -174,7 +242,8 @@
         id: fig.id,
         nome: fig.nome || 'Figurinha ' + fig.id,
         arquivo: fig.arquivo,
-        preco: 0.15
+        preco: 0.15,
+        temAudio: fig.temAudio === true || fig.temAudio === 'true'
       });
       
       atualizarCarrinho();
@@ -197,7 +266,9 @@
       const total = carrinho.reduce((sum, item) => sum + item.preco, 0);
       const formattedTotal = total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
       
-      cartCount.textContent = carrinho.length;
+      // Count cart items (showing badge)
+      const totalItems = carrinho.length;
+      cartCount.textContent = totalItems;
       cartTotal.textContent = formattedTotal.replace('R$ ', 'R$ ');
       
       // Update checkout button state
@@ -213,7 +284,7 @@
             <img src="figurinhas_loja/exemplo/${item.arquivo}" alt="${item.nome}" class="cart-img">
             <div class="cart-item-info">
               <h4 class="cart-item-name">${item.nome}</h4>
-              <p class="cart-item-price">${item.preco}¢</p>
+              <p class="cart-item-price">${item.preco}¢ ${item.temAudio ? '<span class="audio-icon">🔊</span>' : ''}</p>
             </div>
             <button class="btn-remove" data-index="${i}" title="Remover">
               <i class="fas fa-trash"></i>
@@ -340,7 +411,7 @@
     }
     
     /* Navbar */
-    .navbar {
+    .fabi-topbar {
       background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
       position: fixed;
       width: 100%;
@@ -349,7 +420,7 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     }
     
-    .navbar-container {
+    .fabi-topbar-in {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
@@ -359,7 +430,7 @@
       justify-content: space-between;
     }
     
-    .navbar-logo {
+    .fabi-brand {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -370,18 +441,13 @@
       font-size: 1.2rem;
     }
     
-    .navbar-logo img {
+    .fabi-brand img {
       width: 32px;
       height: 32px;
       border-radius: 6px;
     }
     
-    .navbar-nav {
-      display: flex;
-      gap: 30px;
-    }
-    
-    .navbar-nav a {
+    .fabi-nav a {
       color: #a0a0c0;
       text-decoration: none;
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -390,18 +456,12 @@
       transition: color 0.2s;
     }
     
-    .navbar-nav a:hover {
+    .fabi-nav a:hover {
       color: #fff;
     }
     
-    .navbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    
-    .navbar-link {
-      display: flex;
+    .fabi-nav-link {
+      display: inline-flex;
       align-items: center;
       gap: 8px;
       color: #a0a0c0;
@@ -414,54 +474,70 @@
       transition: all 0.2s;
     }
     
-    .navbar-link:hover {
+    .fabi-nav-link:hover {
       background: rgba(255,255,255,0.1);
       color: #fff;
     }
     
-    .navbar-link--cart {
-      position: relative;
-      background: #ff6b6b;
-      color: #fff;
-    }
-    
-    .navbar-link--cart:hover {
-      background: #ff5252;
-    }
-    
-    .navbar-link--cart span {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      background: #ff5252;
-      color: #fff;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      font-size: 0.625rem;
+    .fabi-nav-actions {
       display: flex;
       align-items: center;
-      justify-content: center;
-      border: 2px solid #fff;
+      gap: 15px;
     }
+    
+    .fabi-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    
+    .fabi-btn:hover {
+      background: #ff5252;
+    }
+    
+    .fabi-btn i { font-size: 16px; }
     
     /* Main Sections */
     .main {
       margin-top: 70px;
       min-height: calc(100vh - 70px);
+      padding: 20px 0;
     }
     
-    /* Catalog Section */
-    .catalog-section {
+    /* Section */
+    .fabi-section {
       padding: 100px 20px 40px;
     }
     
-    .section-header {
+    .fabi-section-head {
       text-align: center;
       margin-bottom: 40px;
     }
     
-    .section-header h2 {
+    .fabi-section-head .fabi-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .fabi-section-head h1 {
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 2.5rem;
       font-weight: 700;
@@ -469,16 +545,11 @@
       margin-bottom: 10px;
     }
     
-    .section-header h2 span {
-      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .section-header p {
+    .fabi-section-head p {
       color: #666;
       font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
     }
     
     .price-tag {
@@ -487,100 +558,169 @@
       font-size: 1.2rem;
     }
     
-    /* Catalog Grid */
-    .catalog-grid {
+    /* Editorial Grid */
+    .editorial-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
       max-width: 1200px;
-      margin: 0 auto;
+      margin: 30px auto 0;
     }
     
-    .catalog-card {
+    .editorial-card {
       background: #1a1a3e;
       border-radius: 16px;
-      overflow: hidden;
-      transition: transform 0.2s, box-shadow 0.2s;
-      cursor: pointer;
-      height: 350px;
+      padding: 24px;
+      border: 1px solid #333;
+      transition: all 0.3s ease;
+    }
+    
+    .editorial-card:hover {
+      border-color: #2563eb;
+      transform: translateY(-2px);
+    }
+    
+    body.light-mode .editorial-card:hover {
+      border-color: #111827;
+    }
+    
+    .editorial-card h3 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 12px;
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 8px;
     }
     
-    .catalog-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+    .editorial-card p {
+      color: #a0a0c0;
+      font-size: 0.875rem;
+      line-height: 1.5;
     }
     
-    .card-preview {
-      position: relative;
-      height: 200px;
-      overflow: hidden;
-    }
-    
-    .card-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s;
-    }
-    
-    .catalog-card:hover .card-preview img {
-      transform: scale(1.05);
-    }
-    
-    .card-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(transparent, rgba(0,0,0,0.8));
-      padding: 15px;
-    }
-    
-    .btn-add {
+    /* Audio tag */
+    .audio-tag {
       background: #ff6b6b;
       color: #fff;
-      border: none;
-      border-radius: 20px;
-      padding: 8px 16px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.65rem;
       font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-      white-space: nowrap;
+      margin-left: 8px;
     }
     
-    .btn-add:hover {
-      background: #ff5252;
+    /* Commands List */
+    .commands-list {
+      max-width: 800px;
+      margin: 30px auto 0;
     }
     
-    .card-info {
-      padding: 20px 15px;
-      flex: 1;
+    .commands-list h3 {
+      font-size: 1.25rem;
+      color: #1a1a3e;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333;
+    }
+    
+    .commands-list ul {
+      list-style: none;
+    }
+    
+    .commands-list li {
+      background: #1a1a3e;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
       display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-    }
-    
-    .card-title {
+      justify-content: space-between;
+      align-items: center;
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.875rem;
-      font-weight: 600;
       color: #fff;
-      margin-bottom: 4px;
-      line-height: 1.3;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      transition: all 0.2s;
     }
     
-    .card-price {
-      color: #ff6b6b;
-      font-size: 0.75rem;
+    .commands-list li:hover {
+      border-color: #2563eb;
+      background: rgba(37, 99, 235, 0.1);
+    }
+    
+    body.light-mode .commands-list li:hover {
+      border-color: #111827;
+      background: rgba(17, 24, 27, 0.05);
+    }
+    
+    .commands-list .command-name {
       font-weight: 600;
+      color: #2563eb;
+    }
+    
+    .commands-list .command-desc {
+      color: #a0a0c0;
+      font-size: 0.75rem;
+    }
+    
+    /* Links */
+    .editorial-links {
+      display: flex;
+      gap: 16px;
+      margin-top: 30px;
+      justify-content: center;
+    }
+    
+    .editorial-links a {
+      background: #2563eb;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .editorial-links a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .fabi-nav {
+        display: none;
+      }
+      
+      .fabi-topbar-in {
+        padding: 0 12px;
+      }
+      
+      .fabi-section {
+        padding: 80px 16px 32px;
+      }
+      
+      .fabi-section-head h1 {
+        font-size: 2rem;
+      }
+      
+      .editorial-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .editorial-links {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .editorial-links a {
+        width: 100%;
+        text-align: center;
+      }
     }
     
     /* Cart Section */
@@ -645,6 +785,12 @@
     .cart-item-price {
       color: #ff6b6b;
       font-size: 0.75rem;
+    }
+    
+    .audio-icon {
+      color: #ff6b6b;
+      font-size: 12px;
+      margin-left: 4px;
     }
     
     .btn-remove {
@@ -750,37 +896,48 @@
       margin-top: 20px;
     }
     
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      background: #333;
+      color: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      z-index: 1000;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
     /* Responsive */
     @media (max-width: 768px) {
-      .navbar-nav {
+      .fabi-nav {
         display: none;
       }
       
-      .section-header h2 {
+      .fabi-topbar-in {
+        padding: 0 12px;
+      }
+      
+      .fabi-section {
+        padding: 80px 16px 32px;
+      }
+      
+      .fabi-section-head h1 {
         font-size: 2rem;
       }
       
-      .catalog-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 15px;
+      .editorial-grid {
+        grid-template-columns: 1fr;
       }
       
-      .catalog-card {
-        height: 300px;
-      }
-      
-      .card-preview {
-        height: 180px;
-      }
-      
-      .cart-item {
+      .editorial-links {
         flex-direction: column;
-        text-align: center;
+        align-items: stretch;
       }
       
-      .cart-item img {
-        width: 80px;
-        height: 80px;
+      .editorial-links a {
+        width: 100%;
+        text-align: center;
       }
     }
   </style>
