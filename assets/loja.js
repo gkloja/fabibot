@@ -7,10 +7,15 @@
   const icon = name => '<svg class="icon" aria-hidden="true"><use href="#i-' + name + '"/></svg>';
   const fold = value => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const favoritesKey = 'fabi_sticker_favorites_v1';
+  const favoriteTokenKey = 'fabi_sticker_favorite_token_v1';
   const cartKey = 'fabi_sticker_cart_v1';
   const orderKey = 'fabi_sticker_pending_order_v1';
-  const fixedPriceCents = 20;
+  const defaultPriceCents = 10;
+  const priceOf = item => Math.max(1, Number(item && item.priceCents) || (item && item.temAudio ? 20 : defaultPriceCents));
+  const priceLabel = item => formatMoney(priceOf(item));
   const storeWhatsapp = String(config.storeWhatsapp || '5592985715119').replace(/\D/g, '');
+  let favoriteToken = '';
+  try { favoriteToken = localStorage.getItem(favoriteTokenKey) || ''; if (!/^[a-zA-Z0-9_-]{16,120}$/.test(favoriteToken)) { favoriteToken = (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '') : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem(favoriteTokenKey, favoriteToken); } } catch (_) { favoriteToken = 'anon' + Date.now().toString(36); }
   const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'recent', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
   try {
     const saved = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
@@ -54,6 +59,7 @@
     try { localStorage.setItem(favoritesKey, JSON.stringify([...state.favorites])); }
     catch (_) { persisted = false; }
     updateSavedCount();
+    api.recordFavorite(id, state.favorites.has(id) ? 'add' : 'remove', favoriteToken).catch(() => {});
     if (state.filter === 'favorites') render();
     else document.querySelectorAll('.card-save').forEach(button => {
       const isSaved = state.favorites.has(button.dataset.id);
@@ -67,11 +73,14 @@
     const query = fold(state.query.trim());
     return state.items.filter(item => {
       if (state.filter === 'audio' && !item.temAudio) return false;
+      if (state.filter === 'no-audio' && item.temAudio) return false;
       if (state.filter === 'animated' && !item.isAnimated) return false;
       if (state.filter === 'favorites' && !state.favorites.has(item.id)) return false;
       if (state.category !== 'all' && item.categoria !== state.category) return false;
       return !query || fold([item.nome, item.id, ...item.tags].join(' ')).includes(query);
     }).sort((a, b) => {
+      if (state.sort === 'most-purchased') return (priceOf(b), b.compras - a.compras) || a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
+      if (state.sort === 'most-favorited') return (b.favoritos - a.favoritos) || a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
       if (state.sort === 'name') return a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
       const dateA = Date.parse(a.criadoEm) || 0;
       const dateB = Date.parse(b.criadoEm) || 0;
@@ -113,9 +122,9 @@
       (image ? '<img src="' + escape(image) + '" alt="' + escape(item.nome) + '" width="360" height="360" loading="lazy" decoding="async" data-sticker-id="' + escape(item.id) + '" data-fallback="' + escape(fallback) + '"><span class="watermark" aria-hidden="true">FABI BOT</span>' : fallbackHTML('Prévia disponível apenas pelo backend.')) +
       '<span class="card-play">' + icon('play') + 'Ver exemplo</span></button>' +
       '<button class="card-save" type="button" data-action="favorite" data-id="' + escape(item.id) + '" data-name="' + escape(item.nome) + '" aria-pressed="' + isSaved + '" aria-label="' + (isSaved ? 'Remover ' : 'Salvar ') + escape(item.nome) + (isSaved ? ' das favoritas' : ' nas favoritas') + '">' + icon('heart') + '</button>' +
-      '<div class="card-info"><div class="card-kicker"><span>' + escape(item.id.replace('_', ' #')) + '</span><span>R$ 0,20</span></div>' +
+      '<div class="card-info"><div class="card-kicker"><span>' + escape(item.id.replace('_', ' #')) + '</span><span>' + priceLabel(item) + '</span></div>' +
       '<h3 class="card-title" title="' + escape(item.nome) + '">' + escape(item.nome) + '</h3><div class="card-bottom">' +
-      '<span class="audio-badge">' + icon(item.temAudio ? 'sound' : 'play') + (item.temAudio ? 'Com áudio' : item.isAnimated ? 'Animada' : 'Estática') + '</span>' +
+      '<span class="audio-badge ' + (item.temAudio ? 'has-audio' : 'no-audio') + '">' + icon(item.temAudio ? 'sound' : 'play') + (item.temAudio ? 'COM SOM' : 'SEM ÁUDIO') + '</span>' +
       '<button class="card-cart-button" type="button" data-action="cart-add" data-id="' + escape(item.id) + '" aria-pressed="' + inCart + '">' + (inCart ? 'No carrinho ✓' : '+ Carrinho') + '</button></div>' +
       '<button class="card-view-button" type="button" data-action="preview" data-id="' + escape(item.id) + '">Ver detalhes' + icon('arrow') + '</button></div></article>';
   }
@@ -154,6 +163,10 @@
     });
   }
 
+  function protectMedia(scope = document) {
+    scope.querySelectorAll('video').forEach(video => { video.setAttribute('controlsList', 'nodownload noplaybackrate'); video.setAttribute('disablepictureinpicture', ''); });
+  }
+
   function render() {
     stopHoverVideos();
     const items = filteredItems();
@@ -186,6 +199,7 @@
     }
     updateSavedCount();
     bindImageFallbacks(grid);
+    protectMedia(grid);
   }
 
   function renderHero() {
@@ -203,11 +217,11 @@
         const image = animated ? api.mediaUrl(item) : (media.poster || (state.source === 'live' ? api.mediaUrl(item) : ''));
         return '<button class="hero-card ' + (position ? 'hero-card-back' : 'hero-card-main') + '" type="button" data-action="preview" data-id="' + escape(item.id) + '" aria-label="Ver ' + escape(item.nome) + '">' +
           (image ? '<img src="' + escape(image) + '" alt="' + escape(item.nome) + '" width="360" height="360" loading="eager" data-sticker-id="' + escape(item.id) + '" data-fallback="' + escape(media.poster || '') + '"><span class="watermark" aria-hidden="true">FABI BOT</span>' : fallbackHTML(item.nome)) +
-          '<span class="hero-card-label">R$ 0,20 · ADICIONE</span></button>';
+          '<span class="hero-card-label">' + priceLabel(item) + ' · ' + (item.temAudio ? 'COM SOM' : 'SEM ÁUDIO') + '</span></button>';
       }).join('');
       bindImageFallbacks(collage);
     }
-    $('#heroCount').textContent = state.items.length ? state.items.length + ' figurinhas · R$ 0,20 cada' : 'Seu próximo meme está aqui';
+    $('#heroCount').textContent = state.items.length ? state.items.length + ' figurinhas · de R$ 0,10 a R$ 0,20' : 'Seu próximo meme está aqui';
     $('#surpriseButton').disabled = !state.items.length;
   }
 
@@ -262,6 +276,8 @@
     if (tab === 'example' && media.example) {
       const video = document.createElement('video');
       video.controls = true;
+      video.controlsList = 'nodownload noplaybackrate';
+      video.disablePictureInPicture = true;
       video.playsInline = true;
       video.autoplay = true;
       video.muted = false;
@@ -322,7 +338,7 @@
     $('#previewStatus').textContent = state.source !== 'live' ? 'Prévia do pacote local. O checkout exige conexão ativa com o catálogo do bot.' : '';
     $('#exampleTab').disabled = !api.staticMedia(item, state.index).example;
     $('#previewAddToCart').setAttribute('aria-pressed', String(state.cart.has(item.id)));
-    $('#previewAddToCart').textContent = state.cart.has(item.id) ? 'No carrinho · R$ 0,20' : 'Adicionar ao carrinho · R$ 0,20';
+    $('#previewAddToCart').textContent = state.cart.has(item.id) ? 'No carrinho · ' + priceLabel(item) : 'Adicionar ao carrinho · ' + priceLabel(item);
     updateSavedCount();
     const initialTab = api.staticMedia(item, state.index).example ? 'example' : 'preview';
     showPreviewMedia(initialTab);
@@ -365,15 +381,17 @@
     $('#cartSummary').hidden = items.length === 0;
     $('#checkoutButton').disabled = items.length === 0 || state.source !== 'live';
     $('#cartQuantityText').textContent = items.length + (items.length === 1 ? ' figurinha' : ' figurinhas');
-    $('#cartTotal').textContent = formatMoney(items.length * fixedPriceCents);
+    $('#cartTotal').textContent = formatMoney(items.reduce((total, item) => total + priceOf(item), 0));
     $('#cartItems').innerHTML = items.map(item => {
       const media = api.staticMedia(item, state.index);
       const image = media.poster || (state.source === 'live' ? api.mediaUrl(item) : '');
-      return '<div class="cart-line"><div class="cart-thumb">' + (image ? '<img src="' + escape(image) + '" alt="" loading="lazy"><span class="watermark" aria-hidden="true">FABI BOT</span>' : '') + '</div><div class="cart-line-info"><strong>' + escape(item.nome) + '</strong><small>' + escape(item.id) + ' · R$ 0,20</small></div><button class="cart-remove" type="button" data-action="cart-remove" data-id="' + escape(item.id) + '" aria-label="Remover ' + escape(item.nome) + '">Remover</button></div>';
+      return '<div class="cart-line"><div class="cart-thumb">' + (image ? '<img src="' + escape(image) + '" alt="" loading="lazy"><span class="watermark" aria-hidden="true">FABI BOT</span>' : '') + '</div><div class="cart-line-info"><strong>' + escape(item.nome) + '</strong><small>' + escape(item.id) + ' · ' + priceLabel(item) + (item.temAudio ? ' · COM SOM' : ' · SEM ÁUDIO') + '</small></div><button class="cart-remove" type="button" data-action="cart-remove" data-id="' + escape(item.id) + '" aria-label="Remover ' + escape(item.nome) + '">Remover</button></div>';
     }).join('');
     if (state.source !== 'live') $('#checkoutStatus').textContent = 'Checkout indisponível: conecte-se ao catálogo ao vivo do bot.';
     updateCartButtons();
   }
+
+  document.addEventListener('contextmenu', event => { if (event.target.closest('video')) event.preventDefault(); });
 
   function addToCart(id) {
     const item = state.items.find(entry => entry.id === id);
@@ -383,7 +401,7 @@
     state.cart.add(id);
     renderCart();
     render();
-    toast('Adicionada ao carrinho · R$ 0,20.');
+    toast('Adicionada ao carrinho · ' + priceLabel(item) + (item.temAudio ? ' · com som.' : ' · sem áudio.'));
   }
 
   function removeFromCart(id) {

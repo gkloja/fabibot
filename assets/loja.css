@@ -152,7 +152,10 @@ h2 span { color: var(--green); }
 .card-kicker span:last-child { margin-left: auto; color: var(--green); font-weight: 700; letter-spacing: 0; flex: 0 0 auto; }
 .card-title { font-size: 13px; line-height: 1.45; font-weight: 600; margin: 0 0 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.audio-badge { color: #c8dbb3; font-size: 8px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 6px; border-radius: 4px; background: #2c3923; }
+.audio-badge { color: #c8dbb3; font-weight: 800; letter-spacing: .04em; font-size: 8px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 6px; border-radius: 4px; background: #2c3923; }
+.audio-badge.has-audio { color: #10110f; background: var(--green); box-shadow: 0 0 0 2px #b6ff5b33; }
+.audio-badge.no-audio { color: #ffd1aa; background: #4b3025; }
+.preview-media video { user-select: none; }
 .audio-badge .icon { width: 11px; height: 11px; }
 .card-view-button { color: var(--text); font-size: 9px; padding: 4px 0; display: flex; align-items: center; gap: 6px; }
 .card-view-button .icon { width: 14px; height: 14px; color: var(--green); }
@@ -215,7 +218,7 @@ code { color: var(--green); font-size: .95em; }
 .preview-info-side .eyebrow { margin: 0 0 10px; font-size: 9px; }
 .preview-info-side h2 { font: 700 30px/1.15 var(--display-font); letter-spacing: 0; overflow-wrap: anywhere; }
 .preview-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
-.preview-badges span { font-size: 9px; color: var(--green); background: #2c3923; padding: 4px 8px; border-radius: 4px; }
+.preview-badges span { font-size: 9px; font-weight: 700; color: var(--green); background: #2c3923; padding: 4px 8px; border-radius: 4px; }
 .preview-meta { color: var(--muted); font-size: 10px; margin: 14px 0; }
 .preview-help { color: #c3c9bd; font-size: 12px; line-height: 1.7; }
 

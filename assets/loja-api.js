@@ -13,7 +13,7 @@
   function proxyUrl(path) {
     const target = new URL(path, backend);
     const allowedMedia = /^\/figurinhas_loja(?:\.json|\/[a-zA-Z0-9_-]+\.(?:webp|ogg))$|^\/figurinhas_media\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$/i.test(target.pathname);
-    const allowedStoreApi = /^\/api\/figurinhas\/(?:gerar-pix|verificar-pagamento\/[a-f0-9-]{36})$/i.test(target.pathname);
+    const allowedStoreApi = /^\/api\/figurinhas\/(?:gerar-pix|favoritar|verificar-pagamento\/[a-f0-9-]{36})$/i.test(target.pathname);
     if (target.origin !== backend.origin || (!allowedMedia && !allowedStoreApi) || target.search || target.hash) throw new Error('Caminho de mídia ou checkout não permitido.');
     return config.proxy.replace(/\/$/, '') + '/' + backend.host + '/proxy?url=' + encodeURIComponent(target.href);
   }
@@ -108,7 +108,8 @@
         packname: cleanText(row.packname || 'Fabi Loja', 80),
         temAudio: bool(row.temAudio) && !!audio, isAnimated: bool(row.isAnimated),
         audioSeconds: Math.max(0, Number(row.audioSeconds) || 0), tamanho: Math.max(0, Number(row.tamanho) || 0),
-        criadoEm: cleanText(row.criadoEm, 40), priceCents: 20,
+        criadoEm: cleanText(row.criadoEm, 40), priceCents: Math.max(1, Number(row.priceCents || row.precoCentavos || (bool(row.temAudio) && !!audio ? 20 : 10)) || 10),
+        compras: Math.max(0, Number(row.compras ?? row.salesCount) || 0), favoritos: Math.max(0, Number(row.favoritos ?? row.favoriteCount) || 0),
         fingerprint: cleanText(row.criadoEm, 40) + ':' + (Number(row.tamanho) || 0),
         media: {
           preview: cleanText(row.previewUrl || serverMedia.preview, 240),
@@ -181,11 +182,13 @@
     return jsonApi('/api/figurinhas/gerar-pix', 'POST', { items: ids, payerEmail: email, requestId: idempotencyRequest });
   }
 
+  async function recordFavorite(id, action, clientToken) { return jsonApi('/api/figurinhas/favoritar', 'POST', { id: String(id), action: action === 'remove' ? 'remove' : 'add', clientToken: String(clientToken) }); }
+
   async function checkStickerPayment(orderId) {
     const id = String(orderId || '');
     if (!/^[a-f0-9-]{36}$/i.test(id)) throw new Error('Identificador de pagamento inválido.');
     return jsonApi('/api/figurinhas/verificar-pagamento/' + encodeURIComponent(id), 'GET');
   }
 
-  window.FabiStickerApi = { catalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, createStickerOrder, checkStickerPayment };
+  window.FabiStickerApi = { catalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, createStickerOrder, recordFavorite, checkStickerPayment };
 })();
