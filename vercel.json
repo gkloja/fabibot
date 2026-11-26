@@ -225,9 +225,22 @@
       "source": "/grupos/",
       "destination": "/grupos",
       "permanent": true
+    },
+    {
+      "source": "/criar-figurinha.html",
+      "destination": "/criar-figurinha",
+      "permanent": true
     }
   ],
   "rewrites": [
+    {
+      "source": "/api/creator/:path*",
+      "destination": "http://br2.bronxyshost.com:4009/api/creator/:path*"
+    },
+    {
+      "source": "/figurinhas_creator/:path*",
+      "destination": "http://br2.bronxyshost.com:4009/figurinhas_creator/:path*"
+    },
     {
       "source": "/sitemap-figurinhas.xml",
       "destination": "/api/figurinhas-seo?mode=sitemap"
@@ -327,6 +340,10 @@
     {
       "source": "/grupos",
       "destination": "/grupos.html"
+    },
+    {
+      "source": "/criar-figurinha",
+      "destination": "/criar-figurinha.html"
     }
   ],
   "headers": [
