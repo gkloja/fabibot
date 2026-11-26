@@ -517,3 +517,5 @@ code { color: var(--green); font-size: .95em; }
 .theme-toggle { color: var(--green); }
 .video-watermark { font-size: clamp(30px, 8vw, 76px) !important; font-weight: 900; letter-spacing: .13em; color: rgb(16 17 15 / 52%); -webkit-text-stroke: 1px rgb(255 255 255 / 75%); text-shadow: 0 2px 5px rgb(255 255 255 / 55%); }
 .preview-media .video-watermark { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; transform: rotate(-24deg); }
+.card-play { color: #fff; background: rgb(16 17 15 / 92%); border-color: rgb(255 255 255 / 72%); }
+:root[data-theme="light"] .card-play { color: #fff; background: #172016; border-color: #4b8f16; }
