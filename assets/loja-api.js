@@ -12,7 +12,7 @@
 
   function proxyUrl(path) {
     const target = new URL(path, backend);
-    const allowedMedia = /^\/figurinhas_loja(?:\.json|\/[a-zA-Z0-9_-]+\.(?:webp|ogg))$/i.test(target.pathname);
+    const allowedMedia = /^\/figurinhas_loja(?:\.json|\/[a-zA-Z0-9_-]+\.(?:webp|ogg))$|^\/figurinhas_media\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$/i.test(target.pathname);
     const allowedStoreApi = /^\/api\/figurinhas\/(?:gerar-pix|verificar-pagamento\/[a-f0-9-]{36})$/i.test(target.pathname);
     if (target.origin !== backend.origin || (!allowedMedia && !allowedStoreApi) || target.search || target.hash) throw new Error('Caminho de mídia ou checkout não permitido.');
     return config.proxy.replace(/\/$/, '') + '/' + backend.host + '/proxy?url=' + encodeURIComponent(target.href);
@@ -99,6 +99,7 @@
       if (!/^[a-zA-Z0-9_-]{1,80}$/.test(id) || !arquivo || seen.has(id)) return null;
       seen.add(id);
       const audio = fileName(row.arquivoAudio, 'audio');
+      const serverMedia = row.media && typeof row.media === 'object' ? row.media : {};
       return {
         id, nome: cleanText(row.nome || 'Figurinha ' + id), arquivo, arquivoAudio: audio,
         categoria: cleanText(row.categoria || 'geral', 60),
@@ -108,7 +109,12 @@
         temAudio: bool(row.temAudio) && !!audio, isAnimated: bool(row.isAnimated),
         audioSeconds: Math.max(0, Number(row.audioSeconds) || 0), tamanho: Math.max(0, Number(row.tamanho) || 0),
         criadoEm: cleanText(row.criadoEm, 40), priceCents: 20,
-        fingerprint: cleanText(row.criadoEm, 40) + ':' + (Number(row.tamanho) || 0)
+        fingerprint: cleanText(row.criadoEm, 40) + ':' + (Number(row.tamanho) || 0),
+        media: {
+          preview: cleanText(row.previewUrl || serverMedia.preview, 240),
+          poster: cleanText(row.posterUrl || serverMedia.poster, 240),
+          example: cleanText(row.exampleUrl || serverMedia.example, 240)
+        }
       };
     }).filter(Boolean);
     if (rows.length > 0 && result.length === 0) throw new Error('O catálogo não contém registros válidos com ID e arquivo WebP.');
@@ -135,9 +141,17 @@
   }
 
   function staticMedia(item, index) {
+    const result = {};
+    if (item.media && typeof item.media === 'object') {
+      for (const key of ['poster', 'preview', 'example']) {
+        const mediaPath = item.media[key];
+        const allowed = typeof mediaPath === 'string' && /^\/figurinhas_media\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$/i.test(new URL(mediaPath, backend).pathname);
+        if (allowed) result[key] = proxyUrl(mediaPath);
+      }
+      if (Object.keys(result).length) return result;
+    }
     const entry = index[item.id];
     if (!entry || entry.fingerprint !== item.fingerprint) return {};
-    const result = {};
     for (const key of ['poster', 'preview', 'example']) {
       const mediaPath = entry[key];
       const allowed = typeof mediaPath === 'string' && (key === 'example'
