@@ -7124,6 +7124,22 @@ body.light-mode .fabi-v55-pro-label{color:#603ad4}
 body.light-mode .fabi-v56-upgrade-copy strong{color:#251c43}body.light-mode .fabi-v56-upgrade-copy p{color:#525169}body.light-mode .fabi-v56-upgrade-kicker{color:#5133bd}
 @media(max-width:600px){.fabi-v56-upgrade-link{width:100%}}
 </style>
+
+<style id="fabi-sticker-promo-css">
+.fabi-sticker-promo{position:relative;isolation:isolate;max-width:1180px;margin:30px auto;padding:clamp(22px,4vw,38px);border:1px solid color-mix(in srgb,#b6ff5b 35%,var(--border,#314133));border-radius:28px;background:radial-gradient(circle at 92% 12%,#b6ff5b2b,transparent 34%),linear-gradient(125deg,#152317,#101712 62%,#18251a);color:#f7fff2;box-shadow:0 18px 48px #07100833;overflow:hidden}
+.fabi-sticker-promo:after{content:'✦';position:absolute;right:6%;top:-18px;color:#b6ff5b33;font-size:150px;line-height:1;z-index:-1;transform:rotate(15deg)}
+.fabi-sticker-promo__eyebrow{display:inline-flex;align-items:center;gap:8px;color:#b6ff5b;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.fabi-sticker-promo__eyebrow:before{content:'';width:8px;height:8px;border-radius:50%;background:#b6ff5b;box-shadow:0 0 0 5px #b6ff5b1f}
+.fabi-sticker-promo h2{max-width:720px;margin:10px 0 8px;font-size:clamp(24px,4vw,39px);line-height:1.05;color:inherit}
+.fabi-sticker-promo p{max-width:720px;margin:0;color:#d4e7d0;line-height:1.65}
+.fabi-sticker-promo__actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.fabi-sticker-promo__actions a{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:11px 17px;text-decoration:none;font-weight:850;transition:transform .18s ease,filter .18s ease}
+.fabi-sticker-promo__actions a:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.fabi-sticker-promo__store{background:#b6ff5b;color:#111c10}.fabi-sticker-promo__channel{border:1px solid #d8ffd080;color:#efffe9;background:#ffffff0d}
+.fabi-sticker-promo__note{display:block;margin-top:14px;font-size:11px;color:#a9c3a5}
+@media(max-width:600px){.fabi-sticker-promo{margin:22px 14px;padding:23px 18px;border-radius:22px}.fabi-sticker-promo__actions a{width:100%}}
+</style>
+
 </head>
 <!-- VERSÃO ESTÁTICA HTML — sessão via localStorage (fabi_session); APIs via orange-hill proxy -->
 <body class="dark-mode">
@@ -11727,7 +11743,20 @@ function fzRenderAdminRank(infoGrupo, registro) {
 </div>
 
 
-<!-- ============================================================ -->
+
+<section class="fabi-sticker-promo" aria-labelledby="fabiStickerPromoTitle">
+  <span class="fabi-sticker-promo__eyebrow">Novidades da Fabi Bot</span>
+  <h2 id="fabiStickerPromoTitle">Figurinhas com áudio para deixar suas conversas mais divertidas.</h2>
+  <p>Conheça a loja oficial, veja prévias reais e acompanhe os próximos lançamentos. Entre no canal para receber avisos quando novas figurinhas forem publicadas.</p>
+  <div class="fabi-sticker-promo__actions">
+    <a class="fabi-sticker-promo__store" href="/figurinhas">🎬 Ver loja de figurinhas <span aria-hidden="true">↗</span></a>
+    <a class="fabi-sticker-promo__channel" href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener noreferrer">📢 Entrar no canal oficial <span aria-hidden="true">↗</span></a>
+  </div>
+  <small class="fabi-sticker-promo__note">Prévia protegida com marca Fabi Bot · valores e disponibilidade aparecem na vitrine.</small>
+</section>
+
+
+    <!-- ============================================================ -->
 <!-- POKÉMON ADVENTURE — sistema principal de progressão -->
 <!-- ============================================================ -->
 <footer class="footer" id="siteFooter">
