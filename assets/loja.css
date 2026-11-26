@@ -519,3 +519,17 @@ code { color: var(--green); font-size: .95em; }
 .preview-media .video-watermark { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; transform: rotate(-24deg); }
 .card-play { color: #fff; background: rgb(16 17 15 / 92%); border-color: rgb(255 255 255 / 72%); }
 :root[data-theme="light"] .card-play { color: #fff; background: #172016; border-color: #4b8f16; }
+:root[data-theme="light"] .bot-callout { background: #ffffff; border-color: #b6caa9; color: #172016; }
+:root[data-theme="light"] .bot-callout p { color: #52614d; }
+:root[data-theme="light"] .bot-callout .button-secondary { color: #172016; border-color: #9caf91; }
+:root[data-theme="light"] .callout-icon { border-color: #76a455; }
+:root[data-theme="light"] .watermark-notice { background: #edf4e8; border-color: #b6caa9; color: #52614d; }
+:root[data-theme="light"] .command-box { background: #f7faf4; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .bot-callout { background: #ffffff; border-color: #b6caa9; color: #172016; }
+  :root:not([data-theme="dark"]) .bot-callout p { color: #52614d; }
+  :root:not([data-theme="dark"]) .bot-callout .button-secondary { color: #172016; border-color: #9caf91; }
+  :root:not([data-theme="dark"]) .callout-icon { border-color: #76a455; }
+  :root:not([data-theme="dark"]) .watermark-notice { background: #edf4e8; border-color: #b6caa9; color: #52614d; }
+  :root:not([data-theme="dark"]) .command-box { background: #f7faf4; }
+}
