@@ -37,7 +37,7 @@
   },
   "fig_0007": {
     "preview": "assets/figurinhas-preview/fig_0007.mp4",
-   "example": "exemplo/fig_0007.mp4",
+    "example": "exemplo/figurinhas-preview/fig_0007.mp4",
     "poster": "assets/figurinhas-preview/fig_0007.webp",
     "fingerprint": "2026-11-25T01:48:59.724Z:457852"
   },
@@ -49,7 +49,7 @@
   },
   "fig_0009": {
     "preview": "assets/figurinhas-preview/fig_0009.mp4",
-    "example": "exemplo/fig_0009.mp4",
+    "example": "exemplo/figurinhas-preview/fig_0009.mp4",
     "poster": "assets/figurinhas-preview/fig_0009.webp",
     "fingerprint": "2026-11-25T01:49:07.118Z:409548"
   },
@@ -61,14 +61,56 @@
   },
   "fig_0011": {
     "preview": "assets/figurinhas-preview/fig_0011.mp4",
-    "example": "exemplo/fig_0011.mp4",
+    "example": "exemplo/figurinhas-preview/fig_0011.mp4",
     "poster": "assets/figurinhas-preview/fig_0011.webp",
     "fingerprint": "2026-11-25T01:49:13.608Z:373416"
   },
   "fig_0012": {
     "preview": "assets/figurinhas-preview/fig_0012.mp4",
-    "example": "exemplo/fig_0012.mp4",
+    "example": "exemplo/figurinhas-preview/fig_0012.mp4",
     "poster": "assets/figurinhas-preview/fig_0012.webp",
     "fingerprint": "2026-11-25T01:49:28.774Z:490086"
+  },
+  "fig_0013": {
+    "preview": "assets/figurinhas-preview/fig_0013.mp4",
+    "example": "exemplo/fig_0013.mp4",
+    "poster": "assets/figurinhas-preview/fig_0013.mp4",
+    "fingerprint": ""
+  },
+  "fig_0014": {
+    "preview": "assets/figurinhas-preview/fig_0014.mp4",
+    "example": "exemplo/fig_0014.mp4",
+    "poster": "assets/figurinhas-preview/fig_0014.mp4",
+    "fingerprint": ""
+  },
+  "fig_0015": {
+    "preview": "assets/figurinhas-preview/fig_0015.mp4",
+    "example": "exemplo/fig_0015.mp4",
+    "poster": "assets/figurinhas-preview/fig_0015.mp4",
+    "fingerprint": ""
+  },
+  "fig_0016": {
+    "preview": "assets/figurinhas-preview/fig_0016.mp4",
+    "example": "exemplo/fig_0016.mp4",
+    "poster": "assets/figurinhas-preview/fig_0016.mp4",
+    "fingerprint": ""
+  },
+  "fig_0017": {
+    "preview": "assets/figurinhas-preview/fig_0017.mp4",
+    "example": "exemplo/fig_0017.mp4",
+    "poster": "assets/figurinhas-preview/fig_0017.mp4",
+    "fingerprint": ""
+  },
+  "fig_0018": {
+    "preview": "assets/figurinhas-preview/fig_0018.mp4",
+    "example": "exemplo/figurinhas-preview/fig_0018.mp4",
+    "poster": "assets/figurinhas-preview/fig_0018.mp4",
+    "fingerprint": ""
+  },
+  "fig_0019": {
+    "preview": "assets/figurinhas-preview/fig_0019.mp4",
+    "example": "exemplo/figurinhas-preview/fig_0019.mp4",
+    "poster": "assets/figurinhas-preview/fig_0019.mp4",
+    "fingerprint": ""
   }
 }
