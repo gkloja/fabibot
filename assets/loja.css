@@ -531,6 +531,13 @@ code { color: var(--green); font-size: .95em; }
 :root[data-theme="light"] .callout-icon { border-color: #76a455; }
 :root[data-theme="light"] .watermark-notice { background: #edf4e8; border-color: #b6caa9; color: #52614d; }
 :root[data-theme="light"] .command-box { background: #f7faf4; }
+:root[data-theme="light"] .redeem-code-box { background: #f3f8ee; border-color: #9fbd89; color: #172016; }
+:root[data-theme="light"] .redeem-code-box > strong { background: #e5efdc; color: #28620d; border: 1px solid #b5cea4; }
+:root[data-theme="light"] .redeem-instruction { color: #344432; }
+:root[data-theme="light"] .redeem-code-box .redeem-primary { background: #3c7d10; color: #fff; border-color: #3c7d10; }
+:root[data-theme="light"] .redeem-code-box .redeem-primary:hover { background: #2e6509; border-color: #2e6509; }
+:root[data-theme="light"] .redeem-copy { color: #344432; border-color: #9caf91; }
+:root[data-theme="light"] .support-link { color: #3c641e; }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) .bot-callout { background: #ffffff; border-color: #b6caa9; color: #172016; }
   :root:not([data-theme="dark"]) .bot-callout p { color: #52614d; }
@@ -538,4 +545,11 @@ code { color: var(--green); font-size: .95em; }
   :root:not([data-theme="dark"]) .callout-icon { border-color: #76a455; }
   :root:not([data-theme="dark"]) .watermark-notice { background: #edf4e8; border-color: #b6caa9; color: #52614d; }
   :root:not([data-theme="dark"]) .command-box { background: #f7faf4; }
+  :root:not([data-theme="dark"]) .redeem-code-box { background: #f3f8ee; border-color: #9fbd89; color: #172016; }
+  :root:not([data-theme="dark"]) .redeem-code-box > strong { background: #e5efdc; color: #28620d; border-color: #b5cea4; }
+  :root:not([data-theme="dark"]) .redeem-instruction { color: #344432; }
+  :root:not([data-theme="dark"]) .redeem-code-box .redeem-primary { background: #3c7d10; color: #fff; border-color: #3c7d10; }
+  :root:not([data-theme="dark"]) .redeem-code-box .redeem-primary:hover { background: #2e6509; border-color: #2e6509; }
+  :root:not([data-theme="dark"]) .redeem-copy { color: #344432; border-color: #9caf91; }
+  :root:not([data-theme="dark"]) .support-link { color: #3c641e; }
 }
