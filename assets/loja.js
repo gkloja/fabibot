@@ -10,6 +10,7 @@
   const favoriteTokenKey = 'fabi_sticker_favorite_token_v1';
   const cartKey = 'fabi_sticker_cart_v1';
   const orderKey = 'fabi_sticker_pending_order_v1';
+  const historyKey = 'fabi_sticker_order_history_v1';
   const themeKey = 'fabi_sticker_theme_v1';
   const defaultPriceCents = 10;
   const priceOf = item => Math.max(1, Number(item && item.priceCents) || (item && item.temAudio ? 20 : defaultPriceCents));
@@ -17,7 +18,7 @@
   const storeWhatsapp = String(config.storeWhatsapp || '5592985715119').replace(/\D/g, '');
   let favoriteToken = '';
   try { favoriteToken = localStorage.getItem(favoriteTokenKey) || ''; if (!/^[a-zA-Z0-9_-]{16,120}$/.test(favoriteToken)) { favoriteToken = (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '') : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem(favoriteTokenKey, favoriteToken); } } catch (_) { favoriteToken = 'anon' + Date.now().toString(36); }
-  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'recent', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
+  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'recent', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
   try {
     const saved = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
     if (Array.isArray(saved)) state.favorites = new Set(saved.filter(id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,80}$/.test(id)).slice(0, 2000));
@@ -454,7 +455,42 @@
       state.pendingQr = saved.qrCode || '';
       state.pendingCopy = saved.copyPaste || '';
       state.redeemCode = typeof saved.redeemCode === 'string' ? saved.redeemCode : '';
+      if (state.redeemCode) {
+        void refreshRedeemStatus();
+        state.redeemedStatusTimer = setInterval(refreshRedeemStatus, 15000);
+      }
     } catch (_) { /* Ignore corrupt local order data. */ }
+  }
+
+  function rememberRedeemedOrder() {
+    try {
+      const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+      const next = Array.isArray(history) ? history.filter(item => item && item.orderId !== state.activeOrderId) : [];
+      next.unshift({ orderId: state.activeOrderId, redeemedAt: new Date().toISOString(), codeHint: state.redeemCode ? '…' + state.redeemCode.slice(-6) : '' });
+      localStorage.setItem(historyKey, JSON.stringify(next.slice(0, 20)));
+    } catch (_) { /* History is optional and never blocks new purchases. */ }
+  }
+
+  async function refreshRedeemStatus() {
+    if (!state.activeOrderId || !state.redeemCode) return false;
+    try {
+      const result = await api.checkStickerPayment(state.activeOrderId);
+      if (result && (result.redeemed === true || result.status === 'redeemed')) {
+        rememberRedeemedOrder();
+        clearInterval(state.redeemedStatusTimer);
+        state.redeemedStatusTimer = null;
+        clearInterval(state.pollTimer);
+        state.pollTimer = null;
+        state.activeOrderId = ''; state.pendingQr = ''; state.pendingCopy = ''; state.redeemCode = '';
+        try { localStorage.removeItem(orderKey); } catch (_) {}
+        $('#redeemCodeBox').hidden = true;
+        $('#checkoutPanel').hidden = true;
+        renderCart();
+        toast('Resgate concluído. O código foi arquivado no histórico.');
+        return true;
+      }
+    } catch (_) { /* A temporary network error must not remove the active code. */ }
+    return false;
   }
 
   function invalidatePendingOrder(message) {
@@ -538,6 +574,7 @@
     $('#checkoutStatus').textContent = savedLocally
       ? 'Código de uso único salvo neste navegador. Envie-o no privado da Fabi Bot.'
       : 'Código de uso único pronto. Copie-o e envie no privado da Fabi Bot para não perdê-lo.';
+    if (!state.redeemedStatusTimer) state.redeemedStatusTimer = setInterval(refreshRedeemStatus, 15000);
     $('#checkoutPanel').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   }
 
@@ -672,7 +709,9 @@
   restorePendingOrder();
   updateSavedCount();
   if (state.redeemCode) {
-    setTimeout(() => {
+    setTimeout(async () => {
+      await refreshRedeemStatus();
+      if (!state.redeemCode) return;
       openCart();
       $('#checkoutPanel').scrollIntoView({ behavior: 'auto', block: 'start' });
     }, 80);
