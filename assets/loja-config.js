@@ -10,6 +10,7 @@
     catalogPath: '/figurinhas_loja.json',
     snapshotPath: 'assets/figurinhas-preview/catalogo.json',
     mediaIndexPath: 'assets/figurinhas-preview/media-index.json',
+    tutorialVideoPath: '/figurinhas_media/tutorial-como-receber.mp4',
     timeoutMs: 18000,
     pageSize: 24,
     priceCents: 20,

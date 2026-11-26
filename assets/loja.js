@@ -148,6 +148,7 @@
       '<h3 class="card-title" title="' + escape(item.nome) + '">' + escape(item.nome) + '</h3><div class="card-bottom">' +
       '<span class="audio-badge ' + (item.temAudio ? 'has-audio' : 'no-audio') + '">' + icon(item.temAudio ? 'sound' : 'play') + (item.temAudio ? 'COM SOM' : 'SEM ÁUDIO') + '</span>' +
       '<button class="card-cart-button" type="button" data-action="cart-add" data-id="' + escape(item.id) + '" aria-pressed="' + inCart + '">' + (inCart ? 'No carrinho ✓' : '+ Carrinho') + '</button></div>' +
+      '<div class="card-stats"><span>' + icon('eye') + escape(String(item.visualizacoes || 0)) + ' visualizações</span><span>' + icon('heart') + escape(String(item.favoritos || 0)) + '</span><span>' + icon('cart') + escape(String(item.compras || 0)) + '</span></div>' +
       '<div class="card-links"><button class="card-view-button" type="button" data-action="preview" data-id="' + escape(item.id) + '">Ver detalhes' + icon('arrow') + '</button><a class="card-seo-link" href="/figurinhas/' + encodeURIComponent(item.id) + '">Página pública</a></div></div></article>';
   }
 
@@ -189,6 +190,25 @@
     scope.querySelectorAll('video').forEach(video => { video.setAttribute('controlsList', 'nodownload noplaybackrate'); video.setAttribute('disablepictureinpicture', ''); });
   }
 
+  function openTutorial() {
+    const dialog = $('#tutorialDialog');
+    const video = $('#tutorialVideo');
+    if (!dialog || !video) return;
+    const primary = api.tutorialUrl();
+    video.onerror = () => {
+      if (video.dataset.fallbackUsed) return;
+      video.dataset.fallbackUsed = '1';
+      video.src = './assets/tutorial-codigo-whatsapp.mp4';
+      video.load();
+    };
+    video.dataset.fallbackUsed = '';
+    video.src = primary;
+    try { video.poster = api.proxyUrl('/figurinhas_media/tutorial-como-receber.webp'); } catch (_) { video.removeAttribute('poster'); }
+    video.load();
+    if (!dialog.open) dialog.showModal();
+    document.body.classList.add('modal-open');
+  }
+
   function render() {
     stopHoverVideos();
     const items = filteredItems();
@@ -225,9 +245,10 @@
   }
 
   function renderHero() {
+    const highlighted = state.items.filter(item => item.destaque);
     const animatedItems = state.source === 'live' ? state.items.filter(item => item.isAnimated) : [];
     const preferred = animatedItems.length ? animatedItems : state.items.filter(item => api.staticMedia(item, state.index).poster);
-    const items = preferred.length ? preferred : state.items;
+    const items = highlighted.length >= 2 ? highlighted : (preferred.length ? preferred : state.items);
     const selected = [items[0], items[Math.min(3, items.length - 1)]].filter(Boolean);
     const collage = $('#heroCollage');
     if (!selected.length) {
@@ -360,6 +381,7 @@
     ++state.previewGeneration;
     state.lastFocused = document.activeElement;
     state.current = item;
+    api.recordView(item.id, favoriteToken).catch(() => {});
     history.replaceState(null, '', '/figurinhas?sticker=' + encodeURIComponent(item.id));
     $('#previewId').textContent = item.id.toUpperCase();
     $('#previewTitle').textContent = item.nome;
@@ -656,6 +678,7 @@
     if (button.dataset.action === 'preview') openPreview(button.dataset.id);
     if (button.dataset.action === 'cart-add') addToCart(button.dataset.id);
     if (button.dataset.action === 'cart-remove') removeFromCart(button.dataset.id);
+    if (button.dataset.action === 'tutorial') openTutorial();
   });
   document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
   $('#savedButton').addEventListener('click', () => { setFilter(state.filter === 'favorites' ? 'all' : 'favorites'); $('#catalogo').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
@@ -704,6 +727,9 @@
   $('#checkoutButton').addEventListener('click', startCheckout);
   $('#copyPixButton').addEventListener('click', () => copyText($('#pixCopyPaste').value, $('#checkoutStatus'), 'PIX copiado.'));
   $('#copyRedeemButton').addEventListener('click', () => copyText($('#redeemCode').textContent, $('#checkoutStatus'), 'Código de resgate copiado.'));
+  $('#closeTutorial').addEventListener('click', () => $('#tutorialDialog').close());
+  $('#tutorialDialog').addEventListener('close', () => { $('#tutorialVideo').pause(); $('#tutorialVideo').removeAttribute('src'); $('#tutorialVideo').load(); document.body.classList.remove('modal-open'); });
+  $('#tutorialDialog').addEventListener('click', event => { if (event.target === $('#tutorialDialog')) $('#tutorialDialog').close(); });
 
   window.addEventListener('storage', event => {
     if (event.key !== favoritesKey) return;

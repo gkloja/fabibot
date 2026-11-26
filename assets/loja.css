@@ -152,6 +152,9 @@ h2 span { color: var(--green); }
 .card-kicker span:last-child { margin-left: auto; color: var(--green); font-weight: 700; letter-spacing: 0; flex: 0 0 auto; }
 .card-title { font-size: 13px; line-height: 1.45; font-weight: 600; margin: 0 0 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.card-stats { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 8px; margin: 10px 0 3px; white-space: nowrap; overflow: hidden; }
+.card-stats span { display: inline-flex; align-items: center; gap: 3px; min-width: 0; }
+.card-stats .icon { width: 11px; height: 11px; color: var(--green); }
 .audio-badge { color: #c8dbb3; font-weight: 800; letter-spacing: .04em; font-size: 8px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 6px; border-radius: 4px; background: #2c3923; }
 .audio-badge.has-audio { color: #10110f; background: var(--green); box-shadow: 0 0 0 2px #b6ff5b33; }
 .audio-badge.no-audio { color: #ffd1aa; background: #4b3025; }
@@ -237,6 +240,11 @@ code { color: var(--green); font-size: .95em; }
 .command-box .icon { width: 14px; height: 14px; }
 .command-box small { display: block; font-size: 9px; color: var(--muted); line-height: 1.6; margin-top: 6px; }
 .preview-status { font-size: 11px; color: var(--orange); line-height: 1.65; margin-top: 14px; min-height: 18px; }
+.tutorial-dialog { padding: 0; color: var(--text); border: 1px solid var(--line); border-radius: 20px; background: var(--surface); width: min(720px, calc(100% - 32px)); max-height: calc(100dvh - 36px); overflow: auto; }
+.tutorial-dialog::backdrop { background: rgb(0 0 0 / 80%); backdrop-filter: blur(8px); }
+.tutorial-shell { padding: 24px; }
+.tutorial-intro { color: var(--muted); font-size: 13px; margin: 0 0 18px; }
+.tutorial-dialog video { width: 100%; max-height: 68dvh; background: #000; border-radius: 12px; }
 .toast-stack { position: fixed; right: 20px; bottom: 20px; z-index: 60; max-width: min(420px, calc(100% - 40px)); pointer-events: none; }
 .toast { padding: 13px 18px; background: #25301c; border: 1px solid #5c7841; color: var(--text); border-radius: 9px; font-size: 12px; box-shadow: 0 9px 35px #0006; }
 .no-script { position: fixed; bottom: 0; inset-inline: 0; padding: 15px 20px; background: #573922; color: #fff; z-index: 99; text-align: center; }

@@ -13,7 +13,7 @@
   function proxyUrl(path) {
     const target = new URL(path, backend);
     const allowedMedia = /^\/figurinhas_loja(?:\.json|\/[a-zA-Z0-9_-]+\.(?:webp|ogg))$|^\/figurinhas_media\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$/i.test(target.pathname);
-    const allowedStoreApi = /^\/api\/figurinhas\/(?:gerar-pix|favoritar|verificar-pagamento\/[a-f0-9-]{36})$/i.test(target.pathname);
+    const allowedStoreApi = /^\/api\/figurinhas\/(?:gerar-pix|favoritar|visualizar|verificar-pagamento\/[a-f0-9-]{36})$/i.test(target.pathname);
     if (target.origin !== backend.origin || (!allowedMedia && !allowedStoreApi) || target.search || target.hash) throw new Error('Caminho de mídia ou checkout não permitido.');
     return config.proxy.replace(/\/$/, '') + '/' + backend.host + '/proxy?url=' + encodeURIComponent(target.href);
   }
@@ -102,14 +102,14 @@
       const serverMedia = row.media && typeof row.media === 'object' ? row.media : {};
       return {
         id, nome: cleanText(row.nome || 'Figurinha ' + id), arquivo, arquivoAudio: audio,
-        categoria: cleanText(row.categoria || 'geral', 60),
+        categoria: cleanText(row.categoria || 'geral', 60), destaque: row.destaque === true,
         tags: Array.isArray(row.tags) ? row.tags.slice(0, 30).map(tag => cleanText(tag, 60)) : [],
         author: cleanText(row.author || row.packname || 'Fabi Bot', 80),
         packname: cleanText(row.packname || 'Fabi Loja', 80),
         temAudio: bool(row.temAudio) && !!audio, isAnimated: bool(row.isAnimated),
         audioSeconds: Math.max(0, Number(row.audioSeconds) || 0), tamanho: Math.max(0, Number(row.tamanho) || 0),
         criadoEm: cleanText(row.criadoEm, 40), priceCents: Math.max(1, Number(row.priceCents || row.precoCentavos || (bool(row.temAudio) && !!audio ? 20 : 10)) || 10),
-        compras: Math.max(0, Number(row.compras ?? row.salesCount) || 0), favoritos: Math.max(0, Number(row.favoritos ?? row.favoriteCount) || 0),
+        compras: Math.max(0, Number(row.compras ?? row.salesCount) || 0), favoritos: Math.max(0, Number(row.favoritos ?? row.favoriteCount) || 0), visualizacoes: Math.max(0, Number(row.visualizacoes ?? row.views) || 0),
         fingerprint: cleanText(row.criadoEm, 40) + ':' + (Number(row.tamanho) || 0),
         media: {
           preview: cleanText(row.previewUrl || serverMedia.preview, 240),
@@ -183,6 +183,8 @@
   }
 
   async function recordFavorite(id, action, clientToken) { return jsonApi('/api/figurinhas/favoritar', 'POST', { id: String(id), action: action === 'remove' ? 'remove' : 'add', clientToken: String(clientToken) }); }
+  async function recordView(id, clientToken) { return jsonApi('/api/figurinhas/visualizar', 'POST', { id: String(id), clientToken: String(clientToken) }); }
+  function tutorialUrl() { return proxyUrl(config.tutorialVideoPath || '/figurinhas_media/tutorial-como-receber.mp4'); }
 
   async function checkStickerPayment(orderId) {
     const id = String(orderId || '');
@@ -190,5 +192,5 @@
     return jsonApi('/api/figurinhas/verificar-pagamento/' + encodeURIComponent(id), 'GET');
   }
 
-  window.FabiStickerApi = { catalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, createStickerOrder, recordFavorite, checkStickerPayment };
+  window.FabiStickerApi = { catalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, tutorialUrl, createStickerOrder, recordFavorite, recordView, checkStickerPayment };
 })();
