@@ -99,7 +99,7 @@
       if (state.filter === 'animated' && !item.isAnimated) return false;
       if (state.filter === 'favorites' && !state.favorites.has(item.id)) return false;
       if (state.category !== 'all' && item.categoria !== state.category) return false;
-      return !query || fold([item.nome, item.id, ...item.tags].join(' ')).includes(query);
+      return !query || fold([item.nome, item.id, item.author, item.packname, ...item.tags].join(' ')).includes(query);
     }).sort((a, b) => {
       if (state.sort === 'most-purchased') return (priceOf(b), b.compras - a.compras) || a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
       if (state.sort === 'most-favorited') return (b.favoritos - a.favoritos) || a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
@@ -144,8 +144,8 @@
       (image ? '<img src="' + escape(image) + '" alt="' + escape(item.nome) + '" width="360" height="360" loading="lazy" decoding="async" data-sticker-id="' + escape(item.id) + '" data-fallback="' + escape(fallback) + '"><span class="watermark" aria-hidden="true">FABI BOT</span>' : fallbackHTML('Prévia disponível apenas pelo backend.')) +
       '<span class="card-play">' + icon('play') + 'Ver exemplo</span></button>' +
       '<button class="card-save" type="button" data-action="favorite" data-id="' + escape(item.id) + '" data-name="' + escape(item.nome) + '" aria-pressed="' + isSaved + '" aria-label="' + (isSaved ? 'Remover ' : 'Salvar ') + escape(item.nome) + (isSaved ? ' das favoritas' : ' nas favoritas') + '">' + icon('heart') + '</button>' +
-      '<div class="card-info"><div class="card-kicker"><span>' + escape(item.id.replace('_', ' #')) + '</span><span>' + priceLabel(item) + '</span></div>' +
-      '<h3 class="card-title" title="' + escape(item.nome) + '">' + escape(item.nome) + '</h3><div class="card-bottom">' +
+      '<div class="card-info"><div class="card-kicker"><span>' + (item.source === 'community' ? '<b class="source-badge community">COMUNIDADE</b>' : '<b class="source-badge official">FABI OFICIAL</b>') + '<span>' + escape(item.id.replace('_', ' #')) + '</span></span><span>' + priceLabel(item) + '</span></div>' +
+      '<h3 class="card-title" title="' + escape(item.nome) + '">' + escape(item.nome) + '</h3><p class="card-author">por ' + escape(item.author || 'Fabi Bot') + '</p><div class="card-bottom">'+
       '<span class="audio-badge ' + (item.temAudio ? 'has-audio' : 'no-audio') + '">' + icon(item.temAudio ? 'sound' : 'play') + (item.temAudio ? 'COM SOM' : 'SEM ÁUDIO') + '</span>' +
       '<button class="card-cart-button" type="button" data-action="cart-add" data-id="' + escape(item.id) + '" aria-pressed="' + inCart + '">' + (inCart ? 'No carrinho ✓' : '+ Carrinho') + '</button></div>' +
       '<div class="card-stats"><span>' + icon('eye') + escape(String(item.visualizacoes || 0)) + ' visualizações</span><span>' + icon('heart') + escape(String(item.favoritos || 0)) + '</span><span>' + icon('cart') + escape(String(item.compras || 0)) + '</span></div>' +
@@ -275,15 +275,15 @@
     $('#connectionBox').className = 'connection-box loading';
     $('#connectionText').textContent = 'Conectando ao catálogo do bot…';
     $('#catalogGrid').setAttribute('aria-busy', 'true');
-    const [result, index] = await Promise.all([api.catalog(), api.mediaIndex()]);
-    state.items = result.items;
+    const [result, index, community] = await Promise.all([api.catalog(), api.mediaIndex(), api.creatorCatalog()]);
+    state.items = result.items.concat(community);
     state.index = index;
     state.source = result.source;
     state.loading = false;
     $('#reloadButton').disabled = false;
     const time = new Date(result.loadedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     $('#connectionBox').className = 'connection-box ' + (result.source === 'snapshot' ? 'warning' : result.source === 'error' ? 'error' : '');
-    $('#connectionText').textContent = result.source === 'live' ? 'Conectado ao bot · ' + result.items.length + ' figurinhas · atualizado às ' + time : result.source === 'snapshot' ? 'Catálogo de prévias do site · não está ao vivo. ' + result.error : 'Falha de conexão. ' + result.error;
+    $('#connectionText').textContent = result.source === 'live' ? 'Conectado ao bot · ' + state.items.length + ' figurinhas (' + community.length + ' da comunidade) · atualizado às ' + time : result.source === 'snapshot' ? 'Catálogo de prévias do site · não está ao vivo. ' + result.error : 'Falha de conexão. ' + result.error;
     const select = $('#categorySelect');
     select.innerHTML = '<option value="all">Todas as categorias</option>' + [...new Set(state.items.map(item => item.categoria))].sort((a, b) => a.localeCompare(b, 'pt-BR')).map(category => '<option value="' + escape(category) + '">' + escape(category.charAt(0).toUpperCase() + category.slice(1)) + '</option>').join('');
     if (!state.items.some(item => item.categoria === state.category)) state.category = 'all';
@@ -742,6 +742,7 @@
     try { if (!localStorage.getItem(themeKey)) applyTheme('system'); } catch (_) { applyTheme('system'); }
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden) { stopMedia(); stopHoverVideos(); } });
+  window.addEventListener('fabi-creator-published', () => { state.limit = config.pageSize; loadCatalog(); });
   $('#currentYear').textContent = String(new Date().getFullYear());
   restoreTheme();
   restorePendingOrder();

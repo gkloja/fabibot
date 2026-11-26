@@ -135,13 +135,29 @@
     catch (_) { return {}; }
   }
 
+  async function creatorCatalog() {
+    try {
+      const response = await fetch('/api/creator/creations?limit=60', { cache: 'no-store' });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || 'Creator indisponível');
+      return (payload.creations || []).filter(row => row && row.status === 'publicada').map(row => {
+        const id = 'creator_' + String(row.id || '').replace(/[^a-zA-Z0-9_-]/g, '');
+        const poster = String(row.posterUrl || '');
+        const preview = String(row.videoUrl || '');
+        return { id, nome: cleanText(row.title || 'Criação da comunidade', 80), arquivo: '', arquivoAudio: '', categoria: cleanText(row.category || 'comunidade', 60), destaque: false, tags: [ ...(Array.isArray(row.tags) ? row.tags : []), row.description || '', row.creator && (row.creator.displayName || row.creator.username) || '' ].map(tag => cleanText(tag, 60)).filter(Boolean), author: cleanText(row.creator && (row.creator.displayName || row.creator.username) || 'Criador Fabi', 80), packname: 'FabiBot Creator', temAudio: true, isAnimated: true, audioSeconds: 0, tamanho: 0, criadoEm: cleanText(row.createdAt, 40), priceCents: 20, compras: Number(row.purchases) || 0, favoritos: 0, visualizacoes: Number(row.views) || 0, source: 'community', creator: row.creator || {}, creatorSlug: row.slug || '', media: { poster, preview, example: preview } };
+      });
+    } catch (_) { return []; }
+  }
+
   function mediaUrl(item, kind = 'sticker') {
+    if (item.source === 'community') return item.media && (kind === 'audio' ? item.media.preview : item.media.poster) || '';
     const name = fileName(kind === 'audio' ? item.arquivoAudio : item.arquivo, kind);
     if (!name) throw new Error('Arquivo não disponível no catálogo.');
     return proxyUrl('/figurinhas_loja/' + name);
   }
 
   function staticMedia(item, index) {
+    if (item.source === 'community' && item.media) return { poster: item.media.poster || '', preview: item.media.preview || '', example: item.media.example || '' };
     const result = {};
     if (item.media && typeof item.media === 'object') {
       for (const key of ['poster', 'preview', 'example']) {
@@ -192,5 +208,5 @@
     return jsonApi('/api/figurinhas/verificar-pagamento/' + encodeURIComponent(id), 'GET');
   }
 
-  window.FabiStickerApi = { catalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, tutorialUrl, createStickerOrder, recordFavorite, recordView, checkStickerPayment };
+  window.FabiStickerApi = { catalog, creatorCatalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, tutorialUrl, createStickerOrder, recordFavorite, recordView, checkStickerPayment };
 })();
