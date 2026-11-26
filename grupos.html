@@ -101,13 +101,9 @@ html[data-theme="dark"] .free-choice-option .free-choice-sub,html[data-theme="da
 @media(prefers-reduced-motion:reduce){.fabi-confirm-overlay,.fabi-confirm-card{transition:none!important}}
 </style>
 
-<style id="fabi-sticker-promo-css">
-.fabi-sticker-promo{position:relative;display:flex;align-items:center;gap:14px;max-width:1180px;margin:22px auto;padding:14px 17px;border:1px solid color-mix(in srgb,#b6ff5b 38%,var(--border,#314133));border-radius:18px;background:linear-gradient(105deg,#162519,#101812 72%);color:#f7fff2;box-shadow:0 10px 28px #0710082b;overflow:hidden}
-.fabi-sticker-promo:before{content:'✦';display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border-radius:12px;background:#b6ff5b;color:#142010;font-size:19px;box-shadow:0 0 0 5px #b6ff5b1a}
-.fabi-sticker-promo__copy{min-width:0;display:flex;flex-direction:column;gap:2px}.fabi-sticker-promo__eyebrow{color:#b6ff5b;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.fabi-sticker-promo strong{font-size:15px;line-height:1.25;color:inherit}.fabi-sticker-promo p{margin:0;color:#c9dfc5;font-size:12px;line-height:1.4}.fabi-sticker-promo__actions{margin-left:auto;flex:0 0 auto}.fabi-sticker-promo__actions a{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:9px 13px;text-decoration:none;background:#b6ff5b;color:#111c10;font-size:12px;font-weight:900;white-space:nowrap;transition:transform .18s ease,filter .18s ease}.fabi-sticker-promo__actions a:hover{transform:translateY(-1px);filter:brightness(1.08)}.fabi-sticker-promo__note{display:none}
-@media(max-width:650px){.fabi-sticker-promo{margin:17px 14px;padding:13px 14px;align-items:flex-start}.fabi-sticker-promo:before{flex-basis:30px;width:30px;height:30px;font-size:16px}.fabi-sticker-promo strong{font-size:13px}.fabi-sticker-promo p{font-size:11px}.fabi-sticker-promo__actions{margin-left:0}.fabi-sticker-promo__actions a{padding:8px 10px;font-size:11px}.fabi-sticker-promo{flex-wrap:wrap}.fabi-sticker-promo__copy{flex:1 1 calc(100% - 50px)}.fabi-sticker-promo__actions{margin-left:48px}}
+<style id="fabi-floating-sticker-ad-css">
+.fabi-floating-sticker-ad{position:fixed;z-index:10050;right:18px;bottom:20px;width:min(390px,calc(100vw - 28px));display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:12px;padding:12px 13px 12px 12px;border:1px solid #b6ff5b66;border-radius:20px;background:linear-gradient(125deg,#17271a,#0d1510 78%);color:#f7fff2;box-shadow:0 20px 55px #0008,0 0 0 1px #b6ff5b14;opacity:0;transform:translateY(25px) scale(.94);pointer-events:none;visibility:hidden;transition:opacity .35s ease,transform .35s cubic-bezier(.2,.8,.2,1),visibility .35s}.fabi-floating-sticker-ad.is-visible{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;visibility:visible}.fabi-floating-sticker-ad__image{width:58px;height:58px;object-fit:cover;border-radius:16px;background:#fff;box-shadow:0 5px 16px #0005;border:2px solid #b6ff5b}.fabi-floating-sticker-ad__content{min-width:0}.fabi-floating-sticker-ad__eyebrow{display:block;margin-bottom:3px;color:#b6ff5b;font-size:9px;font-weight:950;letter-spacing:.11em;text-transform:uppercase}.fabi-floating-sticker-ad__content strong{display:block;font-size:14px;line-height:1.2;color:#fff}.fabi-floating-sticker-ad__content p{margin:4px 0 8px;color:#c8ddc6;font-size:11px;line-height:1.35}.fabi-floating-sticker-ad__cta{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:999px;background:#b6ff5b;color:#101b0f;text-decoration:none;font-size:11px;font-weight:950}.fabi-floating-sticker-ad__cta:hover{filter:brightness(1.08);transform:translateY(-1px)}.fabi-floating-sticker-ad__close{align-self:start;display:grid;place-items:center;width:24px;height:24px;border:0;border-radius:50%;background:#ffffff14;color:#d8ebd6;font-size:18px;line-height:1;cursor:pointer}.fabi-floating-sticker-ad__close:hover{background:#ffffff2b;color:#fff}@media(max-width:480px){.fabi-floating-sticker-ad{right:12px;bottom:12px;grid-template-columns:50px 1fr auto;gap:9px;padding:10px;border-radius:17px}.fabi-floating-sticker-ad__image{width:50px;height:50px;border-radius:13px}.fabi-floating-sticker-ad__content strong{font-size:13px}.fabi-floating-sticker-ad__content p{font-size:10px;margin-bottom:6px}}@media(prefers-reduced-motion:reduce){.fabi-floating-sticker-ad{transition:none}}
 </style>
-
 </head>
 <body>
   <a class="skip-link" href="#explorar">Pular para os grupos</a>
@@ -169,15 +165,6 @@ html[data-theme="dark"] .free-choice-option .free-choice-sub,html[data-theme="da
         <div class="art-caption"><span class="caption-bullet">●</span> FABI FREE <strong>é de verdade, não é só propaganda.</strong></div>
       </div>
     </div></section>
-
-<section class="fabi-sticker-promo" role="status" aria-label="Novidade da loja de figurinhas">
-  <div class="fabi-sticker-promo__copy">
-    <span class="fabi-sticker-promo__eyebrow">Nova experiência Fabi Bot</span>
-    <strong>Receba figurinhas com áudio no seu WhatsApp!</strong>
-    <p>Veja a prévia, escolha sua reação e receba direto no privado da Fabi.</p>
-  </div>
-  <div class="fabi-sticker-promo__actions"><a href="/figurinhas">Conhecer a loja <span aria-hidden="true">↗</span></a></div>
-</section>
 
     <section class="benefit-ribbon" aria-label="Benefícios"><div class="container ribbon-grid"><div><span class="ribbon-icon">↗</span><strong>Mais gente descobrindo sua comunidade</strong><small>Grupos e canais em um catálogo organizado</small></div><div><span class="ribbon-icon">✦</span><strong>Mais visibilidade com Pix</strong><small>Destaque opcional para grupos e canais</small></div><div><span class="ribbon-icon">✓</span><strong>Fabi Free para grupos</strong><small>Proteção e rankings conforme elegibilidade</small></div></div></section>
 
@@ -695,6 +682,34 @@ html[data-theme="dark"] .pix-state{color:#5eead4}
    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
  },true);
+})();
+</script>
+<aside class="fabi-floating-sticker-ad" id="fabiFloatingStickerAd" aria-label="Anúncio da loja de figurinhas" aria-live="polite">
+  <img class="fabi-floating-sticker-ad__image" src="/assets/figurinhas-preview/fig_0018.webp" alt="Prévia de figurinha com áudio da Fabi Bot" width="58" height="58" loading="lazy" onerror="this.style.display='none'">
+  <div class="fabi-floating-sticker-ad__content">
+    <span class="fabi-floating-sticker-ad__eyebrow">Uma reação acabou de chegar</span>
+    <strong>Receba figurinhas com áudio no seu WhatsApp!</strong>
+    <p>Escolha a sua, pague por PIX e receba no privado da Fabi.</p>
+    <a class="fabi-floating-sticker-ad__cta" href="/figurinhas">Ver figurinhas <span aria-hidden="true">↗</span></a>
+  </div>
+  <button class="fabi-floating-sticker-ad__close" id="fabiFloatingStickerAdClose" type="button" aria-label="Fechar anúncio">×</button>
+</aside>
+<script id="fabi-floating-sticker-ad-js">
+(function(){
+  const ad=document.getElementById('fabiFloatingStickerAd');
+  if(!ad) return;
+  const close=document.getElementById('fabiFloatingStickerAdClose');
+  const key='fabi-floating-sticker-ad-seen-v2';
+  let seen=false;
+  try{seen=sessionStorage.getItem(key)==='1';}catch(e){}
+  if(!seen){
+    window.setTimeout(()=>ad.classList.add('is-visible'),2600);
+    try{sessionStorage.setItem(key,'1');}catch(e){}
+  }
+  close?.addEventListener('click',()=>{
+    ad.classList.remove('is-visible');
+    try{sessionStorage.setItem(key,'1');}catch(e){}
+  });
 })();
 </script>
 </body></html>
