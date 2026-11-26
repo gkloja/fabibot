@@ -2293,18 +2293,10 @@ body.dark-mode .fb-session-actions .btn{
 
 
 <style id="fabi-sticker-promo-css">
-.fabi-sticker-promo{position:relative;isolation:isolate;max-width:1180px;margin:30px auto;padding:clamp(22px,4vw,38px);border:1px solid color-mix(in srgb,#b6ff5b 35%,var(--border,#314133));border-radius:28px;background:radial-gradient(circle at 92% 12%,#b6ff5b2b,transparent 34%),linear-gradient(125deg,#152317,#101712 62%,#18251a);color:#f7fff2;box-shadow:0 18px 48px #07100833;overflow:hidden}
-.fabi-sticker-promo:after{content:'✦';position:absolute;right:6%;top:-18px;color:#b6ff5b33;font-size:150px;line-height:1;z-index:-1;transform:rotate(15deg)}
-.fabi-sticker-promo__eyebrow{display:inline-flex;align-items:center;gap:8px;color:#b6ff5b;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
-.fabi-sticker-promo__eyebrow:before{content:'';width:8px;height:8px;border-radius:50%;background:#b6ff5b;box-shadow:0 0 0 5px #b6ff5b1f}
-.fabi-sticker-promo h2{max-width:720px;margin:10px 0 8px;font-size:clamp(24px,4vw,39px);line-height:1.05;color:inherit}
-.fabi-sticker-promo p{max-width:720px;margin:0;color:#d4e7d0;line-height:1.65}
-.fabi-sticker-promo__actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
-.fabi-sticker-promo__actions a{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:11px 17px;text-decoration:none;font-weight:850;transition:transform .18s ease,filter .18s ease}
-.fabi-sticker-promo__actions a:hover{transform:translateY(-2px);filter:brightness(1.08)}
-.fabi-sticker-promo__store{background:#b6ff5b;color:#111c10}.fabi-sticker-promo__channel{border:1px solid #d8ffd080;color:#efffe9;background:#ffffff0d}
-.fabi-sticker-promo__note{display:block;margin-top:14px;font-size:11px;color:#a9c3a5}
-@media(max-width:600px){.fabi-sticker-promo{margin:22px 14px;padding:23px 18px;border-radius:22px}.fabi-sticker-promo__actions a{width:100%}}
+.fabi-sticker-promo{position:relative;display:flex;align-items:center;gap:14px;max-width:1180px;margin:22px auto;padding:14px 17px;border:1px solid color-mix(in srgb,#b6ff5b 38%,var(--border,#314133));border-radius:18px;background:linear-gradient(105deg,#162519,#101812 72%);color:#f7fff2;box-shadow:0 10px 28px #0710082b;overflow:hidden}
+.fabi-sticker-promo:before{content:'✦';display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border-radius:12px;background:#b6ff5b;color:#142010;font-size:19px;box-shadow:0 0 0 5px #b6ff5b1a}
+.fabi-sticker-promo__copy{min-width:0;display:flex;flex-direction:column;gap:2px}.fabi-sticker-promo__eyebrow{color:#b6ff5b;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.fabi-sticker-promo strong{font-size:15px;line-height:1.25;color:inherit}.fabi-sticker-promo p{margin:0;color:#c9dfc5;font-size:12px;line-height:1.4}.fabi-sticker-promo__actions{margin-left:auto;flex:0 0 auto}.fabi-sticker-promo__actions a{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:9px 13px;text-decoration:none;background:#b6ff5b;color:#111c10;font-size:12px;font-weight:900;white-space:nowrap;transition:transform .18s ease,filter .18s ease}.fabi-sticker-promo__actions a:hover{transform:translateY(-1px);filter:brightness(1.08)}.fabi-sticker-promo__note{display:none}
+@media(max-width:650px){.fabi-sticker-promo{margin:17px 14px;padding:13px 14px;align-items:flex-start}.fabi-sticker-promo:before{flex-basis:30px;width:30px;height:30px;font-size:16px}.fabi-sticker-promo strong{font-size:13px}.fabi-sticker-promo p{font-size:11px}.fabi-sticker-promo__actions{margin-left:0}.fabi-sticker-promo__actions a{padding:8px 10px;font-size:11px}.fabi-sticker-promo{flex-wrap:wrap}.fabi-sticker-promo__copy{flex:1 1 calc(100% - 50px)}.fabi-sticker-promo__actions{margin-left:48px}}
 </style>
 
 </head>
@@ -2378,7 +2370,7 @@ body.dark-mode .fb-session-actions .btn{
   <article class="fb57-plan free" id="fb58FreeCard"><span class="fb57-pill">🛡️ INICIAL · VAGAS LIMITADAS</span><h3>Fabi Free</h3><div class="fb57-price">R$ 0 <small>sem comprar plano</small></div>
    <p>Proteção básica para começar sem pagar, com comandos de moderação e controle de grupo.</p><div class="fb58-capacity" id="fb58Capacity" role="status" aria-live="polite">🔄 Consultando vagas gratuitas…</div>
    <ul><li>Até 1 sessão Free por conta registrada</li><li>Bloquear anúncios, spam, números suspeitos e links de grupos/canais</li><li>Bloquear imagens, vídeos, áudios, figurinhas, documentos, contatos e localizações</li><li>Modo RPG e programação para abrir/fechar o grupo</li><li>Controle no painel com apenas os recursos Free</li><li>Sem downloads automáticos, boas-vindas por áudio ou aluguel por grupo</li></ul>
-   <div class="fb57-foot"><button type="button" class="fb57-cta" id="fb58FreeCTA" onclick="fabi57SelecionarModo('free')">Escolher Fabi Free</button><small>Uma sessão por conta e vagas globais limitadas. Sem compra de plano.</small><a class="fb58-channel" href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener noreferrer">📢 Canal oficial · avisos de novas vagas</a><button class="fb58-notify" id="fb58Notify" type="button" onclick="fabi58InscreverAviso()">🔔 Ativar notificações de vagas</button></div>
+   <div class="fb57-foot"><button type="button" class="fb57-cta" id="fb58FreeCTA" onclick="fabi57SelecionarModo('free')">Escolher Fabi Free</button><small>Uma sessão por conta e vagas globais limitadas. Sem compra de plano.</small><button class="fb58-notify" id="fb58Notify" type="button" onclick="fabi58InscreverAviso()">🔔 Ativar notificações de vagas</button></div>
   </article>
   <article class="fb57-plan pro" id="fb58ProCard"><span class="fb57-pill">💎 PROTEÇÃO AVANÇADA</span><span class="fb58-topchoice">AUTOMAÇÃO + SEGURANÇA</span><h3>Fabi Pro</h3><div class="fb57-price">Planos pagos <small>por período</small></div>
    <p>Para comunidades que exigem uma proteção mais avançada, conteúdo inteligente e ferramentas profissionais de gerenciamento.</p>
@@ -2419,15 +2411,13 @@ body.dark-mode .fb-session-actions .btn{
  </div>
 </section>
 
-<section class="fabi-sticker-promo" aria-labelledby="fabiStickerPromoTitle">
-  <span class="fabi-sticker-promo__eyebrow">Novidades da Fabi Bot</span>
-  <h2 id="fabiStickerPromoTitle">Figurinhas com áudio para deixar suas conversas mais divertidas.</h2>
-  <p>Conheça a loja oficial, veja prévias reais e acompanhe os próximos lançamentos. Entre no canal para receber avisos quando novas figurinhas forem publicadas.</p>
-  <div class="fabi-sticker-promo__actions">
-    <a class="fabi-sticker-promo__store" href="/figurinhas">🎬 Ver loja de figurinhas <span aria-hidden="true">↗</span></a>
-    <a class="fabi-sticker-promo__channel" href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener noreferrer">📢 Entrar no canal oficial <span aria-hidden="true">↗</span></a>
+<section class="fabi-sticker-promo" role="status" aria-label="Novidade da loja de figurinhas">
+  <div class="fabi-sticker-promo__copy">
+    <span class="fabi-sticker-promo__eyebrow">Nova experiência Fabi Bot</span>
+    <strong>Receba figurinhas com áudio no seu WhatsApp!</strong>
+    <p>Veja a prévia, escolha sua reação e receba direto no privado da Fabi.</p>
   </div>
-  <small class="fabi-sticker-promo__note">Prévia protegida com marca Fabi Bot · valores e disponibilidade aparecem na vitrine.</small>
+  <div class="fabi-sticker-promo__actions"><a href="/figurinhas">Conhecer a loja <span aria-hidden="true">↗</span></a></div>
 </section>
 
 
@@ -5648,7 +5638,6 @@ $(document).ready(function() {
                 </p>
                 <div class="footer-social">
                     <a href="https://wa.me/5521989047220" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    <a href="https://whatsapp.com/channel/0029VatppnH4o7qSzKKm0X3x" target="_blank" rel="noopener" title="Canal" aria-label="Canal"><i class="fas fa-bullhorn"></i></a>
                     <a href="mailto:contato@fabibot.com.br" title="E-mail" aria-label="E-mail"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
