@@ -449,15 +449,16 @@ code { color: var(--green); font-size: .95em; }
 .checkout-back { padding-left: 0; }
 .pix-qr { width: min(260px, 78%); aspect-ratio: 1; object-fit: contain; padding: 10px; margin: 14px auto; border-radius: 10px; background: #fff; }
 #pixCopyPaste { resize: vertical; min-height: 74px; color: var(--text); font: 10px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
-.redeem-code-box { margin-top: 22px; padding: 17px; border: 1px solid #536e3c; border-radius: 12px; background: #1e2519; }
+.redeem-code-box { margin-top: 16px; padding: 14px; border: 1px solid #536e3c; border-radius: 12px; background: #1e2519; }
 .redeem-code-box p { font-size: 11px; margin-bottom: 8px; }
-.redeem-code-box > strong { display: block; padding: 12px 8px; border-radius: 8px; background: #10110f; color: var(--green); text-align: center; font: 800 21px/1.2 ui-monospace, monospace; letter-spacing: .08em; overflow-wrap: anywhere; }
+.redeem-code-box > strong { display: block; padding: 8px 10px; border-radius: 7px; background: #10110f; color: var(--green); text-align: center; font: 700 14px/1.2 ui-monospace, monospace; letter-spacing: .06em; overflow-wrap: anywhere; }
 .redeem-success-title { color: var(--green); font-weight: 800; }
-.redeem-instruction { color: var(--text); line-height: 1.6; }
-.redeem-code-box #sendRedeemToWhatsApp { margin-top: 12px; background: var(--green); color: var(--bg); border-color: var(--green); }
-.redeem-code-box #sendRedeemToWhatsApp:hover { background: #c9ff86; border-color: #c9ff86; }
-.support-link { display: block; width: 100%; margin-top: 10px; text-align: center; }
-.redeem-code-box small { display: block; color: var(--muted); font-size: 9px; line-height: 1.6; margin-top: 12px; text-align: center; }
+.redeem-instruction { color: var(--text); line-height: 1.45; margin-top: 8px; }
+.redeem-code-box .redeem-primary { margin-top: 12px; background: var(--green); color: var(--bg); border-color: var(--green); font-weight: 800; }
+.redeem-code-box .redeem-primary:hover { background: #c9ff86; border-color: #c9ff86; }
+.redeem-copy { margin-top: 7px; font-size: 11px; padding: 8px 12px; }
+.support-link { display: block; width: 100%; margin-top: 9px; text-align: center; font-size: 11px; }
+.redeem-code-box small { display: block; color: var(--muted); font-size: 9px; line-height: 1.5; margin-top: 10px; text-align: center; }
 .copy-fallback { position: fixed; width: 1px; height: 1px; opacity: 0; left: -9999px; }
 @media (max-width: 800px) { .cart-shell { padding: 20px; } }
 @media (max-width: 600px) {

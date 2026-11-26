@@ -14,7 +14,7 @@
   const defaultPriceCents = 10;
   const priceOf = item => Math.max(1, Number(item && item.priceCents) || (item && item.temAudio ? 20 : defaultPriceCents));
   const priceLabel = item => formatMoney(priceOf(item));
-  const storeWhatsapp = String(config.storeWhatsapp || '5521989047220').replace(/\D/g, '');
+  const storeWhatsapp = String(config.storeWhatsapp || '5592985715119').replace(/\D/g, '');
   let favoriteToken = '';
   try { favoriteToken = localStorage.getItem(favoriteTokenKey) || ''; if (!/^[a-zA-Z0-9_-]{16,120}$/.test(favoriteToken)) { favoriteToken = (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '') : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem(favoriteTokenKey, favoriteToken); } } catch (_) { favoriteToken = 'anon' + Date.now().toString(36); }
   const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'recent', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
@@ -478,7 +478,7 @@
       $('#checkoutTitle').textContent = 'Pagamento confirmado';
       $('#checkoutStatus').textContent = 'Código de uso único recuperado deste navegador. Envie no privado da Fabi Bot.';
       $('#redeemCode').textContent = state.redeemCode; $('#redeemCodeBox').hidden = false;
-      $('#sendRedeemToWhatsApp').href = 'https://wa.me/' + storeWhatsapp + '?text=' + encodeURIComponent(state.redeemCode);
+      $('#sendRedeemToWhatsApp').href = 'https://wa.me/' + storeWhatsapp + '?text=' + encodeURIComponent('Olá! Quero receber minhas figurinhas. Código: ' + state.redeemCode);
     } else if (state.activeOrderId && state.pendingCopy) {
       $('#cartSummary').hidden = true; $('#cartEmpty').hidden = true; $('#checkoutPanel').hidden = false;
       $('#checkoutTitle').textContent = 'Aguardando pagamento';
@@ -525,7 +525,7 @@
     $('#redeemCodeBox').hidden = false;
     $('#checkoutTitle').textContent = 'Pagamento confirmado';
     $('#checkoutStatus').textContent = 'Seu código de uso único está pronto. Envie-o no privado da Fabi Bot.';
-    $('#sendRedeemToWhatsApp').href = 'https://wa.me/' + storeWhatsapp + '?text=' + encodeURIComponent(code);
+    $('#sendRedeemToWhatsApp').href = 'https://wa.me/' + storeWhatsapp + '?text=' + encodeURIComponent('Olá! Quero receber minhas figurinhas. Código: ' + code);
     state.cart.clear();
     persistCart();
     renderCart();
