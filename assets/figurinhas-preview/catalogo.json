@@ -10,6 +10,10 @@
     "tags": [],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:07.139Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
     "tamanho": 415924,
     "temAudio": true,
     "arquivoAudio": "fig_0001.ogg",
@@ -27,6 +31,10 @@
     "tags": [],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:20.401Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
     "tamanho": 440278,
     "temAudio": true,
     "arquivoAudio": "fig_0002.ogg",
@@ -44,6 +52,10 @@
     "tags": [],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:47.118Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
     "tamanho": 477022,
     "temAudio": true,
     "arquivoAudio": "fig_0003.ogg",
@@ -61,6 +73,10 @@
     "tags": [],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:52.211Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
     "tamanho": 750568,
     "temAudio": true,
     "arquivoAudio": "fig_0004.ogg",
@@ -78,6 +94,10 @@
     "tags": [],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:52.724Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
     "tamanho": 425228,
     "temAudio": true,
     "arquivoAudio": "fig_0005.ogg",
@@ -95,6 +115,10 @@
     "tags": [],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:52.816Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
     "tamanho": 391006,
     "temAudio": true,
     "arquivoAudio": "fig_0006.ogg",
@@ -112,6 +136,10 @@
     "tags": [],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:59.724Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
     "tamanho": 457852,
     "temAudio": true,
     "arquivoAudio": "fig_0007.ogg",
@@ -129,6 +157,10 @@
     "tags": [],
     "preco": 0,
     "criadoEm": "2026-11-25T01:49:02.880Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
     "tamanho": 356474,
     "temAudio": true,
     "arquivoAudio": "fig_0008.ogg",
@@ -146,6 +178,10 @@
     "tags": [],
     "preco": 0,
     "criadoEm": "2026-11-25T01:49:07.118Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
     "tamanho": 409548,
     "temAudio": true,
     "arquivoAudio": "fig_0009.ogg",
@@ -163,6 +199,10 @@
     "tags": [],
     "preco": 0,
     "criadoEm": "2026-11-25T01:49:08.172Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
     "tamanho": 335058,
     "temAudio": true,
     "arquivoAudio": "fig_0010.ogg",
@@ -180,6 +220,10 @@
     "tags": [],
     "preco": 0,
     "criadoEm": "2026-11-25T01:49:13.608Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
     "tamanho": 373416,
     "temAudio": true,
     "arquivoAudio": "fig_0011.ogg",
@@ -197,10 +241,161 @@
     "tags": [],
     "preco": 0,
     "criadoEm": "2026-11-25T01:49:28.774Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
     "tamanho": 490086,
     "temAudio": true,
     "arquivoAudio": "fig_0012.ogg",
     "isAnimated": true,
     "audioSeconds": 9.9
+  },
+  {
+    "id": "fig_0013",
+    "nome": "Figurinha fig_0013",
+    "arquivo": "fig_0013.webp",
+    "url": "/figurinhas_loja/fig_0013.webp",
+    "packname": "Fabi Loja",
+    "author": "c43ral",
+    "categoria": "geral",
+    "tags": [],
+    "preco": 0,
+    "criadoEm": "2026-11-25T21:58:37.819Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
+    "tamanho": 445536,
+    "temAudio": true,
+    "arquivoAudio": "fig_0013.ogg",
+    "isAnimated": true,
+    "audioSeconds": 8.9
+  },
+  {
+    "id": "fig_0014",
+    "nome": "Figurinha fig_0014",
+    "arquivo": "fig_0014.webp",
+    "url": "/figurinhas_loja/fig_0014.webp",
+    "packname": "Fabi Loja",
+    "author": "c43ral",
+    "categoria": "geral",
+    "tags": [],
+    "preco": 0,
+    "criadoEm": "2026-11-25T22:08:49.559Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
+    "tamanho": 434056,
+    "temAudio": true,
+    "arquivoAudio": "fig_0014.ogg",
+    "isAnimated": true,
+    "audioSeconds": 8.6
+  },
+  {
+    "id": "fig_0015",
+    "nome": "Figurinha fig_0015",
+    "arquivo": "fig_0015.webp",
+    "url": "/figurinhas_loja/fig_0015.webp",
+    "packname": "Fabi Loja",
+    "author": "c43ral",
+    "categoria": "geral",
+    "tags": [],
+    "preco": 0,
+    "criadoEm": "2026-11-25T22:10:50.673Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
+    "tamanho": 381742,
+    "temAudio": true,
+    "arquivoAudio": "fig_0015.ogg",
+    "isAnimated": true,
+    "audioSeconds": 9.4
+  },
+  {
+    "id": "fig_0016",
+    "nome": "Figurinha fig_0016",
+    "arquivo": "fig_0016.webp",
+    "url": "/figurinhas_loja/fig_0016.webp",
+    "packname": "Fabi Loja",
+    "author": "c43ral",
+    "categoria": "geral",
+    "tags": [],
+    "preco": 0,
+    "criadoEm": "2026-11-25T23:58:07.166Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
+    "tamanho": 471318,
+    "temAudio": true,
+    "arquivoAudio": "fig_0016.ogg",
+    "isAnimated": true,
+    "audioSeconds": 6.2
+  },
+  {
+    "id": "fig_0017",
+    "nome": "Figurinha fig_0017",
+    "arquivo": "fig_0017.webp",
+    "url": "/figurinhas_loja/fig_0017.webp",
+    "packname": "Fabi Loja",
+    "author": "c43ral",
+    "categoria": "geral",
+    "tags": [],
+    "preco": 0,
+    "criadoEm": "2026-11-25T23:58:47.966Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
+    "tamanho": 468502,
+    "temAudio": true,
+    "arquivoAudio": "fig_0017.ogg",
+    "isAnimated": true,
+    "audioSeconds": 9
+  },
+  {
+    "id": "fig_0018",
+    "nome": "Figurinha fig_0018",
+    "arquivo": "fig_0018.webp",
+    "url": "/figurinhas_loja/fig_0018.webp",
+    "packname": "Fabi Loja",
+    "author": "c43ral",
+    "categoria": "geral",
+    "tags": [],
+    "preco": 0,
+    "criadoEm": "2026-11-25T23:59:09.577Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
+    "tamanho": 490942,
+    "temAudio": true,
+    "arquivoAudio": "fig_0018.ogg",
+    "isAnimated": true,
+    "audioSeconds": 8
+  },
+  {
+    "id": "fig_0019",
+    "nome": "Figurinha fig_0019",
+    "arquivo": "fig_0019.webp",
+    "url": "/figurinhas_loja/fig_0019.webp",
+    "packname": "Fabi Loja",
+    "author": "c43ral",
+    "categoria": "geral",
+    "tags": [],
+    "preco": 0,
+    "criadoEm": "2026-11-25T23:59:26.064Z",
+    "criadoPor": {
+      "id": "112266200490027@lid",
+      "nome": "c43ral"
+    },
+    "tamanho": 440444,
+    "temAudio": true,
+    "arquivoAudio": "fig_0019.ogg",
+    "isAnimated": true,
+    "audioSeconds": 7.9
   }
 ]
