@@ -441,7 +441,7 @@ code { color: var(--green); font-size: .95em; }
 .cart-summary > div strong { color: var(--green); font-size: 20px; }
 .cart-summary > p, .checkout-disclaimer { color: var(--muted); font-size: 10px; margin: 5px 0 12px; }
 .payer-email-label, .pix-copy-label { display: block; color: var(--muted); font-size: 10px; margin: 12px 0 6px; }
-.payer-email, #pixCopyPaste { display: block; width: 100%; border: 1px solid var(--line); border-radius: 8px; background: #10110f; padding: 11px 12px; font-size: 12px; }
+.payer-email, #pixCopyPaste { display: block; width: 100%; border: 1px solid var(--line); border-radius: 8px; background: #10110f; color: #f5f5ed; padding: 11px 12px; font-size: 12px; }
 .payer-email:focus, #pixCopyPaste:focus { border-color: var(--green); outline: none; }
 .checkout-panel { border-top: 1px solid var(--line); margin-top: 17px; padding-top: 16px; }
 .checkout-panel h3 { margin: 12px 0 5px; font-size: 17px; }
@@ -449,6 +449,7 @@ code { color: var(--green); font-size: .95em; }
 .checkout-back { padding-left: 0; }
 .pix-qr { width: min(260px, 78%); aspect-ratio: 1; object-fit: contain; padding: 10px; margin: 14px auto; border-radius: 10px; background: #fff; }
 #pixCopyPaste { resize: vertical; min-height: 74px; color: var(--text); font: 10px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+[hidden] { display: none !important; }
 .redeem-code-box { margin-top: 16px; padding: 14px; border: 1px solid #536e3c; border-radius: 12px; background: #1e2519; }
 .redeem-code-box p { font-size: 11px; margin-bottom: 8px; }
 .redeem-code-box > strong { display: block; padding: 8px 10px; border-radius: 7px; background: #10110f; color: var(--green); text-align: center; font: 700 14px/1.2 ui-monospace, monospace; letter-spacing: .06em; overflow-wrap: anywhere; }
@@ -531,6 +532,7 @@ code { color: var(--green); font-size: .95em; }
 :root[data-theme="light"] .callout-icon { border-color: #76a455; }
 :root[data-theme="light"] .watermark-notice { background: #edf4e8; border-color: #b6caa9; color: #52614d; }
 :root[data-theme="light"] .command-box { background: #f7faf4; }
+:root[data-theme="light"] .payer-email, :root[data-theme="light"] #pixCopyPaste { background: #ffffff; color: #172016; border-color: #b8c8b0; }
 :root[data-theme="light"] .redeem-code-box { background: #f3f8ee; border-color: #9fbd89; color: #172016; }
 :root[data-theme="light"] .redeem-code-box > strong { background: #e5efdc; color: #28620d; border: 1px solid #b5cea4; }
 :root[data-theme="light"] .redeem-instruction { color: #344432; }
@@ -545,6 +547,7 @@ code { color: var(--green); font-size: .95em; }
   :root:not([data-theme="dark"]) .callout-icon { border-color: #76a455; }
   :root:not([data-theme="dark"]) .watermark-notice { background: #edf4e8; border-color: #b6caa9; color: #52614d; }
   :root:not([data-theme="dark"]) .command-box { background: #f7faf4; }
+  :root:not([data-theme="dark"]) .payer-email, :root:not([data-theme="dark"]) #pixCopyPaste { background: #ffffff; color: #172016; border-color: #b8c8b0; }
   :root:not([data-theme="dark"]) .redeem-code-box { background: #f3f8ee; border-color: #9fbd89; color: #172016; }
   :root:not([data-theme="dark"]) .redeem-code-box > strong { background: #e5efdc; color: #28620d; border-color: #b5cea4; }
   :root:not([data-theme="dark"]) .redeem-instruction { color: #344432; }

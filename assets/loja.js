@@ -505,18 +505,28 @@
     if (message) $('#checkoutStatus').textContent = message;
   }
 
+  function setPaymentConfirmedView(confirmed) {
+    $('#pixQrImage').hidden = confirmed;
+    $('#pixCopyPaste').hidden = confirmed;
+    $('#copyPixButton').hidden = confirmed;
+    const pixLabel = $('.pix-copy-label');
+    if (pixLabel) pixLabel.hidden = confirmed;
+  }
+
   function openCart() {
     if (!$('#cartDialog').open) $('#cartDialog').showModal();
     document.body.classList.add('modal-open');
     $('#closeCart').focus();
     if (state.redeemCode) {
       $('#cartSummary').hidden = true; $('#cartEmpty').hidden = true; $('#checkoutPanel').hidden = false;
+      setPaymentConfirmedView(true);
       $('#checkoutTitle').textContent = 'Pagamento confirmado';
       $('#checkoutStatus').textContent = 'Código de uso único recuperado deste navegador. Envie no privado da Fabi Bot.';
       $('#redeemCode').textContent = state.redeemCode; $('#redeemCodeBox').hidden = false;
       $('#sendRedeemToWhatsApp').href = 'https://wa.me/' + storeWhatsapp + '?text=' + encodeURIComponent('Olá! Quero receber minhas figurinhas. Código: ' + state.redeemCode);
     } else if (state.activeOrderId && state.pendingCopy) {
       $('#cartSummary').hidden = true; $('#cartEmpty').hidden = true; $('#checkoutPanel').hidden = false;
+      setPaymentConfirmedView(false);
       $('#checkoutTitle').textContent = 'Aguardando pagamento';
       $('#checkoutStatus').textContent = 'PIX pendente. O código de resgate só aparece após a confirmação.';
       $('#pixCopyPaste').value = state.pendingCopy;
@@ -559,6 +569,7 @@
     state.redeemCode = code;
     $('#redeemCode').textContent = code;
     $('#redeemCodeBox').hidden = false;
+    setPaymentConfirmedView(true);
     $('#checkoutTitle').textContent = 'Pagamento confirmado';
     $('#checkoutStatus').textContent = 'Seu código de uso único está pronto. Envie-o no privado da Fabi Bot.';
     $('#sendRedeemToWhatsApp').href = 'https://wa.me/' + storeWhatsapp + '?text=' + encodeURIComponent('Olá! Quero receber minhas figurinhas. Código: ' + code);
@@ -603,6 +614,7 @@
     $('#checkoutPanel').hidden = false;
     $('#backToCart').hidden = true;
     $('#redeemCodeBox').hidden = true;
+    setPaymentConfirmedView(false);
     $('#pixQrImage').hidden = true;
     $('#pixCopyPaste').value = '';
     $('#checkoutTitle').textContent = 'Gerando PIX';
