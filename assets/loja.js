@@ -18,7 +18,7 @@
   const storeWhatsapp = String(config.storeWhatsapp || '5592985715119').replace(/\D/g, '');
   let favoriteToken = '';
   try { favoriteToken = localStorage.getItem(favoriteTokenKey) || ''; if (!/^[a-zA-Z0-9_-]{16,120}$/.test(favoriteToken)) { favoriteToken = (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '') : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem(favoriteTokenKey, favoriteToken); } } catch (_) { favoriteToken = 'anon' + Date.now().toString(36); }
-  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'recent', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
+  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'popular', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
   try {
     const saved = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
     if (Array.isArray(saved)) state.favorites = new Set(saved.filter(id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,80}$/.test(id)).slice(0, 2000));
@@ -101,6 +101,7 @@
       if (state.category !== 'all' && item.categoria !== state.category) return false;
       return !query || fold([item.nome, item.id, item.author, item.packname, ...item.tags].join(' ')).includes(query);
     }).sort((a, b) => {
+      if (state.sort === 'popular') return ((b.compras || 0) * 1000000 + (b.favoritos || 0) * 1000 + (b.visualizacoes || 0)) - ((a.compras || 0) * 1000000 + (a.favoritos || 0) * 1000 + (a.visualizacoes || 0)) || a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
       if (state.sort === 'most-purchased') return (priceOf(b), b.compras - a.compras) || a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
       if (state.sort === 'most-favorited') return (b.favoritos - a.favoritos) || a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
       if (state.sort === 'name') return a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
@@ -244,6 +245,16 @@
     protectMedia(grid);
   }
 
+  function renderPopularity() {
+    const target = $('#popularityLeaders'); if (!target) return;
+    const metrics = [{ key: 'compras', label: 'Mais compradas', icon: 'cart' }, { key: 'favoritos', label: 'Mais queridas', icon: 'heart' }, { key: 'visualizacoes', label: 'Mais vistas', icon: 'eye' }];
+    target.innerHTML = metrics.map(metric => {
+      const item = [...state.items].sort((a, b) => (Number(b[metric.key]) || 0) - (Number(a[metric.key]) || 0))[0];
+      if (!item) return '<div class="popularity-leader is-empty"><small>' + metric.label + '</small><b>Ainda começando</b></div>';
+      return '<button class="popularity-leader" type="button" data-action="preview" data-id="' + escape(item.id) + '"><span class="popularity-leader__icon">' + icon(metric.icon) + '</span><span><small>' + metric.label + '</small><b>' + escape(item.nome) + '</b><em>' + escape(String(item[metric.key] || 0)) + ' ' + (metric.key === 'compras' ? 'compras' : metric.key === 'favoritos' ? 'corações' : 'views') + '</em></span></button>';
+    }).join('');
+  }
+
   function renderHero() {
     const highlighted = state.items.filter(item => item.destaque);
     const animatedItems = state.source === 'live' ? state.items.filter(item => item.isAnimated) : [];
@@ -289,6 +300,7 @@
     if (!state.items.some(item => item.categoria === state.category)) state.category = 'all';
     select.value = state.category;
     render();
+    renderPopularity();
     renderHero();
     renderCart();
     const requestedSticker = new URLSearchParams(location.search).get('sticker');
