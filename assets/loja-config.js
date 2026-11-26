@@ -13,6 +13,6 @@
     timeoutMs: 18000,
     pageSize: 24,
     priceCents: 20,
-    storeWhatsapp: '5592985715119'
+    storeWhatsapp: '5521989047220'
   }, window.FABI_FIGURINHAS_CONFIG || {});
 })();

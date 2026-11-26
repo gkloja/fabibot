@@ -14,7 +14,7 @@
   const defaultPriceCents = 10;
   const priceOf = item => Math.max(1, Number(item && item.priceCents) || (item && item.temAudio ? 20 : defaultPriceCents));
   const priceLabel = item => formatMoney(priceOf(item));
-  const storeWhatsapp = String(config.storeWhatsapp || '5592985715119').replace(/\D/g, '');
+  const storeWhatsapp = String(config.storeWhatsapp || '5521989047220').replace(/\D/g, '');
   let favoriteToken = '';
   try { favoriteToken = localStorage.getItem(favoriteTokenKey) || ''; if (!/^[a-zA-Z0-9_-]{16,120}$/.test(favoriteToken)) { favoriteToken = (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '') : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem(favoriteTokenKey, favoriteToken); } } catch (_) { favoriteToken = 'anon' + Date.now().toString(36); }
   const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'recent', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
@@ -446,7 +446,7 @@
   function restorePendingOrder() {
     try {
       const saved = JSON.parse(localStorage.getItem(orderKey) || 'null');
-      if (!saved || !/^[a-f0-9-]{36}$/i.test(saved.orderId || '') || saved.cartSignature !== cartSignature()) {
+      if (!saved || !/^[a-f0-9-]{36}$/i.test(saved.orderId || '') || (!saved.redeemCode && saved.cartSignature !== cartSignature())) {
         localStorage.removeItem(orderKey);
         return;
       }
@@ -538,6 +538,7 @@
     $('#checkoutStatus').textContent = savedLocally
       ? 'Código de uso único salvo neste navegador. Envie-o no privado da Fabi Bot.'
       : 'Código de uso único pronto. Copie-o e envie no privado da Fabi Bot para não perdê-lo.';
+    $('#checkoutPanel').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   }
 
   async function checkPaymentStatus() {
@@ -670,6 +671,12 @@
   restoreTheme();
   restorePendingOrder();
   updateSavedCount();
+  if (state.redeemCode) {
+    setTimeout(() => {
+      openCart();
+      $('#checkoutPanel').scrollIntoView({ behavior: 'auto', block: 'start' });
+    }, 80);
+  }
   loadCatalog().catch(error => {
     state.loading = false;
     state.source = 'error';
