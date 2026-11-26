@@ -10,6 +10,7 @@
   const favoriteTokenKey = 'fabi_sticker_favorite_token_v1';
   const cartKey = 'fabi_sticker_cart_v1';
   const orderKey = 'fabi_sticker_pending_order_v1';
+  const themeKey = 'fabi_sticker_theme_v1';
   const defaultPriceCents = 10;
   const priceOf = item => Math.max(1, Number(item && item.priceCents) || (item && item.temAudio ? 20 : defaultPriceCents));
   const priceLabel = item => formatMoney(priceOf(item));
@@ -51,6 +52,26 @@
 
   function persistCart() {
     try { localStorage.setItem(cartKey, JSON.stringify([...state.cart])); } catch (_) { /* Optional persistence. */ }
+  }
+
+  function cartSignature() { return [...state.cart].sort().join('|'); }
+
+  function applyTheme(theme) {
+    if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+    else delete document.documentElement.dataset.theme;
+    const effective = theme === 'light' || (theme !== 'dark' && matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+    const button = $('#themeToggle');
+    if (button) {
+      button.setAttribute('aria-label', effective === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro');
+      button.setAttribute('title', effective === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro');
+      button.innerHTML = icon(effective === 'dark' ? 'sun' : 'moon');
+    }
+  }
+
+  function restoreTheme() {
+    let saved = '';
+    try { saved = localStorage.getItem(themeKey) || ''; } catch (_) { /* Optional preference. */ }
+    applyTheme(saved === 'light' || saved === 'dark' ? saved : 'system');
   }
 
   function toggleFavorite(id) {
@@ -248,6 +269,8 @@
     render();
     renderHero();
     renderCart();
+    const requestedSticker = new URLSearchParams(location.search).get('sticker');
+    if (requestedSticker && state.items.some(item => item.id === requestedSticker)) openPreview(requestedSticker);
   }
 
   function setFilter(filter) {
@@ -290,6 +313,11 @@
         $('#previewMediaNote').textContent = 'Não foi possível carregar o vídeo da conversa. Confira se a pasta exemplo está junto ao site; a figurinha animada continua disponível.';
       }, { once: true });
       container.appendChild(video);
+      const watermark = document.createElement('span');
+      watermark.className = 'watermark video-watermark';
+      watermark.setAttribute('aria-hidden', 'true');
+      watermark.textContent = 'FABI BOT';
+      container.appendChild(watermark);
       $('#previewMediaNote').textContent = 'Exemplo no WhatsApp com o áudio original. Se a reprodução automática for bloqueada, toque em play no vídeo.';
       try {
         const playback = video.play();
@@ -331,6 +359,7 @@
     ++state.previewGeneration;
     state.lastFocused = document.activeElement;
     state.current = item;
+    history.replaceState(null, '', '/figurinhas?sticker=' + encodeURIComponent(item.id));
     $('#previewId').textContent = item.id.toUpperCase();
     $('#previewTitle').textContent = item.nome;
     $('#previewBadges').innerHTML = [item.temAudio ? 'Com áudio' : 'Sem áudio', item.isAnimated ? 'Animada' : 'Estática', item.categoria].map(label => '<span>' + escape(label) + '</span>').join('');
@@ -353,6 +382,8 @@
     stopMedia();
     document.body.classList.remove('modal-open');
     state.current = null;
+    const url = new URL(location.href);
+    if (url.searchParams.has('sticker')) { url.searchParams.delete('sticker'); history.replaceState(null, '', url.pathname + (url.search ? url.search : '') + url.hash); }
     const focused = state.lastFocused;
     if (focused && focused.isConnected) focused.focus();
   }
@@ -367,7 +398,7 @@
     if (state.current) {
       const inCart = state.cart.has(state.current.id);
       $('#previewAddToCart').setAttribute('aria-pressed', String(inCart));
-      $('#previewAddToCart').textContent = inCart ? 'No carrinho · R$ 0,20' : 'Adicionar ao carrinho · R$ 0,20';
+      $('#previewAddToCart').textContent = inCart ? 'No carrinho · ' + priceLabel(state.current) : 'Adicionar ao carrinho · ' + priceLabel(state.current);
     }
   }
 
@@ -398,6 +429,7 @@
     if (!item) return;
     if (state.cart.has(id)) { toast('Essa figurinha já está no carrinho.'); return; }
     if (state.cart.size >= 40) { toast('O carrinho aceita até 40 figurinhas por pedido.'); return; }
+    invalidatePendingOrder('Sua seleção mudou. Gere um novo PIX para o carrinho atualizado.');
     state.cart.add(id);
     renderCart();
     render();
@@ -405,6 +437,7 @@
   }
 
   function removeFromCart(id) {
+    invalidatePendingOrder('Sua seleção mudou. Gere um novo PIX para o carrinho atualizado.');
     state.cart.delete(id);
     renderCart();
     render();
@@ -413,12 +446,27 @@
   function restorePendingOrder() {
     try {
       const saved = JSON.parse(localStorage.getItem(orderKey) || 'null');
-      if (!saved || !/^[a-f0-9-]{36}$/i.test(saved.orderId || '')) return;
+      if (!saved || !/^[a-f0-9-]{36}$/i.test(saved.orderId || '') || saved.cartSignature !== cartSignature()) {
+        localStorage.removeItem(orderKey);
+        return;
+      }
       state.activeOrderId = saved.orderId;
       state.pendingQr = saved.qrCode || '';
       state.pendingCopy = saved.copyPaste || '';
       state.redeemCode = typeof saved.redeemCode === 'string' ? saved.redeemCode : '';
     } catch (_) { /* Ignore corrupt local order data. */ }
+  }
+
+  function invalidatePendingOrder(message) {
+    if (!state.activeOrderId || state.redeemCode) return;
+    clearInterval(state.pollTimer);
+    state.pollTimer = null;
+    state.activeOrderId = ''; state.pendingQr = ''; state.pendingCopy = '';
+    try { localStorage.removeItem(orderKey); } catch (_) { /* Optional. */ }
+    $('#checkoutPanel').hidden = true;
+    $('#cartSummary').hidden = state.cart.size === 0;
+    $('#cartEmpty').hidden = state.cart.size > 0;
+    if (message) $('#checkoutStatus').textContent = message;
   }
 
   function openCart() {
@@ -539,7 +587,7 @@
       $('#pixCopyPaste').value = copyPaste;
       $('#checkoutTitle').textContent = 'Pague com PIX';
       $('#checkoutStatus').textContent = 'Escaneie o QR Code ou copie o PIX. O código de resgate só aparece após a confirmação.';
-      try { localStorage.setItem(orderKey, JSON.stringify({ orderId, qrCode, copyPaste })); } catch (_) { /* Optional. */ }
+      try { localStorage.setItem(orderKey, JSON.stringify({ orderId, qrCode, copyPaste, cartSignature: cartSignature() })); } catch (_) { /* Optional. */ }
       await checkPaymentStatus();
       if (!state.redeemCode && !state.pollTimer) state.pollTimer = setInterval(checkPaymentStatus, 5000);
     } catch (error) {
@@ -588,6 +636,12 @@
   $('#previewSave').addEventListener('click', () => { if (state.current) toggleFavorite(state.current.id); });
   $('#previewAddToCart').addEventListener('click', () => { if (state.current) { addToCart(state.current.id); $('#previewDialog').close(); openCart(); } });
   $('#cartButton').addEventListener('click', openCart);
+  $('#themeToggle').addEventListener('click', () => {
+    const light = document.documentElement.dataset.theme === 'light' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: light)').matches);
+    const next = light ? 'dark' : 'light';
+    try { localStorage.setItem(themeKey, next); } catch (_) { /* Optional preference. */ }
+    applyTheme(next);
+  });
   $('#closeCart').addEventListener('click', () => $('#cartDialog').close());
   $('#cartDialog').addEventListener('close', closeCart);
   $('#cartDialog').addEventListener('click', event => {
@@ -608,8 +662,12 @@
       if (Array.isArray(data)) { state.favorites = new Set(data.filter(id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,80}$/.test(id)).slice(0, 2000)); render(); }
     } catch (_) { /* Ignore invalid data from another tab. */ }
   });
+  matchMedia('(prefers-color-scheme: light)').addEventListener?.('change', () => {
+    try { if (!localStorage.getItem(themeKey)) applyTheme('system'); } catch (_) { applyTheme('system'); }
+  });
   document.addEventListener('visibilitychange', () => { if (document.hidden) { stopMedia(); stopHoverVideos(); } });
   $('#currentYear').textContent = String(new Date().getFullYear());
+  restoreTheme();
   restorePendingOrder();
   updateSavedCount();
   loadCatalog().catch(error => {
