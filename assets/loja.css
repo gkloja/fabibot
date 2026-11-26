@@ -157,6 +157,9 @@ h2 span { color: var(--green); }
 .audio-badge.no-audio { color: #ffd1aa; background: #4b3025; }
 .preview-media video { user-select: none; }
 .audio-badge .icon { width: 11px; height: 11px; }
+.card-links { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.card-seo-link { color:var(--muted); font-size:8px; }
+.card-seo-link:hover { color:var(--green); }
 .card-view-button { color: var(--text); font-size: 9px; padding: 4px 0; display: flex; align-items: center; gap: 6px; }
 .card-view-button .icon { width: 14px; height: 14px; color: var(--green); }
 .media-fallback { height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; padding: 15px; background: var(--surface-raised); color: var(--muted); text-align: center; font-size: 11px; }

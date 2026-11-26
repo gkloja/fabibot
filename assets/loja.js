@@ -126,7 +126,7 @@
       '<h3 class="card-title" title="' + escape(item.nome) + '">' + escape(item.nome) + '</h3><div class="card-bottom">' +
       '<span class="audio-badge ' + (item.temAudio ? 'has-audio' : 'no-audio') + '">' + icon(item.temAudio ? 'sound' : 'play') + (item.temAudio ? 'COM SOM' : 'SEM ÁUDIO') + '</span>' +
       '<button class="card-cart-button" type="button" data-action="cart-add" data-id="' + escape(item.id) + '" aria-pressed="' + inCart + '">' + (inCart ? 'No carrinho ✓' : '+ Carrinho') + '</button></div>' +
-      '<button class="card-view-button" type="button" data-action="preview" data-id="' + escape(item.id) + '">Ver detalhes' + icon('arrow') + '</button></div></article>';
+      '<div class="card-links"><button class="card-view-button" type="button" data-action="preview" data-id="' + escape(item.id) + '">Ver detalhes' + icon('arrow') + '</button><a class="card-seo-link" href="/figurinhas/' + encodeURIComponent(item.id) + '">Página pública</a></div></div></article>';
   }
 
   function stopHoverVideos() {
