@@ -229,6 +229,14 @@
   ],
   "rewrites": [
     {
+      "source": "/sitemap-figurinhas.xml",
+      "destination": "/api/figurinhas-seo?mode=sitemap"
+    },
+    {
+      "source": "/figurinhas/:id",
+      "destination": "/api/figurinhas-seo?id=:id"
+    },
+    {
       "source": "/sitemap-grupos.xml",
       "destination": "/api/fabi-grupos-seo?mode=sitemap"
     },

@@ -20,3 +20,4 @@ Sitemap: https://www.fabibot.com.br/noticias/portais.xml
 
 # Fabi Grupos V49: sitemap vivo somente para grupos públicos autorizados.
 Sitemap: https://www.fabibot.com.br/sitemap-grupos.xml
+Sitemap: https://www.fabibot.com.br/sitemap-figurinhas.xml
