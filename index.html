@@ -19065,6 +19065,8 @@ sessionStorage.setItem(`noticia_${noticiaId}`, url);
         const text2Cor = isDarkMode ? '#A0A0A0' : '#666666';
         const borderCor = isDarkMode ? '#333333' : '#E5E5E5';
         const cardCor = isDarkMode ? '#222222' : '#F5F5F5';
+        const exibirAnuncioFigurinhas = sessionStorage.getItem('fabi_news_sticker_ad_seen') !== '1';
+        if (exibirAnuncioFigurinhas) sessionStorage.setItem('fabi_news_sticker_ad_seen', '1');
         
         const modalHtml = `
             <div style="background: ${bgCor}; color: ${textCor}; border-radius: 20px; overflow: hidden; max-height: 85vh; overflow-y: auto;">
@@ -19153,6 +19155,19 @@ sessionStorage.setItem(`noticia_${noticiaId}`, url);
                 <div style="padding: 0 24px; font-size: 15px; line-height: 1.7; color: ${textCor}; text-align: justify;">
                     ${escapeHtml(noticiaCache.conteudoCompleto)}
                 </div>
+
+                ${exibirAnuncioFigurinhas ? `
+                <!-- Divulgação contextual: aparece uma vez por sessão, somente no detalhe -->
+                <aside aria-label="Divulgação de figurinhas com áudio" style="display: flex; align-items: center; gap: 14px; margin: 20px 24px; padding: 14px; border: 1px solid ${isDarkMode ? '#3b4a73' : '#c7d2fe'}; border-radius: 16px; background: ${isDarkMode ? 'linear-gradient(135deg, #172554, #1e1b4b)' : 'linear-gradient(135deg, #eef2ff, #faf5ff)'};">
+                    <img src="/assets/figurinhas-preview/fig_0018.webp" alt="Figurinha com áudio da Fabi Bot" loading="lazy" style="width: 58px; height: 58px; object-fit: cover; border-radius: 14px; background: ${cardCor}; flex: 0 0 auto;">
+                    <div style="min-width: 0; flex: 1;">
+                        <div style="font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: ${isDarkMode ? '#c4b5fd' : '#6d28d9'}; margin-bottom: 3px;">Enquanto você se informa...</div>
+                        <div style="font-size: 14px; line-height: 1.35; font-weight: 800; color: ${textCor};">Escolha sua próxima reação.</div>
+                        <div style="font-size: 12px; line-height: 1.35; color: ${text2Cor}; margin-top: 3px;">Figurinhas com áudio prontas para enviar no WhatsApp.</div>
+                    </div>
+                    <a href="/figurinhas" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 12px; border-radius: 999px; background: #7c3aed; color: #fff; text-decoration: none; font-size: 11px; font-weight: 800; white-space: nowrap;">Ver figurinhas <i class="fas fa-arrow-up-right-from-square"></i></a>
+                </aside>
+                ` : ''}
                 
     <!-- Compartilhar -->
 <div style="background: ${cardCor}; border-radius: 16px; padding: 16px; margin: 20px 24px; border: 1px solid ${borderCor};">
