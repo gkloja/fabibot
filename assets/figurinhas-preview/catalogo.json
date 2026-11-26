@@ -1,13 +1,20 @@
 [
   {
     "id": "fig_0001",
-    "nome": "Figurinha fig_0001",
+    "nome": "Dominó, cervejinha e churrasco",
     "arquivo": "fig_0001.webp",
     "url": "/figurinhas_loja/fig_0001.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "humor",
+    "tags": [
+      "domino",
+      "cerveja",
+      "churrasco",
+      "cachorro",
+      "padre",
+      "brasil"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:07.139Z",
     "criadoPor": {
@@ -18,17 +25,26 @@
     "temAudio": true,
     "arquivoAudio": "fig_0001.ogg",
     "isAnimated": true,
-    "audioSeconds": 9.9
+    "audioSeconds": 9.9,
+    "descricao": "Dominó, cervejinha e churrasco — e ainda tem cachorro dançando como padre.",
+    "personagem": "cachorro dançando como padre",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0002",
-    "nome": "Figurinha fig_0002",
+    "nome": "Ancestrais, escutem bem",
     "arquivo": "fig_0002.webp",
     "url": "/figurinhas_loja/fig_0002.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "humor",
+    "tags": [
+      "ancestrais",
+      "cantando",
+      "mulher",
+      "reacao",
+      "meme"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:20.401Z",
     "criadoPor": {
@@ -39,17 +55,26 @@
     "temAudio": true,
     "arquivoAudio": "fig_0002.ogg",
     "isAnimated": true,
-    "audioSeconds": 9.8
+    "audioSeconds": 9.8,
+    "descricao": "Ancestrais, escutem bem: quero um macho que não seja gay. Uma mulher cantando.",
+    "personagem": "mulher cantando",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0003",
-    "nome": "Figurinha fig_0003",
+    "nome": "Seu papai deixa?",
     "arquivo": "fig_0003.webp",
     "url": "/figurinhas_loja/fig_0003.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "romantica",
+    "tags": [
+      "romance",
+      "gatinhos",
+      "casal",
+      "fofura",
+      "it malia"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:47.118Z",
     "criadoPor": {
@@ -60,17 +85,25 @@
     "temAudio": true,
     "arquivoAudio": "fig_0003.ogg",
     "isAnimated": true,
-    "audioSeconds": 8.7
+    "audioSeconds": 8.7,
+    "descricao": "Seu papai deixa você ser só minha? It Malia, neném, It Malia… dois gatinhos.",
+    "personagem": "dois gatinhos",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0004",
-    "nome": "Figurinha fig_0004",
+    "nome": "Você é gayyy",
     "arquivo": "fig_0004.webp",
     "url": "/figurinhas_loja/fig_0004.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "reacao",
+    "tags": [
+      "provocacao",
+      "musica",
+      "reacao",
+      "amigos"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:52.211Z",
     "criadoPor": {
@@ -81,17 +114,25 @@
     "temAudio": true,
     "arquivoAudio": "fig_0004.ogg",
     "isAnimated": true,
-    "audioSeconds": 8.9
+    "audioSeconds": 8.9,
+    "descricao": "Você é gayyy — figurinha com música para uma reação provocadora.",
+    "personagem": "voz musical",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0005",
-    "nome": "Figurinha fig_0005",
+    "nome": "Simsalabim",
     "arquivo": "fig_0005.webp",
     "url": "/figurinhas_loja/fig_0005.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "humor",
+    "tags": [
+      "magia",
+      "simsalabim",
+      "provocacao",
+      "meme"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:52.724Z",
     "criadoPor": {
@@ -102,17 +143,25 @@
     "temAudio": true,
     "arquivoAudio": "fig_0005.ogg",
     "isAnimated": true,
-    "audioSeconds": 6
+    "audioSeconds": 6,
+    "descricao": "Simsalabim… você vai dar o bumbum para mim.",
+    "personagem": "mago",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0006",
-    "nome": "Figurinha fig_0006",
+    "nome": "Pirikitinho",
     "arquivo": "fig_0006.webp",
     "url": "/figurinhas_loja/fig_0006.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "humor",
+    "tags": [
+      "provocacao",
+      "cantada",
+      "meme",
+      "reacao"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:52.816Z",
     "criadoPor": {
@@ -123,17 +172,26 @@
     "temAudio": true,
     "arquivoAudio": "fig_0006.ogg",
     "isAnimated": true,
-    "audioSeconds": 8.3
+    "audioSeconds": 8.3,
+    "descricao": "Quer comer meu pirikitinho, né? Quer comer meu pirikitinho… eu conheço.",
+    "personagem": "voz provocadora",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0007",
-    "nome": "Figurinha fig_0007",
+    "nome": "É o boi chifrudo",
     "arquivo": "fig_0007.webp",
     "url": "/figurinhas_loja/fig_0007.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "humor",
+    "tags": [
+      "boi",
+      "chifre",
+      "sertanejo",
+      "meme",
+      "musica"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T01:48:59.724Z",
     "criadoPor": {
@@ -144,17 +202,26 @@
     "temAudio": true,
     "arquivoAudio": "fig_0007.ogg",
     "isAnimated": true,
-    "audioSeconds": 9.4
+    "audioSeconds": 9.4,
+    "descricao": "É o boi, o boi chifrudo! O chifre dele é maior, é maior, é maior que tudo.",
+    "personagem": "boi chifrudo",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0008",
-    "nome": "Figurinha fig_0008",
+    "nome": "O lobo de Gato de Botas",
     "arquivo": "fig_0008.webp",
     "url": "/figurinhas_loja/fig_0008.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "humor",
+    "tags": [
+      "gato de botas",
+      "lobo",
+      "cheiro",
+      "cinema",
+      "meme"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T01:49:02.880Z",
     "criadoPor": {
@@ -165,17 +232,26 @@
     "temAudio": true,
     "arquivoAudio": "fig_0008.ogg",
     "isAnimated": true,
-    "audioSeconds": 7.2
+    "audioSeconds": 7.2,
+    "descricao": "Eu adoro o cheiro de bct… o Lobo do Gato de Botas.",
+    "personagem": "Lobo do Gato de Botas",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0009",
-    "nome": "Figurinha fig_0009",
+    "nome": "Aprovado, parabéns",
     "arquivo": "fig_0009.webp",
     "url": "/figurinhas_loja/fig_0009.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "elogio",
+    "tags": [
+      "aprovado",
+      "parabens",
+      "elogio",
+      "gostoso",
+      "reacao"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T01:49:07.118Z",
     "criadoPor": {
@@ -186,17 +262,26 @@
     "temAudio": true,
     "arquivoAudio": "fig_0009.ogg",
     "isAnimated": true,
-    "audioSeconds": 9
+    "audioSeconds": 9,
+    "descricao": "Aprovado! Parabéns, você é um gostoso.",
+    "personagem": "voz de aprovação",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0010",
-    "nome": "Figurinha fig_0010",
+    "nome": "Você não me ama mais?",
     "arquivo": "fig_0010.webp",
     "url": "/figurinhas_loja/fig_0010.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "romantica",
+    "tags": [
+      "saudade",
+      "cobranca",
+      "amor",
+      "mensagem",
+      "casal"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T01:49:08.172Z",
     "criadoPor": {
@@ -207,17 +292,26 @@
     "temAudio": true,
     "arquivoAudio": "fig_0010.ogg",
     "isAnimated": true,
-    "audioSeconds": 8.9
+    "audioSeconds": 8.9,
+    "descricao": "Por que você não me respondeu? Você não me ama mais?",
+    "personagem": "voz apaixonada",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0011",
-    "nome": "Figurinha fig_0011",
+    "nome": "Eu me empiriquitei todinha",
     "arquivo": "fig_0011.webp",
     "url": "/figurinhas_loja/fig_0011.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "humor",
+    "tags": [
+      "maquiagem",
+      "peludo",
+      "gato",
+      "reacao",
+      "desabafo"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T01:49:13.608Z",
     "criadoPor": {
@@ -228,17 +322,25 @@
     "temAudio": true,
     "arquivoAudio": "fig_0011.ogg",
     "isAnimated": true,
-    "audioSeconds": 7.7
+    "audioSeconds": 7.7,
+    "descricao": "Eu não me empiriquitei todinha para que um peludo, gordo e metido diga que ele é bom demais para mim. Eu passei maquiagem no traseiro, cara…",
+    "personagem": "personagem felino",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0012",
-    "nome": "Figurinha fig_0012",
+    "nome": "Uhu, delícia",
     "arquivo": "fig_0012.webp",
     "url": "/figurinhas_loja/fig_0012.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "humor",
+    "tags": [
+      "tubarao",
+      "delicia",
+      "comemoracao",
+      "meme"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T01:49:28.774Z",
     "criadoPor": {
@@ -249,17 +351,26 @@
     "temAudio": true,
     "arquivoAudio": "fig_0012.ogg",
     "isAnimated": true,
-    "audioSeconds": 9.9
+    "audioSeconds": 9.9,
+    "descricao": "Uhu, delícia… figurinha do tubarão para comemorar ou provocar.",
+    "personagem": "tubarão",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0013",
-    "nome": "Figurinha fig_0013",
+    "nome": "Ninguém escapa de mim",
     "arquivo": "fig_0013.webp",
     "url": "/figurinhas_loja/fig_0013.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "reacao",
+    "tags": [
+      "gato de botas",
+      "lobo",
+      "morte",
+      "ameaca",
+      "vilao"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T21:58:37.819Z",
     "criadoPor": {
@@ -270,17 +381,26 @@
     "temAudio": true,
     "arquivoAudio": "fig_0013.ogg",
     "isAnimated": true,
-    "audioSeconds": 8.9
+    "audioSeconds": 8.9,
+    "descricao": "Tem sempre um que acha que vai me derrotar, mas ninguém nunca escapou de mim. O Lobo, a Morte, do Gato de Botas.",
+    "personagem": "Lobo, a Morte do Gato de Botas",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0014",
-    "nome": "Figurinha fig_0014",
+    "nome": "Na minha cama",
     "arquivo": "fig_0014.webp",
     "url": "/figurinhas_loja/fig_0014.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "adulto",
+    "tags": [
+      "cantada",
+      "ciumes",
+      "provocacao",
+      "casal",
+      "18+"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T22:08:49.559Z",
     "criadoPor": {
@@ -291,17 +411,25 @@
     "temAudio": true,
     "arquivoAudio": "fig_0014.ogg",
     "isAnimated": true,
-    "audioSeconds": 8.6
+    "audioSeconds": 8.6,
+    "descricao": "Eu queria te comer na minha cama, mas é outro vagabundo que tu ama…",
+    "personagem": "voz provocadora",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0015",
-    "nome": "Figurinha fig_0015",
+    "nome": "Brochinha",
     "arquivo": "fig_0015.webp",
     "url": "/figurinhas_loja/fig_0015.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "humor",
+    "tags": [
+      "brochada",
+      "provocacao",
+      "reacao",
+      "adulto"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T22:10:50.673Z",
     "criadoPor": {
@@ -312,17 +440,25 @@
     "temAudio": true,
     "arquivoAudio": "fig_0015.ogg",
     "isAnimated": true,
-    "audioSeconds": 9.4
+    "audioSeconds": 9.4,
+    "descricao": "Agora eu sei que tu é um brochinha. Tu deu uma brochadinha, tu deu uma brochadinha…",
+    "personagem": "voz provocadora",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0016",
-    "nome": "Figurinha fig_0016",
+    "nome": "Aaaaaaa, vai se fuder",
     "arquivo": "fig_0016.webp",
     "url": "/figurinhas_loja/fig_0016.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "reacao",
+    "tags": [
+      "raiva",
+      "xingamento",
+      "frustracao",
+      "desabafo"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T23:58:07.166Z",
     "criadoPor": {
@@ -333,17 +469,26 @@
     "temAudio": true,
     "arquivoAudio": "fig_0016.ogg",
     "isAnimated": true,
-    "audioSeconds": 6.2
+    "audioSeconds": 6.2,
+    "descricao": "Aaaaaaa… vai se fuder!",
+    "personagem": "voz irritada",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0017",
-    "nome": "Figurinha fig_0017",
+    "nome": "Algo familiar",
     "arquivo": "fig_0017.webp",
     "url": "/figurinhas_loja/fig_0017.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "reacao",
+    "tags": [
+      "gato de botas",
+      "lobo",
+      "fome",
+      "misterio",
+      "cinema"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T23:58:47.966Z",
     "criadoPor": {
@@ -354,17 +499,25 @@
     "temAudio": true,
     "arquivoAudio": "fig_0017.ogg",
     "isAnimated": true,
-    "audioSeconds": 9
+    "audioSeconds": 9,
+    "descricao": "Sinto cheiro de algo familiar, de algo apetitoso… Gato de Botas.",
+    "personagem": "Gato de Botas",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0018",
-    "nome": "Figurinha fig_0018",
+    "nome": "Quero pimba, quero tcheca",
     "arquivo": "fig_0018.webp",
     "url": "/figurinhas_loja/fig_0018.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "adulto",
+    "tags": [
+      "provocacao",
+      "cantada",
+      "18+",
+      "meme"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T23:59:09.577Z",
     "criadoPor": {
@@ -375,17 +528,26 @@
     "temAudio": true,
     "arquivoAudio": "fig_0018.ogg",
     "isAnimated": true,
-    "audioSeconds": 8
+    "audioSeconds": 8,
+    "descricao": "Quero pimba, quero tcheca, quero a sua perereca.",
+    "personagem": "voz provocadora",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   },
   {
     "id": "fig_0019",
-    "nome": "Figurinha fig_0019",
+    "nome": "Amizade para todo o sempre",
     "arquivo": "fig_0019.webp",
     "url": "/figurinhas_loja/fig_0019.webp",
     "packname": "Fabi Loja",
     "author": "c43ral",
-    "categoria": "geral",
-    "tags": [],
+    "categoria": "amizade",
+    "tags": [
+      "amizade",
+      "carinho",
+      "eterno",
+      "mensagem",
+      "fofura"
+    ],
     "preco": 0,
     "criadoEm": "2026-11-25T23:59:26.064Z",
     "criadoPor": {
@@ -396,6 +558,9 @@
     "temAudio": true,
     "arquivoAudio": "fig_0019.ogg",
     "isAnimated": true,
-    "audioSeconds": 7.9
+    "audioSeconds": 7.9,
+    "descricao": "Toda a amizade pode acabar um dia… A minha e a sua não. A minha e a sua vai durar para todo o sempre.",
+    "personagem": "duas pessoas amigas",
+    "atualizadoEm": "2026-11-26T02:20:00.000Z"
   }
 ]
