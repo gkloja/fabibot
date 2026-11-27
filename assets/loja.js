@@ -255,6 +255,18 @@
     }).join('');
   }
 
+  function renderCreatorRanking(ranking) {
+    const target = $('#creatorRank'); if (!target) return;
+    const rows = Array.isArray(ranking) ? ranking.slice(0, 5) : [];
+    target.innerHTML = rows.length ? rows.map((row, i) => {
+      const id = 'creator_' + String(row.id || '').replace(/[^a-zA-Z0-9_-]/g, '');
+      const item = state.items.find(entry => entry.id === id);
+      const poster = row.posterUrl || (item && api.staticMedia(item, state.index).poster) || './assets/fabi-logo.webp';
+      const claimed = row.claimed === true || (item && item.claimed === true);
+      return '<article class="creator-rank__item creator-rank__item--action"><span class="rank-number">0' + (i + 1) + '</span><img src="' + escape(poster) + '" alt="" loading="lazy"><div class="creator-rank__main"><b>' + escape(row.title || (item && item.nome) || 'Criação da comunidade') + '</b><small>por ' + escape(row.creator && (row.creator.displayName || row.creator.username) || (item && item.author) || 'criador') + ' · ' + escape(String(row.purchases || 0)) + ' escolhas</small></div><div class="creator-rank__actions"><button type="button" class="rank-view-button" data-action="preview" data-id="' + escape(id) + '">Ver</button>' + (claimed ? '<span class="rank-claimed">Recebida ✓</span>' : '<button type="button" class="rank-claim-button" data-action="creator-rank-claim" data-id="' + escape(id) + '">Resgatar</button>') + '</div></article>';
+    }).join('') : '<span class="creator-muted">O ranking começa com a sua criação.</span>';
+  }
+
   function renderHero() {
     const highlighted = state.items.filter(item => item.destaque);
     const animatedItems = state.source === 'live' ? state.items.filter(item => item.isAnimated) : [];
@@ -455,12 +467,15 @@
     const url = location.origin + '/figurinhas/' + encodeURIComponent(state.current.id);
     const text = 'Olha essa figurinha da Fabi Bot: ' + state.current.nome;
     if (kind === 'copy') return copyText(url, $('#previewStatus'), 'Link copiado.');
-    if (kind === 'whatsapp') return window.open('https://wa.me/?text=' + encodeURIComponent(text + ' ' + url), '_blank', 'noopener');
+    if (kind === 'whatsapp') return window.open('https://wa.me/?text=' + encodeURIComponent(text + ' ' + url), '_blank');
+    if (kind === 'facebook') return window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), '_blank');
+    if (kind === 'x') return window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank');
     if (navigator.share) navigator.share({ title: state.current.nome + ' | Fabi Bot', text, url }).catch(() => {}); else copyText(url, $('#previewStatus'), 'Link copiado.');
   }
 
-  async function claimCurrentCreation() {
-    const item = state.current; if (!item || item.source !== 'community') return;
+  async function claimCurrentCreation(itemOverride) {
+    const item = itemOverride || state.current; if (!item || item.source !== 'community') return;
+    if (itemOverride && state.current !== item) openPreview(item.id);
     let token = ''; try { token = localStorage.getItem('fabi_creator_token') || ''; } catch (_) {}
     try { const result = await api.creatorClaimLink(item.communityId, token); if (result.claimUrl) window.open(result.claimUrl, '_blank', 'noopener'); $('#previewClaim').hidden = true; toast('Link de recebimento aberto no WhatsApp.'); }
     catch (error) { $('#previewStatus').textContent = error.message; }
@@ -733,6 +748,10 @@
     if (button.dataset.action === 'cart-add') addToCart(button.dataset.id);
     if (button.dataset.action === 'cart-remove') removeFromCart(button.dataset.id);
     if (button.dataset.action === 'tutorial') openTutorial();
+    if (button.dataset.action === 'creator-rank-claim') {
+      const item = state.items.find(entry => entry.id === button.dataset.id);
+      if (item) claimCurrentCreation(item);
+    }
   });
   document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
   $('#savedButton').addEventListener('click', () => { setFilter(state.filter === 'favorites' ? 'all' : 'favorites'); $('#catalogo').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
