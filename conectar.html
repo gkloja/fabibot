@@ -2375,7 +2375,7 @@ body.dark-mode .fb-session-actions .btn{
   <article class="fb57-plan private" id="fb58PrivateCard"><span class="fb57-private-badge">R$ 30/MÊS</span><span class="fb57-pill">🔒 CONTROLE EXCLUSIVO</span><h3>Modo Privado</h3><div class="fb57-price">R$ 30 <small>por mês</small></div>
    <p>Transforme a FabiBot em sua assistente pessoal. Ela responde somente no privado do proprietário e fica silenciosa nos grupos.</p>
    <ul><li><strong>Privado do dono:</strong> comandos e recursos normais somente na sua conversa</li><li><strong>Grupos silenciosos:</strong> não responde ranking, comandos ou automações comuns</li><li><strong>Proteções seletivas:</strong> ative anti-link e outras proteções grupo a grupo</li><li><strong>Uso pessoal:</strong> play, figurinhas, downloads e mídias no seu próprio privado</li><li><strong>Ativação guiada:</strong> plano e pareamento em uma área exclusiva</li></ul>
-   <div class="fb57-foot"><a class="fb57-private-cta" href="/conectarpv">Conhecer e ativar <span aria-hidden="true">→</span></a><small>Ideal para quem não quer que a robô converse nos grupos.</small></div>
+   <div class="fb57-foot"><button type="button" class="fb57-private-cta" onclick="fabi57SelecionarModo('private')">Conectar no Modo Privado <span aria-hidden="true">→</span></button><small>Ideal para quem não quer que a robô converse nos grupos.</small></div>
   </article>
  </div>
  <details class="fb57-extras" id="fb57Detalhes"><summary><span>Comparar todas as funcionalidades</span><span aria-hidden="true">⌄</span></summary>
@@ -2766,10 +2766,11 @@ body.dark-mode .fb-session-actions .btn{
 </div>
     
 
-<div class="fb57-note" id="fb57ModeTip" role="status">Escolha o modo. A Fabi Free não precisa de plano pago, mas possui recursos limitados. A Pro exige sessão disponível no plano.</div>
+<div class="fb57-note" id="fb57ModeTip" role="status">Escolha o modo. A Fabi Free não precisa de plano pago, mas possui recursos limitados. A Pro exige sessão disponível no plano. O Privado custa R$ 30/mês e funciona somente no privado do proprietário.</div>
 <div class="fb57-choice" role="radiogroup" aria-label="Tipo de conexão">
  <label><input type="radio" name="fb57Modo" value="free" onchange="fabi57AtualizarModo()"><span><strong>🛡️ Free · R$ 0</strong><small>1 sessão por conta, sem aluguel e sem automação de mídia</small></span></label>
  <label><input type="radio" name="fb57Modo" value="pro" checked onchange="fabi57AtualizarModo()"><span><strong>💎 Pro · Plano pago</strong><small>Recursos completos e aluguel por grupo</small></span></label>
+ <label><input type="radio" name="fb57Modo" value="private" onchange="fabi57AtualizarModo()"><span><strong>🔒 Privado · R$ 30/mês</strong><small>Só responde no privado do proprietário; grupos ficam silenciosos</small></span></label>
 </div>
 
     <form id="formNovaSessao">
@@ -3931,19 +3932,19 @@ let codigoImediatoSegundos = 70;
 let windowCodigoAtualImediato = '';
 let windowSessaoAtualImediato = '';
 
-function fabi57Modo(){return document.querySelector('input[name="fb57Modo"]:checked')?.value==='free'?'free':'pro'}
+function fabi57Modo(){const value=document.querySelector('input[name="fb57Modo"]:checked')?.value;return value==='free'||value==='private'?value:'pro'}
 function fabi57AtualizarModo(){
-  const free=fabi57Modo()==='free';
+  const mode=fabi57Modo(),free=mode==='free',privateMode=mode==='private';
   const tip=document.getElementById('fb57ModeTip');
-  if(tip)tip.textContent=free?'Fabi Free: gratuita, até uma sessão por conta. Não permite aluguel, downloads automáticos ou comandos Pro.':'Fabi Pro: precisa de crédito disponível no plano; libera recursos extras, incluindo aluguel.';
+  if(tip)tip.textContent=free?'Fabi Free: gratuita, até uma sessão por conta. Não permite aluguel, downloads automáticos ou comandos Pro.':privateMode?'Modo Privado: R$ 30/mês. A FabiBot responde somente no privado do proprietário; proteções de grupo só funcionam quando ativadas por ele.':'Fabi Pro: precisa de crédito disponível no plano; libera recursos extras, incluindo aluguel.';
   const intro=document.getElementById('fb61WalletIntro');
   const proActions=document.getElementById('fb61ProWalletActions');
   const freeActions=document.getElementById('fb61FreeWalletActions');
   const saldoNotice=document.getElementById('fb23SaldoAviso');
-  if(intro)intro.hidden=free;
-  if(proActions)proActions.hidden=free;
+  if(intro)intro.hidden=free||privateMode;
+  if(proActions)proActions.hidden=free||privateMode;
   if(freeActions)freeActions.hidden=!free;
-  if(saldoNotice && free)saldoNotice.hidden=true;
+  if(saldoNotice && (free||privateMode))saldoNotice.hidden=true;
   const freeBtn=document.getElementById('fb61FreeConnectBtn');
   if(freeBtn){
     const full=window.fabi58Capacity?.available===false;
@@ -3951,10 +3952,10 @@ function fabi57AtualizarModo(){
     freeBtn.textContent=full?'🔒 Vagas grátis esgotadas':'🛡️ Conectar robô grátis';
   }
   const btn=document.getElementById('btnCriarSessao');
-  if(btn && !btn.disabled)btn.textContent=free?'Criar Fabi Free grátis':'Criar sessão Pro';
+  if(btn && !btn.disabled)btn.textContent=free?'Criar Fabi Free grátis':privateMode?'Conectar no Modo Privado':'Criar sessão Pro';
 }
 window.fabi57SelecionarModo=function(mode){
-  const val=mode==='free'?'free':'pro',radio=document.querySelector('input[name="fb57Modo"][value="'+val+'"]');
+  const val=mode==='free'?'free':mode==='private'?'private':'pro',radio=document.querySelector('input[name="fb57Modo"][value="'+val+'"]');
   if(val==='free' && window.fabi58Capacity?.available===false){
     document.getElementById('fb58Capacity')?.scrollIntoView({behavior:'smooth',block:'center'});return;
   }
@@ -3962,14 +3963,15 @@ window.fabi57SelecionarModo=function(mode){
   document.body.setAttribute('data-fabi-plan',val);
   document.getElementById('fb58FreeCard')?.classList.toggle('selected',val==='free');
   document.getElementById('fb58ProCard')?.classList.toggle('selected',val==='pro');
+  document.getElementById('fb58PrivateCard')?.classList.toggle('selected',val==='private');
   fabi57AtualizarModo();
 
   const guide=document.getElementById('fb59Guide');
   if(guide){guide.hidden=false;guide.dataset.mode=val;}
   const guideTitle=document.getElementById('fb59GuideTitle'),guideText=document.getElementById('fb59GuideText'),guideTag=document.getElementById('fb59GuideTag');
-  if(guideTitle)guideTitle.textContent=val==='free'?'Prontinho! Seu site está no modo Fabi Free.':'Tudo certo! Você selecionou a Fabi Pro.';
-  if(guideTag)guideTag.textContent=val==='free'?'🟢 MODO GRÁTIS ATIVADO':'💎 MODO PRO SELECIONADO';
-  if(guideText)guideText.textContent=val==='free'?'Você pode continuar rolando normalmente. Logo abaixo estão os vídeos, o passo a passo e o botão para conectar a Fabi Free gratuitamente.':'Continue rolando para ver os tutoriais. Para conectar a Pro, tenha um plano ativo; se já usa Free, você poderá convertê-la sem desconectar.';
+  if(guideTitle)guideTitle.textContent=val==='free'?'Prontinho! Seu site está no modo Fabi Free.':val==='private'?'Modo Privado selecionado.':'Tudo certo! Você selecionou a Fabi Pro.';
+  if(guideTag)guideTag.textContent=val==='free'?'🟢 MODO GRÁTIS ATIVADO':val==='private'?'🔒 MODO PRIVADO SELECIONADO':'💎 MODO PRO SELECIONADO';
+  if(guideText)guideText.textContent=val==='free'?'Você pode continuar rolando normalmente. Logo abaixo estão os vídeos, o passo a passo e o botão para conectar a Fabi Free gratuitamente.':val==='private'?'A conexão do Modo Privado acontece no mesmo formulário abaixo. Tenha seu plano privado ativo para gerar o código.':'Continue rolando para ver os tutoriais. Para conectar a Pro, tenha um plano ativo; se já usa Free, você poderá convertê-la sem desconectar.';
   try{sessionStorage.setItem('fabi-connect-selected-plan',val)}catch(_){ }
   if(guide){
     const motion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
@@ -4031,7 +4033,6 @@ async function criarNovaSessao() {
     }
     const numero = String($('#inputNumero').val() || '').trim();
     const nome = String($('#inputNome').val() || numero).trim();
-    const modoPrivado = $('#modoPrivado') ? $('#modoPrivado').is(':checked') : false;
     if (!/^[0-9]{10,13}$/.test(numero)) {
         toastr.error('Número inválido. Digite um número válido (10-13 dígitos).', 'Erro'); return;
     }
@@ -4045,13 +4046,13 @@ async function criarNovaSessao() {
     const controller = new AbortController();
     const timeoutId = setTimeout(()=>controller.abort(), 25000);
     try {
-      const response = await fetch(apiUrl(modo==='free'?'/api/sessoes/nova-free':'/api/sessoes/nova'), {
+      const endpoint=modo==='private'?'/api/privado/criar-sessao':modo==='free'?'/api/sessoes/nova-free':'/api/sessoes/nova';
+      const response = await fetch(apiUrl(endpoint), {
         method:'POST', headers:{'Content-Type':'application/json'}, signal:controller.signal,
-        body:JSON.stringify({numero,nome,modoPrivado:modo==='pro'&&modoPrivado,...authBodyFields(),...(modo==='free'?{fabiGrupoToken:tokenFree}:{})})
+        body:JSON.stringify({numero,nome,...(modo==='private'?{}:authBodyFields()),...(modo==='free'?{fabiGrupoToken:tokenFree}:{})})
       });
       const data=await response.json().catch(()=>({success:false,message:'Resposta inválida do servidor'}));
       if(!response.ok || !data.success) throw new Error(data.message||data.error||('HTTP '+response.status));
-      if(modoPrivado&&data.botJid&&typeof ativarModoPrivado==='function') ativarModoPrivado(data.botJid);
       $('#mensagemStatus').html('<i class="fas fa-check-circle text-success"></i> Sessão criada! Buscando código...');
       $('#detalhesResultado').html(`<div class="alert alert-success"><strong>Sessão:</strong> ${String(data.session||'').replace(/[<>]/g,'')}<br><strong>Status:</strong> ${String(data.message||'Criada').replace(/[<>]/g,'')}</div><div class="text-center"><div class="loading mx-auto"></div><p class="mt-2">Aguardando código de pareamento...</p></div>`);
       setTimeout(()=>$('#novaSessaoModal').modal('hide'),800);
@@ -4061,7 +4062,7 @@ async function criarNovaSessao() {
       console.error('Erro ao criar sessão:',error);
       const msg=error.name==='AbortError'?'O servidor demorou demais para responder. Verifique o status antes de tentar novamente.':(error.message||'Falha de comunicação com o servidor');
       $('#mensagemStatus').html('<i class="fas fa-times-circle text-danger"></i> '+msg.replace(/[<>]/g,''));
-      btn.prop('disabled',false).text(fabi57Modo()==='free'?'Criar Fabi Free grátis':'Criar sessão Pro');
+      btn.prop('disabled',false).text(fabi57Modo()==='free'?'Criar Fabi Free grátis':fabi57Modo()==='private'?'Conectar no Modo Privado':'Criar sessão Pro');
       if(typeof verificarErroRede==='function') verificarErroRede(error);
     } finally {
       clearTimeout(timeoutId); btn.data('fabi-busy',false);
@@ -6168,7 +6169,7 @@ body.light-mode .fb25-yt-card-alt .fb26-yt-watch { color:#1557ac; }
  document.addEventListener('DOMContentLoaded',()=>{
   const query=new URLSearchParams(location.search);
   if(query.has('adminFree')||location.hash==='#admin-free'){location.replace('/grupos?admin=1#tabFree');return;}
-  try{const chosen=sessionStorage.getItem('fabi-connect-selected-plan');if(chosen==='free'||chosen==='pro')fabi57SelecionarModo(chosen)}catch(_){ }
+  try{const chosen=sessionStorage.getItem('fabi-connect-selected-plan');if(chosen==='free'||chosen==='pro'||chosen==='private')fabi57SelecionarModo(chosen)}catch(_){ }
   refresh();
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
   setInterval(()=>{if(!document.hidden)refresh()},60000);
