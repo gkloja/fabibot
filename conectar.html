@@ -2360,7 +2360,7 @@ body.dark-mode .fb-session-actions .btn{
 
         <!-- V25: área de ajuda priorizando YouTube + microdemonstração -->
 <section class="fb57-plans" id="escolher-fabi" aria-labelledby="fb57Title">
- <div class="fb57-title"><div><span class="fb57-eyebrow">ESCOLHA A SUA FABI</span><h2 id="fb57Title">Escolha como a FabiBot deve funcionar.</h2><p>Use Free ou Pro para grupos. Se você quer uma assistente pessoal que só responda no seu privado, conheça o Modo Privado por R$ 30/mês.</p></div></div>
+ <div class="fb57-title"><div><span class="fb57-eyebrow">ESCOLHA A SUA FABI</span><h2 id="fb57Title">Escolha como a FabiBot deve funcionar.</h2><p>Use Free ou um plano pago para grupos. No Modo Privado, você usa o mesmo plano do Pro, mas a FabiBot só responde no privado do proprietário.</p></div></div>
  <div class="fb57-grid">
   <article class="fb57-plan free" id="fb58FreeCard"><span class="fb57-pill">🛡️ INICIAL · VAGAS LIMITADAS</span><h3>Fabi Free</h3><div class="fb57-price">R$ 0 <small>sem comprar plano</small></div>
    <p>Proteção básica para começar sem pagar, com comandos de moderação e controle de grupo.</p><div class="fb58-capacity" id="fb58Capacity" role="status" aria-live="polite">🔄 Consultando vagas gratuitas…</div>
@@ -2372,7 +2372,7 @@ body.dark-mode .fb-session-actions .btn{
    <ul><li><strong>Segurança avançada:</strong> antipornografia, antipolítica e filtros especiais de moderação</li><li><strong>Autoresposta:</strong> respostas automáticas para interagir com os membros</li><li><strong>Notícias automáticas:</strong> programação e seleção de fontes disponíveis</li><li><strong>RPG e Pokémon:</strong> experiência de jogos e recursos ampliados</li><li><strong>Boas-vindas:</strong> mensagens e áudios personalizados em OGG/Opus</li><li><strong>Ferramentas extras:</strong> downloads e automações de mídia, quando ativados</li><li><strong>Gestão comercial:</strong> aluguel de robô por grupo, vencimentos e acesso a comandos Pro</li><li>Inclui os controles Free, com limites de sessão conforme o plano contratado</li></ul>
    <div class="fb57-foot"><button type="button" class="fb57-cta" onclick="fabi57SelecionarModo('pro')">Escolher Fabi Pro</button><button type="button" class="fb58-pro-tour" onclick="abrirModalPlanos()">💎 Ver planos Pro</button><small>Se você já usa a Free, pode atualizar a mesma sessão depois de ativar um plano, sem novo pareamento.</small></div>
   </article>
-  <article class="fb57-plan private" id="fb58PrivateCard"><span class="fb57-private-badge">R$ 30/MÊS</span><span class="fb57-pill">🔒 CONTROLE EXCLUSIVO</span><h3>Modo Privado</h3><div class="fb57-price">R$ 30 <small>por mês</small></div>
+  <article class="fb57-plan private" id="fb58PrivateCard"><span class="fb57-private-badge">A PARTIR DE R$ 30/MÊS</span><span class="fb57-pill">🔒 CONTROLE EXCLUSIVO</span><h3>Modo Privado</h3><div class="fb57-price">Mesmo plano Pro <small>com comportamento privado</small></div>
    <p>Transforme a FabiBot em sua assistente pessoal. Ela responde somente no privado do proprietário e fica silenciosa nos grupos.</p>
    <ul><li><strong>Privado do dono:</strong> comandos e recursos normais somente na sua conversa</li><li><strong>Grupos silenciosos:</strong> não responde ranking, comandos ou automações comuns</li><li><strong>Proteções seletivas:</strong> ative anti-link e outras proteções grupo a grupo</li><li><strong>Uso pessoal:</strong> play, figurinhas, downloads e mídias no seu próprio privado</li><li><strong>Ativação guiada:</strong> plano e pareamento em uma área exclusiva</li></ul>
    <div class="fb57-foot"><button type="button" class="fb57-private-cta" onclick="fabi57SelecionarModo('private')">Conectar no Modo Privado <span aria-hidden="true">→</span></button><small>Ideal para quem não quer que a robô converse nos grupos.</small></div>
@@ -2404,7 +2404,7 @@ body.dark-mode .fb-session-actions .btn{
  <li><strong>Somente o proprietário:</strong> a FabiBot só executa comandos recebidos no privado do número conectado.</li>
  <li><strong>Nenhuma conversa automática em grupos:</strong> ela não responde mensagens, rankings ou comandos comuns em grupos.</li>
  <li><strong>Proteções sob demanda:</strong> o proprietário pode ativar recursos específicos, como anti-link, em cada grupo.</li>
- </ul><p>O Modo Privado custa <strong>R$ 30/mês</strong> e tem uma etapa de conexão própria. Use o botão do card para iniciar.</p></section>
+ </ul><p>O Modo Privado usa o mesmo plano pago do Pro. O mensal começa em <strong>R$ 30/mês</strong>, mas você pode escolher outro plano disponível. Use o botão do card para iniciar.</p></section>
  </div></details>
 <div class="fb59-guide" id="fb59Guide" role="status" aria-live="polite" hidden>
   <div class="fb59-avatar" aria-hidden="true">👩🏽‍💻<span>✓</span></div>
@@ -3936,7 +3936,7 @@ function fabi57Modo(){const value=document.querySelector('input[name="fb57Modo"]
 function fabi57AtualizarModo(){
   const mode=fabi57Modo(),free=mode==='free',privateMode=mode==='private';
   const tip=document.getElementById('fb57ModeTip');
-  if(tip)tip.textContent=free?'Fabi Free: gratuita, até uma sessão por conta. Não permite aluguel, downloads automáticos ou comandos Pro.':privateMode?'Modo Privado: R$ 30/mês. A FabiBot responde somente no privado do proprietário; proteções de grupo só funcionam quando ativadas por ele.':'Fabi Pro: precisa de crédito disponível no plano; libera recursos extras, incluindo aluguel.';
+  if(tip)tip.textContent=free?'Fabi Free: gratuita, até uma sessão por conta. Não permite aluguel, downloads automáticos ou comandos Pro.':privateMode?'Modo Privado: usa o mesmo plano pago do Pro. O mensal começa em R$ 30/mês; a FabiBot responde somente no privado do proprietário.':'Fabi Pro: precisa de crédito disponível no plano; libera recursos extras, incluindo aluguel.';
   const intro=document.getElementById('fb61WalletIntro');
   const proActions=document.getElementById('fb61ProWalletActions');
   const freeActions=document.getElementById('fb61FreeWalletActions');
@@ -3971,7 +3971,7 @@ window.fabi57SelecionarModo=function(mode){
   const guideTitle=document.getElementById('fb59GuideTitle'),guideText=document.getElementById('fb59GuideText'),guideTag=document.getElementById('fb59GuideTag');
   if(guideTitle)guideTitle.textContent=val==='free'?'Prontinho! Seu site está no modo Fabi Free.':val==='private'?'Modo Privado selecionado.':'Tudo certo! Você selecionou a Fabi Pro.';
   if(guideTag)guideTag.textContent=val==='free'?'🟢 MODO GRÁTIS ATIVADO':val==='private'?'🔒 MODO PRIVADO SELECIONADO':'💎 MODO PRO SELECIONADO';
-  if(guideText)guideText.textContent=val==='free'?'Você pode continuar rolando normalmente. Logo abaixo estão os vídeos, o passo a passo e o botão para conectar a Fabi Free gratuitamente.':val==='private'?'A conexão do Modo Privado acontece no mesmo formulário abaixo. Tenha seu plano privado ativo para gerar o código.':'Continue rolando para ver os tutoriais. Para conectar a Pro, tenha um plano ativo; se já usa Free, você poderá convertê-la sem desconectar.';
+  if(guideText)guideText.textContent=val==='free'?'Você pode continuar rolando normalmente. Logo abaixo estão os vídeos, o passo a passo e o botão para conectar a Fabi Free gratuitamente.':val==='private'?'A conexão do Modo Privado acontece no mesmo formulário abaixo. Tenha qualquer plano pago ativo e uma sessão disponível para gerar o código.':'Continue rolando para ver os tutoriais. Para conectar a Pro, tenha um plano ativo; se já usa Free, você poderá convertê-la sem desconectar.';
   try{sessionStorage.setItem('fabi-connect-selected-plan',val)}catch(_){ }
   if(guide){
     const motion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
