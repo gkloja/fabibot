@@ -2103,7 +2103,7 @@ body {
   });
 </script>
 
-    <link rel="stylesheet" href="/assets/conectar-v3.css?v=20261127">
+    <link rel="stylesheet" href="/assets/conectar-v3.css?v=20261127-next-step-1">
 <style id="fabi-conectar-compat-v17">
 html,body {max-width:100%;overflow-x:clip;}
 *,*::before,*::after {box-sizing:border-box;}
@@ -2382,6 +2382,19 @@ body.dark-mode .fb-session-actions .btn{
             <p>Pareie números, acompanhe sessões em tempo real e gerencie sua carteira — tudo em um só lugar.</p>
         </div>
 
+        <section class="fb61-next-step" id="fb61NextStep" data-state="loading" aria-live="polite" aria-atomic="true" aria-labelledby="fb61NextTitle">
+            <div class="fb61-next-step__copy">
+                <span class="fb61-next-step__badge" id="fb61NextBadge">PRÓXIMO PASSO</span>
+                <h2 id="fb61NextTitle">Preparando sua orientação…</h2>
+                <p id="fb61NextBody">Vamos conferir seu acesso e indicar a ação certa para conectar ou ativar sua Fabi.</p>
+                <p class="fb61-next-step__foot" id="fb61NextFoot">Saldo na carteira, plano ativo e sessão conectada são etapas diferentes.</p>
+            </div>
+            <div class="fb61-next-step__actions">
+                <button type="button" class="fb61-next-step__primary" id="fb61NextPrimary" hidden></button>
+                <button type="button" class="fb61-next-step__secondary" id="fb61NextSecondary" hidden></button>
+            </div>
+        </section>
+
         <!-- V25: área de ajuda priorizando YouTube + microdemonstração -->
 <section class="fb57-plans" id="escolher-fabi" aria-labelledby="fb57Title">
  <div class="fb57-title"><div><span class="fb57-eyebrow">ESCOLHA A SUA FABI</span><h2 id="fb57Title">Escolha como a FabiBot deve funcionar.</h2><p>Use Free ou um plano pago para grupos. No Modo Privado, você usa o mesmo plano do Pro, mas a FabiBot só responde no privado do proprietário.</p></div></div>
@@ -2581,10 +2594,10 @@ body.dark-mode .fb-session-actions .btn{
         <div class="fb25-wallet-strip" id="fb61WalletIntro">
             <div>
                 <span class="fb25-wallet-pill">⚡ Pronto para conectar</span>
-                <p>Escolha um plano para liberar sua próxima sessão. Se você já tiver saldo na carteira, o site mostra essa opção automaticamente.</p>
+                <p>Saldo na carteira é crédito, não um plano ativo. Para liberar o Pro, escolha um plano e depois toque em <strong>“Ativar usando saldo disponível”</strong>.</p>
             </div>
         </div>
-        <p id="fb23SaldoAviso" class="fb23-saldo-aviso" hidden>Você já tem saldo na carteira. Ao escolher um plano, a opção de usar saldo aparecerá automaticamente.</p>
+        <p id="fb23SaldoAviso" class="fb23-saldo-aviso" hidden><span>Seu saldo está disponível, mas ainda não ativou um plano. Escolha um plano e depois use <strong>“Ativar usando saldo disponível”</strong>.</span><button type="button" class="fb23-saldo-aviso__button" onclick="abrirModalPlanos()">Ativar plano com saldo</button></p>
         <div class="row mb-4 fb23-wallet-actions" id="fb61ProWalletActions">
             <div class="col-md-6">
                 <button class="btn btn-whatsapp btn-lg w-100 mb-2" onclick="abrirModalPlanos()">
@@ -2693,6 +2706,10 @@ body.dark-mode .fb-session-actions .btn{
             <i class="fas fa-list"></i> Sessões Ativas
             <span class="badge bg-primary ms-2" id="contadorSessoes">0</span>
         </h5>
+        <div id="fb61FreeUpgradeHint" class="fb61-free-upgrade-hint" role="note" hidden>
+            <strong>Seu plano não transforma uma sessão Free automaticamente.</strong>
+            Para liberar os recursos Pro neste WhatsApp, clique em <strong>“Transformar em Pro”</strong> no cartão da Fabi Free abaixo. O número continua conectado: não é necessário parear novamente. A conversão usa uma sessão disponível do plano.
+        </div>
         
         <div id="listaSessoes">
             <div class="empty-state text-center py-4">
@@ -3009,7 +3026,7 @@ body.dark-mode .fb-session-actions .btn{
                             <p class="text-muted small">
                                 <i class="fas fa-info-circle"></i>
                                 Use o código PIX ou escaneie o QR Code para pagar.
-                                O saldo será creditado automaticamente após confirmação.
+                                O saldo será creditado automaticamente após a confirmação, mas este depósito <strong>não ativa um plano</strong>. Para pagar e ativar um plano em uma etapa, use “Escolher e ativar plano”.
                             </p>
                         </div>
                     </div>
@@ -3028,7 +3045,7 @@ body.dark-mode .fb-session-actions .btn{
                         class="btn btn-success" 
                         id="btnGerarDeposito"
                         onclick="gerarDeposito()">
-                    <i class="fas fa-qrcode"></i> PIX · Ativação automática
+                    <i class="fas fa-qrcode"></i> Gerar PIX para adicionar saldo
                 </button>
                 <button type="button" 
                         class="btn btn-primary" 
@@ -3198,7 +3215,7 @@ body.dark-mode .fb-session-actions .btn{
                 </div>
                 
                 <div id="metodoPagamento" style="display: none;">
-                    <h6 class="mb-3">Escolha como ativar seu plano:</h6><p class="fb23-payment-help">O PIX desta tela ativa <strong>diretamente o plano selecionado</strong>. Não será necessário converter saldo depois. <strong>Se você já adicionou saldo antes, escolha a primeira opção.</strong></p>
+                    <h6 class="mb-3">Escolha como ativar seu plano:</h6><p class="fb23-payment-help">O PIX desta tela ativa <strong>diretamente o plano selecionado</strong>. Já adicionou saldo na carteira? Escolha <strong>“Ativar usando saldo disponível”</strong>. Apenas adicionar saldo não ativa o plano.</p>
                     <div class="d-grid gap-2">
                         <div id="btnPagarSaldoWrap" style="display:none;">
                             <button class="btn btn-success" id="btnPagarSaldo" onclick="pagarComSaldo()">
@@ -3375,14 +3392,73 @@ function fabiTemSaldoDisponivel(valorMinimo) {
     return saldo > 0 && saldo >= valorMinimo;
 }
 function fabiAtualizarResumoCarteira(data) {
+    var planoExpirado = !!(data && (data.planoExpirado === true || String(data.planoExpirado).toLowerCase() === 'true'));
+    var nomePlano = String(data && data.planoAtual || '').trim().toLowerCase();
+    var planoGratuito = /(^|\b)(free|gr[aá]tis|gratuit[oa]|nenhum|none)(\b|$)/i.test(nomePlano);
+    var tempoPlano = String(data && data.tempoRestante || '').trim();
+    var tempoValido = !!tempoPlano && !/^(?:-|—|expirado|vencido|expired|0(?:\s|$))/i.test(tempoPlano);
+    var temFlagAtivo = !!(data && data.planoAtivo != null);
+    var flagAtivo = temFlagAtivo && String(data.planoAtivo).toLowerCase() === 'true';
+    var planoAtivo = !planoExpirado && !planoGratuito && (temFlagAtivo ? flagAtivo : tempoValido);
     window.fabiConnectState = {
         saldo: Number(data && data.saldo || 0),
         sessoes: Number(data && data.sessoesRestantes || 0),
         planoAtual: String(data && data.planoAtual || 'Nenhum'),
-        planoAtivo: !!((data && data.tempoRestante) || ((data && data.planoAtual) && String(data.planoAtual).toLowerCase() !== 'nenhum')),
+        planoAtivo: planoAtivo,
         tempoRestante: String(data && data.tempoRestante || '')
     };
     if (typeof fabiAtualizarBotaoSaldoNoModal === 'function') fabiAtualizarBotaoSaldoNoModal();
+    var avisoSaldo = document.getElementById('fb23SaldoAviso');
+    if (avisoSaldo) avisoSaldo.hidden = !(window.fabiConnectState.saldo > 0 && !window.fabiConnectState.planoAtivo);
+    if (typeof fabiAtualizarProximoPasso === 'function') fabiAtualizarProximoPasso();
+}
+function fabiAtualizarProximoPasso() {
+    var card = document.getElementById('fb61NextStep');
+    if (!card) return;
+    var badge = document.getElementById('fb61NextBadge');
+    var title = document.getElementById('fb61NextTitle');
+    var body = document.getElementById('fb61NextBody');
+    var foot = document.getElementById('fb61NextFoot');
+    var primary = document.getElementById('fb61NextPrimary');
+    var secondary = document.getElementById('fb61NextSecondary');
+    var state = window.fabiConnectState || {saldo:0,sessoes:0,planoAtivo:false};
+    var saldo = Number(state.saldo || 0);
+    var sessoes = Number(state.sessoes || 0);
+    var sessaoLocal = typeof getSessaoLocal === 'function' ? getSessaoLocal() : null;
+    var hasOwner = !!(sessaoLocal && String(sessaoLocal.numero || '').replace(/\D/g,''));
+    var hasFree = window.fabiConnectHasFreeSession === true;
+    var formatarValor = function(valor) { return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(valor); };
+    var rolarPara = function(selector) { var alvo=document.querySelector(selector); if(alvo)alvo.scrollIntoView({behavior:'smooth',block:'center'}); };
+    var conectarPro = function() {
+        if (typeof fabi57SelecionarModo === 'function') fabi57SelecionarModo('pro');
+        window.setTimeout(function(){ if(typeof fabi58AbrirPareamento === 'function') fabi58AbrirPareamento(); },0);
+    };
+    var irParaFree = function() {
+        var alvo=document.querySelector('#listaSessoes .session-item[data-fabi-session-free="true"]');
+        if(alvo){alvo.scrollIntoView({behavior:'smooth',block:'center'});var botao=alvo.querySelector('.fb-btn-pro');if(botao)window.setTimeout(function(){try{botao.focus({preventScroll:true});}catch(e){botao.focus();}},450);}
+        else rolarPara('#listaSessoes');
+    };
+    var definir = function(tipo,rotulo,titulo,descricao,detalhe,cta,acao,cta2,acao2) {
+        card.dataset.state=tipo; badge.textContent=rotulo; title.textContent=titulo; body.textContent=descricao; foot.textContent=detalhe;
+        primary.textContent=cta; primary.onclick=acao; primary.hidden=!cta;
+        secondary.textContent=cta2||''; secondary.onclick=acao2||null; secondary.hidden=!cta2;
+    };
+    if (!hasOwner) {
+        definir('login','PARA CONTINUAR','Entre na sua conta para ver o próximo passo','Depois do login, vamos conferir seu saldo, seu plano e as sessões já conectadas.','Free é gratuita; Pro e Privado exigem plano pago.','Entrar e continuar',function(){location.href='/login?redirect=conectar';});
+    } else if (state.planoAtivo && hasFree) {
+        var detalheFree = sessoes > 0 ? 'Você tem '+sessoes+' sessão(ões) disponível(is); a conversão usa 1 crédito de sessão.' : 'Sua carteira mostra 0 sessões disponíveis. A conversão usa 1 crédito; confira seu plano antes de prosseguir.';
+        definir('upgrade','PLANO ATIVO · AÇÃO NECESSÁRIA','Sua sessão Free ainda não virou Pro','Comprar ou ativar um plano não altera automaticamente uma Fabi que já está conectada no Free. Use “Transformar em Pro” no cartão dessa sessão.','Seu WhatsApp continua conectado; não apague nem pareie o número de novo. '+detalheFree,sessoes>0?'Ir para minha sessão Free':'Ver opções de plano',sessoes>0?irParaFree:function(){if(typeof abrirModalPlanos==='function')abrirModalPlanos();},sessoes>0?'Conectar outro número como Pro':'Localizar minha sessão Free',sessoes>0?conectarPro:irParaFree);
+    } else if (state.planoAtivo && sessoes > 0) {
+        definir('active','PLANO ATIVO','Agora conecte como Fabi Pro','Seu plano está ativo e há '+sessoes+' sessão(ões) disponível(is). No pareamento de um número novo, selecione Pro para liberar os recursos contratados.','Se já existir uma sessão Free, ela precisa ser convertida separadamente pelo botão “Transformar em Pro”.','Conectar como Fabi Pro',conectarPro,'Ver minhas sessões',function(){rolarPara('#listaSessoes');});
+    } else if (state.planoAtivo) {
+        definir('used','PLANO ATIVO · SEM VAGA LIVRE','Seu plano está ativo, mas não há sessão disponível','Se sua Fabi já está conectada no Free, confira o botão “Transformar em Pro” na lista. Caso contrário, libere uma sessão que não usa ou escolha outro plano.','A conexão Free e a sessão Pro são estados diferentes; não apague uma conexão ativa antes de confirmar a opção.','Ver minhas sessões',function(){rolarPara('#listaSessoes');},'Ver opções de plano',function(){if(typeof abrirModalPlanos==='function')abrirModalPlanos();});
+    } else if (saldo > 0) {
+        definir('balance','SALDO DISPONÍVEL · FALTA ATIVAR','Seu saldo chegou — agora ative o plano','Você tem '+formatarValor(saldo)+' na carteira. Esse valor é crédito, não um plano Pro ativo. Escolha a duração e toque em “Ativar usando saldo disponível”.','Não gere outro PIX de depósito se o saldo já está na carteira.','Escolher plano e usar saldo',function(){if(typeof abrirModalPlanos==='function')abrirModalPlanos();});
+    } else {
+        definir('start','ESCOLHA COMO COMEÇAR','Selecione a Fabi certa para o que você precisa','A Fabi Free não exige compra de plano. Para usar os recursos Pro, ative um plano antes de conectar ou transformar uma sessão Free.','Ativar um plano e conectar o WhatsApp são duas etapas separadas.','Comparar Fabi Free, Pro e Privado',function(){rolarPara('#escolher-fabi');},'Ver planos pagos',function(){if(typeof abrirModalPlanos==='function')abrirModalPlanos();});
+    }
+    var dicaFree=document.getElementById('fb61FreeUpgradeHint');
+    if(dicaFree)dicaFree.hidden=!(state.planoAtivo && hasFree);
 }
 function fabiAtualizarBotaoSaldoNoModal(valorPlano) {
     var wrap = document.getElementById('btnPagarSaldoWrap');
@@ -3713,6 +3789,7 @@ function renderizarListaSessoes(sessoes) {
     const $lista = $('#listaSessoes');
     if (!$lista.length) return;
     if (!sessoes || !sessoes.length) {
+        window.fabiConnectHasFreeSession = false;
         $lista.html(`
             <div class="empty-state">
                 <i class="fab fa-whatsapp"></i>
@@ -3723,8 +3800,15 @@ function renderizarListaSessoes(sessoes) {
                 </button>
             </div>`);
         $('#contadorSessoes').text(0);
+        if (typeof fabiAtualizarProximoPasso === 'function') fabiAtualizarProximoPasso();
         return;
     }
+    window.fabiConnectHasFreeSession = sessoes.some(function(s){
+        const nome = s.session || s.sessionName || s.numero || s.name || '';
+        const ehFree = String(s.plan || s.mode || '').toLowerCase() === 'free';
+        const ehPrivada = (typeof fabiEhSessaoPrivada === 'function') ? fabiEhSessaoPrivada(s,nome) : false;
+        return ehFree && !ehPrivada;
+    });
     let html = '';
     sessoes.forEach(function (s) {
         const name = s.session || s.sessionName || s.numero || s.name || '';
@@ -3747,7 +3831,7 @@ function renderizarListaSessoes(sessoes) {
             ? `<button class="btn btn-sm fb-btn-codigo mb-1" onclick="mostrarCodigo('${pairing}', '${name}')"><i class="fas fa-qrcode"></i> Código</button>`
             : `<button class="btn btn-sm fb-btn-codigo mb-1" onclick="verificarSessao('${name}')"><i class="fas fa-qrcode"></i> Código</button>`;
         html += `
-        <div class="card session-item${privado ? ' session-item-privado' : ''} mb-3" id="sessao-${name}">
+        <div class="card session-item${privado ? ' session-item-privado' : ''} mb-3" data-fabi-session-free="${free && !privado ? 'true' : 'false'}" id="sessao-${name}">
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-md-6">
@@ -3788,6 +3872,7 @@ function renderizarListaSessoes(sessoes) {
     });
     $lista.html(html);
     $('#contadorSessoes').text(sessoes.length);
+    if (typeof fabiAtualizarProximoPasso === 'function') fabiAtualizarProximoPasso();
 }
 
 
@@ -6273,8 +6358,9 @@ body.light-mode .fb25-yt-card-alt .fb26-yt-watch { color:#1557ac; }
      window.carregarCarteira=function(){return original.apply(this,arguments);};
    }
    // Mostra explicação sobre créditos sem autorizar uma compra silenciosa.
-   var obs=new MutationObserver(function(){var eSaldo=get('saldoUsuario'),notice=get('fb23SaldoAviso');if(!eSaldo||!notice)return;var v=parseFloat(eSaldo.textContent.replace(/[^0-9,]/g,'').replace(',','.'));notice.hidden=!(v>0);});
+   var obs=new MutationObserver(function(){var eSaldo=get('saldoUsuario'),notice=get('fb23SaldoAviso');if(!eSaldo||!notice)return;var v=parseFloat(eSaldo.textContent.replace(/[^0-9,]/g,'').replace(',','.'));var s=window.fabiConnectState||{};notice.hidden=!(v>0&&!s.planoAtivo);});
    if(get('saldoUsuario')){obs.observe(get('saldoUsuario'),{characterData:true,subtree:true,childList:true});}
+   if(typeof fabiAtualizarProximoPasso==='function')fabiAtualizarProximoPasso();
    var novaSessaoEl = get('novaSessaoModal');
    if (novaSessaoEl && window.bootstrap) {
      novaSessaoEl.addEventListener('show.bs.modal', function(ev){

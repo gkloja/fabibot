@@ -646,3 +646,53 @@ html[data-theme="light"] a:not(.btn){
 .fb57-private-cta:hover{filter:brightness(1.08);transform:translateY(-1px);color:#241744}
 @media(max-width:900px){.fb57-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.fb57-plan.private{grid-column:1/-1}}
 @media(max-width:620px){.fb57-grid{grid-template-columns:1fr}.fb57-plan.private{grid-column:auto}}
+
+
+/* V61 — guia contextual para ativação, saldo e conexão */
+.fb61-next-step{
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  margin:18px 0 22px;padding:clamp(18px,3vw,26px);
+  border:1px solid rgba(96,165,250,.34);border-radius:20px;
+  background:radial-gradient(circle at 8% 0%,rgba(59,130,246,.15),transparent 42%),linear-gradient(125deg,#101b2b,#10252b);
+  color:#f1f5f9;box-shadow:0 14px 34px rgba(0,0,0,.18)
+}
+.fb61-next-step[data-state="balance"],.fb61-next-step[data-state="used"]{border-color:rgba(251,191,36,.52);background:radial-gradient(circle at 8% 0%,rgba(245,158,11,.16),transparent 42%),linear-gradient(125deg,#231d15,#17202a)}
+.fb61-next-step[data-state="upgrade"]{border-color:rgba(196,181,253,.55);background:radial-gradient(circle at 8% 0%,rgba(139,92,246,.2),transparent 42%),linear-gradient(125deg,#211a33,#10252b)}
+.fb61-next-step[data-state="active"]{border-color:rgba(52,211,153,.48);background:radial-gradient(circle at 8% 0%,rgba(16,185,129,.18),transparent 42%),linear-gradient(125deg,#102520,#10252b)}
+.fb61-next-step__copy{min-width:0;max-width:760px}
+.fb61-next-step__badge{display:inline-flex;align-items:center;margin-bottom:8px;color:#86efac;font-size:11px;font-weight:900;letter-spacing:.1em}
+.fb61-next-step[data-state="balance"] .fb61-next-step__badge,.fb61-next-step[data-state="used"] .fb61-next-step__badge{color:#fcd34d}
+.fb61-next-step[data-state="upgrade"] .fb61-next-step__badge{color:#c4b5fd}
+.fb61-next-step__copy h2{margin:0 0 8px;color:inherit;font-size:clamp(20px,2.4vw,27px);font-weight:850;line-height:1.2}
+.fb61-next-step__copy p{margin:0;color:#d5e2ed;font-size:14px;line-height:1.55}
+.fb61-next-step__copy .fb61-next-step__foot{margin-top:9px;color:#9fb4c5;font-size:12px}
+.fb61-next-step__actions{display:flex;flex:0 0 auto;flex-direction:column;gap:9px;min-width:205px}
+.fb61-next-step__actions button{width:100%;min-height:46px;padding:11px 15px;border:1px solid transparent;border-radius:12px;font:inherit;font-size:13px;font-weight:850;line-height:1.25;cursor:pointer;transition:transform .18s ease,filter .18s ease}
+.fb61-next-step__actions button:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.fb61-next-step__primary{background:#34d399;color:#08271d}
+.fb61-next-step__secondary{background:rgba(255,255,255,.06);border-color:rgba(203,213,225,.25)!important;color:#e2e8f0}
+.fb61-next-step__actions button[hidden]{display:none!important}
+.fb61-free-upgrade-hint{margin:0 0 15px;padding:14px 16px;border:1px solid rgba(196,181,253,.48);border-radius:14px;background:rgba(109,75,177,.14);color:#e9ddff;font-size:13px;line-height:1.55}
+.fb61-free-upgrade-hint strong{color:#fff}
+.fb23-saldo-aviso{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.fb23-saldo-aviso__button{flex:0 0 auto;padding:8px 12px;border:1px solid rgba(59,130,246,.38);border-radius:10px;background:#dbeafe;color:#123d70;font:inherit;font-size:12px;font-weight:850;cursor:pointer}
+.fb23-saldo-aviso__button:hover{filter:brightness(.97)}
+.fb23-saldo-aviso[hidden],.fb61-free-upgrade-hint[hidden]{display:none!important}
+html[data-theme="light"] .fb61-next-step,body.light-mode .fb61-next-step{background:linear-gradient(125deg,#fff,#f0f9ff);color:#142536;box-shadow:0 10px 26px rgba(15,23,42,.08)}
+html[data-theme="light"] .fb61-next-step[data-state="balance"],body.light-mode .fb61-next-step[data-state="balance"],html[data-theme="light"] .fb61-next-step[data-state="used"],body.light-mode .fb61-next-step[data-state="used"]{background:linear-gradient(125deg,#fffaf0,#fff);}
+html[data-theme="light"] .fb61-next-step[data-state="upgrade"],body.light-mode .fb61-next-step[data-state="upgrade"]{background:linear-gradient(125deg,#f7f2ff,#fff);}
+html[data-theme="light"] .fb61-next-step__copy p,body.light-mode .fb61-next-step__copy p{color:#334155}
+html[data-theme="light"] .fb61-next-step__copy .fb61-next-step__foot,body.light-mode .fb61-next-step__copy .fb61-next-step__foot{color:#64748b}
+html[data-theme="light"] .fb61-next-step__secondary,body.light-mode .fb61-next-step__secondary{background:#fff;color:#334155;border-color:#cbd5e1!important}
+html[data-theme="light"] .fb61-free-upgrade-hint,body.light-mode .fb61-free-upgrade-hint{background:#f5f0ff;color:#3e2a66;border-color:#d8c7fa}
+html[data-theme="light"] .fb61-free-upgrade-hint strong,body.light-mode .fb61-free-upgrade-hint strong{color:#2e1c50}
+html[data-theme="light"] .fb23-saldo-aviso,body.light-mode .fb23-saldo-aviso{color:#23486d}
+@media(max-width:700px){
+  .fb61-next-step{align-items:stretch;flex-direction:column;gap:16px}
+  .fb61-next-step__actions{min-width:0;width:100%}
+  .fb23-saldo-aviso{align-items:stretch;flex-direction:column}
+  .fb23-saldo-aviso__button{width:100%;min-height:42px}
+}
+@media(prefers-reduced-motion:reduce){.fb61-next-step__actions button{transition:none}}
+
+.fb61-next-step__actions button:focus-visible,.fb23-saldo-aviso__button:focus-visible{outline:3px solid #a5b4fc;outline-offset:3px}
