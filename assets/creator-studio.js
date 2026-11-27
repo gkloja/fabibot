@@ -263,25 +263,6 @@
     });
   }
 
-  async function copyText(value) {
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(value);
-        return;
-      }
-    } catch (_) { /* Use the compatibility fallback. */ }
-    const field = document.createElement('textarea');
-    field.value = value;
-    field.setAttribute('readonly', '');
-    field.style.position = 'fixed';
-    field.style.opacity = '0';
-    document.body.appendChild(field);
-    field.select();
-    const copied = document.execCommand('copy');
-    field.remove();
-    if (!copied) throw new Error('Não foi possível copiar o código.');
-  }
-
   function renderUploadResult(data) {
     const result = $('#creatorResult');
     result.replaceChildren();
@@ -289,27 +270,19 @@
     title.textContent = 'Figurinha publicada na comunidade.';
     const note = document.createElement('span');
     note.className = 'creator-result-note';
-    note.textContent = 'O resgate fica em “Minhas criações”, dentro deste estúdio — nunca na prévia pública.';
+    const creationId = validCreationId(data && data.creation && data.creation.id);
+    note.textContent = creationId
+      ? 'Abra o WhatsApp da Fabi pelo botão abaixo. O resgate também fica em “Minhas criações”.'
+      : 'A figurinha foi publicada. Consulte “Minhas criações” para verificar as opções de resgate.';
     result.append(title, note);
 
-    const code = String(data.redemptionCode || '').trim();
-    if (code) {
-      const codeText = document.createElement('code');
-      codeText.className = 'creator-code';
-      codeText.textContent = code;
-      const copyButton = document.createElement('button');
-      copyButton.className = 'creator-copy';
-      copyButton.type = 'button';
-      copyButton.textContent = 'Copiar código';
-      copyButton.addEventListener('click', async () => {
-        try {
-          await copyText(code);
-          showMessage('Código copiado.', 'ok');
-        } catch (error) {
-          showMessage(error.message || 'Não foi possível copiar.', 'error');
-        }
-      });
-      result.append(codeText, copyButton);
+    if (creationId) {
+      const claimButton = document.createElement('button');
+      claimButton.className = 'creator-claim';
+      claimButton.type = 'button';
+      claimButton.textContent = 'Resgatar no WhatsApp';
+      claimButton.addEventListener('click', () => claimCreation(claimButton, creationId));
+      result.append(claimButton);
     }
     result.classList.remove('creator-hidden');
   }
@@ -334,7 +307,7 @@
       window.dispatchEvent(new Event('fabi-creator-published'));
       loadMineCreations();
       loadRank();
-      showMessage('Sua figurinha entrou na vitrine. O botão de resgate está em Minhas criações.', 'ok');
+      showMessage('Sua figurinha entrou na vitrine. Toque em “Resgatar no WhatsApp” para continuar.', 'ok');
     } catch (error) {
       showMessage(error.message || 'Não foi possível publicar agora.', 'error');
     } finally {

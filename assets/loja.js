@@ -31,6 +31,8 @@
 
   const formatMoney = cents => (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   const prefersStill = () => matchMedia('(prefers-reduced-motion: reduce)').matches || Boolean(navigator.connection && navigator.connection.saveData);
+  let communityVideoObserver = null;
+  let catalogGeneration = 0;
   const syncDialogLock = () => document.body.classList.toggle('modal-open', Boolean(document.querySelector('dialog[open]')));
 
   function toast(message) {
@@ -121,12 +123,18 @@
     scope.querySelectorAll('img[data-sticker-id]').forEach(image => {
       image.addEventListener('error', () => {
         const item = state.items.find(entry => entry.id === image.dataset.stickerId);
-        if (image.dataset.fallback && !image.dataset.fallbackUsed) {
+        const fallbackUrl = image.dataset.fallback ? new URL(image.dataset.fallback, location.href).href : '';
+        if (fallbackUrl && !image.dataset.fallbackUsed && fallbackUrl !== image.src) {
           image.dataset.fallbackUsed = '1';
-          image.src = image.dataset.fallback;
-        } else if (item && !image.dataset.retried && state.source === 'live') {
+          image.src = fallbackUrl;
+        } else if (item && !image.dataset.retried && (item.source === 'community' || state.source === 'live')) {
           image.dataset.retried = '1';
-          image.src = api.mediaUrl(item);
+          const retryUrl = api.mediaUrl(item);
+          if (retryUrl && retryUrl !== image.src) {
+            image.src = retryUrl;
+            return;
+          }
+          image.replaceWith(Object.assign(document.createElement('span'), { className: 'media-fallback', textContent: 'Prévia indisponível. Abra para ver as opções.' }));
         } else {
           image.replaceWith(Object.assign(document.createElement('span'), { className: 'media-fallback', textContent: 'Prévia indisponível. Abra para ver as opções.' }));
         }
@@ -134,16 +142,107 @@
     });
   }
 
+  function communityVideoFallback(video) {
+    if (!video.isConnected) return;
+    if (communityVideoObserver) communityVideoObserver.unobserve(video);
+    const poster = video.getAttribute('poster') || '';
+    if (!poster) {
+      video.replaceWith(Object.assign(document.createElement('span'), { className: 'media-fallback', textContent: 'Prévia indisponível. Abra para ver as opções.' }));
+      return;
+    }
+    const image = document.createElement('img');
+    image.src = poster;
+    image.alt = video.dataset.fallbackAlt || '';
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    image.addEventListener('error', () => {
+      if (image.isConnected) image.replaceWith(Object.assign(document.createElement('span'), { className: 'media-fallback', textContent: 'Prévia indisponível. Abra para ver as opções.' }));
+    }, { once: true });
+    video.replaceWith(image);
+  }
+
+  function pauseCommunityVideo(video) {
+    video.pause();
+    video.autoplay = false;
+    video.preload = 'none';
+    if (video.hasAttribute('src')) {
+      video.removeAttribute('src');
+      video.load();
+    }
+  }
+
+  function startCommunityVideo(video) {
+    if (!video.isConnected || prefersStill() || document.hidden) { pauseCommunityVideo(video); return; }
+    const source = video.dataset.communitySrc || '';
+    if (!source) { communityVideoFallback(video); return; }
+    if (video.getAttribute('src') !== source) {
+      video.preload = 'metadata';
+      video.autoplay = true;
+      video.setAttribute('src', source);
+      video.load();
+    }
+    if (!video.paused) return;
+    try {
+      const playback = video.play();
+      if (playback && typeof playback.catch === 'function') playback.catch(() => communityVideoFallback(video));
+    } catch (_) {
+      communityVideoFallback(video);
+    }
+  }
+
+  function bindCommunityVideos(scope = document) {
+    scope.querySelectorAll('video[data-community-video]').forEach(video => {
+      if (video.dataset.communityBound) return;
+      video.dataset.communityBound = '1';
+      video.dataset.communitySrc = video.dataset.communitySrc || video.getAttribute('src') || '';
+      video.removeAttribute('src');
+      video.muted = true;
+      video.loop = true;
+      video.autoplay = false;
+      video.removeAttribute('autoplay');
+      video.playsInline = true;
+      video.preload = 'none';
+      video.addEventListener('error', () => communityVideoFallback(video), { once: true });
+      if (typeof IntersectionObserver !== 'function') {
+        communityVideoFallback(video);
+        return;
+      }
+      if (!communityVideoObserver) {
+        communityVideoObserver = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            const target = entry.target;
+            if (!target.isConnected) { communityVideoObserver.unobserve(target); return; }
+            if (entry.isIntersecting && !prefersStill() && !document.hidden) startCommunityVideo(target);
+            else pauseCommunityVideo(target);
+          });
+        }, { rootMargin: '100px 0px', threshold: 0.01 });
+      }
+      communityVideoObserver.observe(video);
+    });
+  }
+
+  function disposeCommunityVideos(scope) {
+    if (!scope) return;
+    scope.querySelectorAll('video[data-community-video]').forEach(video => {
+      if (communityVideoObserver) communityVideoObserver.unobserve(video);
+      pauseCommunityVideo(video);
+    });
+  }
+
   function cardHTML(item) {
     const media = api.staticMedia(item, state.index);
-    const animated = state.source === 'live' && item.isAnimated && !prefersStill();
-    const image = animated ? api.mediaUrl(item) : (media.poster || (state.source === 'live' ? api.mediaUrl(item) : ''));
+    const communityAnimated = item.source === 'community' && item.isAnimated && Boolean(media.preview) && !prefersStill();
+    const animated = item.source !== 'community' && state.source === 'live' && item.isAnimated && !prefersStill();
+    const image = animated ? api.mediaUrl(item) : (media.poster || (item.source !== 'community' && state.source === 'live' ? api.mediaUrl(item) : ''));
     const isSaved = state.favorites.has(item.id);
     const inCart = state.cart.has(item.id);
     const fallback = media.poster || '';
+    const previewMedia = communityAnimated
+      ? '<video class="community-motion" data-community-src="' + escape(media.preview) + '"' + (fallback ? ' poster="' + escape(fallback) + '"' : '') + ' muted loop playsinline preload="none" aria-hidden="true" data-community-video data-fallback-alt="' + escape(item.nome) + '"></video><span class="watermark" aria-hidden="true">FABI BOT</span>'
+      : (image ? '<img src="' + escape(image) + '" alt="' + escape(item.nome) + '" width="360" height="360" loading="lazy" decoding="async" data-sticker-id="' + escape(item.id) + '" data-fallback="' + escape(fallback) + '"><span class="watermark" aria-hidden="true">FABI BOT</span>' : fallbackHTML('Prévia disponível apenas pelo backend.'));
     return '<article class="sticker-card" data-id="' + escape(item.id) + '">' +
       '<button class="card-preview" type="button" data-action="preview" data-id="' + escape(item.id) + '" aria-label="Ver prévia de ' + escape(item.nome) + '">' +
-      (image ? '<img src="' + escape(image) + '" alt="' + escape(item.nome) + '" width="360" height="360" loading="lazy" decoding="async" data-sticker-id="' + escape(item.id) + '" data-fallback="' + escape(fallback) + '"><span class="watermark" aria-hidden="true">FABI BOT</span>' : fallbackHTML('Prévia disponível apenas pelo backend.')) +
+      previewMedia +
       '<span class="card-play">' + icon('play') + 'Ver exemplo</span></button>' +
       '<button class="card-save" type="button" data-action="favorite" data-id="' + escape(item.id) + '" data-name="' + escape(item.nome) + '" aria-pressed="' + isSaved + '" aria-label="' + (isSaved ? 'Remover ' : 'Salvar ') + escape(item.nome) + (isSaved ? ' das favoritas' : ' nas favoritas') + '">' + icon('heart') + '</button>' +
       '<div class="card-info"><div class="card-kicker"><span>' + (item.source === 'community' ? '<b class="source-badge community">COMUNIDADE</b>' : '<b class="source-badge official">FABI OFICIAL</b>') + '<span>' + escape(item.id.replace('_', ' #')) + '</span></span><span>' + priceLabel(item) + '</span></div>' +
@@ -216,6 +315,7 @@
     const items = filteredItems();
     const visible = items.slice(0, state.limit);
     const grid = $('#catalogGrid');
+    disposeCommunityVideos(grid);
     grid.innerHTML = visible.map(cardHTML).join('');
     grid.setAttribute('aria-busy', String(state.loading));
     $('#catalogEmpty').hidden = items.length !== 0;
@@ -243,12 +343,14 @@
     }
     updateSavedCount();
     bindImageFallbacks(grid);
+    bindCommunityVideos(grid);
     protectMedia(grid);
   }
 
   function renderPopularity() {
     const target = $('#popularityLeaders');
     if (!target) return;
+    disposeCommunityVideos(target);
     const metrics = [
       { key: 'compras', label: 'Mais compradas', icon: 'cart' },
       { key: 'favoritos', label: 'Mais queridas', icon: 'heart' },
@@ -261,7 +363,7 @@
       const poster = String(media.poster || (item.source === 'community' ? '' : (state.source === 'live' ? api.mediaUrl(item) : '')));
       let thumbnail = '<span class="popularity-leader__media" aria-hidden="true">' + icon('play') + '</span>';
       if (!prefersStill() && item.source === 'community' && media.preview) {
-        thumbnail = '<span class="popularity-leader__media"><video src="' + escape(media.preview) + '"' + (poster ? ' poster="' + escape(poster) + '"' : '') + ' muted loop autoplay playsinline preload="metadata" aria-hidden="true" data-popularity-video></video></span>';
+        thumbnail = '<span class="popularity-leader__media"><video class="community-motion" data-community-src="' + escape(media.preview) + '"' + (poster ? ' poster="' + escape(poster) + '"' : '') + ' muted loop playsinline preload="none" aria-hidden="true" data-community-video></video></span>';
       } else if (!prefersStill() && state.source === 'live' && item.isAnimated) {
         thumbnail = '<span class="popularity-leader__media"><img src="' + escape(api.mediaUrl(item)) + '"' + (poster ? ' data-fallback="' + escape(poster) + '"' : '') + ' alt="" loading="lazy" decoding="async" data-sticker-id="' + escape(item.id) + '"></span>';
       } else if (poster) {
@@ -274,41 +376,38 @@
         '<span class="popularity-leader__icon">' + icon(metric.icon) + '</span>' + thumbnail +
         '<span class="popularity-leader__copy"><small>' + metric.label + '</small><em>' + escape(String(amount)) + ' ' + unit + '</em></span></button>';
     }).join('');
-    target.querySelectorAll('[data-popularity-video]').forEach(video => {
-      video.addEventListener('error', () => {
-        const fallback = video.getAttribute('poster');
-        if (fallback) {
-          const image = document.createElement('img');
-          image.src = fallback;
-          image.alt = '';
-          image.loading = 'lazy';
-          video.replaceWith(image);
-        } else video.closest('.popularity-leader__media')?.replaceChildren();
-      }, { once: true });
-      video.play().catch(() => {});
-    });
+    bindCommunityVideos(target);
     bindImageFallbacks(target);
   }
 
   function renderHero() {
     const highlighted = state.items.filter(item => item.destaque);
-    const animatedItems = state.source === 'live' ? state.items.filter(item => item.isAnimated) : [];
+    const communityAnimated = state.items.filter(item => item.source === 'community' && item.isAnimated && api.staticMedia(item, state.index).preview);
+    const officialAnimated = state.source === 'live' ? state.items.filter(item => item.source !== 'community' && item.isAnimated) : [];
+    const animatedItems = communityAnimated.concat(officialAnimated);
     const preferred = animatedItems.length ? animatedItems : state.items.filter(item => api.staticMedia(item, state.index).poster);
-    const items = highlighted.length >= 2 ? highlighted : (preferred.length ? preferred : state.items);
+    const items = communityAnimated.length ? preferred : (highlighted.length >= 2 ? highlighted : (preferred.length ? preferred : state.items));
     const selected = [items[0], items[Math.min(3, items.length - 1)]].filter(Boolean);
     const collage = $('#heroCollage');
+    disposeCommunityVideos(collage);
     if (!selected.length) {
       collage.innerHTML = '<div class="hero-card hero-card-main">' + fallbackHTML('O próximo play vem do catálogo.') + '</div>';
     } else {
       collage.innerHTML = selected.map((item, position) => {
         const media = api.staticMedia(item, state.index);
-        const animated = state.source === 'live' && item.isAnimated && !prefersStill();
-        const image = animated ? api.mediaUrl(item) : (media.poster || (state.source === 'live' ? api.mediaUrl(item) : ''));
+        const communityMotion = item.source === 'community' && item.isAnimated && Boolean(media.preview) && !prefersStill();
+        const animated = item.source !== 'community' && state.source === 'live' && item.isAnimated && !prefersStill();
+        const image = animated ? api.mediaUrl(item) : (media.poster || (item.source !== 'community' && state.source === 'live' ? api.mediaUrl(item) : ''));
+        const fallback = media.poster || '';
+        const previewMedia = communityMotion
+          ? '<video class="community-motion" data-community-src="' + escape(media.preview) + '"' + (fallback ? ' poster="' + escape(fallback) + '"' : '') + ' muted loop playsinline preload="none" aria-hidden="true" data-community-video data-fallback-alt="' + escape(item.nome) + '"></video><span class="watermark" aria-hidden="true">FABI BOT</span>'
+          : (image ? '<img src="' + escape(image) + '" alt="' + escape(item.nome) + '" width="360" height="360" loading="eager" data-sticker-id="' + escape(item.id) + '" data-fallback="' + escape(fallback) + '"><span class="watermark" aria-hidden="true">FABI BOT</span>' : fallbackHTML(item.nome));
         return '<button class="hero-card ' + (position ? 'hero-card-back' : 'hero-card-main') + '" type="button" data-action="preview" data-id="' + escape(item.id) + '" aria-label="Ver ' + escape(item.nome) + '">' +
-          (image ? '<img src="' + escape(image) + '" alt="' + escape(item.nome) + '" width="360" height="360" loading="eager" data-sticker-id="' + escape(item.id) + '" data-fallback="' + escape(media.poster || '') + '"><span class="watermark" aria-hidden="true">FABI BOT</span>' : fallbackHTML(item.nome)) +
+          previewMedia +
           '<span class="hero-card-label">' + priceLabel(item) + ' · ' + (item.temAudio ? 'COM SOM' : 'SEM ÁUDIO') + '</span></button>';
       }).join('');
       bindImageFallbacks(collage);
+      bindCommunityVideos(collage);
     }
     $('#heroCount').textContent = state.items.length ? state.items.length + ' figurinhas · de R$ 0,10 a R$ 0,20' : 'Seu próximo meme está aqui';
     $('#surpriseButton').disabled = !state.items.length;
@@ -316,30 +415,51 @@
 
   async function loadCatalog() {
     if (state.loading) return;
+    const requestGeneration = ++catalogGeneration;
     state.loading = true;
     $('#reloadButton').disabled = true;
     $('#connectionBox').className = 'connection-box loading';
     $('#connectionText').textContent = 'Conectando ao catálogo do bot…';
     $('#catalogGrid').setAttribute('aria-busy', 'true');
-    const [result, index, community] = await Promise.all([api.catalog(), api.mediaIndex(), api.creatorCatalog()]);
-    state.items = result.items.concat(community);
+    const communityRequest = api.creatorCatalog().catch(() => []);
+    const [result, index] = await Promise.all([api.catalog(), api.mediaIndex()]);
+    if (requestGeneration !== catalogGeneration) return;
+    state.items = result.items;
     state.index = index;
     state.source = result.source;
     state.loading = false;
     $('#reloadButton').disabled = false;
-    const time = new Date(result.loadedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    $('#connectionBox').className = 'connection-box ' + (result.source === 'snapshot' ? 'warning' : result.source === 'error' ? 'error' : '');
-    $('#connectionText').textContent = result.source === 'live' ? 'Conectado ao bot · ' + state.items.length + ' figurinhas (' + community.length + ' da comunidade) · atualizado às ' + time : result.source === 'snapshot' ? 'Catálogo de prévias do site · não está ao vivo. ' + result.error : 'Falha de conexão. ' + result.error;
-    const select = $('#categorySelect');
-    select.innerHTML = '<option value="all">Todas as categorias</option>' + [...new Set(state.items.map(item => item.categoria))].sort((a, b) => a.localeCompare(b, 'pt-BR')).map(category => '<option value="' + escape(category) + '">' + escape(category.charAt(0).toUpperCase() + category.slice(1)) + '</option>').join('');
-    if (!state.items.some(item => item.categoria === state.category)) state.category = 'all';
-    select.value = state.category;
-    render();
-    renderPopularity();
-    renderHero();
-    renderCart();
     const requestedSticker = new URLSearchParams(location.search).get('sticker');
-    if (requestedSticker && state.items.some(item => item.id === requestedSticker)) openPreview(requestedSticker);
+    let requestedStickerOpened = false;
+    const renderLoadedCatalog = () => {
+      const communityCount = state.items.filter(item => item.source === 'community').length;
+      const time = new Date(result.loadedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      $('#connectionBox').className = 'connection-box ' + (result.source === 'snapshot' ? 'warning' : result.source === 'error' ? 'error' : '');
+      $('#connectionText').textContent = result.source === 'live' ? 'Conectado ao bot · ' + state.items.length + ' figurinhas (' + communityCount + ' da comunidade) · atualizado às ' + time : result.source === 'snapshot' ? 'Catálogo de prévias do site · não está ao vivo. ' + result.error : 'Falha de conexão. ' + result.error;
+      const select = $('#categorySelect');
+      const categories = [...new Set(state.items.map(item => item.categoria))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+      select.innerHTML = '<option value="all">Todas as categorias</option>' + categories.map(category => '<option value="' + escape(category) + '">' + escape(category.charAt(0).toUpperCase() + category.slice(1)) + '</option>').join('');
+      if (!categories.includes(state.category)) state.category = 'all';
+      select.value = state.category;
+      render();
+      renderPopularity();
+      renderHero();
+      renderCart();
+    };
+    renderLoadedCatalog();
+    if (requestedSticker && state.items.some(item => item.id === requestedSticker)) {
+      openPreview(requestedSticker);
+      requestedStickerOpened = true;
+    }
+    communityRequest.then(community => {
+      if (requestGeneration !== catalogGeneration) return;
+      state.items = state.items.filter(item => item.source !== 'community').concat(community);
+      renderLoadedCatalog();
+      if (!requestedStickerOpened && requestedSticker && state.items.some(item => item.id === requestedSticker)) {
+        openPreview(requestedSticker);
+        requestedStickerOpened = true;
+      }
+    });
   }
 
   function setFilter(filter) {
@@ -349,7 +469,9 @@
   }
 
   function stopMedia() {
-    $('#previewMedia').querySelectorAll('video').forEach(video => { video.pause(); video.removeAttribute('src'); video.load(); });
+    const container = $('#previewMedia');
+    disposeCommunityVideos(container);
+    container.querySelectorAll('video').forEach(video => { video.pause(); video.removeAttribute('src'); video.load(); });
   }
 
   function showPreviewMedia(tab) {
@@ -402,30 +524,23 @@
     }
     if (item.source === 'community' && media.preview && !prefersStill()) {
       const video = document.createElement('video');
-      video.src = media.preview;
+      video.dataset.communitySrc = media.preview;
       video.poster = media.poster || '';
       video.muted = true;
       video.loop = true;
-      video.autoplay = true;
+      video.autoplay = false;
       video.playsInline = true;
-      video.preload = 'metadata';
+      video.preload = 'none';
       video.setAttribute('aria-label', 'Prévia animada da criação da comunidade');
-      video.addEventListener('error', () => {
-        if (state.current !== item || state.activeTab !== tab || state.mediaGeneration !== mediaGeneration || !container.contains(video)) return;
-        if (media.poster) {
-          const image = document.createElement('img');
-          image.src = media.poster;
-          image.alt = item.nome;
-          video.replaceWith(image);
-        } else container.innerHTML = fallbackHTML('A prévia da criação não respondeu.');
-      }, { once: true });
+      video.dataset.communityVideo = '';
+      video.dataset.fallbackAlt = item.nome;
       container.appendChild(video);
       const watermark = document.createElement('span');
       watermark.className = 'watermark video-watermark';
       watermark.setAttribute('aria-hidden', 'true');
       watermark.textContent = 'FABI BOT';
       container.appendChild(watermark);
-      video.play().catch(() => {});
+      bindCommunityVideos(container);
       $('#previewMediaNote').textContent = 'Prévia animada da comunidade. A marca-d’água aparece apenas na vitrine.';
       return;
     }
@@ -518,11 +633,17 @@
     $('#creatorProfilePurchasesStat').textContent = purchases.toLocaleString('pt-BR');
     $('#creatorProfileViewsStat').textContent = views.toLocaleString('pt-BR');
     $('#creatorProfileCount').textContent = String(items.length);
-    $('#creatorProfileGrid').innerHTML = items.map(item => {
+    const profileGrid = $('#creatorProfileGrid');
+    disposeCommunityVideos(profileGrid);
+    profileGrid.innerHTML = items.map(item => {
       const media = api.staticMedia(item, state.index);
-      const thumbnail = media.poster ? '<img src="' + escape(media.poster) + '" alt="" loading="lazy">' : icon('play');
+      const animated = !prefersStill() && item.source === 'community' && item.isAnimated && Boolean(media.preview);
+      const thumbnail = animated
+        ? '<video class="community-motion" data-community-src="' + escape(media.preview) + '"' + (media.poster ? ' poster="' + escape(media.poster) + '"' : '') + ' muted loop playsinline preload="none" aria-hidden="true" data-community-video></video>'
+        : (media.poster ? '<img src="' + escape(media.poster) + '" alt="" loading="lazy">' : icon('play'));
       return '<button class="creator-mini-card" type="button" data-action="preview" data-id="' + escape(item.id) + '"><span class="creator-mini-card__image">' + thumbnail + '<span class="creator-mini-card__play">' + icon('play') + '</span></span><strong>' + escape(item.nome) + '</strong><small>' + escape(String(item.visualizacoes || 0)) + ' visualizações · ' + escape(String(item.compras || 0)) + ' escolhas</small></button>';
     }).join('');
+    bindCommunityVideos(profileGrid);
     if (!$('#creatorProfileDialog').open) $('#creatorProfileDialog').showModal();
     document.body.classList.add('modal-open');
   }
@@ -850,7 +971,10 @@
   $('#previewCreatorProfile')?.addEventListener('click', () => openCreatorProfile($('#previewCreatorProfile').dataset.handle));
   document.querySelectorAll('[data-share]').forEach(button => button.addEventListener('click', () => shareSticker(button.dataset.share)));
   $('#closeCreatorProfile')?.addEventListener('click', () => $('#creatorProfileDialog').close());
-  $('#creatorProfileDialog')?.addEventListener('close', syncDialogLock);
+  $('#creatorProfileDialog')?.addEventListener('close', () => {
+    disposeCommunityVideos($('#creatorProfileGrid'));
+    syncDialogLock();
+  });
   $('#creatorProfileDialog')?.addEventListener('click', event => { if (event.target === $('#creatorProfileDialog')) $('#creatorProfileDialog').close(); });
   $('#cartButton').addEventListener('click', openCart);
   $('#themeToggle').addEventListener('click', () => {
@@ -886,7 +1010,18 @@
     try { if (!localStorage.getItem(themeKey)) applyTheme('system'); } catch (_) { applyTheme('system'); }
   });
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { stopMedia(); stopHoverVideos(); return; }
+    if (document.hidden) {
+      stopMedia();
+      stopHoverVideos();
+      document.querySelectorAll('video[data-community-video]').forEach(pauseCommunityVideo);
+      return;
+    }
+    if (communityVideoObserver) {
+      document.querySelectorAll('video[data-community-video]').forEach(video => {
+        communityVideoObserver.unobserve(video);
+        communityVideoObserver.observe(video);
+      });
+    }
   });
   window.addEventListener('fabi-creator-published', () => { state.limit = config.pageSize; loadCatalog(); });
   $('#currentYear').textContent = String(new Date().getFullYear());

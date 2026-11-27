@@ -137,9 +137,7 @@
 
   async function creatorCatalog() {
     try {
-      const response = await fetch('/api/creator/creations?limit=60', { cache: 'no-store' });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || 'Creator indisponível');
+      const payload = await request('/api/creator/creations?limit=60', {}, 8000);
       return (payload.creations || []).filter(row => row && row.status === 'publicada').map(row => {
         const communityId = String(row.id || '');
         if (!/^[a-zA-Z0-9_-]{1,100}$/.test(communityId)) return null;
