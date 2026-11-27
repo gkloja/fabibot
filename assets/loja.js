@@ -18,7 +18,7 @@
   const storeWhatsapp = String(config.storeWhatsapp || '5592985715119').replace(/\D/g, '');
   let favoriteToken = '';
   try { favoriteToken = localStorage.getItem(favoriteTokenKey) || ''; if (!/^[a-zA-Z0-9_-]{16,120}$/.test(favoriteToken)) { favoriteToken = (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '') : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem(favoriteTokenKey, favoriteToken); } } catch (_) { favoriteToken = 'anon' + Date.now().toString(36); }
-  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'popular', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
+  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'popular', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '', claimRefreshPending: false };
   try {
     const saved = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
     if (Array.isArray(saved)) state.favorites = new Set(saved.filter(id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,80}$/.test(id)).slice(0, 2000));
@@ -259,11 +259,15 @@
     const target = $('#creatorRank'); if (!target) return;
     const rows = Array.isArray(ranking) ? ranking.slice(0, 5) : [];
     target.innerHTML = rows.length ? rows.map((row, i) => {
-      const id = 'creator_' + String(row.id || '').replace(/[^a-zA-Z0-9_-]/g, '');
+      const rawCommunityId = String(row.id || '');
+      const communityId = /^[a-zA-Z0-9_-]{1,100}$/.test(rawCommunityId) ? rawCommunityId : '';
+      const id = 'creator_' + communityId;
       const item = state.items.find(entry => entry.id === id);
       const poster = row.posterUrl || (item && api.staticMedia(item, state.index).poster) || './assets/fabi-logo.webp';
       const claimed = row.claimed === true || (item && item.claimed === true);
-      return '<article class="creator-rank__item creator-rank__item--action"><span class="rank-number">0' + (i + 1) + '</span><img src="' + escape(poster) + '" alt="" loading="lazy"><div class="creator-rank__main"><b>' + escape(row.title || (item && item.nome) || 'Criação da comunidade') + '</b><small>por ' + escape(row.creator && (row.creator.displayName || row.creator.username) || (item && item.author) || 'criador') + ' · ' + escape(String(row.purchases || 0)) + ' escolhas</small></div><div class="creator-rank__actions"><button type="button" class="rank-view-button" data-action="preview" data-id="' + escape(id) + '">Ver</button>' + (claimed ? '<span class="rank-claimed">Recebida ✓</span>' : '<button type="button" class="rank-claim-button" data-action="creator-rank-claim" data-id="' + escape(id) + '">Resgatar</button>') + '</div></article>';
+      const claimable = !!communityId && !claimed && (row.claimed === false || (item && item.claimed === false));
+      const claimStatus = claimed ? '<span class="rank-claimed">Recebida ✓</span>' : claimable ? '<button type="button" class="rank-claim-button" data-action="creator-rank-claim" data-id="' + escape(id) + '">Resgatar</button>' : '<span class="rank-claim-unavailable">Status indisponível</span>';
+      return '<article class="creator-rank__item creator-rank__item--action"><span class="rank-number">0' + (i + 1) + '</span><img src="' + escape(poster) + '" alt="" loading="lazy"><div class="creator-rank__main"><b>' + escape(row.title || (item && item.nome) || 'Criação da comunidade') + '</b><small>por ' + escape(row.creator && (row.creator.displayName || row.creator.username) || (item && item.author) || 'criador') + ' · ' + escape(String(row.purchases || 0)) + ' escolhas</small></div><div class="creator-rank__actions"><button type="button" class="rank-view-button" data-action="preview" data-id="' + escape(id) + '">Ver</button>' + claimStatus + '</div></article>';
     }).join('') : '<span class="creator-muted">O ranking começa com a sua criação.</span>';
   }
 
@@ -401,6 +405,7 @@
   function openPreview(id) {
     const item = state.items.find(entry => entry.id === id);
     if (!item) return;
+    if ($('#creatorProfileDialog')?.open) $('#creatorProfileDialog').close();
     stopHoverVideos();
     ++state.previewGeneration;
     state.lastFocused = document.activeElement;
@@ -414,7 +419,7 @@
     const creatorBox = $('#previewCreator');
     if (creatorBox) {
       creatorBox.hidden = item.source !== 'community';
-      $('#previewClaim').hidden = item.source !== 'community' || item.claimed !== false;
+      $('#previewClaim').hidden = !(item.source === 'community' && item.claimed === false && item.communityId);
       if (item.source === 'community') {
         const creator = item.creator || {};
         $('#previewCreatorAvatar').src = creator.avatarUrl || './assets/fabi-logo.webp';
@@ -438,7 +443,7 @@
     ++state.previewGeneration;
     ++state.mediaGeneration;
     stopMedia();
-    document.body.classList.remove('modal-open');
+    if (!$('#creatorProfileDialog')?.open) document.body.classList.remove('modal-open');
     state.current = null;
     const url = new URL(location.href);
     if (url.searchParams.has('sticker')) { url.searchParams.delete('sticker'); history.replaceState(null, '', url.pathname + (url.search ? url.search : '') + url.hash); }
@@ -452,12 +457,25 @@
     const first = items[0];
     if (!first) return toast('Este perfil ainda não tem criações públicas.');
     const creator = first.creator || {};
+    const views = items.reduce((total, item) => total + Math.max(0, Number(item.visualizacoes) || 0), 0);
+    const purchases = items.reduce((total, item) => total + Math.max(0, Number(item.compras) || 0), 0);
+    const handleText = String(creator.handle || creator.username || first.creatorSlug || '').replace(/^@/, '');
+    const createdAt = Date.parse(creator.createdAt);
     $('#creatorProfileDialogAvatar').src = creator.avatarUrl || './assets/fabi-logo.webp';
+    $('#creatorProfileDialogAvatar').alt = 'Foto de ' + (first.author || creator.displayName || creator.username || 'criador');
     $('#creatorProfileDialogName').textContent = first.author || creator.displayName || creator.username || 'Criador Fabi';
-    $('#creatorProfileDialogBio').textContent = creator.bio || 'Ideias que viram reação.';
-    $('#creatorProfileDialogStats').textContent = items.length + (items.length === 1 ? ' criação publicada' : ' criações publicadas');
+    $('#creatorProfileDialogHandle').textContent = handleText ? '@' + handleText : 'Comunidade Fabi Creator';
+    $('#creatorProfileDialogBio').textContent = creator.bio || 'Ideias que viram reação e deixam qualquer conversa mais divertida.';
+    $('#creatorProfileMemberSince').textContent = Number.isFinite(createdAt) ? 'Na comunidade desde ' + new Date(createdAt).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) : 'Criador da comunidade Fabi Bot';
+    $('#creatorProfileCreationsStat').textContent = items.length.toLocaleString('pt-BR');
+    $('#creatorProfilePurchasesStat').textContent = purchases.toLocaleString('pt-BR');
+    $('#creatorProfileViewsStat').textContent = views.toLocaleString('pt-BR');
     $('#creatorProfileCount').textContent = String(items.length);
-    $('#creatorProfileGrid').innerHTML = items.map(item => { const media = api.staticMedia(item, state.index); return '<button class="creator-mini-card" type="button" data-action="preview" data-id="' + escape(item.id) + '"><span class="creator-mini-card__image">' + (media.poster ? '<img src="' + escape(media.poster) + '" alt="" loading="lazy">' : icon('play')) + '</span><strong>' + escape(item.nome) + '</strong><small>' + escape(String(item.visualizacoes || 0)) + ' views · abrir prévia</small></button>'; }).join('');
+    $('#creatorProfileGrid').innerHTML = items.map(item => {
+      const media = api.staticMedia(item, state.index);
+      const thumbnail = media.poster ? '<img src="' + escape(media.poster) + '" alt="" loading="lazy">' : icon('play');
+      return '<button class="creator-mini-card" type="button" data-action="preview" data-id="' + escape(item.id) + '"><span class="creator-mini-card__image">' + thumbnail + '<span class="creator-mini-card__play">' + icon('play') + '</span></span><strong>' + escape(item.nome) + '</strong><small>' + escape(String(item.visualizacoes || 0)) + ' visualizações · ' + escape(String(item.compras || 0)) + ' escolhas</small></button>';
+    }).join('');
     if (!$('#creatorProfileDialog').open) $('#creatorProfileDialog').showModal();
     document.body.classList.add('modal-open');
   }
@@ -467,18 +485,71 @@
     const url = location.origin + '/figurinhas/' + encodeURIComponent(state.current.id);
     const text = 'Olha essa figurinha da Fabi Bot: ' + state.current.nome;
     if (kind === 'copy') return copyText(url, $('#previewStatus'), 'Link copiado.');
-    if (kind === 'whatsapp') return window.open('https://wa.me/?text=' + encodeURIComponent(text + ' ' + url), '_blank');
-    if (kind === 'facebook') return window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), '_blank');
-    if (kind === 'x') return window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank');
-    if (navigator.share) navigator.share({ title: state.current.nome + ' | Fabi Bot', text, url }).catch(() => {}); else copyText(url, $('#previewStatus'), 'Link copiado.');
+    const fallbackShare = () => {
+      if (!navigator.share) return copyText(url, $('#previewStatus'), 'A janela foi bloqueada; link copiado para compartilhar.');
+      try {
+        const pending = navigator.share({ title: state.current.nome + ' | Fabi Bot', text, url });
+        if (pending && typeof pending.catch === 'function') pending.catch(error => { if (error.name !== 'AbortError') copyText(url, $('#previewStatus'), 'Link copiado.'); });
+      } catch (error) { if (error.name !== 'AbortError') copyText(url, $('#previewStatus'), 'Link copiado.'); }
+    };
+    const openShareWindow = shareUrl => {
+      let opened = null;
+      try { opened = window.open(shareUrl, '_blank'); } catch (_) {}
+      if (opened) { try { opened.opener = null; } catch (_) {} }
+      else fallbackShare();
+    };
+    if (kind === 'whatsapp') return openShareWindow('https://wa.me/?text=' + encodeURIComponent(text + ' ' + url));
+    if (kind === 'facebook') return openShareWindow('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url));
+    if (kind === 'x') return openShareWindow('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url));
+    fallbackShare();
   }
 
   async function claimCurrentCreation(itemOverride) {
-    const item = itemOverride || state.current; if (!item || item.source !== 'community') return;
-    if (itemOverride && state.current !== item) openPreview(item.id);
-    let token = ''; try { token = localStorage.getItem('fabi_creator_token') || ''; } catch (_) {}
-    try { const result = await api.creatorClaimLink(item.communityId, token); if (result.claimUrl) window.open(result.claimUrl, '_blank', 'noopener'); $('#previewClaim').hidden = true; toast('Link de recebimento aberto no WhatsApp.'); }
-    catch (error) { $('#previewStatus').textContent = error.message; }
+    const item = itemOverride || state.current;
+    if (!item || item.source !== 'community') return;
+    if (itemOverride && state.current !== item && state.items.some(entry => entry.id === item.id)) openPreview(item.id);
+    const inPreview = !!(state.current && state.current.id === item.id && $('#previewDialog')?.open);
+    const report = message => { if (inPreview) $('#previewStatus').textContent = message; else toast(message); };
+    if (item.claimed !== false || !item.communityId) {
+      report('Esta criação já foi reivindicada ou o status ainda não foi confirmado.');
+      return;
+    }
+    let token = '';
+    try { token = localStorage.getItem('fabi_creator_token') || ''; } catch (_) {}
+    if (!token) {
+      report('Entre na sua conta pelo botão “Criar figurinha” para confirmar que esta criação é sua.');
+      return;
+    }
+    const button = inPreview ? $('#previewClaimButton') : null;
+    const originalLabel = button && button.innerHTML;
+    let claimWindow = null;
+    if (button) { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Preparando seu WhatsApp…'; }
+    report('Gerando um link seguro de recebimento…');
+    try {
+      // Open synchronously inside the tap, before the API request, to avoid mobile popup blockers.
+      try {
+        claimWindow = window.open('about:blank', '_blank');
+        if (claimWindow) {
+          claimWindow.opener = null;
+          claimWindow.document.title = 'Abrindo o WhatsApp';
+          claimWindow.document.body.textContent = 'Preparando o link seguro de recebimento…';
+        }
+      } catch (_) { claimWindow = null; }
+      const result = await api.creatorClaimLink(item.communityId, token);
+      const claimUrl = String(result.claimUrl || '').trim();
+      if (!claimUrl) throw new Error('O servidor não retornou um link de recebimento. Tente novamente.');
+      const target = new URL(claimUrl, location.href);
+      if (target.protocol !== 'https:' && target.protocol !== 'whatsapp:') throw new Error('O link de recebimento retornado não é seguro.');
+      state.claimRefreshPending = true;
+      if (claimWindow && !claimWindow.closed) claimWindow.location.replace(target.href);
+      else window.location.assign(target.href);
+      report('O WhatsApp está abrindo com seu link de recebimento.');
+    } catch (error) {
+      if (claimWindow && !claimWindow.closed) claimWindow.close();
+      report(error.message || 'Não foi possível gerar o link de recebimento.');
+    } finally {
+      if (button) { button.disabled = false; button.removeAttribute('aria-busy'); button.innerHTML = originalLabel; }
+    }
   }
 
   function updateCartButtons() {
@@ -751,6 +822,10 @@
     if (button.dataset.action === 'creator-rank-claim') {
       const item = state.items.find(entry => entry.id === button.dataset.id);
       if (item) claimCurrentCreation(item);
+      else {
+        const match = /^creator_([a-zA-Z0-9_-]{1,100})$/.exec(button.dataset.id || '');
+        if (match) claimCurrentCreation({ id: button.dataset.id, communityId: match[1], claimed: false, source: 'community' });
+      }
     }
   });
   document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
@@ -785,7 +860,7 @@
   $('#previewClaimButton')?.addEventListener('click', claimCurrentCreation);
   document.querySelectorAll('[data-share]').forEach(button => button.addEventListener('click', () => shareSticker(button.dataset.share)));
   $('#closeCreatorProfile')?.addEventListener('click', () => $('#creatorProfileDialog').close());
-  $('#creatorProfileDialog')?.addEventListener('close', () => document.body.classList.remove('modal-open'));
+  $('#creatorProfileDialog')?.addEventListener('close', () => { if (!$('#previewDialog')?.open) document.body.classList.remove('modal-open'); });
   $('#creatorProfileDialog')?.addEventListener('click', event => { if (event.target === $('#creatorProfileDialog')) $('#creatorProfileDialog').close(); });
   $('#cartButton').addEventListener('click', openCart);
   $('#themeToggle').addEventListener('click', () => {
@@ -820,7 +895,10 @@
   matchMedia('(prefers-color-scheme: light)').addEventListener?.('change', () => {
     try { if (!localStorage.getItem(themeKey)) applyTheme('system'); } catch (_) { applyTheme('system'); }
   });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) { stopMedia(); stopHoverVideos(); } });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { stopMedia(); stopHoverVideos(); return; }
+    if (state.claimRefreshPending) { state.claimRefreshPending = false; loadCatalog(); }
+  });
   window.addEventListener('fabi-creator-published', () => { state.limit = config.pageSize; loadCatalog(); });
   $('#currentYear').textContent = String(new Date().getFullYear());
   restoreTheme();

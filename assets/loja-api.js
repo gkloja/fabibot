@@ -141,11 +141,26 @@
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || 'Creator indisponível');
       return (payload.creations || []).filter(row => row && row.status === 'publicada').map(row => {
-        const id = 'creator_' + String(row.id || '').replace(/[^a-zA-Z0-9_-]/g, '');
+        const communityId = String(row.id || '');
+        if (!/^[a-zA-Z0-9_-]{1,100}$/.test(communityId)) return null;
+        const id = 'creator_' + communityId;
         const poster = String(row.posterUrl || '');
         const preview = String(row.videoUrl || '');
-        return { id, nome: cleanText(row.title || 'Criação da comunidade', 80), arquivo: '', arquivoAudio: '', categoria: cleanText(row.category || 'comunidade', 60), destaque: false, tags: [ ...(Array.isArray(row.tags) ? row.tags : []), row.description || '', row.creator && (row.creator.displayName || row.creator.username) || '' ].map(tag => cleanText(tag, 60)).filter(Boolean), author: cleanText(row.creator && (row.creator.displayName || row.creator.username) || 'Criador Fabi', 80), packname: 'FabiBot Creator', temAudio: true, isAnimated: true, audioSeconds: 0, tamanho: 0, criadoEm: cleanText(row.createdAt, 40), priceCents: 20, compras: Number(row.purchases) || 0, favoritos: 0, visualizacoes: Number(row.views) || 0, source: 'community', creator: row.creator || {}, creatorSlug: row.slug || '', media: { poster: poster ? proxyUrl(poster) : '', preview: preview ? proxyUrl(preview) : '', example: preview ? proxyUrl(preview) : '' } };
-      });
+        return {
+          id, communityId, claimed: typeof row.claimed === 'boolean' ? row.claimed : null,
+          nome: cleanText(row.title || 'Criação da comunidade', 80), arquivo: '', arquivoAudio: '',
+          categoria: cleanText(row.category || 'comunidade', 60), destaque: false,
+          tags: [ ...(Array.isArray(row.tags) ? row.tags : []), row.description || '', row.creator && (row.creator.displayName || row.creator.username) || '' ].map(tag => cleanText(tag, 60)).filter(Boolean),
+          author: cleanText(row.creator && (row.creator.displayName || row.creator.username) || 'Criador Fabi', 80),
+          packname: 'FabiBot Creator', temAudio: true, isAnimated: true, audioSeconds: 0, tamanho: 0,
+          criadoEm: cleanText(row.createdAt, 40), priceCents: 20,
+          compras: Math.max(0, Number(row.purchases) || 0), favoritos: 0,
+          visualizacoes: Math.max(0, Number(row.views) || 0), source: 'community',
+          creator: row.creator && typeof row.creator === 'object' ? row.creator : {},
+          creatorSlug: cleanText(row.slug || '', 100),
+          media: { poster: poster ? proxyUrl(poster) : '', preview: preview ? proxyUrl(preview) : '', example: preview ? proxyUrl(preview) : '' }
+        };
+      }).filter(Boolean);
     } catch (_) { return []; }
   }
 
