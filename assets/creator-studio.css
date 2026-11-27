@@ -425,6 +425,16 @@
 }
 .creator-hub .creator-mine__claim:hover:not(:disabled) { transform: translateY(-1px); background: #25d36620; }
 .creator-hub .creator-mine__claim:disabled { cursor: wait; opacity: .65; }
+.creator-hub .creator-mine__claim.is-claimed:disabled,
+.creator-hub .creator-mine__claim.is-pending:disabled {
+  border-color: #64748b55;
+  background: #64748b1f;
+  color: #94a3b8;
+  opacity: 1;
+  pointer-events: none;
+}
+.creator-hub .creator-mine__claim.is-claimed:disabled { cursor: not-allowed; }
+.creator-hub .creator-mine__claim.is-pending:disabled { cursor: wait; }
 .creator-hub .creator-mine__status { color: var(--muted); font-size: 8px; font-weight: 850; white-space: nowrap; }
 .creator-hub .creator-mine__status.is-claimed { color: var(--green); }
 .creator-hub .creator-mine__empty { padding: 8px 0; }

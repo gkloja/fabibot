@@ -357,7 +357,7 @@
     if (!row || !user) return false;
     const creator = row.creator && typeof row.creator === 'object' ? row.creator : {};
     const userIds = [user.id, user.userId, user.creatorId, user._id].filter(Boolean).map(String);
-    const creatorIds = [creator.id, creator.userId, creator.creatorId, creator._id, row.creatorId, row.userId].filter(Boolean).map(String);
+    const creatorIds = [creator.id, creator.userId, creator.creatorId, creator._id, row.creatorId, row.userId, row.ownerId].filter(Boolean).map(String);
     if (userIds.some(id => creatorIds.includes(id))) return true;
     const userHandles = [user.username, user.handle].map(normalizeHandle).filter(Boolean);
     const creatorHandles = [creator.username, creator.handle].map(normalizeHandle).filter(Boolean);
@@ -376,13 +376,13 @@
     mineList.setAttribute('aria-busy', 'true');
     mineList.innerHTML = '<p class="creator-muted">Carregando suas criações…</p>';
     try {
-      const data = await api('/creations?limit=60');
+      const data = await api('/my-creations');
       if (requestId !== state.mineRequest || tokenAtStart !== state.token || userAtStart !== state.user) return;
       const rows = (Array.isArray(data.creations) ? data.creations : [])
-        .filter(row => validCreationId(row && row.id) && row.status === 'publicada' && creatorOwns(row, state.user))
+        .filter(row => validCreationId(row && row.id) && creatorOwns(row, state.user))
         .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
       if (!rows.length) {
-        mineList.innerHTML = '<p class="creator-muted creator-mine__empty">Suas criações publicadas aparecem aqui. Quando uma ainda não tiver sido recebida, o botão de resgate ficará disponível neste estúdio.</p>';
+        mineList.innerHTML = '<p class="creator-muted creator-mine__empty">Todas as suas criações aparecem aqui. O resgate fica disponível após a publicação e só enquanto a figurinha não tiver sido recebida.</p>';
         return;
       }
       mineList.innerHTML = rows.map(row => {
@@ -393,10 +393,15 @@
           ? '<img src="' + escapeHTML(poster) + '" alt="" loading="lazy" width="56" height="56">'
           : '<span class="creator-mine__placeholder" aria-hidden="true">F</span>';
         let action = '<span class="creator-mine__status">Status indisponível</span>';
-        if (row.claimed === false) {
+        if (row.claimed === true) {
+          action = '<button class="creator-mine__claim is-claimed" type="button" disabled aria-disabled="true" aria-label="Esta figurinha já foi resgatada">Resgatada</button>';
+        } else if (row.claimPending === true) {
+          action = '<button class="creator-mine__claim is-pending" type="button" disabled aria-disabled="true" aria-label="O resgate desta figurinha está sendo processado">Processando</button>';
+        } else if (row.status === 'publicada' && row.claimed === false) {
           action = '<button class="creator-mine__claim" type="button" data-creator-claim="' + escapeHTML(id) + '" aria-label="Resgatar ' + title + ' no WhatsApp">Resgatar <span aria-hidden="true">↗</span></button>';
-        } else if (row.claimed === true) {
-          action = '<span class="creator-mine__status is-claimed">Recebida</span>';
+        } else {
+          const statusLabel = row.status === 'publicada' ? 'Resgate indisponível' : 'Aguardando publicação';
+          action = '<span class="creator-mine__status">' + escapeHTML(statusLabel) + '</span>';
         }
         const count = Math.max(0, Number(row.purchases) || 0);
         const purchaseText = count === 1 ? '1 escolha' : count + ' escolhas';
