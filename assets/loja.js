@@ -18,7 +18,7 @@
   const storeWhatsapp = String(config.storeWhatsapp || '5592985715119').replace(/\D/g, '');
   let favoriteToken = '';
   try { favoriteToken = localStorage.getItem(favoriteTokenKey) || ''; if (!/^[a-zA-Z0-9_-]{16,120}$/.test(favoriteToken)) { favoriteToken = (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '') : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem(favoriteTokenKey, favoriteToken); } } catch (_) { favoriteToken = 'anon' + Date.now().toString(36); }
-  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'popular', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, creator: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '', claimRefreshPending: false };
+  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'popular', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
   try {
     const saved = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
     if (Array.isArray(saved)) state.favorites = new Set(saved.filter(id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,80}$/.test(id)).slice(0, 2000));
@@ -31,6 +31,7 @@
 
   const formatMoney = cents => (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   const prefersStill = () => matchMedia('(prefers-reduced-motion: reduce)').matches || Boolean(navigator.connection && navigator.connection.saveData);
+  const syncDialogLock = () => document.body.classList.toggle('modal-open', Boolean(document.querySelector('dialog[open]')));
 
   function toast(message) {
     clearTimeout(state.toastTimer);
@@ -49,47 +50,6 @@
       $('#previewSave').setAttribute('aria-pressed', String(isSaved));
       $('#previewSave').innerHTML = icon('heart') + (isSaved ? 'Remover das favoritas' : 'Salvar nas favoritas');
     }
-  }
-
-  function creatorSessionToken() {
-    try { return localStorage.getItem('fabi_creator_token') || ''; }
-    catch (_) { return ''; }
-  }
-
-  function normalizedCreatorHandle(value) {
-    return String(value || '').trim().replace(/^@/, '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  }
-
-  function creatorOwnsCreation(item) {
-    if (!item || item.source !== 'community' || !state.creator) return false;
-    const creator = item.creator || {};
-    const userIds = [state.creator.id, state.creator.userId, state.creator.creatorId, state.creator._id]
-      .filter(value => value !== undefined && value !== null && String(value).trim() !== '').map(String);
-    const itemIds = [creator.id, creator.userId, creator.creatorId, creator._id, item.creatorId, item.userId]
-      .filter(value => value !== undefined && value !== null && String(value).trim() !== '').map(String);
-    if (userIds.length && itemIds.length) return userIds.some(id => itemIds.includes(id));
-    const userHandles = [state.creator.username, state.creator.handle].map(normalizedCreatorHandle).filter(Boolean);
-    const creationHandles = [creator.username, creator.handle].map(normalizedCreatorHandle).filter(Boolean);
-    return userHandles.some(handle => creationHandles.includes(handle));
-  }
-
-  function updatePreviewClaim() {
-    const claimBox = $('#previewClaim');
-    if (!claimBox) return;
-    const item = state.current;
-    claimBox.hidden = !(creatorSessionToken() && item && item.source === 'community' && item.claimed === false && item.communityId && creatorOwnsCreation(item));
-  }
-
-  async function refreshCreatorIdentity(tokenOverride) {
-    const token = tokenOverride === undefined ? creatorSessionToken() : String(tokenOverride || '').trim();
-    if (!token) {
-      state.creator = null;
-      updatePreviewClaim();
-      return;
-    }
-    try { state.creator = await api.creatorIdentity(token); }
-    catch (_) { state.creator = null; }
-    updatePreviewClaim();
   }
 
   function persistCart() {
@@ -297,10 +257,16 @@
     target.innerHTML = metrics.map(metric => {
       const item = [...state.items].sort((a, b) => (Number(b[metric.key]) || 0) - (Number(a[metric.key]) || 0))[0];
       if (!item) return '<div class="popularity-leader is-empty"><small>' + metric.label + '</small><b>Ainda começando</b></div>';
-      const poster = String(api.staticMedia(item, state.index).poster || '');
-      const thumbnail = /\.webp(?:$|[?#])/i.test(poster)
-        ? '<span class="popularity-leader__media"><img src="' + escape(poster) + '" alt="" loading="lazy"></span>'
-        : '<span class="popularity-leader__media" aria-hidden="true">' + icon('play') + '</span>';
+      const media = api.staticMedia(item, state.index);
+      const poster = String(media.poster || (item.source === 'community' ? '' : (state.source === 'live' ? api.mediaUrl(item) : '')));
+      let thumbnail = '<span class="popularity-leader__media" aria-hidden="true">' + icon('play') + '</span>';
+      if (!prefersStill() && item.source === 'community' && media.preview) {
+        thumbnail = '<span class="popularity-leader__media"><video src="' + escape(media.preview) + '"' + (poster ? ' poster="' + escape(poster) + '"' : '') + ' muted loop autoplay playsinline preload="metadata" aria-hidden="true" data-popularity-video></video></span>';
+      } else if (!prefersStill() && state.source === 'live' && item.isAnimated) {
+        thumbnail = '<span class="popularity-leader__media"><img src="' + escape(api.mediaUrl(item)) + '"' + (poster ? ' data-fallback="' + escape(poster) + '"' : '') + ' alt="" loading="lazy" decoding="async" data-sticker-id="' + escape(item.id) + '"></span>';
+      } else if (poster) {
+        thumbnail = '<span class="popularity-leader__media"><img src="' + escape(poster) + '" alt="" loading="lazy" decoding="async"></span>';
+      }
       const amount = Number(item[metric.key]) || 0;
       const unit = metric.key === 'compras' ? 'compras' : metric.key === 'favoritos' ? 'corações' : 'visualizações';
       const description = metric.label + ': ' + item.nome + ', ' + amount + ' ' + unit;
@@ -308,21 +274,20 @@
         '<span class="popularity-leader__icon">' + icon(metric.icon) + '</span>' + thumbnail +
         '<span class="popularity-leader__copy"><small>' + metric.label + '</small><em>' + escape(String(amount)) + ' ' + unit + '</em></span></button>';
     }).join('');
-  }
-
-  function renderCreatorRanking(ranking) {
-    const target = $('#creatorRank');
-    if (!target) return;
-    const rows = Array.isArray(ranking) ? ranking.slice(0, 5) : [];
-    target.innerHTML = rows.length ? rows.map((row, i) => {
-      const rawCommunityId = String(row.id || '');
-      const communityId = /^[a-zA-Z0-9_-]{1,100}$/.test(rawCommunityId) ? rawCommunityId : '';
-      if (!communityId) return '';
-      const id = 'creator_' + communityId;
-      const item = state.items.find(entry => entry.id === id);
-      const poster = row.posterUrl || (item && api.staticMedia(item, state.index).poster) || './assets/fabi-logo.webp';
-      return '<article class="creator-rank__item creator-rank__item--action"><span class="rank-number">0' + (i + 1) + '</span><img src="' + escape(poster) + '" alt="" loading="lazy"><div class="creator-rank__main"><b>' + escape(row.title || (item && item.nome) || 'Criação da comunidade') + '</b><small>por ' + escape(row.creator && (row.creator.displayName || row.creator.username) || (item && item.author) || 'criador') + ' · ' + escape(String(row.purchases || 0)) + ' escolhas</small></div><div class="creator-rank__actions"><button type="button" class="rank-view-button" data-action="preview" data-id="' + escape(id) + '">Ver</button></div></article>';
-    }).join('') : '<span class="creator-muted">O ranking começa com a sua criação.</span>';
+    target.querySelectorAll('[data-popularity-video]').forEach(video => {
+      video.addEventListener('error', () => {
+        const fallback = video.getAttribute('poster');
+        if (fallback) {
+          const image = document.createElement('img');
+          image.src = fallback;
+          image.alt = '';
+          image.loading = 'lazy';
+          video.replaceWith(image);
+        } else video.closest('.popularity-leader__media')?.replaceChildren();
+      }, { once: true });
+      video.play().catch(() => {});
+    });
+    bindImageFallbacks(target);
   }
 
   function renderHero() {
@@ -435,6 +400,35 @@
       }
       return;
     }
+    if (item.source === 'community' && media.preview && !prefersStill()) {
+      const video = document.createElement('video');
+      video.src = media.preview;
+      video.poster = media.poster || '';
+      video.muted = true;
+      video.loop = true;
+      video.autoplay = true;
+      video.playsInline = true;
+      video.preload = 'metadata';
+      video.setAttribute('aria-label', 'Prévia animada da criação da comunidade');
+      video.addEventListener('error', () => {
+        if (state.current !== item || state.activeTab !== tab || state.mediaGeneration !== mediaGeneration || !container.contains(video)) return;
+        if (media.poster) {
+          const image = document.createElement('img');
+          image.src = media.poster;
+          image.alt = item.nome;
+          video.replaceWith(image);
+        } else container.innerHTML = fallbackHTML('A prévia da criação não respondeu.');
+      }, { once: true });
+      container.appendChild(video);
+      const watermark = document.createElement('span');
+      watermark.className = 'watermark video-watermark';
+      watermark.setAttribute('aria-hidden', 'true');
+      watermark.textContent = 'FABI BOT';
+      container.appendChild(watermark);
+      video.play().catch(() => {});
+      $('#previewMediaNote').textContent = 'Prévia animada da comunidade. A marca-d’água aparece apenas na vitrine.';
+      return;
+    }
     const source = state.source === 'live' ? api.mediaUrl(item) : media.poster;
     if (source) {
       const image = document.createElement('img');
@@ -480,7 +474,6 @@
         $('#previewCreatorProfile').dataset.handle = creator.handle || creator.username || item.creatorSlug || '';
       }
     }
-    updatePreviewClaim();
     $('#previewStatus').textContent = state.source !== 'live' ? 'Prévia do pacote local. O checkout exige conexão ativa com o catálogo do bot.' : '';
     $('#exampleTab').disabled = !api.staticMedia(item, state.index).example;
     $('#previewAddToCart').setAttribute('aria-pressed', String(state.cart.has(item.id)));
@@ -497,7 +490,7 @@
     ++state.previewGeneration;
     ++state.mediaGeneration;
     stopMedia();
-    if (!$('#creatorProfileDialog')?.open) document.body.classList.remove('modal-open');
+    syncDialogLock();
     state.current = null;
     const url = new URL(location.href);
     if (url.searchParams.has('sticker')) { url.searchParams.delete('sticker'); history.replaceState(null, '', url.pathname + (url.search ? url.search : '') + url.hash); }
@@ -556,55 +549,6 @@
     if (kind === 'facebook') return openShareWindow('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url));
     if (kind === 'x') return openShareWindow('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url));
     fallbackShare();
-  }
-
-  async function claimCurrentCreation(itemOverride) {
-    const item = itemOverride || state.current;
-    if (!item || item.source !== 'community') return;
-    if (itemOverride && state.current !== item && state.items.some(entry => entry.id === item.id)) openPreview(item.id);
-    const inPreview = !!(state.current && state.current.id === item.id && $('#previewDialog')?.open);
-    const report = message => { if (inPreview) $('#previewStatus').textContent = message; else toast(message); };
-    const token = creatorSessionToken();
-    if (!token || !creatorOwnsCreation(item)) {
-      updatePreviewClaim();
-      report('O resgate fica disponível apenas para o criador autenticado desta figurinha.');
-      return;
-    }
-    if (item.claimed !== false || !item.communityId) {
-      updatePreviewClaim();
-      report('Esta figurinha já foi resgatada ou não está disponível para resgate.');
-      return;
-    }
-    const button = inPreview ? $('#previewClaimButton') : null;
-    const originalLabel = button && button.innerHTML;
-    let claimWindow = null;
-    if (button) { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Preparando seu WhatsApp…'; }
-    report('Gerando um link seguro de recebimento…');
-    try {
-      // Open synchronously inside the tap, before the API request, to avoid mobile popup blockers.
-      try {
-        claimWindow = window.open('about:blank', '_blank');
-        if (claimWindow) {
-          claimWindow.opener = null;
-          claimWindow.document.title = 'Abrindo o WhatsApp';
-          claimWindow.document.body.textContent = 'Preparando o link seguro de recebimento…';
-        }
-      } catch (_) { claimWindow = null; }
-      const result = await api.creatorClaimLink(item.communityId, token);
-      const claimUrl = String(result.claimUrl || '').trim();
-      if (!claimUrl) throw new Error('O servidor não retornou um link de recebimento. Tente novamente.');
-      const target = new URL(claimUrl, location.href);
-      if (target.protocol !== 'https:' && target.protocol !== 'whatsapp:') throw new Error('O link de recebimento retornado não é seguro.');
-      state.claimRefreshPending = true;
-      if (claimWindow && !claimWindow.closed) claimWindow.location.replace(target.href);
-      else window.location.assign(target.href);
-      report('O WhatsApp está abrindo com seu link de recebimento.');
-    } catch (error) {
-      if (claimWindow && !claimWindow.closed) claimWindow.close();
-      report(error.message || 'Não foi possível gerar o link de recebimento.');
-    } finally {
-      if (button) { button.disabled = false; button.removeAttribute('aria-busy'); button.innerHTML = originalLabel; }
-    }
   }
 
   function updateCartButtons() {
@@ -754,7 +698,7 @@
     }
   }
 
-  function closeCart() { document.body.classList.remove('modal-open'); }
+  function closeCart() { syncDialogLock(); }
 
   function makeRequestId() {
     if (!window.crypto || !window.crypto.getRandomValues) return '';
@@ -866,13 +810,6 @@
     }
   }
 
-  window.addEventListener('fabi-creator-auth-changed', event => {
-    state.creator = event.detail && typeof event.detail === 'object' ? event.detail : null;
-    updatePreviewClaim();
-  });
-  window.addEventListener('storage', event => {
-    if (event.key === 'fabi_creator_token') refreshCreatorIdentity(event.newValue || '');
-  });
   document.addEventListener('click', event => {
     const button = event.target.closest('[data-action]');
     if (!button) return;
@@ -911,10 +848,9 @@
   $('#previewSave').addEventListener('click', () => { if (state.current) toggleFavorite(state.current.id); });
   $('#previewAddToCart').addEventListener('click', () => { if (state.current) { addToCart(state.current.id); $('#previewDialog').close(); openCart(); } });
   $('#previewCreatorProfile')?.addEventListener('click', () => openCreatorProfile($('#previewCreatorProfile').dataset.handle));
-  $('#previewClaimButton')?.addEventListener('click', claimCurrentCreation);
   document.querySelectorAll('[data-share]').forEach(button => button.addEventListener('click', () => shareSticker(button.dataset.share)));
   $('#closeCreatorProfile')?.addEventListener('click', () => $('#creatorProfileDialog').close());
-  $('#creatorProfileDialog')?.addEventListener('close', () => { if (!$('#previewDialog')?.open) document.body.classList.remove('modal-open'); });
+  $('#creatorProfileDialog')?.addEventListener('close', syncDialogLock);
   $('#creatorProfileDialog')?.addEventListener('click', event => { if (event.target === $('#creatorProfileDialog')) $('#creatorProfileDialog').close(); });
   $('#cartButton').addEventListener('click', openCart);
   $('#themeToggle').addEventListener('click', () => {
@@ -936,7 +872,7 @@
   $('#copyPixButton').addEventListener('click', () => copyText($('#pixCopyPaste').value, $('#checkoutStatus'), 'PIX copiado.'));
   $('#copyRedeemButton').addEventListener('click', () => copyText($('#redeemCode').textContent, $('#checkoutStatus'), 'Código de resgate copiado.'));
   $('#closeTutorial').addEventListener('click', () => $('#tutorialDialog').close());
-  $('#tutorialDialog').addEventListener('close', () => { $('#tutorialVideo').pause(); $('#tutorialVideo').removeAttribute('src'); $('#tutorialVideo').load(); document.body.classList.remove('modal-open'); });
+  $('#tutorialDialog').addEventListener('close', () => { $('#tutorialVideo').pause(); $('#tutorialVideo').removeAttribute('src'); $('#tutorialVideo').load(); syncDialogLock(); });
   $('#tutorialDialog').addEventListener('click', event => { if (event.target === $('#tutorialDialog')) $('#tutorialDialog').close(); });
 
   window.addEventListener('storage', event => {
@@ -951,12 +887,10 @@
   });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) { stopMedia(); stopHoverVideos(); return; }
-    if (state.claimRefreshPending) { state.claimRefreshPending = false; loadCatalog(); }
   });
   window.addEventListener('fabi-creator-published', () => { state.limit = config.pageSize; loadCatalog(); });
   $('#currentYear').textContent = String(new Date().getFullYear());
   restoreTheme();
-  refreshCreatorIdentity();
   restorePendingOrder();
   updateSavedCount();
   if (state.redeemCode) {

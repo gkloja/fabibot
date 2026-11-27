@@ -271,3 +271,28 @@
   .fabi-channel-notice__copy span { display: none; }
   .fabi-channel-notice a { padding-inline: 7px; font-size: 8px; }
 }
+
+
+/* Miniaturas animadas nos três destaques: compacto no celular, com fallback definido pelo controlador. */
+.popularity-leader__media {
+  display: block;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface-raised);
+}
+.popularity-leader__media img,
+.popularity-leader__media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.popularity-leader__media > .icon { display: block; width: 20px; height: 20px; margin: 15px auto; color: var(--green); }
+@media (max-width: 600px) {
+  .popularity-leader__media { flex-basis: 46px; width: 46px; height: 46px; border-radius: 10px; }
+  .popularity-leader__media > .icon { margin: 12px auto; }
+}
