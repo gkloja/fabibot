@@ -217,6 +217,18 @@
   async function recordView(id, clientToken) { return jsonApi('/api/figurinhas/visualizar', 'POST', { id: String(id), clientToken: String(clientToken) }); }
   function tutorialUrl() { return proxyUrl(config.tutorialVideoPath || '/figurinhas_media/tutorial-como-receber.mp4'); }
 
+  async function creatorIdentity(token) {
+    const value = String(token || '').trim();
+    if (!value) return null;
+    const response = await fetch('/api/creator/auth/me', {
+      headers: { Authorization: 'Bearer ' + value },
+      cache: 'no-store'
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.error || 'Sessão de criador indisponível.');
+    return payload.user && typeof payload.user === 'object' ? payload.user : null;
+  }
+
   async function creatorClaimLink(creationId, token) {
     const id = String(creationId || '').replace(/[^a-zA-Z0-9_-]/g, '');
     if (!id || !token) throw new Error('Entre no seu perfil de criador para receber esta figurinha.');
@@ -232,5 +244,5 @@
     return jsonApi('/api/figurinhas/verificar-pagamento/' + encodeURIComponent(id), 'GET');
   }
 
-  window.FabiStickerApi = { catalog, creatorCatalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, tutorialUrl, createStickerOrder, recordFavorite, recordView, checkStickerPayment, creatorClaimLink };
+  window.FabiStickerApi = { catalog, creatorCatalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, tutorialUrl, createStickerOrder, recordFavorite, recordView, checkStickerPayment, creatorIdentity, creatorClaimLink };
 })();

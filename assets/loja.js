@@ -18,7 +18,7 @@
   const storeWhatsapp = String(config.storeWhatsapp || '5592985715119').replace(/\D/g, '');
   let favoriteToken = '';
   try { favoriteToken = localStorage.getItem(favoriteTokenKey) || ''; if (!/^[a-zA-Z0-9_-]{16,120}$/.test(favoriteToken)) { favoriteToken = (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '') : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem(favoriteTokenKey, favoriteToken); } } catch (_) { favoriteToken = 'anon' + Date.now().toString(36); }
-  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'popular', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '', claimRefreshPending: false };
+  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'popular', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, creator: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '', claimRefreshPending: false };
   try {
     const saved = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
     if (Array.isArray(saved)) state.favorites = new Set(saved.filter(id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,80}$/.test(id)).slice(0, 2000));
@@ -49,6 +49,47 @@
       $('#previewSave').setAttribute('aria-pressed', String(isSaved));
       $('#previewSave').innerHTML = icon('heart') + (isSaved ? 'Remover das favoritas' : 'Salvar nas favoritas');
     }
+  }
+
+  function creatorSessionToken() {
+    try { return localStorage.getItem('fabi_creator_token') || ''; }
+    catch (_) { return ''; }
+  }
+
+  function normalizedCreatorHandle(value) {
+    return String(value || '').trim().replace(/^@/, '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+
+  function creatorOwnsCreation(item) {
+    if (!item || item.source !== 'community' || !state.creator) return false;
+    const creator = item.creator || {};
+    const userIds = [state.creator.id, state.creator.userId, state.creator.creatorId, state.creator._id]
+      .filter(value => value !== undefined && value !== null && String(value).trim() !== '').map(String);
+    const itemIds = [creator.id, creator.userId, creator.creatorId, creator._id, item.creatorId, item.userId]
+      .filter(value => value !== undefined && value !== null && String(value).trim() !== '').map(String);
+    if (userIds.length && itemIds.length) return userIds.some(id => itemIds.includes(id));
+    const userHandles = [state.creator.username, state.creator.handle].map(normalizedCreatorHandle).filter(Boolean);
+    const creationHandles = [creator.username, creator.handle].map(normalizedCreatorHandle).filter(Boolean);
+    return userHandles.some(handle => creationHandles.includes(handle));
+  }
+
+  function updatePreviewClaim() {
+    const claimBox = $('#previewClaim');
+    if (!claimBox) return;
+    const item = state.current;
+    claimBox.hidden = !(creatorSessionToken() && item && item.source === 'community' && item.claimed === false && item.communityId && creatorOwnsCreation(item));
+  }
+
+  async function refreshCreatorIdentity(tokenOverride) {
+    const token = tokenOverride === undefined ? creatorSessionToken() : String(tokenOverride || '').trim();
+    if (!token) {
+      state.creator = null;
+      updatePreviewClaim();
+      return;
+    }
+    try { state.creator = await api.creatorIdentity(token); }
+    catch (_) { state.creator = null; }
+    updatePreviewClaim();
   }
 
   function persistCart() {
@@ -246,28 +287,41 @@
   }
 
   function renderPopularity() {
-    const target = $('#popularityLeaders'); if (!target) return;
-    const metrics = [{ key: 'compras', label: 'Mais compradas', icon: 'cart' }, { key: 'favoritos', label: 'Mais queridas', icon: 'heart' }, { key: 'visualizacoes', label: 'Mais vistas', icon: 'eye' }];
+    const target = $('#popularityLeaders');
+    if (!target) return;
+    const metrics = [
+      { key: 'compras', label: 'Mais compradas', icon: 'cart' },
+      { key: 'favoritos', label: 'Mais queridas', icon: 'heart' },
+      { key: 'visualizacoes', label: 'Mais vistas', icon: 'eye' }
+    ];
     target.innerHTML = metrics.map(metric => {
       const item = [...state.items].sort((a, b) => (Number(b[metric.key]) || 0) - (Number(a[metric.key]) || 0))[0];
       if (!item) return '<div class="popularity-leader is-empty"><small>' + metric.label + '</small><b>Ainda começando</b></div>';
-      return '<button class="popularity-leader" type="button" data-action="preview" data-id="' + escape(item.id) + '"><span class="popularity-leader__icon">' + icon(metric.icon) + '</span><span><small>' + metric.label + '</small><b>' + escape(item.nome) + '</b><em>' + escape(String(item[metric.key] || 0)) + ' ' + (metric.key === 'compras' ? 'compras' : metric.key === 'favoritos' ? 'corações' : 'views') + '</em></span></button>';
+      const poster = String(api.staticMedia(item, state.index).poster || '');
+      const thumbnail = /\.webp(?:$|[?#])/i.test(poster)
+        ? '<span class="popularity-leader__media"><img src="' + escape(poster) + '" alt="" loading="lazy"></span>'
+        : '<span class="popularity-leader__media" aria-hidden="true">' + icon('play') + '</span>';
+      const amount = Number(item[metric.key]) || 0;
+      const unit = metric.key === 'compras' ? 'compras' : metric.key === 'favoritos' ? 'corações' : 'visualizações';
+      const description = metric.label + ': ' + item.nome + ', ' + amount + ' ' + unit;
+      return '<button class="popularity-leader" type="button" data-action="preview" data-id="' + escape(item.id) + '" aria-label="' + escape(description) + '" title="' + escape(item.nome) + '">' +
+        '<span class="popularity-leader__icon">' + icon(metric.icon) + '</span>' + thumbnail +
+        '<span class="popularity-leader__copy"><small>' + metric.label + '</small><em>' + escape(String(amount)) + ' ' + unit + '</em></span></button>';
     }).join('');
   }
 
   function renderCreatorRanking(ranking) {
-    const target = $('#creatorRank'); if (!target) return;
+    const target = $('#creatorRank');
+    if (!target) return;
     const rows = Array.isArray(ranking) ? ranking.slice(0, 5) : [];
     target.innerHTML = rows.length ? rows.map((row, i) => {
       const rawCommunityId = String(row.id || '');
       const communityId = /^[a-zA-Z0-9_-]{1,100}$/.test(rawCommunityId) ? rawCommunityId : '';
+      if (!communityId) return '';
       const id = 'creator_' + communityId;
       const item = state.items.find(entry => entry.id === id);
       const poster = row.posterUrl || (item && api.staticMedia(item, state.index).poster) || './assets/fabi-logo.webp';
-      const claimed = row.claimed === true || (item && item.claimed === true);
-      const claimable = !!communityId && !claimed && (row.claimed === false || (item && item.claimed === false));
-      const claimStatus = claimed ? '<span class="rank-claimed">Recebida ✓</span>' : claimable ? '<button type="button" class="rank-claim-button" data-action="creator-rank-claim" data-id="' + escape(id) + '">Resgatar</button>' : '<span class="rank-claim-unavailable">Status indisponível</span>';
-      return '<article class="creator-rank__item creator-rank__item--action"><span class="rank-number">0' + (i + 1) + '</span><img src="' + escape(poster) + '" alt="" loading="lazy"><div class="creator-rank__main"><b>' + escape(row.title || (item && item.nome) || 'Criação da comunidade') + '</b><small>por ' + escape(row.creator && (row.creator.displayName || row.creator.username) || (item && item.author) || 'criador') + ' · ' + escape(String(row.purchases || 0)) + ' escolhas</small></div><div class="creator-rank__actions"><button type="button" class="rank-view-button" data-action="preview" data-id="' + escape(id) + '">Ver</button>' + claimStatus + '</div></article>';
+      return '<article class="creator-rank__item creator-rank__item--action"><span class="rank-number">0' + (i + 1) + '</span><img src="' + escape(poster) + '" alt="" loading="lazy"><div class="creator-rank__main"><b>' + escape(row.title || (item && item.nome) || 'Criação da comunidade') + '</b><small>por ' + escape(row.creator && (row.creator.displayName || row.creator.username) || (item && item.author) || 'criador') + ' · ' + escape(String(row.purchases || 0)) + ' escolhas</small></div><div class="creator-rank__actions"><button type="button" class="rank-view-button" data-action="preview" data-id="' + escape(id) + '">Ver</button></div></article>';
     }).join('') : '<span class="creator-muted">O ranking começa com a sua criação.</span>';
   }
 
@@ -419,7 +473,6 @@
     const creatorBox = $('#previewCreator');
     if (creatorBox) {
       creatorBox.hidden = item.source !== 'community';
-      $('#previewClaim').hidden = !(item.source === 'community' && item.claimed === false && item.communityId);
       if (item.source === 'community') {
         const creator = item.creator || {};
         $('#previewCreatorAvatar').src = creator.avatarUrl || './assets/fabi-logo.webp';
@@ -427,6 +480,7 @@
         $('#previewCreatorProfile').dataset.handle = creator.handle || creator.username || item.creatorSlug || '';
       }
     }
+    updatePreviewClaim();
     $('#previewStatus').textContent = state.source !== 'live' ? 'Prévia do pacote local. O checkout exige conexão ativa com o catálogo do bot.' : '';
     $('#exampleTab').disabled = !api.staticMedia(item, state.index).example;
     $('#previewAddToCart').setAttribute('aria-pressed', String(state.cart.has(item.id)));
@@ -510,14 +564,15 @@
     if (itemOverride && state.current !== item && state.items.some(entry => entry.id === item.id)) openPreview(item.id);
     const inPreview = !!(state.current && state.current.id === item.id && $('#previewDialog')?.open);
     const report = message => { if (inPreview) $('#previewStatus').textContent = message; else toast(message); };
-    if (item.claimed !== false || !item.communityId) {
-      report('Esta criação já foi reivindicada ou o status ainda não foi confirmado.');
+    const token = creatorSessionToken();
+    if (!token || !creatorOwnsCreation(item)) {
+      updatePreviewClaim();
+      report('O resgate fica disponível apenas para o criador autenticado desta figurinha.');
       return;
     }
-    let token = '';
-    try { token = localStorage.getItem('fabi_creator_token') || ''; } catch (_) {}
-    if (!token) {
-      report('Entre na sua conta pelo botão “Criar figurinha” para confirmar que esta criação é sua.');
+    if (item.claimed !== false || !item.communityId) {
+      updatePreviewClaim();
+      report('Esta figurinha já foi resgatada ou não está disponível para resgate.');
       return;
     }
     const button = inPreview ? $('#previewClaimButton') : null;
@@ -811,6 +866,13 @@
     }
   }
 
+  window.addEventListener('fabi-creator-auth-changed', event => {
+    state.creator = event.detail && typeof event.detail === 'object' ? event.detail : null;
+    updatePreviewClaim();
+  });
+  window.addEventListener('storage', event => {
+    if (event.key === 'fabi_creator_token') refreshCreatorIdentity(event.newValue || '');
+  });
   document.addEventListener('click', event => {
     const button = event.target.closest('[data-action]');
     if (!button) return;
@@ -819,14 +881,6 @@
     if (button.dataset.action === 'cart-add') addToCart(button.dataset.id);
     if (button.dataset.action === 'cart-remove') removeFromCart(button.dataset.id);
     if (button.dataset.action === 'tutorial') openTutorial();
-    if (button.dataset.action === 'creator-rank-claim') {
-      const item = state.items.find(entry => entry.id === button.dataset.id);
-      if (item) claimCurrentCreation(item);
-      else {
-        const match = /^creator_([a-zA-Z0-9_-]{1,100})$/.exec(button.dataset.id || '');
-        if (match) claimCurrentCreation({ id: button.dataset.id, communityId: match[1], claimed: false, source: 'community' });
-      }
-    }
   });
   document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
   $('#savedButton').addEventListener('click', () => { setFilter(state.filter === 'favorites' ? 'all' : 'favorites'); $('#catalogo').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
@@ -902,6 +956,7 @@
   window.addEventListener('fabi-creator-published', () => { state.limit = config.pageSize; loadCatalog(); });
   $('#currentYear').textContent = String(new Date().getFullYear());
   restoreTheme();
+  refreshCreatorIdentity();
   restorePendingOrder();
   updateSavedCount();
   if (state.redeemCode) {
