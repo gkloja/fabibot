@@ -2103,7 +2103,7 @@ body {
   });
 </script>
 
-    <link rel="stylesheet" href="/assets/conectar-v3.css?v=20261007">
+    <link rel="stylesheet" href="/assets/conectar-v3.css?v=20261127">
 <style id="fabi-conectar-compat-v17">
 html,body {max-width:100%;overflow-x:clip;}
 *,*::before,*::after {box-sizing:border-box;}
@@ -2360,7 +2360,7 @@ body.dark-mode .fb-session-actions .btn{
 
         <!-- V25: área de ajuda priorizando YouTube + microdemonstração -->
 <section class="fb57-plans" id="escolher-fabi" aria-labelledby="fb57Title">
- <div class="fb57-title"><div><span class="fb57-eyebrow">ESCOLHA A SUA FABI</span><h2 id="fb57Title">Conheça as versões e escolha a sua proteção.</h2><p>Escolha Free ou Pro primeiro. Depois continue rolando para assistir aos vídeos, seguir o tutorial e conectar sua Fabi. A escolha só muda a versão e a aparência do site.</p></div></div>
+ <div class="fb57-title"><div><span class="fb57-eyebrow">ESCOLHA A SUA FABI</span><h2 id="fb57Title">Escolha como a FabiBot deve funcionar.</h2><p>Use Free ou Pro para grupos. Se você quer uma assistente pessoal que só responda no seu privado, conheça o Modo Privado por R$ 30/mês.</p></div></div>
  <div class="fb57-grid">
   <article class="fb57-plan free" id="fb58FreeCard"><span class="fb57-pill">🛡️ INICIAL · VAGAS LIMITADAS</span><h3>Fabi Free</h3><div class="fb57-price">R$ 0 <small>sem comprar plano</small></div>
    <p>Proteção básica para começar sem pagar, com comandos de moderação e controle de grupo.</p><div class="fb58-capacity" id="fb58Capacity" role="status" aria-live="polite">🔄 Consultando vagas gratuitas…</div>
@@ -2371,6 +2371,11 @@ body.dark-mode .fb-session-actions .btn{
    <p>Para comunidades que exigem uma proteção mais avançada, conteúdo inteligente e ferramentas profissionais de gerenciamento.</p>
    <ul><li><strong>Segurança avançada:</strong> antipornografia, antipolítica e filtros especiais de moderação</li><li><strong>Autoresposta:</strong> respostas automáticas para interagir com os membros</li><li><strong>Notícias automáticas:</strong> programação e seleção de fontes disponíveis</li><li><strong>RPG e Pokémon:</strong> experiência de jogos e recursos ampliados</li><li><strong>Boas-vindas:</strong> mensagens e áudios personalizados em OGG/Opus</li><li><strong>Ferramentas extras:</strong> downloads e automações de mídia, quando ativados</li><li><strong>Gestão comercial:</strong> aluguel de robô por grupo, vencimentos e acesso a comandos Pro</li><li>Inclui os controles Free, com limites de sessão conforme o plano contratado</li></ul>
    <div class="fb57-foot"><button type="button" class="fb57-cta" onclick="fabi57SelecionarModo('pro')">Escolher Fabi Pro</button><button type="button" class="fb58-pro-tour" onclick="abrirModalPlanos()">💎 Ver planos Pro</button><small>Se você já usa a Free, pode atualizar a mesma sessão depois de ativar um plano, sem novo pareamento.</small></div>
+  </article>
+  <article class="fb57-plan private" id="fb58PrivateCard"><span class="fb57-private-badge">R$ 30/MÊS</span><span class="fb57-pill">🔒 CONTROLE EXCLUSIVO</span><h3>Modo Privado</h3><div class="fb57-price">R$ 30 <small>por mês</small></div>
+   <p>Transforme a FabiBot em sua assistente pessoal. Ela responde somente no privado do proprietário e fica silenciosa nos grupos.</p>
+   <ul><li><strong>Privado do dono:</strong> comandos e recursos normais somente na sua conversa</li><li><strong>Grupos silenciosos:</strong> não responde ranking, comandos ou automações comuns</li><li><strong>Proteções seletivas:</strong> ative anti-link e outras proteções grupo a grupo</li><li><strong>Uso pessoal:</strong> play, figurinhas, downloads e mídias no seu próprio privado</li><li><strong>Ativação guiada:</strong> plano e pareamento em uma área exclusiva</li></ul>
+   <div class="fb57-foot"><a class="fb57-private-cta" href="/conectarpv">Conhecer e ativar <span aria-hidden="true">→</span></a><small>Ideal para quem não quer que a robô converse nos grupos.</small></div>
   </article>
  </div>
  <details class="fb57-extras" id="fb57Detalhes"><summary><span>Comparar todas as funcionalidades</span><span aria-hidden="true">⌄</span></summary>
@@ -2393,8 +2398,13 @@ body.dark-mode .fb-session-actions .btn{
 <li><strong>Downloads automáticos:</strong> recursos de mídia habilitados pelo administrador.</li>
 <li><strong>RPG e Pokémon:</strong> funcionalidades adicionais de jogo, além do modo RPG básico disponível na Free.</li>
 <li><strong>Aluguel por grupo:</strong> gestão de clientes, prazos e vencimentos.</li>
-<li><strong>Mais personalização:</strong> comandos e ferramentas identificados como Pro no painel.</li>
-</ul><p>Na Free, as funções Pro ficam visíveis, mas não podem ser ativadas. Os limites de sessões Pro dependem do plano comprado.</p></section>
+ <li><strong>Mais personalização:</strong> comandos e ferramentas identificados como Pro no painel.</li>
+ </ul><p>Na Free, as funções Pro ficam visíveis, mas não podem ser ativadas. Os limites de sessões Pro dependem do plano comprado.</p></section>
+ <section><h3>🔒 Como funciona o Modo Privado</h3><ul>
+ <li><strong>Somente o proprietário:</strong> a FabiBot só executa comandos recebidos no privado do número conectado.</li>
+ <li><strong>Nenhuma conversa automática em grupos:</strong> ela não responde mensagens, rankings ou comandos comuns em grupos.</li>
+ <li><strong>Proteções sob demanda:</strong> o proprietário pode ativar recursos específicos, como anti-link, em cada grupo.</li>
+ </ul><p>O Modo Privado custa <strong>R$ 30/mês</strong> e tem uma etapa de conexão própria. Use o botão do card para iniciar.</p></section>
  </div></details>
 <div class="fb59-guide" id="fb59Guide" role="status" aria-live="polite" hidden>
   <div class="fb59-avatar" aria-hidden="true">👩🏽‍💻<span>✓</span></div>

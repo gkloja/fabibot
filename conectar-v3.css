@@ -402,3 +402,19 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   .modal-dialog{margin:10px !important}
   .modal-content{border-radius:18px !important}
 }
+
+/* MODO PRIVADO — opção premium com controle exclusivo no privado */
+.fb57-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.fb57-plan.private{
+  background:linear-gradient(155deg,#30215a,#15152d 80%);
+  border-color:rgba(196,181,253,.55);
+  box-shadow:0 14px 38px rgba(111,66,193,.18)
+}
+.fb57-plan.private .fb57-pill{background:#5b3d91;color:#efe7ff}
+.fb57-plan.private .fb57-price{color:#e7d9ff}
+.fb57-plan.private li:before{color:#d4bfff}
+.fb57-private-badge{position:absolute;top:16px;right:16px;padding:5px 9px;border-radius:999px;background:#c4b5fd;color:#241744;font-size:10px;font-weight:900;letter-spacing:.05em}
+.fb57-private-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border-radius:13px;background:#c4b5fd;color:#241744;text-decoration:none;font-size:14px;font-weight:900}
+.fb57-private-cta:hover{filter:brightness(1.08);transform:translateY(-1px);color:#241744}
+@media(max-width:900px){.fb57-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.fb57-plan.private{grid-column:1/-1}}
+@media(max-width:620px){.fb57-grid{grid-template-columns:1fr}.fb57-plan.private{grid-column:auto}}
