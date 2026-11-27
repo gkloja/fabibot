@@ -399,6 +399,17 @@
     $('#previewTitle').textContent = item.nome;
     $('#previewBadges').innerHTML = [item.temAudio ? 'Com áudio' : 'Sem áudio', item.isAnimated ? 'Animada' : 'Estática', item.categoria].map(label => '<span>' + escape(label) + '</span>').join('');
     $('#previewMeta').textContent = [item.packname, item.tamanho ? Math.round(item.tamanho / 1024) + ' KB' : '', item.audioSeconds ? item.audioSeconds.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' s de áudio' : ''].filter(Boolean).join(' · ');
+    const creatorBox = $('#previewCreator');
+    if (creatorBox) {
+      creatorBox.hidden = item.source !== 'community';
+      $('#previewClaim').hidden = item.source !== 'community' || item.claimed !== false;
+      if (item.source === 'community') {
+        const creator = item.creator || {};
+        $('#previewCreatorAvatar').src = creator.avatarUrl || './assets/fabi-logo.webp';
+        $('#previewCreatorName').textContent = item.author || creator.displayName || creator.username || 'Criador Fabi';
+        $('#previewCreatorProfile').dataset.handle = creator.handle || creator.username || item.creatorSlug || '';
+      }
+    }
     $('#previewStatus').textContent = state.source !== 'live' ? 'Prévia do pacote local. O checkout exige conexão ativa com o catálogo do bot.' : '';
     $('#exampleTab').disabled = !api.staticMedia(item, state.index).example;
     $('#previewAddToCart').setAttribute('aria-pressed', String(state.cart.has(item.id)));
@@ -423,6 +434,37 @@
     if (focused && focused.isConnected) focused.focus();
   }
 
+
+  function openCreatorProfile(handle) {
+    const items = state.items.filter(item => item.source === 'community' && ((item.creator && (item.creator.handle || item.creator.username) === handle) || item.creatorSlug === handle));
+    const first = items[0];
+    if (!first) return toast('Este perfil ainda não tem criações públicas.');
+    const creator = first.creator || {};
+    $('#creatorProfileDialogAvatar').src = creator.avatarUrl || './assets/fabi-logo.webp';
+    $('#creatorProfileDialogName').textContent = first.author || creator.displayName || creator.username || 'Criador Fabi';
+    $('#creatorProfileDialogBio').textContent = creator.bio || 'Ideias que viram reação.';
+    $('#creatorProfileDialogStats').textContent = items.length + (items.length === 1 ? ' criação publicada' : ' criações publicadas');
+    $('#creatorProfileCount').textContent = String(items.length);
+    $('#creatorProfileGrid').innerHTML = items.map(item => { const media = api.staticMedia(item, state.index); return '<button class="creator-mini-card" type="button" data-action="preview" data-id="' + escape(item.id) + '"><span class="creator-mini-card__image">' + (media.poster ? '<img src="' + escape(media.poster) + '" alt="" loading="lazy">' : icon('play')) + '</span><strong>' + escape(item.nome) + '</strong><small>' + escape(String(item.visualizacoes || 0)) + ' views · abrir prévia</small></button>'; }).join('');
+    if (!$('#creatorProfileDialog').open) $('#creatorProfileDialog').showModal();
+    document.body.classList.add('modal-open');
+  }
+
+  function shareSticker(kind) {
+    if (!state.current) return;
+    const url = location.origin + '/figurinhas/' + encodeURIComponent(state.current.id);
+    const text = 'Olha essa figurinha da Fabi Bot: ' + state.current.nome;
+    if (kind === 'copy') return copyText(url, $('#previewStatus'), 'Link copiado.');
+    if (kind === 'whatsapp') return window.open('https://wa.me/?text=' + encodeURIComponent(text + ' ' + url), '_blank', 'noopener');
+    if (navigator.share) navigator.share({ title: state.current.nome + ' | Fabi Bot', text, url }).catch(() => {}); else copyText(url, $('#previewStatus'), 'Link copiado.');
+  }
+
+  async function claimCurrentCreation() {
+    const item = state.current; if (!item || item.source !== 'community') return;
+    let token = ''; try { token = localStorage.getItem('fabi_creator_token') || ''; } catch (_) {}
+    try { const result = await api.creatorClaimLink(item.communityId, token); if (result.claimUrl) window.open(result.claimUrl, '_blank', 'noopener'); $('#previewClaim').hidden = true; toast('Link de recebimento aberto no WhatsApp.'); }
+    catch (error) { $('#previewStatus').textContent = error.message; }
+  }
 
   function updateCartButtons() {
     document.querySelectorAll('[data-action="cart-add"]').forEach(button => {
@@ -720,6 +762,12 @@
   $('#exampleTab').addEventListener('click', () => showPreviewMedia('example'));
   $('#previewSave').addEventListener('click', () => { if (state.current) toggleFavorite(state.current.id); });
   $('#previewAddToCart').addEventListener('click', () => { if (state.current) { addToCart(state.current.id); $('#previewDialog').close(); openCart(); } });
+  $('#previewCreatorProfile')?.addEventListener('click', () => openCreatorProfile($('#previewCreatorProfile').dataset.handle));
+  $('#previewClaimButton')?.addEventListener('click', claimCurrentCreation);
+  document.querySelectorAll('[data-share]').forEach(button => button.addEventListener('click', () => shareSticker(button.dataset.share)));
+  $('#closeCreatorProfile')?.addEventListener('click', () => $('#creatorProfileDialog').close());
+  $('#creatorProfileDialog')?.addEventListener('close', () => document.body.classList.remove('modal-open'));
+  $('#creatorProfileDialog')?.addEventListener('click', event => { if (event.target === $('#creatorProfileDialog')) $('#creatorProfileDialog').close(); });
   $('#cartButton').addEventListener('click', openCart);
   $('#themeToggle').addEventListener('click', () => {
     const light = document.documentElement.dataset.theme === 'light' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: light)').matches);

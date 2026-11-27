@@ -10,7 +10,7 @@ function price(item) { return (Number(item.priceCents || (item.temAudio ? 20 : 1
 function slugId(value) { return /^[a-zA-Z0-9_-]{1,80}$/.test(String(value || '')) ? String(value) : ''; }
 function catalogRows(raw) { return Array.isArray(raw) ? raw : (raw && (raw.figurinhas || raw.data)) || []; }
 function proxiedPath(path) {
-  if (!/^\/figurinhas_media\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$/i.test(String(path || ''))) return '';
+  if (!/^\/(?:figurinhas_media|figurinhas_creator)\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$/i.test(String(path || ''))) return '';
   return `${PROXY.replace(/\/$/, '')}/${new URL(BACKEND).host}/proxy?url=${encodeURIComponent(`${BACKEND.replace(/\/$/, '')}${path}`)}`;
 }
 function mediaUrl(item, kind) {
@@ -22,9 +22,21 @@ function posterUrl(item, id) {
 }
 
 async function loadCatalog() {
-  const response = await fetch(BACKEND.replace(/\/$/, '') + '/figurinhas_loja.json', { headers: { accept: 'application/json' } });
-  if (!response.ok) throw new Error('catalog_http_' + response.status);
-  return catalogRows(await response.json()).filter(row => row && slugId(row.id) && /^[a-zA-Z0-9_-]+\.webp$/i.test(String(row.arquivo || '')));
+  const root = BACKEND.replace(/\/$/, '');
+  const [catalogResponse, creatorResponse] = await Promise.all([
+    fetch(root + '/figurinhas_loja.json', { headers: { accept: 'application/json' } }),
+    fetch(root + '/api/creator/creations?limit=60', { headers: { accept: 'application/json' } })
+  ]);
+  if (!catalogResponse.ok) throw new Error('catalog_http_' + catalogResponse.status);
+  const official = catalogRows(await catalogResponse.json()).filter(row => row && slugId(row.id) && /^[a-zA-Z0-9_-]+\.webp$/i.test(String(row.arquivo || '')));
+  let community = [];
+  if (creatorResponse.ok) {
+    const payload = await creatorResponse.json();
+    community = (payload.creations || []).filter(row => row && row.status === 'publicada' && slugId(row.id)).map(row => ({
+      id: 'creator_' + row.id, nome: row.title || 'Criação da comunidade', descricao: row.description || '', description: row.description || '', categoria: row.category || 'comunidade', author: row.creator && (row.creator.displayName || row.creator.username) || 'Criador Fabi', packname: 'FabiBot Creator', temAudio: true, isAnimated: true, tags: row.tags || [], criadoEm: row.createdAt || '', compras: row.purchases || 0, favoritos: 0, visualizacoes: row.views || 0, source: 'community', creator: row.creator || {}, creatorSlug: row.slug || '', posterUrl: row.posterUrl || '', previewUrl: row.videoUrl || '', exampleUrl: row.videoUrl || '', priceCents: 20
+    }));
+  }
+  return official.concat(community);
 }
 
 function page(item) {
@@ -64,7 +76,7 @@ module.exports = async (req, res) => {
       return res.status(200).send(sitemap(rows));
     }
     const id = slugId(req.query.id || String(req.url || '').split('/').filter(Boolean).pop());
-    const item = rows.find(row => String(row.id) === id);
+    const item = rows.find(row => String(row.id) === id || String(row.slug || row.creatorSlug || '') === id);
     if (!item) return res.status(404).setHeader('X-Robots-Tag', 'noindex, nofollow').send('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Figurinha não encontrada | Fabi Bot</title><meta name="robots" content="noindex, nofollow"><link rel="icon" href="/assets/fabi-favicon.png"></head><body><main><h1>Figurinha não encontrada</h1><p>Essa página não existe mais ou o código foi digitado incorretamente.</p><a href="/figurinhas">Voltar para a loja</a></main></body></html>');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=900');

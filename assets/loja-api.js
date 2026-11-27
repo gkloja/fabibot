@@ -12,7 +12,7 @@
 
   function proxyUrl(path) {
     const target = new URL(path, backend);
-    const allowedMedia = /^\/figurinhas_loja(?:\.json|\/[a-zA-Z0-9_-]+\.(?:webp|ogg))$|^\/figurinhas_media\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$/i.test(target.pathname);
+    const allowedMedia = /^\/figurinhas_loja(?:\.json|\/[a-zA-Z0-9_-]+\.(?:webp|ogg))$|^\/figurinhas_media\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$|^\/figurinhas_creator\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$/i.test(target.pathname);
     const allowedStoreApi = /^\/api\/figurinhas\/(?:gerar-pix|favoritar|visualizar|verificar-pagamento\/[a-f0-9-]{36})$/i.test(target.pathname);
     if (target.origin !== backend.origin || (!allowedMedia && !allowedStoreApi) || target.search || target.hash) throw new Error('Caminho de mídia ou checkout não permitido.');
     return config.proxy.replace(/\/$/, '') + '/' + backend.host + '/proxy?url=' + encodeURIComponent(target.href);
@@ -144,7 +144,7 @@
         const id = 'creator_' + String(row.id || '').replace(/[^a-zA-Z0-9_-]/g, '');
         const poster = String(row.posterUrl || '');
         const preview = String(row.videoUrl || '');
-        return { id, nome: cleanText(row.title || 'Criação da comunidade', 80), arquivo: '', arquivoAudio: '', categoria: cleanText(row.category || 'comunidade', 60), destaque: false, tags: [ ...(Array.isArray(row.tags) ? row.tags : []), row.description || '', row.creator && (row.creator.displayName || row.creator.username) || '' ].map(tag => cleanText(tag, 60)).filter(Boolean), author: cleanText(row.creator && (row.creator.displayName || row.creator.username) || 'Criador Fabi', 80), packname: 'FabiBot Creator', temAudio: true, isAnimated: true, audioSeconds: 0, tamanho: 0, criadoEm: cleanText(row.createdAt, 40), priceCents: 20, compras: Number(row.purchases) || 0, favoritos: 0, visualizacoes: Number(row.views) || 0, source: 'community', creator: row.creator || {}, creatorSlug: row.slug || '', media: { poster, preview, example: preview } };
+        return { id, nome: cleanText(row.title || 'Criação da comunidade', 80), arquivo: '', arquivoAudio: '', categoria: cleanText(row.category || 'comunidade', 60), destaque: false, tags: [ ...(Array.isArray(row.tags) ? row.tags : []), row.description || '', row.creator && (row.creator.displayName || row.creator.username) || '' ].map(tag => cleanText(tag, 60)).filter(Boolean), author: cleanText(row.creator && (row.creator.displayName || row.creator.username) || 'Criador Fabi', 80), packname: 'FabiBot Creator', temAudio: true, isAnimated: true, audioSeconds: 0, tamanho: 0, criadoEm: cleanText(row.createdAt, 40), priceCents: 20, compras: Number(row.purchases) || 0, favoritos: 0, visualizacoes: Number(row.views) || 0, source: 'community', creator: row.creator || {}, creatorSlug: row.slug || '', media: { poster: poster ? proxyUrl(poster) : '', preview: preview ? proxyUrl(preview) : '', example: preview ? proxyUrl(preview) : '' } };
       });
     } catch (_) { return []; }
   }
@@ -202,11 +202,20 @@
   async function recordView(id, clientToken) { return jsonApi('/api/figurinhas/visualizar', 'POST', { id: String(id), clientToken: String(clientToken) }); }
   function tutorialUrl() { return proxyUrl(config.tutorialVideoPath || '/figurinhas_media/tutorial-como-receber.mp4'); }
 
+  async function creatorClaimLink(creationId, token) {
+    const id = String(creationId || '').replace(/[^a-zA-Z0-9_-]/g, '');
+    if (!id || !token) throw new Error('Entre no seu perfil de criador para receber esta figurinha.');
+    const response = await fetch('/api/creator/creations/' + encodeURIComponent(id) + '/claim-link', { headers: { Authorization: 'Bearer ' + token }, cache: 'no-store' });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.error || 'Não foi possível gerar o link de recebimento.');
+    return payload;
+  }
+
   async function checkStickerPayment(orderId) {
     const id = String(orderId || '');
     if (!/^[a-f0-9-]{36}$/i.test(id)) throw new Error('Identificador de pagamento inválido.');
     return jsonApi('/api/figurinhas/verificar-pagamento/' + encodeURIComponent(id), 'GET');
   }
 
-  window.FabiStickerApi = { catalog, creatorCatalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, tutorialUrl, createStickerOrder, recordFavorite, recordView, checkStickerPayment };
+  window.FabiStickerApi = { catalog, creatorCatalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, tutorialUrl, createStickerOrder, recordFavorite, recordView, checkStickerPayment, creatorClaimLink };
 })();
