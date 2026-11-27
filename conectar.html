@@ -2279,6 +2279,30 @@ body[data-fabi-plan="free"] #fb61FreeWalletActions{margin:16px 0}
   background: linear-gradient(135deg, #ef4444, #dc2626) !important;
   color: #fff !important;
 }
+/* Fabi Privado: identidade visual própria, para não confundir com a Fabi Pro */
+.fb-badge-privado{
+  background: linear-gradient(135deg, #6d28d9, #0891b2) !important;
+  color: #fff !important;
+  font-weight: 700;
+  letter-spacing: .4px;
+  box-shadow: 0 2px 10px rgba(109,40,217,.35);
+}
+.fb-badge-privado i{ margin-right: 4px; }
+.session-item-privado{
+  border-left: 4px solid #7c3aed !important;
+  box-shadow: 0 8px 22px rgba(124,58,237,.14);
+}
+.fb-btn-privado{
+  background: linear-gradient(135deg, #6d28d9, #0891b2) !important;
+  color: #fff !important;
+  cursor: default;
+}
+[data-theme="dark"] .fb-badge-privado,
+html[data-theme="dark"] .fb-badge-privado,
+body.dark-mode .fb-badge-privado{
+  background: linear-gradient(135deg, #8b5cf6, #22d3ee) !important;
+  color: #0b1120 !important;
+}
 /* Dark mode refinements */
 [data-theme="dark"] .fb-session-actions .btn,
 html[data-theme="dark"] .fb-session-actions .btn,
@@ -3640,6 +3664,51 @@ async function toggleBotSessaoGrupo(grupoID, sessao, ligar) {
     await carregarGruposAluguelSessao();
 }
 
+// Fabi Privado — identifica as sessões em modo privado para usar selo e cor próprios
+function fabiNumeroDigitos(v){ return String(v==null?'':v).replace(/\D/g,''); }
+function fabiVariantesNumero(digitos){
+    const d = fabiNumeroDigitos(digitos);
+    const out = new Set();
+    if (!d) return out;
+    out.add(d);
+    const sem55 = d.indexOf('55') === 0 ? d.slice(2) : d;
+    if (sem55.length === 10) {
+        out.add('55'+sem55);
+        out.add('55'+sem55.slice(0,2)+'9'+sem55.slice(2));
+    } else if (sem55.length === 11) {
+        out.add('55'+sem55);
+        out.add('55'+sem55.slice(0,2)+sem55.slice(3));
+    }
+    return out;
+}
+function fabiSessoesPrivadasSet(){ return (window.__fabiPrivadas instanceof Set) ? window.__fabiPrivadas : new Set(); }
+function fabiEhSessaoPrivada(s, nome){
+    if (s && (s.privado === true || s.modoPrivado === true)) return true;
+    const set = fabiSessoesPrivadasSet();
+    if (!set.size) return false;
+    const candidatos = [nome, s && (s.session || s.sessionName || s.numero || s.name)].filter(Boolean);
+    for (const c of candidatos) {
+        for (const v of fabiVariantesNumero(c)) { if (set.has(v)) return true; }
+    }
+    return false;
+}
+async function fabiAtualizarSessoesPrivadas(){
+    try{
+        const resp = await fetch(apiUrl(withAuth('/api/privado/sessoes')), {cache:'no-store'});
+        const data = await resp.json().catch(()=>({}));
+        const set = new Set();
+        (Array.isArray(data && data.sessoes) ? data.sessoes : []).forEach(function(s){
+            [s && s.sessionOriginal, s && s.session, s && s.numero, s && s.sessionName].forEach(function(v){
+                fabiVariantesNumero(v).forEach(function(d){ set.add(d); });
+            });
+        });
+        window.__fabiPrivadas = set;
+    }catch(e){
+        if (!(window.__fabiPrivadas instanceof Set)) window.__fabiPrivadas = new Set();
+    }
+    return window.__fabiPrivadas;
+}
+
 function renderizarListaSessoes(sessoes) {
     const $lista = $('#listaSessoes');
     if (!$lista.length) return;
@@ -3665,7 +3734,12 @@ function renderizarListaSessoes(sessoes) {
         // isActive vem do backend (socket vivo). Status no card espelha isso.
         const isActive = s.isActive === true;
         const free=String(s.plan||s.mode||'').toLowerCase()==='free';
-        const planBadge=free?' <span class="badge bg-success ms-2">FABI FREE</span>':' <span class="badge ms-2" style="background:#5740a7;color:#fff">FABI PRO</span>';
+        const privado = (typeof fabiEhSessaoPrivada === 'function') ? fabiEhSessaoPrivada(s, name) : false;
+        const planBadge = privado
+            ? ' <span class="badge fb-badge-privado ms-2"><i class="fas fa-lock"></i>FABI PRIVADO</span>'
+            : (free
+                ? ' <span class="badge bg-success ms-2">FABI FREE</span>'
+                : ' <span class="badge ms-2" style="background:#5740a7;color:#fff">FABI PRO</span>');
         const stShow = isActive ? 'connected' : stStr;
         const onlineBadge = isActive ? ' <span class="badge bg-success ms-2">ONLINE</span>' : ' <span class="badge bg-secondary ms-2">OFFLINE</span>';
         const pairing = s.pairingCode || (s.pairing && s.pairing.code) || s.code || '';
@@ -3673,7 +3747,7 @@ function renderizarListaSessoes(sessoes) {
             ? `<button class="btn btn-sm fb-btn-codigo mb-1" onclick="mostrarCodigo('${pairing}', '${name}')"><i class="fas fa-qrcode"></i> Código</button>`
             : `<button class="btn btn-sm fb-btn-codigo mb-1" onclick="verificarSessao('${name}')"><i class="fas fa-qrcode"></i> Código</button>`;
         html += `
-        <div class="card session-item mb-3" id="sessao-${name}">
+        <div class="card session-item${privado ? ' session-item-privado' : ''} mb-3" id="sessao-${name}">
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-md-6">
@@ -3692,9 +3766,11 @@ function renderizarListaSessoes(sessoes) {
                     <div class="col-md-6 text-end">
                         <div class="fb-session-actions">
                           ${btnCodigo}
-                          ${free
-                            ? `<button class="btn btn-sm fb-btn-pro mb-1" onclick="fabi58UpgradePro('${name}')"><i class="fas fa-gem"></i> Transformar em Pro</button>`
-                            : `<button class="btn btn-sm fb-btn-aluguel mb-1" onclick="abrirAlugueisSessao('${name}')"><i class="fas fa-clock"></i> Aluguéis</button>`}
+                          ${privado
+                            ? `<span class="btn btn-sm fb-btn-privado mb-1" title="Sessão em Modo Privado: a Fabi responde apenas no WhatsApp do dono"><i class="fas fa-lock"></i> Modo Privado</span>`
+                            : (free
+                              ? `<button class="btn btn-sm fb-btn-pro mb-1" onclick="fabi58UpgradePro('${name}')"><i class="fas fa-gem"></i> Transformar em Pro</button>`
+                              : `<button class="btn btn-sm fb-btn-aluguel mb-1" onclick="abrirAlugueisSessao('${name}')"><i class="fas fa-clock"></i> Aluguéis</button>`)}
                           <button class="btn btn-sm fb-btn-verificar mb-1" onclick="verificarSessao('${name}')">
                               <i class="fas fa-sync-alt"></i> Verificar
                           </button>
@@ -3750,7 +3826,7 @@ function aplicarStatsSessoes(data, listaFiltrada) {
     }
 }
 
-function carregarSessoes() {
+async function carregarSessoes() {
     const sess = (typeof getSessaoLocal === 'function') ? getSessaoLocal() : null;
     if (!sess || !(sess.numero || sess.id || sess.nome)) {
         const $lista = $('#listaSessoes');
@@ -3766,6 +3842,10 @@ function carregarSessoes() {
         }
         $('#contadorSessoes').text('0');
         return;
+    }
+    // Fabi Privado: sabe quais sessões são privadas antes de pintar o selo
+    if (typeof fabiAtualizarSessoesPrivadas === 'function') {
+        try { await fabiAtualizarSessoesPrivadas(); } catch (_) {}
     }
     fetch(apiUrl(withAuth('/api/sessoes/status')))
         .then(r => r.json())
