@@ -3932,11 +3932,45 @@ let codigoImediatoSegundos = 70;
 let windowCodigoAtualImediato = '';
 let windowSessaoAtualImediato = '';
 
+// Fabi V58 — estado do Modo Privado (usa o mesmo plano pago da Fabi Pro)
+window.fabiPrivadoState = window.fabiPrivadoState || {loaded:false,temPlano:false,origem:'',plano:'',limite:0,restantes:0,expiraEm:null};
+async function fabiCarregarModoPrivado(force){
+  const sessao = (typeof getSessaoLocal==='function') ? getSessaoLocal() : null;
+  if(!sessao || !sessao.numero) return window.fabiPrivadoState;
+  if(window.fabiPrivadoState.loaded && !force) return window.fabiPrivadoState;
+  try{
+    const res = await fetch(apiUrl(withAuth('/api/privado/limite')),{cache:'no-store'});
+    const data = await res.json().catch(()=>null);
+    if(res.ok && data && data.success){
+      window.fabiPrivadoState = {
+        loaded:true,
+        temPlano:data.temPlano===true,
+        origem:String(data.origem||''),
+        plano:String(data.plano||''),
+        limite:Number(data.limite||0),
+        restantes:Number(data.sessoesRestantes||0),
+        expiraEm:data.expiraEm||null
+      };
+    }
+  }catch(e){console.warn('[Fabi Privado] plano indisponível:',e.message||e);}
+  return window.fabiPrivadoState;
+}
+function fabiModoPrivadoLiberado(){const st=window.fabiPrivadoState||{};return st.loaded===true&&st.temPlano===true&&Number(st.restantes||0)>0}
 function fabi57Modo(){const value=document.querySelector('input[name="fb57Modo"]:checked')?.value;return value==='free'||value==='private'?value:'pro'}
 function fabi57AtualizarModo(){
   const mode=fabi57Modo(),free=mode==='free',privateMode=mode==='private';
   const tip=document.getElementById('fb57ModeTip');
   if(tip)tip.textContent=free?'Fabi Free: gratuita, até uma sessão por conta. Não permite aluguel, downloads automáticos ou comandos Pro.':privateMode?'Modo Privado: usa o mesmo plano pago do Pro. O mensal começa em R$ 30/mês; a FabiBot responde somente no privado do proprietário.':'Fabi Pro: precisa de crédito disponível no plano; libera recursos extras, incluindo aluguel.';
+  if(privateMode){
+    fabiCarregarModoPrivado().then(function(st){
+      if(!st || !st.loaded || fabi57Modo()!=='private') return;
+      var alvo=document.getElementById('fb57ModeTip');
+      if(!alvo) return;
+      alvo.textContent = st.temPlano
+        ? 'Modo Privado liberado no plano '+st.plano+'. Sessões disponíveis: '+st.restantes+'. A FabiBot responde somente no privado do proprietário.'
+        : 'Modo Privado usa o mesmo plano pago da Fabi Pro (a partir de R$ 30/mês). Ative um plano para liberar a conexão.';
+    });
+  }
   const intro=document.getElementById('fb61WalletIntro');
   const proActions=document.getElementById('fb61ProWalletActions');
   const freeActions=document.getElementById('fb61FreeWalletActions');
@@ -3979,11 +4013,15 @@ window.fabi57SelecionarModo=function(mode){
   }
   
 };
-window.fabi58AbrirPareamento=function(){
+window.fabi58AbrirPareamento=async function(){
   const mode=fabi57Modo();
   if(mode==='free'&&window.fabi58Capacity?.available===false){document.getElementById('fb58Capacity')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
   if(!getSessaoLocal()?.numero){location.href='/login?redirect=conectar';return;}
-  if((mode==='pro'||mode==='private')&&Number(window.fabiConnectState?.sessoes||0)<1){abrirModalPlanos();return;}
+  if(mode==='private'){
+    const privado=await fabiCarregarModoPrivado(true);
+    if(privado.loaded && !privado.temPlano){abrirModalPlanos();return;}
+    if(privado.loaded && Number(privado.restantes||0)<1){fabiAbrirSemPlanoModal('Seu plano já está com todas as sessões em uso. Faça upgrade ou remova uma sessão antes de criar outra.');return;}
+  }else if(mode==='pro'&&Number(window.fabiConnectState?.sessoes||0)<1){abrirModalPlanos();return;}
   const el=document.getElementById('novaSessaoModal');
   if(el&&window.bootstrap?.Modal)bootstrap.Modal.getOrCreateInstance(el).show();
 };
@@ -4026,7 +4064,19 @@ async function criarNovaSessao() {
     const btn = $('#btnCriarSessao');
     if (btn.data('fabi-busy')) return;
     const modo=fabi57Modo();
-    if ((modo==='pro'||modo==='private') && Number((window.fabiConnectState && window.fabiConnectState.sessoes) || 0) < 1) {
+    if (modo==='private') {
+        const privado = await fabiCarregarModoPrivado(true);
+        if (privado.loaded && !privado.temPlano) {
+            $('#novaSessaoModal').modal('hide');
+            fabiAbrirSemPlanoModal('O Modo Privado usa o mesmo plano pago da Fabi Pro. Ative um plano e volte para gerar o código.');
+            return;
+        }
+        if (privado.loaded && Number(privado.restantes || 0) < 1) {
+            $('#novaSessaoModal').modal('hide');
+            fabiAbrirSemPlanoModal('Seu plano já está com todas as sessões em uso. Faça upgrade ou remova uma sessão antes de criar outra.');
+            return;
+        }
+    } else if (modo==='pro' && Number((window.fabiConnectState && window.fabiConnectState.sessoes) || 0) < 1) {
         $('#novaSessaoModal').modal('hide');
         fabiAbrirSemPlanoModal('Seu plano atual não possui sessão disponível para criar uma nova conexão. Escolha um plano e tente novamente.');
         return;
@@ -4037,9 +4087,9 @@ async function criarNovaSessao() {
         toastr.error('Número inválido. Digite um número válido (10-13 dígitos).', 'Erro'); return;
     }
     let tokenFree='';
-    if(modo==='free'){
+    if(modo==='free'||modo==='private'){
       tokenFree=await fabi57TokenFree();
-      if(!tokenFree){toastr.warning('Para sua segurança, faça login novamente para autorizar a sessão gratuita.');location.href='/login?redirect=conectar';return;}
+      if(modo==='free'&&!tokenFree){toastr.warning('Para sua segurança, faça login novamente para autorizar a sessão gratuita.');location.href='/login?redirect=conectar';return;}
     }
     btn.data('fabi-busy',true).prop('disabled',true).html('<span class="loading"></span> Criando...');
     $('#resultadoCriacao').show();
@@ -4049,19 +4099,28 @@ async function criarNovaSessao() {
       const endpoint=modo==='private'?'/api/privado/criar-sessao':modo==='free'?'/api/sessoes/nova-free':'/api/sessoes/nova';
       const response = await fetch(apiUrl(endpoint), {
         method:'POST', headers:{'Content-Type':'application/json'}, signal:controller.signal,
-        body:JSON.stringify({numero,nome,...authBodyFields(),...(modo==='free'?{fabiGrupoToken:tokenFree}:{})})
+        body:JSON.stringify({numero,nome,...authBodyFields(),...(tokenFree?{fabiGrupoToken:tokenFree}:{})})
       });
       const data=await response.json().catch(()=>({success:false,message:'Resposta inválida do servidor'}));
-      if(!response.ok || !data.success) throw new Error(data.message||data.error||('HTTP '+response.status));
+      if(!response.ok || !data.success){
+        if(response.status===401){
+          const erroLogin=new Error('Sua sessão de login expirou. Entre novamente para continuar.');
+          erroLogin.precisaLogin=true;
+          throw erroLogin;
+        }
+        if(data.precisaPlano) setTimeout(()=>{try{abrirModalPlanos();}catch(_){}} ,1200);
+        throw new Error(data.message||data.error||('HTTP '+response.status));
+      }
       $('#mensagemStatus').html('<i class="fas fa-check-circle text-success"></i> Sessão criada! Buscando código...');
       $('#detalhesResultado').html(`<div class="alert alert-success"><strong>Sessão:</strong> ${String(data.session||'').replace(/[<>]/g,'')}<br><strong>Status:</strong> ${String(data.message||'Criada').replace(/[<>]/g,'')}</div><div class="text-center"><div class="loading mx-auto"></div><p class="mt-2">Aguardando código de pareamento...</p></div>`);
       setTimeout(()=>$('#novaSessaoModal').modal('hide'),800);
       buscarMostrarCodigoImediato(data.session);
-      setTimeout(()=>{try{atualizarTodasEstatisticas();carregarDadosAtualizados();}catch(e){console.warn('Atualização do painel:',e);}},2500);
+      setTimeout(()=>{try{atualizarTodasEstatisticas();carregarDadosAtualizados();if(modo==='private')fabiCarregarModoPrivado(true);}catch(e){console.warn('Atualização do painel:',e);}},2500);
     } catch(error) {
       console.error('Erro ao criar sessão:',error);
       const msg=error.name==='AbortError'?'O servidor demorou demais para responder. Verifique o status antes de tentar novamente.':(error.message||'Falha de comunicação com o servidor');
-      $('#mensagemStatus').html('<i class="fas fa-times-circle text-danger"></i> '+msg.replace(/[<>]/g,''));
+      const linkLogin=error.precisaLogin?' <a href="/login?redirect=conectar" class="ms-1">Entrar novamente</a>':'';
+      $('#mensagemStatus').html('<i class="fas fa-times-circle text-danger"></i> '+msg.replace(/[<>]/g,'')+linkLogin);
       btn.prop('disabled',false).text(fabi57Modo()==='free'?'Criar Fabi Free grátis':fabi57Modo()==='private'?'Conectar no Modo Privado':'Criar sessão Pro');
       if(typeof verificarErroRede==='function') verificarErroRede(error);
     } finally {
@@ -6073,9 +6132,19 @@ body.light-mode .fb25-yt-card-alt .fb26-yt-watch { color:#1557ac; }
  function save(t){try{if(t)sessionStorage.setItem(key,JSON.stringify(t));else sessionStorage.removeItem(key);}catch(e){}}
  function fetchSafe(url){return fetch(url,{cache:'no-store'}).then(async function(r){var j=await r.json();if(!r.ok)throw new Error(j.message||j.error||'HTTP '+r.status);return j;});}
  window.fabi23PlanoAtivado=function(){completed=true;pending=null;save(null);if(timer)clearTimeout(timer);state('✅ Plano ativado! Agora toque em “Conectar meu WhatsApp” para criar a sessão.',true);move(2);var b=get('fb23BtnPlanos');if(b){b.textContent='✅ Plano ativo';b.disabled=false;}var c=get('fb23BtnConectar');if(c){c.textContent='📱 Conectar meu WhatsApp';c.classList.add('fb23-btn-primary');}modal('confirmarPlanoModal','hide');try{carregarDadosAtualizados();}catch(e){}get('fb23Comecar')?.scrollIntoView({behavior:'smooth',block:'start'});};
- window.fabi23AbrirCriarSessao=function(){
-   var sessoes = Number((window.fabiConnectState && window.fabiConnectState.sessoes) || 0);
+ window.fabi23AbrirCriarSessao=async function(){
    if(fabi57Modo()==='free') {window.fabi58AbrirPareamento();return;}
+   if(fabi57Modo()==='private'){
+     const privado=await fabiCarregarModoPrivado(true);
+     if(privado.loaded && !privado.temPlano){abrirModalPlanos();return;}
+     if(privado.loaded && Number(privado.restantes||0)<1){
+       fabiAbrirSemPlanoModal('Seu plano já está com todas as sessões em uso. Faça upgrade ou remova uma sessão antes de criar outra.');
+       return;
+     }
+     modal('novaSessaoModal','show');
+     return;
+   }
+   var sessoes = Number((window.fabiConnectState && window.fabiConnectState.sessoes) || 0);
    if(sessoes < 1){
      fabiAbrirSemPlanoModal('Para gerar o código do WhatsApp, você precisa liberar uma sessão primeiro. Escolha um plano e, assim que confirmar, volte para conectar.');
      return;
