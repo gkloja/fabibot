@@ -20,6 +20,22 @@
     formMessage.hidden = !text;
   }
 
+  uploadProgress.addEventListener('cancel', event => event.preventDefault());
+
+  function openUploadProgress() {
+    uploadProgress.setAttribute('aria-busy', 'true');
+    if (!uploadProgress.open) {
+      if (typeof uploadProgress.showModal === 'function') uploadProgress.showModal();
+      else uploadProgress.setAttribute('open', '');
+    }
+  }
+
+  function closeUploadProgress() {
+    uploadProgress.setAttribute('aria-busy', 'false');
+    if (uploadProgress.open && typeof uploadProgress.close === 'function') uploadProgress.close();
+    else uploadProgress.removeAttribute('open');
+  }
+
   function showAuthMessage(text, kind) {
     const target = $('#authMessage');
     target.textContent = String(text || '');
@@ -198,24 +214,55 @@
     showMessage('Você saiu da conta. Seu vídeo ainda está preparado nesta página.', '');
   });
 
+  function moveToStep(section, focusTarget) {
+    if (focusTarget) focusTarget.focus({ preventScroll: true });
+    const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    section.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+  }
+
   function updateFlow() {
     const videoReady = Boolean(state.file && state.duration !== null && Number.isFinite(state.duration) && state.duration > 0 && state.duration <= 10);
+    if (!videoReady) state.flowStep = 1;
+    if (![1, 2, 3].includes(state.flowStep)) state.flowStep = 1;
+
     const detailsStep = $('#detailsStep');
-    detailsStep.hidden = !videoReady;
-    detailsStep.disabled = !videoReady;
+    const detailsOpen = videoReady && state.flowStep >= 2;
+    detailsStep.hidden = !detailsOpen;
+    detailsStep.disabled = !detailsOpen;
     const titleInput = $('#titleInput');
     const descriptionInput = $('#descriptionInput');
-    const metadataReady = videoReady && titleInput.validity.valid && descriptionInput.validity.valid && $('#categoryInput').validity.valid;
+    const metadataReady = videoReady && detailsOpen && titleInput.validity.valid && descriptionInput.validity.valid && $('#categoryInput').validity.valid;
+    if (state.flowStep === 3 && !metadataReady) state.flowStep = 2;
+    const step = state.flowStep;
+    const reviewReady = step === 3 && metadataReady;
+
+    const previewCard = $('#videoPreviewCard');
+    previewCard.hidden = !state.file;
+    $('#previewEyebrow').textContent = reviewReady ? 'ETAPA 03 · REVISÃO' : 'PRÉVIA LOCAL';
+    $('#previewTitle').textContent = reviewReady ? 'Confira sua figurinha' : 'Assista ao seu vídeo';
+    $('#previewFootnote').textContent = reviewReady
+      ? 'Esta prévia ainda é local. O vídeo só é enviado quando você publicar.'
+      : 'Dê play para assistir e confira o áudio antes de continuar.';
+
+    const continueToDetails = $('#continueToDetails');
+    continueToDetails.hidden = !state.file || step !== 1;
+    continueToDetails.disabled = !videoReady || state.busy;
+    $('#detailsActions').hidden = !videoReady || step !== 2;
+    $('#backToVideo').hidden = step !== 2;
+    const continueToReview = $('#continueToReview');
+    continueToReview.hidden = !videoReady || step !== 2;
+    continueToReview.disabled = !metadataReady || state.busy;
+
     const reviewAside = $('#reviewAside');
     const publishStep = $('#publishStep');
-    reviewAside.hidden = !metadataReady;
-    publishStep.hidden = !metadataReady;
-    if (metadataReady) {
-      reviewAside.classList.add('is-unlocked');
-      publishStep.classList.add('is-unlocked');
-    }
-    $('#publishButton').disabled = !metadataReady || state.busy;
-    const step = !videoReady ? 1 : (metadataReady ? 3 : 2);
+    reviewAside.hidden = !reviewReady;
+    publishStep.hidden = !reviewReady;
+    $('#reviewAccountCard').hidden = !reviewReady;
+    $('#reviewTipCard').hidden = !reviewReady;
+    reviewAside.classList.toggle('is-unlocked', reviewReady);
+    publishStep.classList.toggle('is-unlocked', reviewReady);
+    $('#publishButton').disabled = !reviewReady || state.busy;
+
     document.querySelectorAll('[data-flow-step]').forEach(item => {
       const number = Number(item.dataset.flowStep);
       item.classList.toggle('is-current', number === step);
@@ -223,12 +270,35 @@
       if (number === step) item.setAttribute('aria-current', 'step');
       else item.removeAttribute('aria-current');
     });
-    if (state.flowStep !== step) {
-      state.flowStep = step;
-      const labels = { 1: 'Etapa 1 de 3: escolha o vídeo.', 2: 'Etapa 2 de 3: personalize sua figurinha.', 3: 'Etapa 3 de 3: revise e publique.' };
+    if (state.flowStep !== state.announcedFlowStep) {
+      state.announcedFlowStep = state.flowStep;
+      const labels = { 1: 'Etapa 1 de 3: escolha e confira o vídeo.', 2: 'Etapa 2 de 3: personalize sua figurinha.', 3: 'Etapa 3 de 3: revise e publique.' };
       $('#flowAnnouncer').textContent = labels[step];
     }
   }
+
+  $('#continueToDetails').addEventListener('click', () => {
+    if (!state.file || state.duration === null || state.duration > 10) return;
+    state.flowStep = 2;
+    updateFlow();
+    moveToStep($('#detailsStep'), $('#detailsStepTitle'));
+  });
+  $('#backToVideo').addEventListener('click', () => {
+    state.flowStep = 1;
+    updateFlow();
+    moveToStep($('#videoStep'), $('#videoStepTitle'));
+  });
+  $('#continueToReview').addEventListener('click', () => {
+    if (!form.reportValidity()) return;
+    state.flowStep = 3;
+    updateFlow();
+    moveToStep($('#reviewAside'), $('#publishTitle'));
+  });
+  $('#backToDetails').addEventListener('click', () => {
+    state.flowStep = 2;
+    updateFlow();
+    moveToStep($('#detailsStep'), $('#detailsStepTitle'));
+  });
 
   function updateTextPreview() {
     const title = $('#titleInput').value.trim();
@@ -357,7 +427,9 @@
   function setProgress(label, value, indeterminate) {
     $('#progressLabel').textContent = label;
     $('#progressPercent').textContent = indeterminate ? '…' : Math.round(value) + '%';
-    $('#progressBar').value = indeterminate ? 78 : Math.max(0, Math.min(100, value));
+    const bar = $('#progressBar');
+    if (indeterminate) bar.removeAttribute('value');
+    else bar.value = Math.max(0, Math.min(100, value));
   }
 
   function uploadCreation() {
@@ -371,9 +443,18 @@
       request.upload.onload = () => setProgress('Finalizando sua figurinha', 80, true);
       request.onload = () => {
         let payload = {};
-        try { payload = JSON.parse(request.responseText); } catch (_) { /* O erro abaixo é exibido ao usuário. */ }
-        if (request.status >= 200 && request.status < 300 && payload.ok !== false) resolve(payload);
-        else reject(new Error(payload.error || 'Não foi possível publicar agora. Tente novamente.'));
+        let invalidJson = false;
+        try { payload = JSON.parse(request.responseText); } catch (_) { invalidJson = true; }
+        const serverError = payload && typeof payload === 'object' && typeof payload.error === 'string'
+          ? payload.error
+          : 'Não foi possível publicar agora. Tente novamente.';
+        if (request.status >= 200 && request.status < 300) {
+          if (invalidJson || !payload || typeof payload !== 'object' || Array.isArray(payload)) {
+            reject(new Error('O servidor respondeu com dados inválidos. Seu vídeo continua preparado nesta página.'));
+          } else if (payload.ok === false) {
+            reject(new Error(serverError));
+          } else resolve(payload);
+        } else reject(new Error(serverError));
       };
       request.onerror = () => reject(new Error('A conexão foi interrompida. Seu vídeo continua preparado nesta página.'));
       request.onabort = () => reject(new Error('O envio foi cancelado. Seu vídeo continua preparado nesta página.'));
@@ -683,25 +764,26 @@
     formMessage.hidden = false;
     const success = document.createElement('strong');
     success.textContent = 'Publicada na vitrine. ';
-    formMessage.append(success, document.createTextNode('Sua criação já entrou para a comunidade.'));
+    formMessage.append(success, document.createTextNode('Sua criação já entrou para a comunidade. Agora você pode resgatá-la no WhatsApp.'));
+    let claimButton = null;
     if (resultId) {
-      const claim = document.createElement('button');
-      claim.className = 'button button-primary';
-      claim.type = 'button';
-      claim.style.marginTop = '10px';
-      claim.textContent = 'Resgatar no WhatsApp ↗';
-      claim.addEventListener('click', () => claimCreation(claim, resultId));
+      claimButton = document.createElement('button');
+      claimButton.className = 'button button-primary';
+      claimButton.type = 'button';
+      claimButton.style.marginTop = '10px';
+      claimButton.textContent = 'Resgatar no WhatsApp ↗';
+      claimButton.addEventListener('click', () => claimCreation(claimButton, resultId));
       const claimStatus = document.createElement('small');
       claimStatus.id = 'claimStatus';
       claimStatus.className = 'claim-status';
       claimStatus.setAttribute('role', 'status');
       claimStatus.setAttribute('aria-live', 'polite');
-      formMessage.append(document.createElement('br'), claim, claimStatus);
+      formMessage.append(document.createElement('br'), claimButton, claimStatus);
     } else {
       const link = document.createElement('a');
       link.className = 'text-link';
-      link.href = '/figurinhas';
-      link.textContent = 'Abrir a vitrine da comunidade ↗';
+      link.href = '#myCreationsSection';
+      link.textContent = 'Ir para minha coleção e ver o resgate ↘';
       link.style.display = 'inline-block';
       link.style.marginTop = '10px';
       formMessage.append(document.createElement('br'), link);
@@ -710,12 +792,28 @@
     clearVideo();
     updateTextPreview();
     loadLists();
-    loadMyCreations();
+    const collectionLoad = loadMyCreations();
+    return { claimButton, collectionLoad };
+  }
+
+  async function focusPublishedAction(result) {
+    if (result.claimButton) {
+      moveToStep(formMessage, result.claimButton);
+      return;
+    }
+    await result.collectionLoad;
+    const claimButton = $('#myCreationsList .my-creation-action');
+    const section = $('#myCreationsSection');
+    moveToStep(section, claimButton || $('#myCreationsTitle'));
   }
 
   form.addEventListener('submit', async event => {
     event.preventDefault();
     if (state.busy) return;
+    if (state.flowStep !== 3) {
+      if (state.flowStep === 2) form.reportValidity();
+      return;
+    }
     if (!state.file) {
       showMessage('Escolha um vídeo antes de publicar.', 'error');
       dropZone.focus();
@@ -743,21 +841,23 @@
     const button = $('#publishButton');
     state.busy = true;
     button.disabled = true;
-    uploadProgress.hidden = false;
+    openUploadProgress();
     setProgress('Preparando sua figurinha', 4, false);
     showMessage('', '');
+    let publishedResult = null;
     try {
       const payload = await uploadCreation();
       setProgress('Publicada na vitrine', 100, false);
-      renderResult(payload);
-      uploadProgress.hidden = true;
+      publishedResult = renderResult(payload);
     } catch (error) {
-      uploadProgress.hidden = true;
       showMessage(error.message || 'Não foi possível publicar agora. Tente novamente.', 'error');
+      moveToStep(formMessage, formMessage);
     } finally {
+      closeUploadProgress();
       state.busy = false;
-      button.disabled = false;
+      updateFlow();
     }
+    if (publishedResult) await focusPublishedAction(publishedResult);
   });
 
   function safeMedia(value) {

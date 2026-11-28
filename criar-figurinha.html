@@ -48,10 +48,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/creator-page.css?v=20261128a">
-  <link rel="stylesheet" href="/assets/creator-experience.css?v=20261128a">
+  <link rel="stylesheet" href="/assets/creator-experience.css?v=20261128b">
   <script defer src="/assets/loja-config.js?v=20261127a"></script>
   <script defer src="/assets/loja-api.js?v=20261127c"></script>
-  <script defer src="/assets/creator-page.js?v=20261128c"></script>
+  <script defer src="/assets/creator-page.js?v=20261128d"></script>
 </head>
 <body>
   <a class="skip-link" href="#studio">Pular para o estúdio</a>
@@ -108,7 +108,7 @@
     <section class="studio-section page-wrap" id="studio" aria-labelledby="studioTitle">
       <div class="section-heading">
         <div><p class="eyebrow">SEU ESPAÇO CRIATIVO</p><h2 id="studioTitle">Uma etapa de cada vez.<br><span>Sua ideia, no seu ritmo.</span></h2></div>
-        <p class="section-note">Primeiro o vídeo. Depois os detalhes. A prévia e a publicação só aparecem quando sua figurinha estiver pronta.</p>
+        <p class="section-note">Primeiro o vídeo. A prévia aparece na hora; depois você personaliza e revisa antes de publicar.</p>
       </div>
 
       <ol class="flow-steps" aria-label="Etapas para criar uma figurinha">
@@ -122,7 +122,7 @@
         <section class="editor-card" aria-label="Criar figurinha em etapas">
           <form id="creationForm" novalidate>
             <section class="form-section guided-step is-unlocked" id="videoStep" aria-labelledby="videoStepTitle" data-guided-step="1">
-              <div class="form-section-heading"><span class="section-index">01</span><div><h3 id="videoStepTitle">Escolha o seu vídeo</h3><p>Comece pelo momento que merece replay.</p></div></div>
+              <div class="form-section-heading"><span class="section-index">01</span><div><h3 id="videoStepTitle" tabindex="-1">Escolha o seu vídeo</h3><p>Comece pelo momento que merece replay.</p></div></div>
               <input id="videoInput" class="visually-hidden" name="video" type="file" accept="video/mp4,video/quicktime,video/webm,video/x-m4v,.mp4,.mov,.webm,.m4v" tabindex="-1" aria-hidden="true">
               <button id="dropZone" class="drop-zone" type="button" aria-controls="videoInput" aria-label="Escolher ou arrastar um vídeo">
                 <span class="drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 15.5v3A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5v-3"/></svg></span>
@@ -135,13 +135,26 @@
                 <span class="file-check" aria-hidden="true">✓</span><span class="file-copy"><b id="fileName">Vídeo selecionado</b><small id="fileMeta"></small></span>
                 <button id="removeVideo" class="text-button" type="button">Trocar vídeo</button>
               </div>
+              <section class="preview-card video-preview-card" id="videoPreviewCard" aria-labelledby="previewTitle" hidden>
+                <div class="preview-heading"><div><p class="eyebrow" id="previewEyebrow">PRÉVIA LOCAL</p><h3 id="previewTitle" tabindex="-1">Assista ao seu vídeo</h3></div><span class="preview-badge" id="previewCategory">COMUNIDADE</span></div>
+                <div class="preview-stage">
+                  <div class="preview-window">
+                    <div id="previewPlaceholder" class="preview-placeholder"><span class="preview-play" aria-hidden="true">▶</span><img src="/assets/fabi-logo.webp" alt="" width="70" height="70"><b>Sua reação vem aí</b><small id="previewPlaceholderMessage">Escolha um vídeo para começar</small></div>
+                    <video id="videoPreview" controls playsinline preload="metadata" aria-label="Prévia local do vídeo selecionado" hidden></video>
+                    <span class="preview-watermark" aria-hidden="true">FABI BOT</span>
+                  </div>
+                </div>
+                <div class="preview-caption"><span class="caption-dot" aria-hidden="true"></span><div><b id="previewStickerTitle">Nome da sua figurinha</b><small id="previewAuthor">Criada por você · com áudio</small></div><span class="caption-sound" aria-label="Com áudio">♫</span></div>
+                <p class="preview-footnote" id="previewFootnote">O vídeo permanece nesta página até você publicar.</p>
+              </section>
               <p class="upload-privacy"><span aria-hidden="true">⌁</span> Seu vídeo fica nesta página enquanto você prepara a figurinha. Ele só é enviado quando você publicar.</p>
+              <button id="continueToDetails" class="button button-primary step-continue" type="button" disabled hidden>Continuar para personalizar <span aria-hidden="true">→</span></button>
             </section>
 
             <fieldset class="form-section guided-step" id="detailsStep" aria-labelledby="detailsStepTitle" disabled hidden>
               <legend class="visually-hidden">Etapa 2: personalize sua figurinha</legend>
               <div class="form-divider" aria-hidden="true"></div>
-              <div class="form-section-heading"><span class="section-index">02</span><div><h3 id="detailsStepTitle">Dê sua assinatura</h3><p>Agora que o vídeo está pronto, conte como a comunidade vai usar essa reação.</p></div></div>
+              <div class="form-section-heading"><span class="section-index">02</span><div><h3 id="detailsStepTitle" tabindex="-1">Dê sua assinatura</h3><p>Agora que o vídeo está pronto, conte como a comunidade vai usar essa reação.</p></div></div>
               <div class="field-grid">
                 <label class="field field-title">Nome da figurinha
                   <input id="titleInput" name="title" type="text" required minlength="2" maxlength="80" autocomplete="off" placeholder="Ex.: Eu avisei" aria-describedby="titleHint titleCount">
@@ -167,46 +180,33 @@
                 <span class="field-hint"><span>Separe por vírgulas</span><span>Ajuda na busca</span></span>
               </label>
               <p class="unlock-hint"><span aria-hidden="true">✦</span> Complete o nome e a descrição para liberar a revisão da sua figurinha.</p>
+              <div class="step-actions" id="detailsActions" hidden>
+                <button id="backToVideo" class="text-button" type="button">← Voltar ao vídeo</button>
+                <button id="continueToReview" class="button button-primary" type="button" disabled>Continuar para revisão <span aria-hidden="true">→</span></button>
+              </div>
             </fieldset>
 
-            <div id="formMessage" class="form-message" role="status" aria-live="polite" hidden></div>
-            <div id="uploadProgress" class="upload-progress" hidden aria-live="polite">
-              <div class="progress-head"><span id="progressLabel">Preparando sua figurinha…</span><b id="progressPercent">0%</b></div>
-              <progress id="progressBar" max="100" value="0">0%</progress>
-              <small>Não feche esta página até a publicação terminar.</small>
-            </div>
+            <div id="formMessage" class="form-message" role="status" aria-live="polite" tabindex="-1" hidden></div>
           </form>
         </section>
 
         <aside class="studio-aside" id="reviewAside" aria-label="Revisão e publicação" hidden>
-          <section class="preview-card" aria-labelledby="previewTitle">
-            <div class="preview-heading"><div><p class="eyebrow">ETAPA 03 · REVISÃO</p><h3 id="previewTitle">Veja antes de publicar</h3></div><span class="preview-badge" id="previewCategory">COMUNIDADE</span></div>
-            <div class="preview-stage">
-              <div class="preview-window">
-                <div id="previewPlaceholder" class="preview-placeholder"><span class="preview-play" aria-hidden="true">▶</span><img src="/assets/fabi-logo.webp" alt="" width="70" height="70"><b>Sua reação vem aí</b><small>Escolha um vídeo para começar</small></div>
-                <video id="videoPreview" controls playsinline preload="metadata" aria-label="Prévia local do vídeo selecionado" hidden></video>
-                <span class="preview-watermark" aria-hidden="true">FABI BOT</span>
-              </div>
-            </div>
-            <div class="preview-caption"><span class="caption-dot" aria-hidden="true"></span><div><b id="previewStickerTitle">Nome da sua figurinha</b><small id="previewAuthor">Criada por você · com áudio</small></div><span class="caption-sound" aria-label="Com áudio">♫</span></div>
-            <p class="preview-footnote">Só você vê esta prévia até escolher publicar.</p>
-          </section>
-
           <section class="publish-card" id="publishStep" aria-labelledby="publishTitle" hidden>
-            <div class="publish-card-heading"><span class="section-index">03</span><div><p class="eyebrow">TUDO PRONTO</p><h3 id="publishTitle">Sua reação merece replay.</h3></div></div>
-            <p>Confira o vídeo e os detalhes. Ao publicar, sua figurinha entra para a comunidade.</p>
+            <div class="publish-card-heading"><span class="section-index">03</span><div><p class="eyebrow">TUDO PRONTO</p><h3 id="publishTitle" tabindex="-1">Sua reação merece replay.</h3></div></div>
+            <p>Confira o nome e os detalhes. O vídeo que você acabou de ver será enviado quando publicar.</p>
             <button id="publishButton" class="button button-publish" type="submit" form="creationForm" disabled>Publicar minha figurinha <span aria-hidden="true">↗</span></button>
             <p class="publish-note"><span aria-hidden="true">⌁</span> Você entra ou cria uma conta no último passo. O vídeo permanece preparado até lá.</p>
+            <button id="backToDetails" class="text-button review-back-button" type="button">← Voltar e editar os detalhes</button>
           </section>
 
-          <section class="account-card" aria-labelledby="accountTitle">
+          <section class="account-card" id="reviewAccountCard" aria-labelledby="accountTitle" hidden>
             <div class="account-mark" aria-hidden="true">F</div>
             <div class="account-copy"><p class="eyebrow" id="accountTitle">SUA CONTA DE CRIADOR</p><p id="accountText">Entre na hora de publicar. Seu vídeo e os detalhes ficam aqui enquanto isso.</p></div>
             <div id="guestActions" class="account-actions"><button id="accountSignIn" class="text-button" type="button">Entrar agora</button><span>ou</span><button id="accountCreate" class="text-button" type="button">Criar conta</button></div>
             <div id="signedInPanel" class="signed-in-panel" hidden><span id="signedInName"></span><span id="signedInPoints"></span><button id="signOutButton" class="text-button" type="button">Sair</button></div>
           </section>
 
-          <section class="tip-card"><span class="tip-icon" aria-hidden="true">✦</span><div><b>Uma dica que funciona</b><p>Uma reação clara e fácil de reconhecer costuma virar a figurinha certa para a conversa.</p></div></section>
+          <section class="tip-card" id="reviewTipCard" hidden><span class="tip-icon" aria-hidden="true">✦</span><div><b>Uma dica que funciona</b><p>Uma reação clara e fácil de reconhecer costuma virar a figurinha certa para a conversa.</p></div></section>
         </aside>
       </div>
     </section>
@@ -226,7 +226,7 @@
       </div>
 
       <section class="my-creations-section" id="myCreationsSection" aria-labelledby="myCreationsTitle">
-        <div class="my-creations-heading"><div><p class="eyebrow">SUA JORNADA DE CRIADOR</p><h3 id="myCreationsTitle">Minha coleção</h3><p>Suas figurinhas, escolhas e opções de resgate ficam reunidas aqui.</p></div><span class="collection-mark" aria-hidden="true">✦</span></div>
+        <div class="my-creations-heading"><div><p class="eyebrow">SUA JORNADA DE CRIADOR</p><h3 id="myCreationsTitle" tabindex="-1">Minha coleção</h3><p>Suas figurinhas, escolhas e opções de resgate ficam reunidas aqui.</p></div><span class="collection-mark" aria-hidden="true">✦</span></div>
         <div id="myCreationsGuest" class="my-creations-guest"><p>Entre na sua conta de criador para acompanhar as figurinhas que você publicou.</p><button id="myCreationsSignIn" class="button button-primary" type="button">Entrar e ver minha coleção</button></div>
         <div id="myCreationsPanel" class="my-creations-panel" hidden>
           <div class="my-creations-toolbar"><p id="myCreationsSummary">Carregando suas figurinhas…</p><button id="myCreationsRefresh" class="refresh-button" type="button">Atualizar</button></div>
@@ -275,6 +275,19 @@
         <button class="button button-primary auth-submit" type="submit">Entrar e continuar</button>
       </form>
       <div id="authMessage" class="form-message" role="status" aria-live="polite" hidden></div>
+    </div>
+  </dialog>
+  <dialog id="uploadProgress" class="upload-progress" aria-labelledby="uploadDialogTitle" aria-describedby="uploadDialogCopy" aria-busy="true">
+    <div class="upload-progress-card">
+      <span class="upload-spinner" aria-hidden="true"></span>
+      <p id="progressLabel" class="eyebrow" role="status" aria-live="polite">Preparando sua figurinha…</p>
+      <h2 id="uploadDialogTitle">Sua reação está a caminho.</h2>
+      <p id="uploadDialogCopy">Estamos enviando o vídeo e preparando sua figurinha. Não feche esta página.</p>
+      <div class="progress-readout">
+        <progress id="progressBar" max="100" value="0" aria-label="Progresso da publicação">0%</progress>
+        <b id="progressPercent">0%</b>
+      </div>
+      <small>Assim que terminar, vamos levar você até o botão de resgate.</small>
     </div>
   </dialog>
 </body>
