@@ -3,7 +3,7 @@
 
   const API = '/api/creator';
   const $ = (selector, root = document) => root.querySelector(selector);
-  const state = { token: '', user: null, objectUrl: '', file: null, duration: null, trimStart: 0, trimEnd: 0, busy: false, returnFocus: null, mineRequest: 0, flowStep: 0, themeMode: 'system' };
+  const state = { token: '', user: null, objectUrl: '', file: null, duration: null, trimStart: 0, trimEnd: 0, cropX: 0.5, cropY: 0.5, cropZoom: 1, cropAnimationFrame: 0, busy: false, returnFocus: null, mineRequest: 0, flowStep: 0, themeMode: 'system' };
 
   try { state.token = localStorage.getItem('fabi_creator_token') || ''; } catch (_) { /* A sessão ainda funciona nesta aba. */ }
 
@@ -17,6 +17,12 @@
   const MIN_CLIP_SECONDS = 0.5;
   const trimStartInput = $('#trimStartRange');
   const trimEndInput = $('#trimEndRange');
+  const cropCanvas = $('#cropPreview');
+  const cropContext = cropCanvas.getContext('2d', { alpha: false });
+  const cropZoomInput = $('#cropZoomRange');
+  const cropXInput = $('#cropXRange');
+  const cropYInput = $('#cropYRange');
+  let cropDrag = null;
 
   function showMessage(text, kind) {
     formMessage.textContent = String(text || '');
@@ -249,10 +255,10 @@
     const previewCard = $('#videoPreviewCard');
     previewCard.hidden = !state.file;
     $('#previewEyebrow').textContent = reviewReady ? 'ETAPA 03 · REVISÃO' : 'PRÉVIA LOCAL';
-    $('#previewTitle').textContent = reviewReady ? 'Confira sua figurinha' : 'Assista ao seu vídeo';
+    $('#previewTitle').textContent = reviewReady ? 'Confira sua figurinha' : 'Enquadre sua figurinha';
     $('#previewFootnote').textContent = reviewReady
-      ? 'Esta prévia ainda é local. O vídeo só é enviado quando você publicar.'
-      : 'Dê play para conferir o trecho escolhido e o áudio antes de continuar.';
+      ? 'Prévia quadrada 512 × 512. O vídeo só é enviado quando você publicar.'
+      : 'Confira o enquadramento quadrado, o trecho escolhido e o áudio antes de continuar.';
 
     const continueToDetails = $('#continueToDetails');
     continueToDetails.hidden = !state.file || step !== 1;
@@ -336,6 +342,62 @@
     return Math.min(Math.max(Number(value) || 0, min), max);
   }
 
+  function sourceCropSide() {
+    if (!preview.videoWidth || !preview.videoHeight) return 0;
+    return Math.min(preview.videoWidth, preview.videoHeight) / state.cropZoom;
+  }
+
+  function updateCropControls() {
+    const width = Number(preview.videoWidth) || 0;
+    const height = Number(preview.videoHeight) || 0;
+    if (!state.file || !width || !height) {
+      $('#frameEditor').hidden = true;
+      cropCanvas.hidden = true;
+      $('#cropDragHint').hidden = true;
+      return;
+    }
+    $('#frameEditor').hidden = false;
+    cropCanvas.hidden = false;
+    $('#cropDragHint').hidden = false;
+    cropZoomInput.value = String(state.cropZoom);
+    cropXInput.value = String(Math.round(state.cropX * 100));
+    cropYInput.value = String(Math.round(state.cropY * 100));
+    $('#cropZoomOutput').textContent = state.cropZoom.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 2 }) + '×';
+    const side = sourceCropSide();
+    const canMoveX = width - side >= 1;
+    const canMoveY = height - side >= 1;
+    cropXInput.disabled = !canMoveX;
+    cropYInput.disabled = !canMoveY;
+    $('#cropXOutput').textContent = canMoveX ? Math.round(state.cropX * 100) + '%' : 'fixo';
+    $('#cropYOutput').textContent = canMoveY ? Math.round(state.cropY * 100) + '%' : 'fixo';
+  }
+
+  function drawCropPreview() {
+    if (!state.file || !cropContext || preview.readyState < 2 || !preview.videoWidth || !preview.videoHeight) return;
+    const width = preview.videoWidth;
+    const height = preview.videoHeight;
+    const side = sourceCropSide();
+    const sourceX = clamp((width - side) * state.cropX, 0, Math.max(0, width - side));
+    const sourceY = clamp((height - side) * state.cropY, 0, Math.max(0, height - side));
+    try {
+      cropContext.drawImage(preview, sourceX, sourceY, side, side, 0, 0, cropCanvas.width, cropCanvas.height);
+    } catch (_) { /* O próximo quadro de vídeo atualizará a prévia. */ }
+  }
+
+  function animateCropPreview() {
+    state.cropAnimationFrame = 0;
+    if (!state.file) return;
+    drawCropPreview();
+    if (!preview.paused && !preview.ended) state.cropAnimationFrame = requestAnimationFrame(animateCropPreview);
+  }
+
+  function refreshCropPreview() {
+    if (state.cropAnimationFrame) cancelAnimationFrame(state.cropAnimationFrame);
+    state.cropAnimationFrame = 0;
+    drawCropPreview();
+    if (!preview.paused && !preview.ended) state.cropAnimationFrame = requestAnimationFrame(animateCropPreview);
+  }
+
   function formatTrimTime(value) {
     const tenths = Math.max(0, Math.round((Number(value) || 0) * 10));
     const minutes = Math.floor(tenths / 600);
@@ -408,7 +470,7 @@
     }
     state.trimStart = start;
     state.trimEnd = end;
-    if (!preview.paused && (preview.currentTime < start || preview.currentTime >= end)) preview.currentTime = start;
+    if (preview.currentTime < start || preview.currentTime >= end) preview.currentTime = start;
     updateTrimControls();
     updateFlow();
   }
@@ -420,12 +482,21 @@
     state.duration = null;
     state.trimStart = 0;
     state.trimEnd = 0;
+    state.cropX = 0.5;
+    state.cropY = 0.5;
+    state.cropZoom = 1;
+    if (state.cropAnimationFrame) cancelAnimationFrame(state.cropAnimationFrame);
+    state.cropAnimationFrame = 0;
     preview.onloadedmetadata = null;
     preview.onerror = null;
     preview.pause();
     preview.removeAttribute('src');
     preview.load();
-    preview.hidden = true;
+    cropCanvas.hidden = true;
+    $('#frameEditor').hidden = true;
+    $('#cropDragHint').hidden = true;
+    if (cropContext) cropContext.clearRect(0, 0, cropCanvas.width, cropCanvas.height);
+    $('#previewTrimButton').textContent = '▶ Assistir ao trecho';
     $('#previewPlaceholder').hidden = false;
     $('#fileDetails').hidden = true;
     $('#trimEditor').hidden = true;
@@ -464,7 +535,6 @@
     state.file = file;
     state.objectUrl = URL.createObjectURL(file);
     preview.src = state.objectUrl;
-    preview.hidden = false;
     $('#previewPlaceholder').hidden = true;
     $('#fileDetails').hidden = false;
     $('#dropZone').classList.add('has-file');
@@ -481,6 +551,10 @@
         invalidFile('Não foi possível confirmar a duração deste vídeo. Escolha outro arquivo.');
         return;
       }
+      if (!preview.videoWidth || !preview.videoHeight) {
+        invalidFile('Não foi possível ler as dimensões do vídeo para enquadrá-lo como figurinha. Escolha outro arquivo.');
+        return;
+      }
       const selectableEnd = Math.floor(duration * 10) / 10;
       if (selectableEnd < MIN_CLIP_SECONDS) {
         invalidFile('O vídeo é curto demais para ajustar. Escolha um trecho com pelo menos 0,5 segundo.');
@@ -489,7 +563,12 @@
       state.duration = duration;
       state.trimStart = 0;
       state.trimEnd = Math.min(selectableEnd, MAX_CLIP_SECONDS);
+      state.cropX = 0.5;
+      state.cropY = 0.5;
+      state.cropZoom = 1;
       $('#fileMeta').textContent = duration.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' s no original · ' + (file.size / (1024 * 1024)).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' MB';
+      updateCropControls();
+      refreshCropPreview();
       updateTrimControls();
       updateFlow();
     };
@@ -503,6 +582,60 @@
 
   trimStartInput.addEventListener('input', () => applyTrimSliderChange('start'));
   trimEndInput.addEventListener('input', () => applyTrimSliderChange('end'));
+  preview.addEventListener('loadeddata', () => {
+    updateCropControls();
+    refreshCropPreview();
+  });
+  cropZoomInput.addEventListener('input', () => {
+    state.cropZoom = Math.round(clamp(cropZoomInput.value, 1, 3) * 100) / 100;
+    updateCropControls();
+    refreshCropPreview();
+  });
+  cropXInput.addEventListener('input', () => {
+    state.cropX = clamp(Number(cropXInput.value) / 100, 0, 1);
+    updateCropControls();
+    refreshCropPreview();
+  });
+  cropYInput.addEventListener('input', () => {
+    state.cropY = clamp(Number(cropYInput.value) / 100, 0, 1);
+    updateCropControls();
+    refreshCropPreview();
+  });
+  $('#resetCropButton').addEventListener('click', () => {
+    state.cropX = 0.5;
+    state.cropY = 0.5;
+    state.cropZoom = 1;
+    updateCropControls();
+    refreshCropPreview();
+  });
+  cropCanvas.addEventListener('pointerdown', event => {
+    if (!state.file || !event.isPrimary) return;
+    cropDrag = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, cropX: state.cropX, cropY: state.cropY, side: sourceCropSide() };
+    cropCanvas.setPointerCapture(event.pointerId);
+    cropCanvas.classList.add('is-dragging');
+    event.preventDefault();
+  });
+  cropCanvas.addEventListener('pointermove', event => {
+    if (!cropDrag || cropDrag.pointerId !== event.pointerId) return;
+    const rect = cropCanvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const maxX = Math.max(0, preview.videoWidth - cropDrag.side);
+    const maxY = Math.max(0, preview.videoHeight - cropDrag.side);
+    const deltaX = event.clientX - cropDrag.x;
+    const deltaY = event.clientY - cropDrag.y;
+    if (maxX > 0) state.cropX = clamp(cropDrag.cropX - deltaX / rect.width * cropDrag.side / maxX, 0, 1);
+    if (maxY > 0) state.cropY = clamp(cropDrag.cropY - deltaY / rect.height * cropDrag.side / maxY, 0, 1);
+    updateCropControls();
+    refreshCropPreview();
+  });
+  function finishCropDrag(event) {
+    if (!cropDrag || cropDrag.pointerId !== event.pointerId) return;
+    cropDrag = null;
+    cropCanvas.classList.remove('is-dragging');
+    $('#cropStatus').textContent = 'Enquadramento atualizado. A saída será uma figurinha quadrada de 512 × 512.';
+  }
+  cropCanvas.addEventListener('pointerup', finishCropDrag);
+  cropCanvas.addEventListener('pointercancel', finishCropDrag);
   $('#markTrimStart').addEventListener('click', () => {
     if (!Number.isFinite(state.duration)) return;
     const selectableEnd = Math.floor(state.duration * 10) / 10;
@@ -527,22 +660,32 @@
   });
   $('#previewTrimButton').addEventListener('click', () => {
     if (!state.file || selectedClipDuration() < MIN_CLIP_SECONDS) return;
-    preview.pause();
-    preview.currentTime = state.trimStart;
+    if (!preview.paused) {
+      preview.pause();
+      return;
+    }
+    if (preview.currentTime < state.trimStart || preview.currentTime >= state.trimEnd) preview.currentTime = state.trimStart;
     const playback = preview.play();
     if (playback && typeof playback.catch === 'function') playback.catch(() => {
-      $('#trimStatus').textContent = 'Toque no vídeo para iniciar a prévia do trecho escolhido.';
+      $('#trimStatus').textContent = 'Toque em “Assistir ao trecho” para iniciar a prévia com áudio.';
     });
   });
   preview.addEventListener('play', () => {
     if (!Number.isFinite(state.duration)) return;
     if (preview.currentTime < state.trimStart || preview.currentTime >= state.trimEnd) preview.currentTime = state.trimStart;
+    $('#previewTrimButton').textContent = 'Ⅱ Pausar prévia';
+    refreshCropPreview();
+  });
+  preview.addEventListener('pause', () => {
+    $('#previewTrimButton').textContent = '▶ Assistir ao trecho';
+    refreshCropPreview();
   });
   preview.addEventListener('timeupdate', () => {
     if (!preview.paused && Number.isFinite(state.duration) && preview.currentTime >= state.trimEnd) {
       preview.currentTime = state.trimStart;
     }
     updateTrimPlayhead();
+    drawCropPreview();
   });
   preview.addEventListener('ended', () => {
     if (!Number.isFinite(state.duration)) return;
@@ -550,7 +693,10 @@
     const playback = preview.play();
     if (playback && typeof playback.catch === 'function') playback.catch(() => {});
   });
-  preview.addEventListener('seeked', updateTrimPlayhead);
+  preview.addEventListener('seeked', () => {
+    updateTrimPlayhead();
+    drawCropPreview();
+  });
 
   const dropZone = $('#dropZone');
   dropZone.addEventListener('click', () => videoInput.click());
@@ -619,6 +765,9 @@
       data.set('tags', $('#tagsInput').value.split(',').map(tag => tag.trim()).filter(Boolean).join(', '));
       data.set('trimStart', Math.max(0, state.trimStart).toFixed(3));
       data.set('trimEnd', Math.min(state.duration || 0, state.trimEnd).toFixed(3));
+      data.set('cropX', clamp(state.cropX, 0, 1).toFixed(4));
+      data.set('cropY', clamp(state.cropY, 0, 1).toFixed(4));
+      data.set('cropZoom', clamp(state.cropZoom, 1, 3).toFixed(2));
       if (state.file && (!videoInput.files || !videoInput.files[0])) data.set('video', state.file, state.file.name || 'figurinha.mp4');
       request.send(data);
     });

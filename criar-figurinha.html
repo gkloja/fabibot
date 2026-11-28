@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" id="themeColorMeta" content="#f5f7ee">
   <title>Criar Figurinhas com Áudio para WhatsApp | Fabi Bot</title>
-  <meta name="description" content="Crie figurinhas com áudio para WhatsApp na Fabi Bot. Envie seu vídeo, corte o melhor trecho no estúdio, personalize e publique na comunidade.">
-  <meta name="keywords" content="criar figurinhas com áudio, figurinhas com som para WhatsApp, criador de figurinhas, figurinha de vídeo para WhatsApp">
+  <meta name="description" content="Crie figurinhas com áudio para WhatsApp na Fabi Bot. Enquadre seu vídeo em formato quadrado 512×512, escolha o melhor trecho, personalize e publique.">
+  <meta name="keywords" content="criar figurinhas com áudio, enquadrar vídeo para figurinha, cortar vídeo quadrado 512x512, figurinhas com som para WhatsApp">
   <link rel="canonical" href="https://www.fabibot.com.br/criar-figurinha">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Fabi Bot">
@@ -48,11 +48,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/creator-page.css?v=20261128a">
-  <link rel="stylesheet" href="/assets/creator-experience.css?v=20261128c">
+  <link rel="stylesheet" href="/assets/creator-experience.css?v=20261128d">
   <link rel="stylesheet" href="/assets/fabi-bottom-nav.css?v=20261128a">
   <script defer src="/assets/loja-config.js?v=20261127a"></script>
   <script defer src="/assets/loja-api.js?v=20261127c"></script>
-  <script defer src="/assets/creator-page.js?v=20261128f"></script>
+  <script defer src="/assets/creator-page.js?v=20261128g"></script>
 </head>
 <body class="has-fabi-bottom-nav">
   <a class="skip-link" href="#studio">Pular para o estúdio</a>
@@ -102,10 +102,10 @@
       <div class="hero-copy">
         <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> ESTÚDIO ABERTO DA COMUNIDADE</p>
         <h1 id="heroTitle">CRIE FIGURINHAS<br><span>COM ÁUDIO</span><br>PARA WHATSAPP.</h1>
-        <p class="hero-lede">Envie um vídeo, escolha o melhor trecho, dê nome à sua reação e publique uma figurinha com áudio para a comunidade Fabi Bot.</p>
+        <p class="hero-lede">Envie um vídeo, enquadre a imagem em formato quadrado, escolha o melhor trecho, dê nome à sua reação e publique com áudio para a comunidade Fabi Bot.</p>
         <a class="button button-primary" href="#videoStep">Começar pelo vídeo <span aria-hidden="true">↘</span></a>
-        <div class="hero-facts" aria-label="Limites de envio">
-          <span>Com áudio</span><span>Corte de até 10 s</span><span>MP4, MOV ou WebM</span>
+        <div class="hero-facts" aria-label="Recursos do estúdio">
+          <span>Com áudio</span><span>Enquadramento 1:1</span><span>Trecho até 10 s</span><span>MP4, MOV ou WebM</span>
         </div>
       </div>
       <div class="hero-art" aria-label="Ilustração de uma figurinha com áudio feita pela comunidade">
@@ -123,11 +123,11 @@
     <section class="studio-section page-wrap" id="studio" aria-labelledby="studioTitle">
       <div class="section-heading">
         <div><p class="eyebrow">SEU ESPAÇO CRIATIVO</p><h2 id="studioTitle">Uma etapa de cada vez.<br><span>Sua ideia, no seu ritmo.</span></h2></div>
-        <p class="section-note">Primeiro o vídeo. A prévia aparece na hora; depois você personaliza e revisa antes de publicar.</p>
+        <p class="section-note">Enquadre a imagem no formato quadrado da figurinha e escolha o trecho. Depois, personalize e revise antes de publicar.</p>
       </div>
 
       <ol class="flow-steps" aria-label="Etapas para criar uma figurinha">
-        <li class="flow-step is-current" data-flow-step="1" aria-current="step"><span class="flow-step-number">01</span><div><b>Escolha o vídeo</b><small>Corte de até 10 s</small></div></li>
+        <li class="flow-step is-current" data-flow-step="1" aria-current="step"><span class="flow-step-number">01</span><div><b>Escolha o vídeo</b><small>Enquadre e corte</small></div></li>
         <li class="flow-step" data-flow-step="2"><span class="flow-step-number">02</span><div><b>Personalize</b><small>Nome e detalhes</small></div></li>
         <li class="flow-step" data-flow-step="3"><span class="flow-step-number">03</span><div><b>Revise e publique</b><small>Confira sua prévia</small></div></li>
       </ol>
@@ -144,7 +144,7 @@
                 <strong id="dropTitle">Solte o vídeo aqui</strong>
                 <span id="dropCopy">ou toque para escolher na galeria</span>
                 <span class="drop-action">Escolher vídeo <span aria-hidden="true">＋</span></span>
-                <small>MP4, MOV ou WebM · corte de até 10 s · máximo 24 MB</small>
+                <small>MP4, MOV ou WebM · quadro 1:1 · trecho de até 10 s · máximo 24 MB</small>
               </button>
               <div id="fileDetails" class="file-details" hidden>
                 <span class="file-check" aria-hidden="true">✓</span><span class="file-copy"><b id="fileName">Vídeo selecionado</b><small id="fileMeta"></small></span>
@@ -155,14 +155,27 @@
                 <div class="preview-stage">
                   <div class="preview-window">
                     <div id="previewPlaceholder" class="preview-placeholder"><span class="preview-play" aria-hidden="true">▶</span><img src="/assets/fabi-logo.webp" alt="" width="70" height="70"><b>Sua reação vem aí</b><small id="previewPlaceholderMessage">Escolha um vídeo para começar</small></div>
-                    <video id="videoPreview" controls playsinline preload="metadata" aria-label="Prévia local do vídeo selecionado" hidden></video>
+                    <video id="videoPreview" class="crop-source-video" playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>
+                    <canvas id="cropPreview" class="crop-preview-canvas" width="512" height="512" role="img" aria-label="Prévia quadrada 512 por 512. Arraste para ajustar o enquadramento; use também os controles abaixo." hidden></canvas>
+                    <span id="cropDragHint" class="crop-drag-hint" aria-hidden="true" hidden>Arraste para enquadrar</span>
                     <span class="preview-watermark" aria-hidden="true">FABI BOT</span>
                   </div>
                 </div>
                 <div class="preview-caption"><span class="caption-dot" aria-hidden="true"></span><div><b id="previewStickerTitle">Nome da sua figurinha</b><small id="previewAuthor">Criada por você · com áudio</small></div><span class="caption-sound" aria-label="Com áudio">♫</span></div>
+                <section class="frame-editor" id="frameEditor" aria-labelledby="frameTitle" hidden>
+                  <div class="frame-editor-heading"><div><p class="frame-kicker">ENQUADRAMENTO 1:1</p><h4 id="frameTitle">Ajuste a imagem na figurinha</h4></div><span class="frame-size-badge">512 × 512</span></div>
+                  <p class="frame-description">A figurinha é quadrada. Arraste a imagem dentro do quadro para escolher o que aparece; a prévia já mostra o resultado, sem barras pretas.</p>
+                  <label class="frame-range-label" for="cropZoomRange"><span>Zoom</span><output id="cropZoomOutput" for="cropZoomRange">1,0×</output></label>
+                  <input id="cropZoomRange" class="frame-range" type="range" min="1" max="3" step="0.05" value="1" aria-label="Ajustar zoom do enquadramento quadrado">
+                  <label class="frame-range-label" for="cropXRange"><span>Posição horizontal</span><output id="cropXOutput" for="cropXRange">50%</output></label>
+                  <input id="cropXRange" class="frame-range" type="range" min="0" max="100" step="1" value="50" aria-label="Mover o enquadramento para a esquerda ou direita">
+                  <label class="frame-range-label" for="cropYRange"><span>Posição vertical</span><output id="cropYOutput" for="cropYRange">50%</output></label>
+                  <input id="cropYRange" class="frame-range" type="range" min="0" max="100" step="1" value="50" aria-label="Mover o enquadramento para cima ou para baixo">
+                  <div class="frame-footer"><p id="cropStatus" role="status" aria-live="polite">Arraste a imagem ou use os controles para enquadrar. O resultado será quadrado, em 512 × 512.</p><button id="resetCropButton" class="frame-reset-button" type="button">Centralizar</button></div>
+                </section>
                 <section class="trim-editor" id="trimEditor" aria-labelledby="trimTitle" hidden>
-                  <div class="trim-editor-heading"><div><p class="trim-kicker">CORTE PRECISO</p><h4 id="trimTitle">Deixe só o melhor momento</h4></div><span class="trim-duration" id="trimLengthBadge">0,0 s</span></div>
-                  <p class="trim-description">Arraste os controles ou marque o início e o fim durante a reprodução. Escolha de 0,5 a 10 segundos; o áudio é preservado.</p>
+                  <div class="trim-editor-heading"><div><p class="trim-kicker">DURAÇÃO DO TRECHO</p><h4 id="trimTitle">Escolha só o melhor momento</h4></div><span class="trim-duration" id="trimLengthBadge">0,0 s</span></div>
+                  <p class="trim-description">Ajuste o início e o fim do vídeo. O enquadramento quadrado é controlado separadamente acima. Escolha de 0,5 a 10 segundos; o áudio é preservado.</p>
                   <div class="trim-track" aria-hidden="true"><span id="trimTrackSelection"></span><i id="trimTrackPlayhead"></i></div>
                   <div class="trim-readouts"><span><small>INÍCIO</small><output id="trimStartOutput">00:00.0</output></span><span><small>FIM</small><output id="trimEndOutput">00:00.0</output></span><strong id="trimSourceDuration">VÍDEO · 00:00.0</strong></div>
                   <label class="trim-range-label" for="trimStartRange"><span>Início do trecho</span><output id="trimStartRangeLabel">00:00.0</output></label>
@@ -263,15 +276,16 @@
     </section>
 
     <section class="how-section page-wrap" aria-labelledby="howTitle">
-      <div><p class="eyebrow">DO VÍDEO AO WHATSAPP</p><h2 id="howTitle">Como criar uma figurinha com áudio para WhatsApp</h2><p class="how-intro">Transforme um trecho curto em uma reação original. A prévia ajuda você a conferir tudo antes de publicar.</p></div>
-      <div class="how-steps"><p><b>01 · Escolha e corte</b><span>Envie um vídeo MP4, MOV ou WebM de até 24 MB. No estúdio, selecione um trecho de 0,5 a 10 segundos e confira o áudio.</span></p><p><b>02 · Personalize</b><span>Dê um nome, escolha uma categoria e descreva o momento em que a figurinha combina.</span></p><p><b>03 · Publique</b><span>Entre ou crie sua conta, confira a prévia e publique na comunidade Fabi Bot.</span></p></div>
+      <div><p class="eyebrow">DO VÍDEO AO WHATSAPP</p><h2 id="howTitle">Como criar uma figurinha com áudio para WhatsApp</h2><p class="how-intro">Transforme um trecho curto em uma reação original. Ajuste a imagem no quadro quadrado 512 × 512 e confira a prévia antes de publicar.</p></div>
+      <div class="how-steps"><p><b>01 · Enquadre e corte</b><span>Envie um vídeo MP4, MOV ou WebM de até 24 MB. Arraste a imagem ou ajuste zoom e posição para escolher o enquadramento quadrado 512 × 512; depois selecione de 0,5 a 10 segundos e confira o áudio.</span></p><p><b>02 · Personalize</b><span>Dê um nome, escolha uma categoria e descreva o momento em que a figurinha combina.</span></p><p><b>03 · Publique</b><span>Entre ou crie sua conta, confira a prévia e publique na comunidade Fabi Bot.</span></p></div>
     </section>
 
     <section class="faq-section page-wrap" aria-labelledby="faqTitle">
       <div class="faq-heading"><p class="eyebrow">DÚVIDAS FREQUENTES</p><h2 id="faqTitle">Criar sua figurinha, sem mistério.</h2></div>
       <div class="faq-list">
-        <details><summary>Como criar uma figurinha com áudio para WhatsApp?<span aria-hidden="true">＋</span></summary><p>Escolha um vídeo, recorte um trecho de 0,5 a 10 segundos, personalize o nome e os detalhes e confira a prévia. A publicação só começa quando você toca em “Publicar minha figurinha”.</p></details>
-        <details><summary>Quais vídeos posso enviar?<span aria-hidden="true">＋</span></summary><p>Aceitamos vídeos MP4, MOV ou WebM de até 24 MB. No editor, você escolhe o início e o fim do trecho, com duração de 0,5 a 10 segundos; o áudio é mantido.</p></details>
+        <details><summary>Como criar uma figurinha com áudio para WhatsApp?<span aria-hidden="true">＋</span></summary><p>Escolha um vídeo, ajuste o enquadramento quadrado 512 × 512 arrastando a imagem ou usando zoom e posição, recorte um trecho de 0,5 a 10 segundos, personalize e confira a prévia. A publicação só começa quando você toca em “Publicar minha figurinha”.</p></details>
+        <details><summary>O vídeo vira uma figurinha quadrada?<span aria-hidden="true">＋</span></summary><p>Sim. A saída é processada em 512 × 512. Antes de publicar, você pode arrastar a imagem no quadro e ajustar zoom e posição para escolher exatamente o que aparece, sem barras pretas.</p></details>
+        <details><summary>Quais vídeos posso enviar?<span aria-hidden="true">＋</span></summary><p>Aceitamos vídeos MP4, MOV ou WebM de até 24 MB. No editor, você escolhe o enquadramento quadrado e o início e fim do trecho, com duração de 0,5 a 10 segundos; o áudio é mantido.</p></details>
         <details><summary>Meu vídeo é enviado assim que eu escolho?<span aria-hidden="true">＋</span></summary><p>Não. A prévia é local enquanto você prepara a figurinha. O arquivo só é enviado ao servidor depois que você entra ou cria uma conta e confirma a publicação.</p></details>
         <details><summary>Onde vejo as figurinhas que já publiquei?<span aria-hidden="true">＋</span></summary><p>Entre na sua conta e abra “Minha coleção” nesta página. Ali você acompanha suas criações e, quando estiver disponível, pode iniciar o resgate pelo WhatsApp.</p></details>
       </div>
