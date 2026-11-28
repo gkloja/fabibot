@@ -3,7 +3,7 @@
 
   const API = '/api/creator';
   const $ = (selector, root = document) => root.querySelector(selector);
-  const state = { token: '', user: null, objectUrl: '', file: null, duration: null, busy: false, returnFocus: null, mineRequest: 0, flowStep: 0, themeMode: 'system' };
+  const state = { token: '', user: null, objectUrl: '', file: null, duration: null, trimStart: 0, trimEnd: 0, busy: false, returnFocus: null, mineRequest: 0, flowStep: 0, themeMode: 'system' };
 
   try { state.token = localStorage.getItem('fabi_creator_token') || ''; } catch (_) { /* A sessão ainda funciona nesta aba. */ }
 
@@ -13,6 +13,10 @@
   const authDialog = $('#authDialog');
   const formMessage = $('#formMessage');
   const uploadProgress = $('#uploadProgress');
+  const MAX_CLIP_SECONDS = 10;
+  const MIN_CLIP_SECONDS = 0.5;
+  const trimStartInput = $('#trimStartRange');
+  const trimEndInput = $('#trimEndRange');
 
   function showMessage(text, kind) {
     formMessage.textContent = String(text || '');
@@ -226,7 +230,8 @@
   }
 
   function updateFlow() {
-    const videoReady = Boolean(state.file && state.duration !== null && Number.isFinite(state.duration) && state.duration > 0 && state.duration <= 10);
+    const clipDuration = selectedClipDuration();
+    const videoReady = Boolean(state.file && state.duration !== null && Number.isFinite(state.duration) && state.duration > 0 && clipDuration >= MIN_CLIP_SECONDS && clipDuration <= MAX_CLIP_SECONDS + 0.05);
     if (!videoReady) state.flowStep = 1;
     if (![1, 2, 3].includes(state.flowStep)) state.flowStep = 1;
 
@@ -247,7 +252,7 @@
     $('#previewTitle').textContent = reviewReady ? 'Confira sua figurinha' : 'Assista ao seu vídeo';
     $('#previewFootnote').textContent = reviewReady
       ? 'Esta prévia ainda é local. O vídeo só é enviado quando você publicar.'
-      : 'Dê play para assistir e confira o áudio antes de continuar.';
+      : 'Dê play para conferir o trecho escolhido e o áudio antes de continuar.';
 
     const continueToDetails = $('#continueToDetails');
     continueToDetails.hidden = !state.file || step !== 1;
@@ -283,7 +288,7 @@
   }
 
   $('#continueToDetails').addEventListener('click', () => {
-    if (!state.file || state.duration === null || state.duration > 10) return;
+    if (!state.file || state.duration === null || selectedClipDuration() < MIN_CLIP_SECONDS || selectedClipDuration() > MAX_CLIP_SECONDS + 0.05) return;
     state.flowStep = 2;
     updateFlow();
     moveToStep($('#detailsStep'), $('#detailsStepTitle'));
@@ -323,11 +328,98 @@
   $('#descriptionInput').addEventListener('input', updateTextPreview);
   $('#categoryInput').addEventListener('change', updateTextPreview);
 
+  function selectedClipDuration() {
+    return Math.max(0, Number(state.trimEnd) - Number(state.trimStart));
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(Number(value) || 0, min), max);
+  }
+
+  function formatTrimTime(value) {
+    const tenths = Math.max(0, Math.round((Number(value) || 0) * 10));
+    const minutes = Math.floor(tenths / 600);
+    const seconds = Math.floor(tenths / 10) % 60;
+    return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0') + '.' + (tenths % 10);
+  }
+
+  function updateTrimPlayhead() {
+    const duration = Number(state.duration) || 0;
+    const current = clamp(preview.currentTime, 0, duration);
+    const percent = duration ? current / duration * 100 : 0;
+    $('#trimTrackPlayhead').style.left = percent + '%';
+  }
+
+  function updateTrimControls() {
+    if (!state.file || !Number.isFinite(state.duration) || state.duration < MIN_CLIP_SECONDS) {
+      $('#trimEditor').hidden = true;
+      return;
+    }
+    const duration = Number(state.duration);
+    const selectableEnd = Math.floor(duration * 10) / 10;
+    const maxStart = Math.max(0, selectableEnd - MIN_CLIP_SECONDS);
+    let start = clamp(state.trimStart, 0, maxStart);
+    let end = clamp(state.trimEnd, start + MIN_CLIP_SECONDS, selectableEnd);
+    if (end - start > MAX_CLIP_SECONDS) end = start + MAX_CLIP_SECONDS;
+    start = Math.round(start * 10) / 10;
+    end = Math.round(end * 10) / 10;
+    state.trimStart = start;
+    state.trimEnd = end;
+
+    trimStartInput.min = '0';
+    trimStartInput.max = String(maxStart.toFixed(1));
+    trimStartInput.value = String(start.toFixed(1));
+    trimStartInput.setAttribute('aria-valuetext', formatTrimTime(start));
+    trimEndInput.min = '0';
+    trimEndInput.max = String(selectableEnd.toFixed(1));
+    trimEndInput.value = String(end.toFixed(1));
+    trimEndInput.setAttribute('aria-valuetext', formatTrimTime(end));
+    $('#trimStartOutput').textContent = formatTrimTime(start);
+    $('#trimEndOutput').textContent = formatTrimTime(end);
+    $('#trimStartRangeLabel').textContent = formatTrimTime(start);
+    $('#trimEndRangeLabel').textContent = formatTrimTime(end);
+    $('#trimSourceDuration').textContent = 'VÍDEO · ' + formatTrimTime(duration);
+    const clip = selectedClipDuration();
+    const clipLabel = clip.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' s';
+    $('#trimLengthBadge').textContent = clipLabel;
+    const startPercent = start / duration * 100;
+    const endPercent = end / duration * 100;
+    $('#trimTrackSelection').style.left = startPercent + '%';
+    $('#trimTrackSelection').style.width = Math.max(0, endPercent - startPercent) + '%';
+    $('#trimStatus').textContent = 'Trecho selecionado: ' + formatTrimTime(start) + '–' + formatTrimTime(end) + ' (' + clipLabel + '). O áudio será preservado.';
+    $('#trimEditor').hidden = false;
+    updateTrimPlayhead();
+  }
+
+  function applyTrimSliderChange(changed) {
+    const duration = Number(state.duration);
+    if (!Number.isFinite(duration) || duration < MIN_CLIP_SECONDS) return;
+    const selectableEnd = Math.floor(duration * 10) / 10;
+    let start = Number(trimStartInput.value) || 0;
+    let end = Number(trimEndInput.value) || 0;
+    if (changed === 'start') {
+      start = clamp(start, 0, Math.max(0, selectableEnd - MIN_CLIP_SECONDS));
+      if (end < start + MIN_CLIP_SECONDS) end = Math.min(selectableEnd, start + MIN_CLIP_SECONDS);
+      if (end - start > MAX_CLIP_SECONDS) end = start + MAX_CLIP_SECONDS;
+    } else {
+      end = clamp(end, MIN_CLIP_SECONDS, selectableEnd);
+      if (end < start + MIN_CLIP_SECONDS) start = Math.max(0, end - MIN_CLIP_SECONDS);
+      if (end - start > MAX_CLIP_SECONDS) start = end - MAX_CLIP_SECONDS;
+    }
+    state.trimStart = start;
+    state.trimEnd = end;
+    if (!preview.paused && (preview.currentTime < start || preview.currentTime >= end)) preview.currentTime = start;
+    updateTrimControls();
+    updateFlow();
+  }
+
   function clearVideo() {
     if (state.objectUrl) URL.revokeObjectURL(state.objectUrl);
     state.objectUrl = '';
     state.file = null;
     state.duration = null;
+    state.trimStart = 0;
+    state.trimEnd = 0;
     preview.onloadedmetadata = null;
     preview.onerror = null;
     preview.pause();
@@ -336,6 +428,7 @@
     preview.hidden = true;
     $('#previewPlaceholder').hidden = false;
     $('#fileDetails').hidden = true;
+    $('#trimEditor').hidden = true;
     $('#dropZone').classList.remove('has-file');
     $('#dropTitle').textContent = 'Solte o vídeo aqui';
     $('#dropCopy').textContent = 'ou toque para escolher na galeria';
@@ -356,7 +449,9 @@
     const ext = String(file.name || '').split('.').pop().toLowerCase();
     const allowedExtensions = ['mp4', 'mov', 'webm', 'm4v'];
     const allowedTypes = ['video/mp4', 'video/quicktime', 'video/webm', 'video/x-m4v'];
-    if (!allowedExtensions.includes(ext) && !allowedTypes.includes(file.type)) {
+    const mimeType = String(file.type || '').toLowerCase();
+    const supportedMime = allowedTypes.includes(mimeType) || !mimeType || mimeType === 'application/octet-stream';
+    if (!allowedExtensions.includes(ext) || !supportedMime) {
       invalidFile('Esse formato ainda não é aceito. Escolha um vídeo MP4, MOV ou WebM.');
       return;
     }
@@ -386,12 +481,16 @@
         invalidFile('Não foi possível confirmar a duração deste vídeo. Escolha outro arquivo.');
         return;
       }
-      state.duration = duration;
-      if (duration > 10) {
-        invalidFile('Este vídeo tem ' + duration.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' s. O limite é 10 s; escolha um trecho mais curto antes de publicar.');
+      const selectableEnd = Math.floor(duration * 10) / 10;
+      if (selectableEnd < MIN_CLIP_SECONDS) {
+        invalidFile('O vídeo é curto demais para ajustar. Escolha um trecho com pelo menos 0,5 segundo.');
         return;
       }
-      $('#fileMeta').textContent = duration.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' s · ' + (file.size / (1024 * 1024)).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' MB';
+      state.duration = duration;
+      state.trimStart = 0;
+      state.trimEnd = Math.min(selectableEnd, MAX_CLIP_SECONDS);
+      $('#fileMeta').textContent = duration.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' s no original · ' + (file.size / (1024 * 1024)).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' MB';
+      updateTrimControls();
       updateFlow();
     };
     preview.onerror = () => {
@@ -401,6 +500,57 @@
       updateFlow();
     };
   }
+
+  trimStartInput.addEventListener('input', () => applyTrimSliderChange('start'));
+  trimEndInput.addEventListener('input', () => applyTrimSliderChange('end'));
+  $('#markTrimStart').addEventListener('click', () => {
+    if (!Number.isFinite(state.duration)) return;
+    const selectableEnd = Math.floor(state.duration * 10) / 10;
+    const start = clamp(Math.floor(preview.currentTime * 10) / 10, 0, Math.max(0, selectableEnd - MIN_CLIP_SECONDS));
+    let end = Math.max(state.trimEnd, start + MIN_CLIP_SECONDS);
+    if (end - start > MAX_CLIP_SECONDS) end = start + MAX_CLIP_SECONDS;
+    state.trimStart = start;
+    state.trimEnd = Math.min(end, selectableEnd);
+    updateTrimControls();
+    updateFlow();
+  });
+  $('#markTrimEnd').addEventListener('click', () => {
+    if (!Number.isFinite(state.duration)) return;
+    const selectableEnd = Math.floor(state.duration * 10) / 10;
+    const end = clamp(Math.floor(preview.currentTime * 10) / 10, MIN_CLIP_SECONDS, selectableEnd);
+    let start = Math.min(state.trimStart, end - MIN_CLIP_SECONDS);
+    if (end - start > MAX_CLIP_SECONDS) start = end - MAX_CLIP_SECONDS;
+    state.trimStart = Math.max(0, start);
+    state.trimEnd = end;
+    updateTrimControls();
+    updateFlow();
+  });
+  $('#previewTrimButton').addEventListener('click', () => {
+    if (!state.file || selectedClipDuration() < MIN_CLIP_SECONDS) return;
+    preview.pause();
+    preview.currentTime = state.trimStart;
+    const playback = preview.play();
+    if (playback && typeof playback.catch === 'function') playback.catch(() => {
+      $('#trimStatus').textContent = 'Toque no vídeo para iniciar a prévia do trecho escolhido.';
+    });
+  });
+  preview.addEventListener('play', () => {
+    if (!Number.isFinite(state.duration)) return;
+    if (preview.currentTime < state.trimStart || preview.currentTime >= state.trimEnd) preview.currentTime = state.trimStart;
+  });
+  preview.addEventListener('timeupdate', () => {
+    if (!preview.paused && Number.isFinite(state.duration) && preview.currentTime >= state.trimEnd) {
+      preview.currentTime = state.trimStart;
+    }
+    updateTrimPlayhead();
+  });
+  preview.addEventListener('ended', () => {
+    if (!Number.isFinite(state.duration)) return;
+    preview.currentTime = state.trimStart;
+    const playback = preview.play();
+    if (playback && typeof playback.catch === 'function') playback.catch(() => {});
+  });
+  preview.addEventListener('seeked', updateTrimPlayhead);
 
   const dropZone = $('#dropZone');
   dropZone.addEventListener('click', () => videoInput.click());
@@ -467,6 +617,8 @@
       data.set('title', $('#titleInput').value.trim());
       data.set('description', $('#descriptionInput').value.trim());
       data.set('tags', $('#tagsInput').value.split(',').map(tag => tag.trim()).filter(Boolean).join(', '));
+      data.set('trimStart', Math.max(0, state.trimStart).toFixed(3));
+      data.set('trimEnd', Math.min(state.duration || 0, state.trimEnd).toFixed(3));
       if (state.file && (!videoInput.files || !videoInput.files[0])) data.set('video', state.file, state.file.name || 'figurinha.mp4');
       request.send(data);
     });
@@ -832,8 +984,8 @@
       showMessage('Aguarde a leitura da duração do vídeo antes de publicar. Se ela não carregar, escolha outro arquivo.', 'error');
       return;
     }
-    if (state.duration > 10) {
-      showMessage('O limite é 10 segundos. Escolha um trecho mais curto.', 'error');
+    if (selectedClipDuration() < MIN_CLIP_SECONDS || selectedClipDuration() > MAX_CLIP_SECONDS + 0.05) {
+      showMessage('Ajuste um trecho de até 10 segundos antes de continuar.', 'error');
       return;
     }
     if (!form.reportValidity()) return;
