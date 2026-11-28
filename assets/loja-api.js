@@ -12,7 +12,7 @@
 
   function proxyUrl(path) {
     const target = new URL(path, backend);
-    const allowedMedia = /^\/figurinhas_loja(?:\.json|\/[a-zA-Z0-9_-]+\.(?:webp|ogg))$|^\/figurinhas_media\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$|^\/figurinhas_creator\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$/i.test(target.pathname);
+    const allowedMedia = target.pathname === '/figurinhas_packs.json' || /^\/figurinhas_loja(?:\.json|\/[a-zA-Z0-9_-]+\.(?:webp|ogg))$|^\/figurinhas_media\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$|^\/figurinhas_creator\/[a-zA-Z0-9_-]+\.(?:mp4|webp)$/i.test(target.pathname);
     const allowedStoreApi = /^\/api\/figurinhas\/(?:gerar-pix|favoritar|visualizar|verificar-pagamento\/[a-f0-9-]{36})$/i.test(target.pathname);
     if (target.origin !== backend.origin || (!allowedMedia && !allowedStoreApi) || target.search || target.hash) throw new Error('Caminho de mídia ou checkout não permitido.');
     return config.proxy.replace(/\/$/, '') + '/' + backend.host + '/proxy?url=' + encodeURIComponent(target.href);
@@ -130,6 +130,33 @@
     }
   }
 
+  function normalizePacks(raw) {
+    const rows = Array.isArray(raw) ? raw : [];
+    const seen = new Set();
+    return rows.filter(row => row && typeof row === 'object').map(row => {
+      const id = cleanText(row.id, 80);
+      const rawStickerIds = Array.isArray(row.stickerIds) ? row.stickerIds.map(value => cleanText(value, 80)) : [];
+      const stickerIds = [...new Set(rawStickerIds.filter(value => /^[a-zA-Z0-9_-]{1,80}$/.test(value)))];
+      if (!/^[a-zA-Z0-9_-]{1,80}$/.test(id) || seen.has(id) || rawStickerIds.length < 2 || rawStickerIds.length > 30 || stickerIds.length !== rawStickerIds.length || row.published !== true) return null;
+      seen.add(id);
+      return {
+        id, name: cleanText(row.name || 'Pack de figurinhas', 120), baseName: cleanText(row.baseName || row.name || 'Pack', 100),
+        number: Math.max(0, Number(row.number) || 0), category: cleanText(row.category || 'geral', 60),
+        description: cleanText(row.description || '', 240), coverId: stickerIds.includes(cleanText(row.coverId || '', 80)) ? cleanText(row.coverId, 80) : stickerIds[0], stickerIds,
+        discountPercent: 15, createdAt: cleanText(row.createdAt, 40), publishedAt: cleanText(row.publishedAt, 40),
+        published: true, salesCount: Math.max(0, Number(row.salesCount) || 0)
+      };
+    }).filter(Boolean);
+  }
+
+  async function packs() {
+    try { return normalizePacks(await jsonRequest(proxyUrl('/figurinhas_packs.json'))); }
+    catch (_) {
+      try { return normalizePacks(await jsonRequest(localUrl('figurinhas_packs.json'))); }
+      catch (_) { return []; }
+    }
+  }
+
   async function mediaIndex() {
     try { const data = await jsonRequest(localUrl(config.mediaIndexPath)); return data && typeof data === 'object' && !Array.isArray(data) ? data : {}; }
     catch (_) { return {}; }
@@ -201,14 +228,18 @@
   }
 
   async function createStickerOrder(items, payerEmail, requestId) {
-    if (!Array.isArray(items) || items.length < 1 || items.length > 40) throw new Error('Selecione de 1 a 40 figurinhas.');
-    const ids = [...new Set(items.map(id => String(id)))];
-    if (ids.length !== items.length || ids.some(id => !/^[a-zA-Z0-9_-]{1,80}$/.test(id))) throw new Error('O carrinho contém IDs inválidos ou repetidos.');
+    if (!Array.isArray(items) || items.length < 1 || items.length > 40) throw new Error('Selecione até 40 itens para o pedido.');
+    const lineItems = items.map(item => {
+      if (typeof item === 'string') return { type: 'sticker', id: item };
+      return item && typeof item === 'object' ? { type: item.type, id: String(item.id || '') } : { type: '', id: '' };
+    });
+    const signatures = lineItems.map(item => item.type + ':' + item.id);
+    if (lineItems.some(item => !['sticker', 'pack'].includes(item.type) || !/^[a-zA-Z0-9_-]{1,80}$/.test(item.id)) || new Set(signatures).size !== lineItems.length) throw new Error('O carrinho contém IDs inválidos ou repetidos.');
     const email = String(payerEmail || '').trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) throw new Error('Informe um e-mail válido para o pagamento.');
     const idempotencyRequest = String(requestId || '');
     if (!/^[a-f0-9-]{36}$/i.test(idempotencyRequest)) throw new Error('A solicitação do PIX expirou. Tente novamente.');
-    return jsonApi('/api/figurinhas/gerar-pix', 'POST', { items: ids, payerEmail: email, requestId: idempotencyRequest });
+    return jsonApi('/api/figurinhas/gerar-pix', 'POST', { items: lineItems, payerEmail: email, requestId: idempotencyRequest });
   }
 
   async function recordFavorite(id, action, clientToken) { return jsonApi('/api/figurinhas/favoritar', 'POST', { id: String(id), action: action === 'remove' ? 'remove' : 'add', clientToken: String(clientToken) }); }
@@ -242,5 +273,5 @@
     return jsonApi('/api/figurinhas/verificar-pagamento/' + encodeURIComponent(id), 'GET');
   }
 
-  window.FabiStickerApi = { catalog, creatorCatalog, mediaIndex, normalizeCatalog, proxyUrl, localUrl, mediaUrl, staticMedia, tutorialUrl, createStickerOrder, recordFavorite, recordView, checkStickerPayment, creatorIdentity, creatorClaimLink };
+  window.FabiStickerApi = { catalog, packs, creatorCatalog, mediaIndex, normalizeCatalog, normalizePacks, proxyUrl, localUrl, mediaUrl, staticMedia, tutorialUrl, createStickerOrder, recordFavorite, recordView, checkStickerPayment, creatorIdentity, creatorClaimLink };
 })();

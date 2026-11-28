@@ -18,7 +18,7 @@
   const storeWhatsapp = String(config.storeWhatsapp || '5592985715119').replace(/\D/g, '');
   let favoriteToken = '';
   try { favoriteToken = localStorage.getItem(favoriteTokenKey) || ''; if (!/^[a-zA-Z0-9_-]{16,120}$/.test(favoriteToken)) { favoriteToken = (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '') : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem(favoriteTokenKey, favoriteToken); } } catch (_) { favoriteToken = 'anon' + Date.now().toString(36); }
-  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'random', visitOrder: new Map(), limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
+  const state = { items: [], index: {}, packs: [], packsLoaded: false, catalogMode: 'stickers', filter: 'all', query: '', category: 'all', sort: 'random', visitOrder: new Map(), limit: config.pageSize, packLimit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
   try {
     const saved = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
     if (Array.isArray(saved)) state.favorites = new Set(saved.filter(id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,80}$/.test(id)).slice(0, 2000));
@@ -26,7 +26,12 @@
 
   try {
     const savedCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
-    if (Array.isArray(savedCart)) state.cart = new Set(savedCart.filter(id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,80}$/.test(id)).slice(0, 40));
+    if (Array.isArray(savedCart)) state.cart = new Set(savedCart.map(value => {
+      if (typeof value !== 'string') return '';
+      const match = /^(sticker|pack):([a-zA-Z0-9_-]{1,80})$/.exec(value);
+      if (match) return value;
+      return /^[a-zA-Z0-9_-]{1,80}$/.test(value) ? 'sticker:' + value : '';
+    }).filter(Boolean).slice(0, 40));
   } catch (_) { /* Cart still works for this visit when storage is blocked. */ }
 
   const formatMoney = cents => (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -67,6 +72,27 @@
   }
 
   function cartSignature() { return [...state.cart].sort().join('|'); }
+
+  function parseCartKey(key) {
+    const match = /^(sticker|pack):([a-zA-Z0-9_-]{1,80})$/.exec(String(key || ''));
+    return match ? { type: match[1], id: match[2] } : null;
+  }
+
+  function packById(id) { return state.packs.find(pack => pack.id === id); }
+  function memberIds(pack) { return pack && Array.isArray(pack.stickerIds) ? pack.stickerIds : []; }
+  function packMembers(pack) { return memberIds(pack).map(id => state.items.find(item => item.id === id)).filter(Boolean); }
+  function packSinglesCents(pack) { return packMembers(pack).reduce((sum, item) => sum + priceOf(item), 0); }
+  function packPriceCents(pack) { return Math.round(packSinglesCents(pack) * 0.85); }
+  function cartStickerIds() {
+    const ids = new Set();
+    state.cart.forEach(key => {
+      const entry = parseCartKey(key);
+      if (!entry) return;
+      if (entry.type === 'sticker') ids.add(entry.id);
+      else memberIds(packById(entry.id)).forEach(id => ids.add(id));
+    });
+    return ids;
+  }
 
   function applyTheme(theme) {
     if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
@@ -244,7 +270,7 @@
     const animated = item.source !== 'community' && state.source === 'live' && item.isAnimated && !prefersStill();
     const image = animated ? api.mediaUrl(item) : (media.poster || (item.source !== 'community' && state.source === 'live' ? api.mediaUrl(item) : ''));
     const isSaved = state.favorites.has(item.id);
-    const inCart = state.cart.has(item.id);
+    const inCart = state.cart.has('sticker:' + item.id);
     const fallback = media.poster || '';
     const previewMedia = communityAnimated
       ? '<video class="community-motion" data-community-src="' + escape(media.preview) + '"' + (fallback ? ' poster="' + escape(fallback) + '"' : '') + ' muted loop playsinline preload="none" aria-hidden="true" data-community-video data-fallback-alt="' + escape(item.nome) + '"></video><span class="watermark" aria-hidden="true">FABI BOT</span>'
@@ -319,7 +345,77 @@
     document.body.classList.add('modal-open');
   }
 
+  function packCardHTML(pack) {
+    const members = packMembers(pack);
+    const cover = state.items.find(item => item.id === memberIds(pack)[0]) || state.items.find(item => item.id === pack.coverId) || members[0];
+    const media = cover ? api.staticMedia(cover, state.index) : {};
+    const image = cover ? (media.poster || (state.source === 'live' ? api.mediaUrl(cover) : '')) : '';
+    const complete = members.length === memberIds(pack).length;
+    const regular = complete ? packSinglesCents(pack) : 0;
+    const packPrice = Math.round(regular * 0.85);
+    const hasAudio = members.some(item => item.temAudio);
+    const animated = members.some(item => item.isAnimated);
+    const inCart = state.cart.has('pack:' + pack.id);
+    const edition = pack.number ? 'Edição ' + pack.number : pack.baseName;
+    return '<article class="pack-card" data-pack-id="' + escape(pack.id) + '">' +
+      '<div class="pack-cover">' + (image ? '<img src="' + escape(image) + '" alt="Capa do pack ' + escape(pack.name) + '" loading="lazy" decoding="async" data-sticker-id="' + escape(cover.id) + '" data-fallback="' + escape(media.poster || '') + '"><span class="watermark" aria-hidden="true">FABI BOT</span>' : '<span class="pack-cover-fallback">' + icon('play') + '</span>') +
+      '<span class="pack-cover-count">' + memberIds(pack).length + ' figurinhas</span><span class="pack-discount">−15%</span></div>' +
+      '<div class="pack-card-info"><div class="pack-kicker"><span>' + escape(edition) + '</span><span>' + escape(pack.category) + '</span></div>' +
+      '<h3>' + escape(pack.name) + '</h3><p class="pack-description">' + escape(pack.description || 'Uma coleção pronta para levar suas reações ao WhatsApp.') + '</p>' +
+      '<div class="pack-indicators"><span class="audio-badge ' + (hasAudio ? 'has-audio' : 'no-audio') + '">' + icon(hasAudio ? 'sound' : 'play') + (hasAudio ? 'COM SOM' : 'SEM ÁUDIO') + '</span><span class="pack-motion-badge">' + (animated ? icon('play') + 'ANIMADAS' : 'ESTÁTICAS') + '</span></div>' +
+      '<div class="pack-price-details"><span>Soma avulsa <s>' + (complete ? formatMoney(regular) : '—') + '</s></span><span>Economize 15% <b>' + (complete ? '−' + formatMoney(regular - packPrice) : '—') + '</b></span></div>' +
+      '<div class="pack-card-bottom"><strong>' + (complete ? formatMoney(packPrice) : '—') + '</strong><button class="card-cart-button" type="button" data-action="pack-add" data-pack-id="' + escape(pack.id) + '" aria-pressed="' + inCart + '"' + (!complete ? ' disabled' : '') + '>' + (inCart ? 'No carrinho ✓' : complete ? '+ Adicionar pack' : 'Itens indisponíveis') + '</button></div></div></article>';
+  }
+
+  function renderPacks() {
+    $('.type-filters').hidden = true;
+    $('#sortSelect').parentElement.hidden = true;
+    stopHoverVideos();
+    const query = fold(state.query.trim());
+    const packs = state.packs.filter(pack => {
+      if (state.category !== 'all' && pack.category !== state.category) return false;
+      return !query || fold([pack.name, pack.baseName, pack.category, pack.description, pack.id].join(' ')).includes(query);
+    });
+    const visible = packs.slice(0, state.packLimit);
+    $('#catalogGrid').hidden = true;
+    $('#packGrid').hidden = false;
+    $('#packGrid').innerHTML = visible.map(packCardHTML).join('');
+    $('#packGrid').setAttribute('aria-busy', String(!state.packsLoaded));
+    $('#catalogEmpty').hidden = true;
+    $('#packEmpty').hidden = packs.length !== 0;
+    $('#loadMoreButton').hidden = packs.length <= state.packLimit;
+    $('#loadMoreButton').innerHTML = 'Ver mais packs' + icon('arrow');
+    $('#searchClear').hidden = !state.query;
+    $('#resultCount').textContent = packs.length === 1 ? '1 pack encontrado' : packs.length + ' packs encontrados';
+    if (packs.length > state.packLimit) $('#resultCount').textContent += ' · mostrando ' + visible.length;
+    const emptyTitle = $('#packEmpty').querySelector('h3');
+    const emptyDescription = $('#packEmpty').querySelector('p');
+    if (!state.packs.length) {
+      emptyTitle.textContent = 'Nenhum pack publicado por enquanto.';
+      emptyDescription.textContent = 'Estamos preparando coleções especiais. Enquanto isso, monte seu carrinho com figurinhas avulsas.';
+    } else {
+      emptyTitle.textContent = 'Nenhum pack com esses filtros.';
+      emptyDescription.textContent = 'Tente outra busca ou categoria para encontrar uma coleção.';
+    }
+    document.querySelectorAll('[data-catalog-tab]').forEach(button => {
+      const active = button.dataset.catalogTab === state.catalogMode;
+      if (button.matches('[role="tab"]')) { button.classList.toggle('active', active); button.setAttribute('aria-selected', String(active)); }
+    });
+    bindImageFallbacks($('#packGrid'));
+    updateCartButtons();
+    updateSavedCount();
+  }
+
   function render() {
+    if (state.catalogMode === 'packs') { renderPacks(); return; }
+    $('#catalogGrid').hidden = false;
+    $('#packGrid').hidden = true;
+    $('#packEmpty').hidden = true;
+    $('.type-filters').hidden = false;
+    $('#sortSelect').parentElement.hidden = false;
+    document.querySelectorAll('[data-catalog-tab]').forEach(button => {
+      if (button.matches('[role="tab"]')) { button.classList.toggle('active', button.dataset.catalogTab === 'stickers'); button.setAttribute('aria-selected', String(button.dataset.catalogTab === 'stickers')); }
+    });
     stopHoverVideos();
     const items = filteredItems();
     const visible = items.slice(0, state.limit);
@@ -329,6 +425,7 @@
     grid.setAttribute('aria-busy', String(state.loading));
     $('#catalogEmpty').hidden = items.length !== 0;
     $('#loadMoreButton').hidden = items.length <= state.limit;
+    $('#loadMoreButton').innerHTML = 'Ver mais figurinhas' + icon('arrow');
     $('#searchClear').hidden = !state.query;
     $('#resultCount').textContent = items.length === 1 ? '1 figurinha encontrada' : items.length + ' figurinhas encontradas';
     if (items.length > state.limit) $('#resultCount').textContent += ' · mostrando ' + visible.length;
@@ -354,6 +451,7 @@
     bindImageFallbacks(grid);
     bindCommunityVideos(grid);
     protectMedia(grid);
+    updateCartButtons();
   }
 
   function renderPopularity() {
@@ -441,10 +539,12 @@
     $('#connectionText').textContent = 'Conectando ao catálogo do bot…';
     $('#catalogGrid').setAttribute('aria-busy', 'true');
     const communityRequest = api.creatorCatalog().catch(() => []);
-    const [result, index] = await Promise.all([api.catalog(), api.mediaIndex()]);
+    const [result, index, packs] = await Promise.all([api.catalog(), api.mediaIndex(), api.packs()]);
     if (requestGeneration !== catalogGeneration) return;
     state.items = assignVisitOrder(result.items);
     state.index = index;
+    state.packs = packs;
+    state.packsLoaded = true;
     state.source = result.source;
     state.loading = false;
     $('#reloadButton').disabled = false;
@@ -456,7 +556,7 @@
       $('#connectionBox').className = 'connection-box ' + (result.source === 'snapshot' ? 'warning' : result.source === 'error' ? 'error' : '');
       $('#connectionText').textContent = result.source === 'live' ? 'Conectado ao bot · ' + state.items.length + ' figurinhas (' + communityCount + ' da comunidade) · atualizado às ' + time : result.source === 'snapshot' ? 'Catálogo de prévias do site · não está ao vivo. ' + result.error : 'Falha de conexão. ' + result.error;
       const select = $('#categorySelect');
-      const categories = [...new Set(state.items.map(item => item.categoria))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+      const categories = [...new Set((state.catalogMode === 'packs' ? state.packs.map(pack => pack.category) : state.items.map(item => item.categoria)))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
       select.innerHTML = '<option value="all">Todas as categorias</option>' + categories.map(category => '<option value="' + escape(category) + '">' + escape(category.charAt(0).toUpperCase() + category.slice(1)) + '</option>').join('');
       if (!categories.includes(state.category)) state.category = 'all';
       select.value = state.category;
@@ -482,7 +582,12 @@
   }
 
   function setFilter(filter) {
+    state.catalogMode = 'stickers';
     state.filter = filter;
+    state.category = 'all';
+    const categories = [...new Set(state.items.map(item => item.categoria))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+    $('#categorySelect').innerHTML = '<option value="all">Todas as categorias</option>' + categories.map(category => '<option value="' + escape(category) + '">' + escape(category.charAt(0).toUpperCase() + category.slice(1)) + '</option>').join('');
+    $('#categorySelect').value = 'all';
     state.limit = config.pageSize;
     render();
   }
@@ -610,9 +715,10 @@
     }
     $('#previewStatus').textContent = state.source !== 'live' ? 'Prévia do pacote local. O checkout exige conexão ativa com o catálogo do bot.' : '';
     $('#exampleTab').disabled = !api.staticMedia(item, state.index).example;
-    $('#previewAddToCart').setAttribute('aria-pressed', String(state.cart.has(item.id)));
-    $('#previewAddToCart').textContent = state.cart.has(item.id) ? 'No carrinho · ' + priceLabel(item) : 'Adicionar ao carrinho · ' + priceLabel(item);
+    $('#previewAddToCart').setAttribute('aria-pressed', String(state.cart.has('sticker:' + item.id)));
+    $('#previewAddToCart').textContent = state.cart.has('sticker:' + item.id) ? 'No carrinho · ' + priceLabel(item) : 'Adicionar ao carrinho · ' + priceLabel(item);
     updateSavedCount();
+    updateCartButtons();
     const initialTab = api.staticMedia(item, state.index).example ? 'example' : 'preview';
     showPreviewMedia(initialTab);
     if (!$('#previewDialog').open) $('#previewDialog').showModal();
@@ -693,32 +799,70 @@
 
   function updateCartButtons() {
     document.querySelectorAll('[data-action="cart-add"]').forEach(button => {
-      const inCart = state.cart.has(button.dataset.id);
+      const key = 'sticker:' + button.dataset.id;
+      const inCart = state.cart.has(key);
+      const covered = !inCart && cartStickerIds().has(button.dataset.id);
       button.setAttribute('aria-pressed', String(inCart));
-      button.textContent = inCart ? 'No carrinho ✓' : '+ Carrinho';
+      button.disabled = covered;
+      button.textContent = inCart ? 'No carrinho ✓' : covered ? 'Incluída em pack' : '+ Carrinho';
+    });
+    document.querySelectorAll('[data-action="pack-add"]').forEach(button => {
+      const key = 'pack:' + button.dataset.packId;
+      button.setAttribute('aria-pressed', String(state.cart.has(key)));
     });
     if (state.current) {
-      const inCart = state.cart.has(state.current.id);
+      const inCart = state.cart.has('sticker:' + state.current.id);
+      const covered = !inCart && cartStickerIds().has(state.current.id);
       $('#previewAddToCart').setAttribute('aria-pressed', String(inCart));
-      $('#previewAddToCart').textContent = inCart ? 'No carrinho · ' + priceLabel(state.current) : 'Adicionar ao carrinho · ' + priceLabel(state.current);
+      $('#previewAddToCart').disabled = covered;
+      $('#previewAddToCart').textContent = inCart ? 'No carrinho · ' + priceLabel(state.current) : covered ? 'Incluída em pack' : 'Adicionar ao carrinho · ' + priceLabel(state.current);
     }
   }
 
   function renderCart() {
-    const validIds = new Set(state.items.map(item => item.id));
-    state.cart = new Set([...state.cart].filter(id => validIds.has(id)));
+    const validStickers = new Set(state.items.map(item => item.id));
+    const includedUnits = new Set();
+    state.cart = new Set([...state.cart].filter(key => {
+      const entry = parseCartKey(key);
+      if (!entry) return false;
+      if (entry.type === 'sticker' && !validStickers.has(entry.id)) return false;
+      const pack = entry.type === 'pack' ? packById(entry.id) : null;
+      if (entry.type === 'pack' && state.packsLoaded && (!pack || memberIds(pack).length < 2 || memberIds(pack).length > 30 || packMembers(pack).length !== memberIds(pack).length)) return false;
+      const units = entry.type === 'sticker' ? [entry.id] : memberIds(pack);
+      if (units.some(id => includedUnits.has(id)) || includedUnits.size + units.length > 40) return false;
+      units.forEach(id => includedUnits.add(id));
+      return true;
+    }));
     persistCart();
-    const items = [...state.cart].map(id => state.items.find(item => item.id === id)).filter(Boolean);
-    $('#cartCount').textContent = String(items.length);
-    $('#cartEmpty').hidden = items.length > 0;
-    $('#cartSummary').hidden = items.length === 0;
-    $('#checkoutButton').disabled = items.length === 0 || state.source !== 'live';
-    $('#cartQuantityText').textContent = items.length + (items.length === 1 ? ' figurinha' : ' figurinhas');
-    $('#cartTotal').textContent = formatMoney(items.reduce((total, item) => total + priceOf(item), 0));
-    $('#cartItems').innerHTML = items.map(item => {
-      const media = api.staticMedia(item, state.index);
-      const image = media.poster || (state.source === 'live' ? api.mediaUrl(item) : '');
-      return '<div class="cart-line"><div class="cart-thumb">' + (image ? '<img src="' + escape(image) + '" alt="" loading="lazy"><span class="watermark" aria-hidden="true">FABI BOT</span>' : '') + '</div><div class="cart-line-info"><strong>' + escape(item.nome) + '</strong><small>' + escape(item.id) + ' · ' + priceLabel(item) + (item.temAudio ? ' · COM SOM' : ' · SEM ÁUDIO') + '</small></div><button class="cart-remove" type="button" data-action="cart-remove" data-id="' + escape(item.id) + '" aria-label="Remover ' + escape(item.nome) + '">Remover</button></div>';
+    const lines = [...state.cart].map(key => ({ key, entry: parseCartKey(key) })).filter(line => line.entry);
+    const units = cartStickerIds();
+    const estimatedTotal = lines.reduce((total, line) => {
+      if (line.entry.type === 'sticker') return total + priceOf(state.items.find(item => item.id === line.entry.id));
+      const pack = packById(line.entry.id);
+      return total + (pack ? packPriceCents(pack) : 0);
+    }, 0);
+    $('#cartCount').textContent = String(lines.length);
+    $('#cartEmpty').hidden = lines.length > 0;
+    $('#cartSummary').hidden = lines.length === 0;
+    $('#checkoutButton').disabled = lines.length === 0 || units.size > 40 || state.source !== 'live';
+    $('#cartQuantityText').textContent = units.size + (units.size === 1 ? ' figurinha' : ' figurinhas') + ' · ' + lines.length + (lines.length === 1 ? ' item' : ' itens');
+    $('#cartTotal').textContent = formatMoney(estimatedTotal);
+    $('#cartItems').innerHTML = lines.map(line => {
+      const { type, id } = line.entry;
+      if (type === 'sticker') {
+        const item = state.items.find(entry => entry.id === id);
+        if (!item) return '';
+        const media = api.staticMedia(item, state.index);
+        const image = media.poster || (state.source === 'live' ? api.mediaUrl(item) : '');
+        return '<div class="cart-line"><div class="cart-thumb">' + (image ? '<img src="' + escape(image) + '" alt="" loading="lazy"><span class="watermark" aria-hidden="true">FABI BOT</span>' : '') + '</div><div class="cart-line-info"><strong>' + escape(item.nome) + '</strong><small>Avulsa · ' + escape(item.id) + ' · ' + priceLabel(item) + (item.temAudio ? ' · COM SOM' : ' · SEM ÁUDIO') + '</small></div><button class="cart-remove" type="button" data-action="cart-remove" data-key="' + escape(line.key) + '" aria-label="Remover ' + escape(item.nome) + '">Remover</button></div>';
+      }
+      const pack = packById(id);
+      if (!pack) return '';
+      const members = packMembers(pack);
+      const cover = state.items.find(item => item.id === memberIds(pack)[0]) || state.items.find(item => item.id === pack.coverId) || members[0];
+      const media = cover ? api.staticMedia(cover, state.index) : {};
+      const image = cover ? (media.poster || (state.source === 'live' ? api.mediaUrl(cover) : '')) : '';
+      return '<div class="cart-line"><div class="cart-thumb">' + (image ? '<img src="' + escape(image) + '" alt="" loading="lazy"><span class="watermark" aria-hidden="true">FABI BOT</span>' : '') + '</div><div class="cart-line-info"><strong>' + escape(pack.name) + '</strong><small>Pack · ' + memberIds(pack).length + ' figurinhas · −15% · ' + formatMoney(packPriceCents(pack)) + '</small></div><button class="cart-remove" type="button" data-action="cart-remove" data-key="' + escape(line.key) + '" aria-label="Remover pack ' + escape(pack.name) + '">Remover</button></div>';
     }).join('');
     if (state.source !== 'live') $('#checkoutStatus').textContent = 'Checkout indisponível: conecte-se ao catálogo ao vivo do bot.';
     updateCartButtons();
@@ -729,18 +873,41 @@
   function addToCart(id) {
     const item = state.items.find(entry => entry.id === id);
     if (!item) return;
-    if (state.cart.has(id)) { toast('Essa figurinha já está no carrinho.'); return; }
-    if (state.cart.size >= 40) { toast('O carrinho aceita até 40 figurinhas por pedido.'); return; }
+    const key = 'sticker:' + id;
+    if (state.cart.has(key)) { toast('Essa figurinha já está no carrinho.'); return; }
+    if (cartStickerIds().has(id)) { toast('Essa figurinha já está incluída em um pack do carrinho.'); return; }
+    if (state.cart.size >= 40) { toast('Limite de 40 itens por pedido. Remova uma linha antes de adicionar.'); return; }
+    if (cartStickerIds().size >= 40) { toast('O limite de entrega é 40 figurinhas por pedido.'); return; }
     invalidatePendingOrder('Sua seleção mudou. Gere um novo PIX para o carrinho atualizado.');
-    state.cart.add(id);
+    state.cart.add(key);
     renderCart();
     render();
     toast('Adicionada ao carrinho · ' + priceLabel(item) + (item.temAudio ? ' · com som.' : ' · sem áudio.'));
   }
 
-  function removeFromCart(id) {
+  function addPackToCart(id) {
+    const pack = packById(id);
+    if (!pack) return;
+    const ids = memberIds(pack);
+    if (ids.length < 2 || ids.length > 30) { toast('Este pack não tem uma quantidade válida de figurinhas.'); return; }
+    if (packMembers(pack).length !== ids.length) { toast('Algumas figurinhas deste pack não estão disponíveis na vitrine.'); return; }
+    if (state.cart.has('pack:' + id)) { toast('Este pack já está no carrinho.'); return; }
+    if (state.cart.size >= 40) { toast('Limite de 40 itens por pedido. Remova uma linha antes de adicionar.'); return; }
+    const existing = cartStickerIds();
+    const overlap = ids.filter(stickerId => existing.has(stickerId));
+    if (overlap.length) { toast('Este pack se sobrepõe a ' + overlap.length + (overlap.length === 1 ? ' figurinha' : ' figurinhas') + ' já selecionada(s). Remova o item repetido antes de adicionar.'); return; }
+    if (existing.size + ids.length > 40) { toast('O limite de entrega é 40 figurinhas por pedido.'); return; }
     invalidatePendingOrder('Sua seleção mudou. Gere um novo PIX para o carrinho atualizado.');
-    state.cart.delete(id);
+    state.cart.add('pack:' + id);
+    renderCart();
+    render();
+    toast('Pack adicionado · ' + ids.length + ' figurinhas com 15% de desconto.');
+  }
+
+  function removeFromCart(key) {
+    if (!state.cart.has(key)) return;
+    invalidatePendingOrder('Sua seleção mudou. Gere um novo PIX para o carrinho atualizado.');
+    state.cart.delete(key);
     renderCart();
     render();
   }
@@ -748,7 +915,8 @@
   function restorePendingOrder() {
     try {
       const saved = JSON.parse(localStorage.getItem(orderKey) || 'null');
-      if (!saved || !/^[a-f0-9-]{36}$/i.test(saved.orderId || '') || (!saved.redeemCode && saved.cartSignature !== cartSignature())) {
+      const oldSignature = typeof saved?.cartSignature === 'string' ? saved.cartSignature.split('|').map(value => value.startsWith('sticker:') || value.startsWith('pack:') ? value : 'sticker:' + value).sort().join('|') : '';
+      if (!saved || !/^[a-f0-9-]{36}$/i.test(saved.orderId || '') || (!saved.redeemCode && oldSignature !== cartSignature())) {
         localStorage.removeItem(orderKey);
         return;
       }
@@ -921,7 +1089,8 @@
     $('#checkoutTitle').textContent = 'Gerando PIX';
     $('#checkoutStatus').textContent = 'Solicitando o PIX ao servidor seguro…';
     try {
-      const result = await api.createStickerOrder([...state.cart], email, requestId);
+      const lineItems = [...state.cart].map(key => parseCartKey(key)).filter(Boolean);
+      const result = await api.createStickerOrder(lineItems, email, requestId);
       const orderId = result.orderId || result.transactionId;
       const qrCode = String(result.qrCode || result.qr_code || '');
       const copyPaste = String(result.copyPaste || result.copy_paste || '');
@@ -956,17 +1125,28 @@
     if (button.dataset.action === 'favorite') toggleFavorite(button.dataset.id);
     if (button.dataset.action === 'preview') openPreview(button.dataset.id);
     if (button.dataset.action === 'cart-add') addToCart(button.dataset.id);
-    if (button.dataset.action === 'cart-remove') removeFromCart(button.dataset.id);
+    if (button.dataset.action === 'pack-add') addPackToCart(button.dataset.packId);
+    if (button.dataset.action === 'cart-remove') removeFromCart(button.dataset.key);
     if (button.dataset.action === 'tutorial') openTutorial();
   });
   document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
   $('#savedButton').addEventListener('click', () => { setFilter(state.filter === 'favorites' ? 'all' : 'favorites'); $('#catalogo').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
-  $('#searchInput').addEventListener('input', event => { state.query = event.target.value; state.limit = config.pageSize; render(); });
+  $('#searchInput').addEventListener('input', event => { state.query = event.target.value; state.limit = config.pageSize; state.packLimit = config.pageSize; render(); });
   $('#searchClear').addEventListener('click', () => { state.query = ''; $('#searchInput').value = ''; render(); $('#searchInput').focus(); });
-  $('#categorySelect').addEventListener('change', event => { state.category = event.target.value; state.limit = config.pageSize; render(); });
+  $('#categorySelect').addEventListener('change', event => { state.category = event.target.value; state.limit = config.pageSize; state.packLimit = config.pageSize; render(); });
   $('#sortSelect').addEventListener('change', event => { state.sort = event.target.value; render(); });
-  $('#resetButton').addEventListener('click', () => { state.filter = 'all'; state.category = 'all'; state.query = ''; state.limit = config.pageSize; $('#searchInput').value = ''; $('#categorySelect').value = 'all'; render(); });
-  $('#loadMoreButton').addEventListener('click', () => { state.limit += config.pageSize; render(); });
+  $('#resetButton').addEventListener('click', () => { state.filter = 'all'; state.category = 'all'; state.query = ''; state.limit = config.pageSize; state.packLimit = config.pageSize; $('#searchInput').value = ''; $('#categorySelect').value = 'all'; render(); });
+  $('#loadMoreButton').addEventListener('click', () => { if (state.catalogMode === 'packs') state.packLimit += config.pageSize; else state.limit += config.pageSize; render(); });
+  document.querySelectorAll('[data-catalog-tab]').forEach(button => button.addEventListener('click', () => {
+    const mode = button.dataset.catalogTab;
+    if (mode !== 'stickers' && mode !== 'packs') return;
+    state.catalogMode = mode;
+    state.category = 'all';
+    const categories = [...new Set((mode === 'packs' ? state.packs.map(pack => pack.category) : state.items.map(item => item.categoria)))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+    $('#categorySelect').innerHTML = '<option value="all">Todas as categorias</option>' + categories.map(category => '<option value="' + escape(category) + '">' + escape(category.charAt(0).toUpperCase() + category.slice(1)) + '</option>').join('');
+    $('#categorySelect').value = 'all';
+    render();
+  }));
   $('#reloadButton').addEventListener('click', loadCatalog);
   $('#surpriseButton').addEventListener('click', () => {
     if (!state.items.length) return;
