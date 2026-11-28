@@ -49,11 +49,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/creator-page.css?v=20261128a">
   <link rel="stylesheet" href="/assets/creator-experience.css?v=20261128b">
+  <link rel="stylesheet" href="/assets/fabi-bottom-nav.css?v=20261128a">
   <script defer src="/assets/loja-config.js?v=20261127a"></script>
   <script defer src="/assets/loja-api.js?v=20261127c"></script>
-  <script defer src="/assets/creator-page.js?v=20261128d"></script>
+  <script defer src="/assets/creator-page.js?v=20261128e"></script>
 </head>
-<body>
+<body class="has-fabi-bottom-nav">
   <a class="skip-link" href="#studio">Pular para o estúdio</a>
   <header class="site-header">
     <div class="page-wrap header-inner">
@@ -68,11 +69,25 @@
         <button id="themeToggle" class="theme-toggle" type="button" aria-label="Tema atual: sistema. Clique para usar o tema claro." title="Tema atual: sistema">
           <span id="themeIcon" class="theme-icon" aria-hidden="true">◐</span><span id="themeLabel">Sistema</span>
         </button>
-        <button id="authOpenButton" class="nav-account" type="button">Entrar / criar conta</button>
-        <span id="headerUser" class="header-user" hidden></span>
       </nav>
     </div>
   </header>
+
+  <nav class="fabi-bottom-nav" aria-label="Navegação principal">
+    <a class="fabi-bottom-nav__item" href="/figurinhas">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
+      <span>Início</span>
+    </a>
+    <a class="fabi-bottom-nav__item fabi-bottom-nav__create" href="#videoStep" aria-current="page">
+      <span class="fabi-bottom-nav__create-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+      <span>Criar</span>
+    </a>
+    <button id="authOpenButton" class="fabi-bottom-nav__item fabi-bottom-nav__profile" type="button" aria-label="Entrar ou abrir meu perfil">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0m8-10a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/></svg>
+      <span>Perfil</span>
+      <small id="headerUser" class="header-user" hidden></small>
+    </button>
+  </nav>
 
   <nav class="breadcrumbs page-wrap" aria-label="Trilha de navegação">
     <ol>

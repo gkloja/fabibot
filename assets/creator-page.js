@@ -56,6 +56,7 @@
       signedInPanel.hidden = true;
       headerUser.hidden = true;
       authOpenButton.hidden = false;
+      authOpenButton.setAttribute('aria-label', 'Entrar ou abrir meu perfil');
       accountText.textContent = 'Entre na hora de publicar. Seu vídeo e os detalhes ficam aqui enquanto isso.';
       $('#myCreationsGuest').hidden = false;
       $('#myCreationsPanel').hidden = true;
@@ -72,7 +73,8 @@
     signedInPanel.hidden = false;
     headerUser.textContent = '@' + username;
     headerUser.hidden = false;
-    authOpenButton.hidden = true;
+    authOpenButton.hidden = false;
+    authOpenButton.setAttribute('aria-label', 'Ver meu perfil e minhas criações');
     accountText.textContent = 'Sua conta está pronta. Publique quando sua prévia estiver do jeito que você quer.';
     $('#myCreationsGuest').hidden = true;
     $('#myCreationsPanel').hidden = false;
@@ -109,7 +111,10 @@
     $('#loginForm').hidden = registerActive;
   }
 
-  $('#authOpenButton').addEventListener('click', () => openAuth('login'));
+  $('#authOpenButton').addEventListener('click', () => {
+    if (!state.user) return openAuth('login');
+    moveToStep($('#myCreationsSection'));
+  });
   $('#accountSignIn').addEventListener('click', () => openAuth('login'));
   $('#accountCreate').addEventListener('click', () => openAuth('register'));
   $('#authClose').addEventListener('click', () => authDialog.close());

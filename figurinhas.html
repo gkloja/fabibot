@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="./assets/loja.css?v=20261127b">
   <script defer src="./assets/loja-config.js?v=20261127a"></script>
   <script defer src="./assets/loja-api.js?v=20261127c"></script>
-  <script defer src="./assets/loja.js?v=20261127e"></script>
+  <script defer src="./assets/loja.js?v=20261128a"></script>
   <script defer src="./assets/creator-studio.js?v=20261128c"></script>
 <style id="fabi-channel-notice-css">.fabi-channel-notice{display:flex;align-items:center;gap:13px;margin:18px auto 0;padding:13px 16px;max-width:1180px;border:1px solid #25d36666;border-radius:17px;background:linear-gradient(105deg,#0c2b1c,#10251b);color:#effff4;box-shadow:0 10px 24px #09211522}.fabi-channel-notice__icon{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:#25d366;color:#062b18;font-weight:950}.fabi-channel-notice__copy{min-width:0;display:flex;flex-direction:column;gap:2px}.fabi-channel-notice__copy strong{font-size:14px;line-height:1.25}.fabi-channel-notice__copy span{font-size:11px;line-height:1.4;color:#c9f4d6}.fabi-channel-notice a{margin-left:auto;white-space:nowrap;border-radius:999px;padding:8px 12px;background:#25d366;color:#062b18;text-decoration:none;font-size:11px;font-weight:900}.fabi-channel-notice a:hover{filter:brightness(1.08)}@media(max-width:620px){.fabi-channel-notice{margin:14px 14px 0;align-items:flex-start;flex-wrap:wrap}.fabi-channel-notice a{margin-left:47px;margin-top:-3px}}</style>
 <style id="fabi-floating-sticker-ad-css">
@@ -52,8 +52,9 @@
 </style>
   <link rel="stylesheet" href="./assets/loja-ux.css?v=20261127c">
   <link rel="stylesheet" href="./assets/creator-studio.css?v=20261128b">
+  <link rel="stylesheet" href="./assets/fabi-bottom-nav.css?v=20261128a">
 </head>
-<body>
+<body class="has-fabi-bottom-nav">
   <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
     <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
@@ -89,7 +90,7 @@
         <a href="#duvidas">Dúvidas</a>
       </nav>
       <div class="header-actions">
-        <button class="saved-button" id="savedButton" type="button" aria-pressed="false"><svg class="icon"><use href="#i-heart"/></svg><span>Favoritas</span><b id="savedCount">0</b></button><button class="creator-profile-button" id="creatorProfileButton" type="button" aria-label="Abrir meu perfil de criador" aria-haspopup="dialog" aria-controls="fabiCreator" aria-expanded="false"><img id="headerCreatorAvatar" src="./assets/fabi-logo.webp" alt=""><span id="headerCreatorLabel">Meu perfil</span></button>
+        <button class="saved-button" id="savedButton" type="button" aria-pressed="false"><svg class="icon"><use href="#i-heart"/></svg><span>Favoritas</span><b id="savedCount">0</b></button>
         <button class="cart-button" id="cartButton" type="button" aria-haspopup="dialog" aria-controls="cartDialog"><svg class="icon"><use href="#i-cart"/></svg><span>Carrinho</span><b id="cartCount">0</b></button>
         <button class="icon-button theme-toggle" id="themeToggle" type="button" aria-label="Ativar modo claro" title="Ativar modo claro"><svg class="icon"><use href="#i-sun"/></svg></button>
         <a class="button button-small connect-link" href="./conectar.html">Conectar bot<svg class="icon"><use href="#i-arrow"/></svg></a>
@@ -100,6 +101,21 @@
       <a href="#catalogo">Explorar figurinhas</a><a href="#como-funciona">Como usar</a><a href="#duvidas">Dúvidas</a><a href="./conectar.html">Conectar Fabi Bot</a>
     </nav>
   </header>
+
+  <nav class="fabi-bottom-nav" aria-label="Navegação principal">
+    <a class="fabi-bottom-nav__item" href="/figurinhas" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
+      <span>Início</span>
+    </a>
+    <a class="fabi-bottom-nav__item fabi-bottom-nav__create" href="/criar-figurinha">
+      <span class="fabi-bottom-nav__create-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+      <span>Criar</span>
+    </a>
+    <button class="fabi-bottom-nav__item fabi-bottom-nav__profile creator-profile-button" id="creatorProfileButton" type="button" aria-label="Abrir meu perfil de criador" aria-haspopup="dialog" aria-controls="fabiCreator" aria-expanded="false">
+      <img id="headerCreatorAvatar" src="./assets/fabi-logo.webp" alt="">
+      <span id="headerCreatorLabel">Perfil</span>
+    </button>
+  </nav>
 
   <main>
     <section class="hero shell" aria-labelledby="heroTitle">
@@ -159,7 +175,7 @@
         </div>
         <label class="search-field"><svg class="icon"><use href="#i-search"/></svg><span class="sr-only">Buscar por nome, ID ou tag</span><input id="searchInput" type="search" placeholder="Buscar nome, ID ou tag…" autocomplete="off"><button type="button" class="search-clear" id="searchClear" aria-label="Limpar busca" hidden><svg class="icon"><use href="#i-close"/></svg></button></label>
       </div>
-      <div class="catalog-subtoolbar"><label class="category-control">Categoria<select id="categorySelect"><option value="all">Todas as categorias</option></select></label><p id="resultCount" aria-live="polite">Carregando figurinhas…</p><label class="sort-control"><span class="sr-only">Ordenar figurinhas</span><select id="sortSelect"><option value="popular">Mais populares</option><option value="recent">Mais recentes</option><option value="oldest">Mais antigas</option><option value="name">Nome: A–Z</option><option value="most-purchased">Mais compradas</option><option value="most-favorited">Mais queridas</option></select></label></div>
+      <div class="catalog-subtoolbar"><label class="category-control">Categoria<select id="categorySelect"><option value="all">Todas as categorias</option></select></label><p id="resultCount" aria-live="polite">Carregando figurinhas…</p><label class="sort-control"><span class="sr-only">Ordenar figurinhas</span><select id="sortSelect"><option value="random" selected>Surpresa da visita</option><option value="popular">Mais populares</option><option value="recent">Mais recentes</option><option value="oldest">Mais antigas</option><option value="name">Nome: A–Z</option><option value="most-purchased">Mais compradas</option><option value="most-favorited">Mais queridas</option></select></label></div>
       <div class="catalog-grid" id="catalogGrid" aria-busy="true"><div class="loading-placeholder skeleton"></div><div class="loading-placeholder skeleton"></div><div class="loading-placeholder skeleton"></div><div class="loading-placeholder skeleton"></div></div>
       <div class="catalog-empty" id="catalogEmpty" hidden><span class="empty-icon"><svg class="icon"><use href="#i-search"/></svg></span><h3 id="emptyTitle">Nenhuma figurinha por aqui.</h3><p id="emptyDescription">Tente outro nome ou filtro para encontrar uma reação.</p><button class="button button-secondary" type="button" id="resetButton">Limpar os filtros<svg class="icon"><use href="#i-refresh"/></svg></button></div>
       <button class="button button-secondary load-more" type="button" id="loadMoreButton" hidden>Ver mais figurinhas<svg class="icon"><use href="#i-arrow"/></svg></button>

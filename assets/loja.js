@@ -18,7 +18,7 @@
   const storeWhatsapp = String(config.storeWhatsapp || '5592985715119').replace(/\D/g, '');
   let favoriteToken = '';
   try { favoriteToken = localStorage.getItem(favoriteTokenKey) || ''; if (!/^[a-zA-Z0-9_-]{16,120}$/.test(favoriteToken)) { favoriteToken = (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '') : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem(favoriteTokenKey, favoriteToken); } } catch (_) { favoriteToken = 'anon' + Date.now().toString(36); }
-  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'popular', limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
+  const state = { items: [], index: {}, filter: 'all', query: '', category: 'all', sort: 'random', visitOrder: new Map(), limit: config.pageSize, favorites: new Set(), cart: new Set(), current: null, source: 'loading', loading: false, activeTab: 'preview', toastTimer: null, lastFocused: null, previewGeneration: 0, mediaGeneration: 0, activeOrderId: '', pollTimer: null, redeemedStatusTimer: null, pollAttempts: 0, pendingQr: '', pendingCopy: '', redeemCode: '' };
   try {
     const saved = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
     if (Array.isArray(saved)) state.favorites = new Set(saved.filter(id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,80}$/.test(id)).slice(0, 2000));
@@ -34,6 +34,14 @@
   let communityVideoObserver = null;
   let catalogGeneration = 0;
   const syncDialogLock = () => document.body.classList.toggle('modal-open', Boolean(document.querySelector('dialog[open]')));
+
+  function assignVisitOrder(items) {
+    return items.map(item => {
+      const id = String(item.id);
+      if (!state.visitOrder.has(id)) state.visitOrder.set(id, Math.random());
+      return Object.assign({}, item, { visitOrder: state.visitOrder.get(id) });
+    });
+  }
 
   function toast(message) {
     clearTimeout(state.toastTimer);
@@ -104,6 +112,7 @@
       if (state.category !== 'all' && item.categoria !== state.category) return false;
       return !query || fold([item.nome, item.id, item.author, item.packname, ...item.tags].join(' ')).includes(query);
     }).sort((a, b) => {
+      if (state.sort === 'random') return (a.visitOrder - b.visitOrder) || a.id.localeCompare(b.id, 'pt-BR', { numeric: true });
       if (state.sort === 'popular') return ((b.compras || 0) * 1000000 + (b.favoritos || 0) * 1000 + (b.visualizacoes || 0)) - ((a.compras || 0) * 1000000 + (a.favoritos || 0) * 1000 + (a.visualizacoes || 0)) || a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
       if (state.sort === 'most-purchased') return (priceOf(b), b.compras - a.compras) || a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
       if (state.sort === 'most-favorited') return (b.favoritos - a.favoritos) || a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
@@ -415,6 +424,7 @@
 
   async function loadCatalog() {
     if (state.loading) return;
+    state.visitOrder.clear();
     const requestGeneration = ++catalogGeneration;
     state.loading = true;
     $('#reloadButton').disabled = true;
@@ -424,7 +434,7 @@
     const communityRequest = api.creatorCatalog().catch(() => []);
     const [result, index] = await Promise.all([api.catalog(), api.mediaIndex()]);
     if (requestGeneration !== catalogGeneration) return;
-    state.items = result.items;
+    state.items = assignVisitOrder(result.items);
     state.index = index;
     state.source = result.source;
     state.loading = false;
@@ -453,7 +463,7 @@
     }
     communityRequest.then(community => {
       if (requestGeneration !== catalogGeneration) return;
-      state.items = state.items.filter(item => item.source !== 'community').concat(community);
+      state.items = assignVisitOrder(state.items.filter(item => item.source !== 'community').concat(community));
       renderLoadedCatalog();
       if (!requestedStickerOpened && requestedSticker && state.items.some(item => item.id === requestedSticker)) {
         openPreview(requestedSticker);
