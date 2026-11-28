@@ -48,11 +48,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/creator-page.css?v=20261128a">
-  <link rel="stylesheet" href="/assets/creator-experience.css?v=20261128d">
+  <link rel="stylesheet" href="/assets/creator-experience.css?v=20261128e">
   <link rel="stylesheet" href="/assets/fabi-bottom-nav.css?v=20261128a">
   <script defer src="/assets/loja-config.js?v=20261127a"></script>
   <script defer src="/assets/loja-api.js?v=20261127c"></script>
-  <script defer src="/assets/creator-page.js?v=20261128h"></script>
+  <script defer src="/assets/creator-page.js?v=20261128i"></script>
 </head>
 <body class="has-fabi-bottom-nav">
   <a class="skip-link" href="#studio">Pular para o estúdio</a>
@@ -126,7 +126,7 @@
         <p class="section-note">Enquadre a imagem no formato quadrado da figurinha e escolha o trecho. Depois, personalize e revise antes de publicar.</p>
       </div>
 
-      <ol class="flow-steps" aria-label="Etapas para criar uma figurinha">
+      <ol class="flow-steps" data-active-step="1" aria-label="Etapas para criar uma figurinha">
         <li class="flow-step is-current" data-flow-step="1" aria-current="step"><span class="flow-step-number">01</span><div><b>Escolha o vídeo</b><small>Enquadre e corte</small></div></li>
         <li class="flow-step" data-flow-step="2"><span class="flow-step-number">02</span><div><b>Personalize</b><small>Nome e detalhes</small></div></li>
         <li class="flow-step" data-flow-step="3"><span class="flow-step-number">03</span><div><b>Revise e publique</b><small>Confira sua prévia</small></div></li>
@@ -193,6 +193,11 @@
 
             <fieldset class="form-section guided-step" id="detailsStep" aria-labelledby="detailsStepTitle" disabled hidden>
               <legend class="visually-hidden">Etapa 2: personalize sua figurinha</legend>
+              <div class="completed-step-summary" id="videoStepSummary" hidden>
+                <span class="completed-step-check" aria-hidden="true">✓</span>
+                <span class="completed-step-copy"><b>Vídeo e enquadramento prontos</b><small id="videoStepSummaryText"></small></span>
+                <button id="editVideoFromDetails" class="text-button" type="button">Editar vídeo</button>
+              </div>
               <div class="form-divider" aria-hidden="true"></div>
               <div class="form-section-heading"><span class="section-index">02</span><div><h3 id="detailsStepTitle" tabindex="-1">Dê sua assinatura</h3><p>Agora que o vídeo está pronto, conte como a comunidade vai usar essa reação.</p></div></div>
               <div class="field-grid">
@@ -232,12 +237,20 @@
 
         <aside class="studio-aside" id="reviewAside" aria-label="Revisão e publicação" hidden>
           <section class="publish-card" id="publishStep" aria-labelledby="publishTitle" hidden>
-            <div class="publish-card-heading"><span class="section-index">03</span><div><p class="eyebrow">TUDO PRONTO</p><h3 id="publishTitle" tabindex="-1">Sua reação merece replay.</h3></div></div>
-            <p>Confira o nome e os detalhes. O vídeo que você acabou de ver será enviado quando publicar.</p>
-            <button id="publishButton" class="button button-publish" type="submit" form="creationForm" disabled>Publicar minha figurinha <span aria-hidden="true">↗</span></button>
-            <p class="publish-note"><span aria-hidden="true">⌁</span> Você entra ou cria uma conta no último passo. O vídeo permanece preparado até lá.</p>
-            <button id="backToDetails" class="text-button review-back-button" type="button">← Voltar e editar os detalhes</button>
+            <div class="publish-card-heading"><span class="section-index">03</span><div><p class="eyebrow">ÚLTIMA ETAPA · 03/03</p><h3 id="publishTitle" tabindex="-1">Revise e publique sua figurinha.</h3></div></div>
+            <p>Confira este resumo. O botão publica sua figurinha e leva você direto ao resgate no WhatsApp.</p>
+            <div class="publish-summary" aria-label="Resumo da figurinha">
+              <div><small>VÍDEO</small><b id="publishVideoSummary">Vídeo pronto</b></div>
+              <div><small>NOME</small><b id="publishTitleSummary">Sua figurinha</b></div>
+              <div><small>CATEGORIA</small><b id="publishCategorySummary">Comunidade</b></div>
+              <div class="publish-summary-description"><small>DESCRIÇÃO</small><b id="publishDescriptionSummary">Descrição da figurinha</b></div>
+            </div>
+            <button id="publishButton" class="button button-publish" type="submit" form="creationForm" disabled>Publicar minha figurinha agora <span aria-hidden="true">↗</span></button>
+            <p class="publish-note"><span aria-hidden="true">⌁</span> Se ainda não entrou, vamos abrir o acesso antes da publicação. O botão de resgate aparece logo depois.</p>
+            <button id="backToDetails" class="text-button review-back-button" type="button">← Editar nome e detalhes</button>
           </section>
+
+          <div id="reviewPreviewSlot" class="review-preview-slot"></div>
 
           <section class="account-card" id="reviewAccountCard" aria-labelledby="accountTitle" hidden>
             <div class="account-mark" aria-hidden="true">F</div>

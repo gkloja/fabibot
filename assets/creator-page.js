@@ -3,13 +3,20 @@
 
   const API = '/api/creator';
   const $ = (selector, root = document) => root.querySelector(selector);
-  const state = { token: '', user: null, objectUrl: '', file: null, duration: null, trimStart: 0, trimEnd: 0, cropX: 0.5, cropY: 0.5, cropZoom: 1, cropAnimationFrame: 0, busy: false, returnFocus: null, mineRequest: 0, flowStep: 0, themeMode: 'system' };
+  const state = { token: '', user: null, objectUrl: '', file: null, duration: null, trimStart: 0, trimEnd: 0, cropX: 0.5, cropY: 0.5, cropZoom: 1, cropAnimationFrame: 0, busy: false, published: false, returnFocus: null, mineRequest: 0, flowStep: 0, themeMode: 'system' };
 
   try { state.token = localStorage.getItem('fabi_creator_token') || ''; } catch (_) { /* A sessão ainda funciona nesta aba. */ }
 
   const form = $('#creationForm');
   const videoInput = $('#videoInput');
   const preview = $('#videoPreview');
+  const videoStep = $('#videoStep');
+  const flowSteps = $('.flow-steps');
+  const studioGrid = $('.studio-grid');
+  const previewCard = $('#videoPreviewCard');
+  const previewHome = previewCard.parentElement;
+  const previewHomeAnchor = previewCard.nextElementSibling;
+  const reviewPreviewSlot = $('#reviewPreviewSlot');
   const authDialog = $('#authDialog');
   const formMessage = $('#formMessage');
   const uploadProgress = $('#uploadProgress');
@@ -234,7 +241,7 @@
   function moveToStep(section, focusTarget) {
     if (focusTarget) focusTarget.focus({ preventScroll: true });
     const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    section.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    (focusTarget || section).scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: focusTarget ? 'center' : 'start' });
   }
 
   function updateFlow() {
@@ -253,9 +260,25 @@
     if (state.flowStep === 3 && !metadataReady) state.flowStep = 2;
     const step = state.flowStep;
     const reviewReady = step === 3 && metadataReady;
+    flowSteps.hidden = state.published;
+    flowSteps.dataset.activeStep = String(step);
+    videoStep.hidden = state.published || step !== 1;
+    detailsStep.hidden = state.published || !detailsOpen || step !== 2;
+    studioGrid.classList.toggle('is-review', reviewReady && !state.published);
+    const videoSummary = $('#videoStepSummary');
+    videoSummary.hidden = state.published || !videoReady || step !== 2;
+    $('#videoStepSummaryText').textContent = state.file
+      ? state.file.name + ' · trecho ' + formatTrimTime(state.trimStart) + '–' + formatTrimTime(state.trimEnd) + ' · 512 × 512'
+      : 'Vídeo preparado';
+    $('#publishVideoSummary').textContent = state.file ? state.file.name : 'Vídeo pronto';
+    $('#publishTitleSummary').textContent = $('#titleInput').value.trim() || 'Sem título';
+    $('#publishCategorySummary').textContent = $('#categoryInput').value || 'comunidade';
+    $('#publishDescriptionSummary').textContent = $('#descriptionInput').value.trim() || 'Sem descrição';
 
-    const previewCard = $('#videoPreviewCard');
     previewCard.hidden = !state.file;
+    previewCard.classList.toggle('is-review', reviewReady);
+    if (reviewReady) reviewPreviewSlot.append(previewCard);
+    else if (previewCard.parentElement !== previewHome) previewHome.insertBefore(previewCard, previewHomeAnchor);
     $('#previewEyebrow').textContent = reviewReady ? 'ETAPA 03 · REVISÃO' : 'PRÉVIA LOCAL';
     $('#previewTitle').textContent = reviewReady ? 'Confira sua figurinha' : 'Enquadre sua figurinha';
     $('#previewFootnote').textContent = reviewReady
@@ -273,10 +296,10 @@
 
     const reviewAside = $('#reviewAside');
     const publishStep = $('#publishStep');
-    reviewAside.hidden = !reviewReady;
-    publishStep.hidden = !reviewReady;
-    $('#reviewAccountCard').hidden = !reviewReady;
-    $('#reviewTipCard').hidden = !reviewReady;
+    reviewAside.hidden = !reviewReady || state.published;
+    publishStep.hidden = !reviewReady || state.published;
+    $('#reviewAccountCard').hidden = !reviewReady || state.published;
+    $('#reviewTipCard').hidden = !reviewReady || state.published;
     reviewAside.classList.toggle('is-unlocked', reviewReady);
     publishStep.classList.toggle('is-unlocked', reviewReady);
     $('#publishButton').disabled = !reviewReady || state.busy;
@@ -288,7 +311,7 @@
       if (number === step) item.setAttribute('aria-current', 'step');
       else item.removeAttribute('aria-current');
     });
-    if (state.flowStep !== state.announcedFlowStep) {
+    if (!state.published && state.flowStep !== state.announcedFlowStep) {
       state.announcedFlowStep = state.flowStep;
       const labels = { 1: 'Etapa 1 de 3: escolha e confira o vídeo.', 2: 'Etapa 2 de 3: personalize sua figurinha.', 3: 'Etapa 3 de 3: revise e publique.' };
       $('#flowAnnouncer').textContent = labels[step];
@@ -306,11 +329,16 @@
     updateFlow();
     moveToStep($('#videoStep'), $('#videoStepTitle'));
   });
+  $('#editVideoFromDetails').addEventListener('click', () => {
+    state.flowStep = 1;
+    updateFlow();
+    moveToStep(videoStep, $('#videoStepTitle'));
+  });
   $('#continueToReview').addEventListener('click', () => {
     if (!form.reportValidity()) return;
     state.flowStep = 3;
     updateFlow();
-    moveToStep($('#reviewAside'), $('#publishTitle'));
+    moveToStep($('#publishStep'), $('#publishButton'));
   });
   $('#backToDetails').addEventListener('click', () => {
     state.flowStep = 2;
@@ -477,11 +505,12 @@
     updateFlow();
   }
 
-  function clearVideo() {
+  function clearVideo({ preservePublished = false } = {}) {
     if (state.objectUrl) URL.revokeObjectURL(state.objectUrl);
     state.objectUrl = '';
     state.file = null;
     state.duration = null;
+    state.published = preservePublished;
     state.trimStart = 0;
     state.trimEnd = 0;
     state.cropX = 0.5;
@@ -1132,20 +1161,28 @@
   });
 
   function renderResult(payload) {
+    state.published = true;
     try { sessionStorage.setItem('fabiCreatorPublished', '1'); } catch (_) { /* The catalog refreshes normally on navigation if storage is unavailable. */ }
     const resultId = safeCreationId(payload && payload.creation && payload.creation.id);
     formMessage.replaceChildren();
-    formMessage.className = 'form-message is-success';
+    formMessage.className = 'form-message is-success publication-result';
     formMessage.hidden = false;
+    const mark = document.createElement('span');
+    mark.className = 'result-success-mark';
+    mark.setAttribute('aria-hidden', 'true');
+    mark.textContent = '✓';
     const success = document.createElement('strong');
-    success.textContent = 'Publicada na vitrine. ';
-    formMessage.append(success, document.createTextNode('Sua criação já entrou para a comunidade. Agora você pode resgatá-la no WhatsApp.'));
-    let claimButton = null;
+    success.className = 'result-success-title';
+    success.textContent = 'Sua figurinha foi publicada!';
+    const successCopy = document.createElement('p');
+    successCopy.className = 'result-success-copy';
+    successCopy.textContent = 'Ela já está na vitrine. Toque no botão abaixo para reivindicá-la no WhatsApp — não precisa procurar na página.';
+    formMessage.append(mark, success, successCopy);
+    let claimAction = null;
     if (resultId) {
-      claimButton = document.createElement('button');
-      claimButton.className = 'button button-primary';
+      const claimButton = document.createElement('button');
+      claimButton.className = 'button button-publish result-claim-button';
       claimButton.type = 'button';
-      claimButton.style.marginTop = '10px';
       claimButton.textContent = 'Resgatar no WhatsApp ↗';
       claimButton.addEventListener('click', () => claimCreation(claimButton, resultId));
       const claimStatus = document.createElement('small');
@@ -1153,27 +1190,39 @@
       claimStatus.className = 'claim-status';
       claimStatus.setAttribute('role', 'status');
       claimStatus.setAttribute('aria-live', 'polite');
-      formMessage.append(document.createElement('br'), claimButton, claimStatus);
+      formMessage.append(claimButton, claimStatus);
+      claimAction = claimButton;
     } else {
       const link = document.createElement('a');
-      link.className = 'text-link';
+      link.className = 'button button-publish result-claim-button';
       link.href = '#myCreationsSection';
-      link.textContent = 'Ir para minha coleção e ver o resgate ↘';
-      link.style.display = 'inline-block';
-      link.style.marginTop = '10px';
-      formMessage.append(document.createElement('br'), link);
+      link.textContent = 'Abrir minha coleção e resgatar ↘';
+      formMessage.append(link);
+      claimAction = link;
     }
+    const newCreationButton = document.createElement('button');
+    newCreationButton.type = 'button';
+    newCreationButton.className = 'result-new-button';
+    newCreationButton.textContent = 'Criar outra figurinha';
+    newCreationButton.addEventListener('click', () => {
+      state.published = false;
+      state.flowStep = 1;
+      showMessage('', '');
+      updateFlow();
+      moveToStep(videoStep, $('#videoStepTitle'));
+    });
+    formMessage.append(newCreationButton);
     form.reset();
-    clearVideo();
+    clearVideo({ preservePublished: true });
     updateTextPreview();
     loadLists();
     const collectionLoad = loadMyCreations();
-    return { claimButton, collectionLoad };
+    return { claimAction, collectionLoad };
   }
 
   async function focusPublishedAction(result) {
-    if (result.claimButton) {
-      moveToStep(formMessage, result.claimButton);
+    if (result.claimAction) {
+      moveToStep(formMessage, result.claimAction);
       return;
     }
     await result.collectionLoad;
