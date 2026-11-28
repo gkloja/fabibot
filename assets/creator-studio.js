@@ -3,6 +3,13 @@
 
   const API = '/api/creator';
   const $ = selector => document.querySelector(selector);
+  window.addEventListener('pageshow', () => {
+    try {
+      if (sessionStorage.getItem('fabiCreatorPublished') !== '1') return;
+      sessionStorage.removeItem('fabiCreatorPublished');
+      window.dispatchEvent(new Event('fabi-creator-published'));
+    } catch (_) { /* The page's initial catalog fetch remains the fallback. */ }
+  });
   const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, char => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[char]));
@@ -28,7 +35,7 @@
   try { state.token = localStorage.getItem('fabi_creator_token') || ''; } catch (_) { /* Storage is optional. */ }
 
   function setExpanded(open) {
-    ['#creatorOpen', '#creatorProfileButton'].forEach(selector => {
+    ['#creatorProfileButton'].forEach(selector => {
       const trigger = $(selector);
       if (trigger) trigger.setAttribute('aria-expanded', String(open));
     });
@@ -64,7 +71,6 @@
     const rect = hub.getBoundingClientRect();
     if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) toggleHub(false);
   });
-  $('#creatorOpen')?.addEventListener('click', () => toggleHub(true));
   $('#creatorProfileButton')?.addEventListener('click', () => toggleHub(true));
   $('#creatorClose')?.addEventListener('click', () => toggleHub(false));
 
@@ -406,7 +412,10 @@
       const claimUrl = String(data.claimUrl || '').trim();
       if (!claimUrl) throw new Error('O servidor não retornou um link de recebimento. Tente novamente.');
       const target = new URL(claimUrl, location.href);
-      if ((target.protocol !== 'https:' && target.protocol !== 'whatsapp:') || target.username || target.password) {
+      const whatsappHttpsHosts = new Set(['wa.me', 'api.whatsapp.com', 'web.whatsapp.com', 'whatsapp.com', 'www.whatsapp.com']);
+      const safeHttps = target.protocol === 'https:' && !target.port && whatsappHttpsHosts.has(target.hostname.toLowerCase());
+      const safeAppLink = target.protocol === 'whatsapp:' && target.hostname.toLowerCase() === 'send' && !target.port && (!target.pathname || target.pathname === '/');
+      if ((!safeHttps && !safeAppLink) || target.username || target.password) {
         throw new Error('O link de recebimento retornado não é seguro.');
       }
       window.dispatchEvent(new Event('fabi-creator-claim-started'));

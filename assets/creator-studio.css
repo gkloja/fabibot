@@ -471,3 +471,23 @@
 @media (prefers-reduced-motion: reduce) {
   .creator-hub *, .creator-hub *::before, .creator-hub *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+.creator-hub .creator-next-step {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+}
+.creator-hub .creator-next-step h3 { margin: 0 0 6px; }
+.creator-hub .creator-next-step p:not(.creator-section-eyebrow) {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+.creator-hub .creator-next-step a {
+  display: flex;
+  margin-top: 12px;
+  text-decoration: none;
+}
+.creator-hub .creator-next-step a span { margin-left: 5px; }
