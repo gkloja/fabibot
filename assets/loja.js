@@ -390,13 +390,22 @@
   }
 
   function renderHero() {
-    const highlighted = state.items.filter(item => item.destaque);
-    const communityAnimated = state.items.filter(item => item.source === 'community' && item.isAnimated && api.staticMedia(item, state.index).preview);
-    const officialAnimated = state.source === 'live' ? state.items.filter(item => item.source !== 'community' && item.isAnimated) : [];
-    const animatedItems = communityAnimated.concat(officialAnimated);
-    const preferred = animatedItems.length ? animatedItems : state.items.filter(item => api.staticMedia(item, state.index).poster);
-    const items = communityAnimated.length ? preferred : (highlighted.length >= 2 ? highlighted : (preferred.length ? preferred : state.items));
-    const selected = [items[0], items[Math.min(3, items.length - 1)]].filter(Boolean);
+    const selected = state.items
+      .filter(item => item.source !== 'community')
+      .map((item, index) => {
+        const createdAt = Date.parse(item.criadoEm || '');
+        return { item, index, createdAt: Number.isFinite(createdAt) ? createdAt : null };
+      })
+      .sort((a, b) => {
+        if (a.createdAt === null && b.createdAt !== null) return 1;
+        if (a.createdAt !== null && b.createdAt === null) return -1;
+        if (a.createdAt !== null && b.createdAt !== null && a.createdAt !== b.createdAt) {
+          return b.createdAt - a.createdAt;
+        }
+        return a.index - b.index;
+      })
+      .slice(0, 2)
+      .map(entry => entry.item);
     const collage = $('#heroCollage');
     disposeCommunityVideos(collage);
     if (!selected.length) {

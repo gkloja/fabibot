@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="./assets/loja.css?v=20261127b">
   <script defer src="./assets/loja-config.js?v=20261127a"></script>
   <script defer src="./assets/loja-api.js?v=20261127c"></script>
-  <script defer src="./assets/loja.js?v=20261128a"></script>
+  <script defer src="./assets/loja.js?v=20261128b"></script>
   <script defer src="./assets/creator-studio.js?v=20261128c"></script>
 <style id="fabi-channel-notice-css">.fabi-channel-notice{display:flex;align-items:center;gap:13px;margin:18px auto 0;padding:13px 16px;max-width:1180px;border:1px solid #25d36666;border-radius:17px;background:linear-gradient(105deg,#0c2b1c,#10251b);color:#effff4;box-shadow:0 10px 24px #09211522}.fabi-channel-notice__icon{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:#25d366;color:#062b18;font-weight:950}.fabi-channel-notice__copy{min-width:0;display:flex;flex-direction:column;gap:2px}.fabi-channel-notice__copy strong{font-size:14px;line-height:1.25}.fabi-channel-notice__copy span{font-size:11px;line-height:1.4;color:#c9f4d6}.fabi-channel-notice a{margin-left:auto;white-space:nowrap;border-radius:999px;padding:8px 12px;background:#25d366;color:#062b18;text-decoration:none;font-size:11px;font-weight:900}.fabi-channel-notice a:hover{filter:brightness(1.08)}@media(max-width:620px){.fabi-channel-notice{margin:14px 14px 0;align-items:flex-start;flex-wrap:wrap}.fabi-channel-notice a{margin-left:47px;margin-top:-3px}}</style>
 <style id="fabi-floating-sticker-ad-css">
@@ -253,6 +253,8 @@
 (function(){
   const ad=document.getElementById('fabiFloatingStickerAd');
   if(!ad) return;
+  const pagePath=window.location.pathname.replace(/\/+$/,'').toLowerCase();
+  if(pagePath==='/figurinhas'){ad.remove();return;}
   const close=document.getElementById('fabiFloatingStickerAdClose');
   const key='fabi-floating-sticker-ad-seen-v2';
   let seen=false;
