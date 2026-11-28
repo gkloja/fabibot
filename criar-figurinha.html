@@ -3,58 +3,97 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f5f7ee">
-  <title>Estúdio de figurinhas | Fabi Bot</title>
-  <meta name="description" content="Transforme seu melhor momento em figurinha para WhatsApp. Envie um vídeo curto, personalize e publique na comunidade Fabi Bot.">
+  <meta name="theme-color" id="themeColorMeta" content="#f5f7ee">
+  <title>Criar Figurinhas com Áudio para WhatsApp | Fabi Bot</title>
+  <meta name="description" content="Crie figurinhas com áudio para WhatsApp na Fabi Bot. Envie um vídeo de até 10 segundos, personalize, confira a prévia e publique na comunidade.">
+  <meta name="keywords" content="criar figurinhas com áudio, figurinhas com som para WhatsApp, criador de figurinhas, figurinha de vídeo para WhatsApp">
   <link rel="canonical" href="https://www.fabibot.com.br/criar-figurinha">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Fabi Bot">
-  <meta property="og:title" content="Estúdio de figurinhas | Fabi Bot">
-  <meta property="og:description" content="Seu vídeo, sua reação, sua figurinha. Crie para a comunidade Fabi Bot.">
+  <meta property="og:title" content="Criar figurinhas com áudio para WhatsApp | Fabi Bot">
+  <meta property="og:description" content="Envie um vídeo curto, personalize sua reação e publique uma figurinha com áudio para WhatsApp na comunidade Fabi Bot.">
   <meta property="og:url" content="https://www.fabibot.com.br/criar-figurinha">
   <meta property="og:image" content="https://www.fabibot.com.br/og-image.jpg">
+  <meta property="og:image:alt" content="Fabi Bot — crie figurinhas com áudio para WhatsApp">
+  <meta property="og:locale" content="pt_BR">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Estúdio de figurinhas | Fabi Bot">
-  <meta name="twitter:description" content="Seu vídeo, sua reação, sua figurinha. Crie para a comunidade Fabi Bot.">
+  <meta name="twitter:title" content="Criar figurinhas com áudio para WhatsApp | Fabi Bot">
+  <meta name="twitter:description" content="Envie um vídeo curto, personalize sua reação e publique uma figurinha com áudio para WhatsApp na comunidade Fabi Bot.">
   <meta name="twitter:image" content="https://www.fabibot.com.br/og-image.jpg">
+  <script>
+    (() => {
+      let mode = 'system';
+      try {
+        const saved = localStorage.getItem('fabi_sticker_theme_v1');
+        if (saved === 'light' || saved === 'dark') mode = saved;
+      } catch (_) { /* O tema do sistema continua disponível sem armazenamento. */ }
+      const dark = mode === 'dark' || (mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      document.documentElement.dataset.themeMode = mode;
+    })();
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.fabibot.com.br/"},
+        {"@type": "ListItem", "position": 2, "name": "Figurinhas com áudio", "item": "https://www.fabibot.com.br/figurinhas"},
+        {"@type": "ListItem", "position": 3, "name": "Criar figurinhas com áudio", "item": "https://www.fabibot.com.br/criar-figurinha"}
+      ]
+    }
+  </script>
   <link rel="icon" type="image/png" href="/assets/fabi-favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/creator-page.css?v=20261128a">
+  <link rel="stylesheet" href="/assets/creator-experience.css?v=20261128a">
   <script defer src="/assets/loja-config.js?v=20261127a"></script>
   <script defer src="/assets/loja-api.js?v=20261127c"></script>
-  <script defer src="/assets/creator-page.js?v=20261128b"></script>
+  <script defer src="/assets/creator-page.js?v=20261128c"></script>
 </head>
 <body>
   <a class="skip-link" href="#studio">Pular para o estúdio</a>
   <header class="site-header">
     <div class="page-wrap header-inner">
-      <a class="brand" href="/figurinhas" aria-label="Fabi Bot — voltar para a vitrine de figurinhas">
+      <a class="brand" href="/figurinhas" aria-label="Fabi Bot — voltar para a vitrine">
         <img src="/assets/fabi-logo.webp" alt="" width="42" height="42">
         <span><strong>FABI<span>BOT</span></strong><small>ESTÚDIO DE FIGURINHAS</small></span>
       </a>
       <nav class="top-nav" aria-label="Navegação principal">
-        <a href="/figurinhas">Explorar figurinhas</a>
+        <a href="/figurinhas">Vitrine</a>
         <a href="#comunidade">Comunidade</a>
+        <a class="header-collection-link" href="#myCreationsSection">Minha coleção</a>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Tema atual: sistema. Clique para usar o tema claro." title="Tema atual: sistema">
+          <span id="themeIcon" class="theme-icon" aria-hidden="true">◐</span><span id="themeLabel">Sistema</span>
+        </button>
         <button id="authOpenButton" class="nav-account" type="button">Entrar / criar conta</button>
         <span id="headerUser" class="header-user" hidden></span>
       </nav>
     </div>
   </header>
 
+  <nav class="breadcrumbs page-wrap" aria-label="Trilha de navegação">
+    <ol>
+      <li><a href="/">Início</a></li>
+      <li><a href="/figurinhas">Figurinhas com áudio</a></li>
+      <li aria-current="page">Criar figurinhas com áudio</li>
+    </ol>
+  </nav>
+
   <main>
     <section class="hero page-wrap" aria-labelledby="heroTitle">
       <div class="hero-copy">
         <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> ESTÚDIO ABERTO DA COMUNIDADE</p>
-        <h1 id="heroTitle">O MOMENTO<br>É SEU.<br><span>A FIGURINHA TAMBÉM.</span></h1>
-        <p class="hero-lede">Escolha um vídeo curto, dê um nome para a reação e veja sua ideia ganhar vida na vitrine Fabi Bot.</p>
-        <a class="button button-primary" href="#studio">Criar minha figurinha <span aria-hidden="true">↘</span></a>
+        <h1 id="heroTitle">CRIE FIGURINHAS<br><span>COM ÁUDIO</span><br>PARA WHATSAPP.</h1>
+        <p class="hero-lede">Envie um vídeo curto, dê nome à sua reação e publique uma figurinha com áudio para a comunidade Fabi Bot.</p>
+        <a class="button button-primary" href="#videoStep">Começar pelo vídeo <span aria-hidden="true">↘</span></a>
         <div class="hero-facts" aria-label="Limites de envio">
-          <span>Vídeo com som</span><span>Até 10 segundos</span><span>Até 24 MB</span>
+          <span>Com áudio</span><span>Até 10 segundos</span><span>MP4, MOV ou WebM</span>
         </div>
       </div>
-      <div class="hero-art" aria-label="Ilustração do estúdio de criação">
+      <div class="hero-art" aria-label="Ilustração de uma figurinha com áudio feita pela comunidade">
         <div class="art-orbit art-orbit-one"></div><div class="art-orbit art-orbit-two"></div>
         <div class="art-spark art-spark-one" aria-hidden="true">✳</div><div class="art-spark art-spark-two" aria-hidden="true">✳</div>
         <div class="art-sticker">
@@ -68,21 +107,22 @@
 
     <section class="studio-section page-wrap" id="studio" aria-labelledby="studioTitle">
       <div class="section-heading">
-        <div><p class="eyebrow">SEU ESPAÇO CRIATIVO</p><h2 id="studioTitle">Do vídeo à vitrine.<br><span>Sem complicação.</span></h2></div>
-        <p class="section-note">Prepare tudo primeiro. Sua mídia só é enviada quando você escolhe publicar.</p>
+        <div><p class="eyebrow">SEU ESPAÇO CRIATIVO</p><h2 id="studioTitle">Uma etapa de cada vez.<br><span>Sua ideia, no seu ritmo.</span></h2></div>
+        <p class="section-note">Primeiro o vídeo. Depois os detalhes. A prévia e a publicação só aparecem quando sua figurinha estiver pronta.</p>
       </div>
 
       <ol class="flow-steps" aria-label="Etapas para criar uma figurinha">
-        <li class="flow-step is-current" data-flow-step="1" aria-current="step"><span>01</span><div><b>Escolha o momento</b><small>Selecione seu vídeo</small></div></li>
-        <li class="flow-step" data-flow-step="2"><span>02</span><div><b>Dê sua assinatura</b><small>Nomeie e personalize</small></div></li>
-        <li class="flow-step" data-flow-step="3"><span>03</span><div><b>Publique</b><small>Entre e coloque no ar</small></div></li>
+        <li class="flow-step is-current" data-flow-step="1" aria-current="step"><span class="flow-step-number">01</span><div><b>Escolha o vídeo</b><small>Até 10 segundos</small></div></li>
+        <li class="flow-step" data-flow-step="2"><span class="flow-step-number">02</span><div><b>Personalize</b><small>Nome e detalhes</small></div></li>
+        <li class="flow-step" data-flow-step="3"><span class="flow-step-number">03</span><div><b>Revise e publique</b><small>Confira sua prévia</small></div></li>
       </ol>
+      <p id="flowAnnouncer" class="visually-hidden" aria-live="polite"></p>
 
       <div class="studio-grid">
-        <section class="editor-card" aria-label="Detalhes da nova figurinha">
+        <section class="editor-card" aria-label="Criar figurinha em etapas">
           <form id="creationForm" novalidate>
-            <div class="form-section">
-              <div class="form-section-heading"><span class="section-index">01</span><div><h3>Escolha o seu vídeo</h3><p>Um momento curto que merece replay.</p></div></div>
+            <section class="form-section guided-step is-unlocked" id="videoStep" aria-labelledby="videoStepTitle" data-guided-step="1">
+              <div class="form-section-heading"><span class="section-index">01</span><div><h3 id="videoStepTitle">Escolha o seu vídeo</h3><p>Comece pelo momento que merece replay.</p></div></div>
               <input id="videoInput" class="visually-hidden" name="video" type="file" accept="video/mp4,video/quicktime,video/webm,video/x-m4v,.mp4,.mov,.webm,.m4v" tabindex="-1" aria-hidden="true">
               <button id="dropZone" class="drop-zone" type="button" aria-controls="videoInput" aria-label="Escolher ou arrastar um vídeo">
                 <span class="drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 15.5v3A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5v-3"/></svg></span>
@@ -93,21 +133,22 @@
               </button>
               <div id="fileDetails" class="file-details" hidden>
                 <span class="file-check" aria-hidden="true">✓</span><span class="file-copy"><b id="fileName">Vídeo selecionado</b><small id="fileMeta"></small></span>
-                <button id="removeVideo" class="text-button" type="button">Trocar</button>
+                <button id="removeVideo" class="text-button" type="button">Trocar vídeo</button>
               </div>
-            </div>
+              <p class="upload-privacy"><span aria-hidden="true">⌁</span> Seu vídeo fica nesta página enquanto você prepara a figurinha. Ele só é enviado quando você publicar.</p>
+            </section>
 
-            <div class="form-divider" aria-hidden="true"></div>
-
-            <div class="form-section">
-              <div class="form-section-heading"><span class="section-index">02</span><div><h3>Dê nome à reação</h3><p>Conte para a comunidade quando usar essa figurinha.</p></div></div>
+            <fieldset class="form-section guided-step" id="detailsStep" aria-labelledby="detailsStepTitle" disabled hidden>
+              <legend class="visually-hidden">Etapa 2: personalize sua figurinha</legend>
+              <div class="form-divider" aria-hidden="true"></div>
+              <div class="form-section-heading"><span class="section-index">02</span><div><h3 id="detailsStepTitle">Dê sua assinatura</h3><p>Agora que o vídeo está pronto, conte como a comunidade vai usar essa reação.</p></div></div>
               <div class="field-grid">
                 <label class="field field-title">Nome da figurinha
-                  <input id="titleInput" name="title" type="text" required minlength="2" maxlength="80" autocomplete="off" placeholder="Ex.: Eu avisei" aria-describedby="titleCount">
-                  <span class="field-hint"><span>Curto e fácil de lembrar</span><span id="titleCount">0/80</span></span>
+                  <input id="titleInput" name="title" type="text" required minlength="2" maxlength="80" autocomplete="off" placeholder="Ex.: Eu avisei" aria-describedby="titleHint titleCount">
+                  <span class="field-hint"><span id="titleHint">Curto e fácil de lembrar</span><span id="titleCount">0/80</span></span>
                 </label>
                 <label class="field">Categoria
-                  <select id="categoryInput" name="category">
+                  <select id="categoryInput" name="category" required>
                     <option value="comunidade">Comunidade</option>
                     <option value="reação">Reação</option>
                     <option value="humor">Humor</option>
@@ -118,14 +159,15 @@
                 </label>
               </div>
               <label class="field">Descrição
-                <textarea id="descriptionInput" name="description" required maxlength="280" rows="3" placeholder="Em que momento essa figurinha entra na conversa?" aria-describedby="descriptionCount"></textarea>
-                <span class="field-hint"><span>Ajude alguém a encontrar a reação certa</span><span id="descriptionCount">0/280</span></span>
+                <textarea id="descriptionInput" name="description" required maxlength="280" rows="3" placeholder="Em que momento essa figurinha entra na conversa?" aria-describedby="descriptionHint descriptionCount"></textarea>
+                <span class="field-hint"><span id="descriptionHint">Ajude alguém a encontrar a reação certa</span><span id="descriptionCount">0/280</span></span>
               </label>
               <label class="field">Tags <span class="optional-label">opcional</span>
                 <input id="tagsInput" name="tags" type="text" maxlength="160" autocomplete="off" placeholder="reação, risada, grupo">
                 <span class="field-hint"><span>Separe por vírgulas</span><span>Ajuda na busca</span></span>
               </label>
-            </div>
+              <p class="unlock-hint"><span aria-hidden="true">✦</span> Complete o nome e a descrição para liberar a revisão da sua figurinha.</p>
+            </fieldset>
 
             <div id="formMessage" class="form-message" role="status" aria-live="polite" hidden></div>
             <div id="uploadProgress" class="upload-progress" hidden aria-live="polite">
@@ -133,14 +175,12 @@
               <progress id="progressBar" max="100" value="0">0%</progress>
               <small>Não feche esta página até a publicação terminar.</small>
             </div>
-            <button id="publishButton" class="button button-publish" type="submit">Publicar na vitrine <span aria-hidden="true">↗</span></button>
-            <p class="publish-note"><span aria-hidden="true">⌁</span> Você confere a prévia antes de enviar. O arquivo não vai para o servidor enquanto você não publicar.</p>
           </form>
         </section>
 
-        <aside class="studio-aside" aria-label="Prévia e conta do criador">
+        <aside class="studio-aside" id="reviewAside" aria-label="Revisão e publicação" hidden>
           <section class="preview-card" aria-labelledby="previewTitle">
-            <div class="preview-heading"><div><p class="eyebrow">PRÉVIA AO VIVO</p><h3 id="previewTitle">Assim vai aparecer</h3></div><span class="preview-badge" id="previewCategory">COMUNIDADE</span></div>
+            <div class="preview-heading"><div><p class="eyebrow">ETAPA 03 · REVISÃO</p><h3 id="previewTitle">Veja antes de publicar</h3></div><span class="preview-badge" id="previewCategory">COMUNIDADE</span></div>
             <div class="preview-stage">
               <div class="preview-window">
                 <div id="previewPlaceholder" class="preview-placeholder"><span class="preview-play" aria-hidden="true">▶</span><img src="/assets/fabi-logo.webp" alt="" width="70" height="70"><b>Sua reação vem aí</b><small>Escolha um vídeo para começar</small></div>
@@ -149,7 +189,14 @@
               </div>
             </div>
             <div class="preview-caption"><span class="caption-dot" aria-hidden="true"></span><div><b id="previewStickerTitle">Nome da sua figurinha</b><small id="previewAuthor">Criada por você · com áudio</small></div><span class="caption-sound" aria-label="Com áudio">♫</span></div>
-            <p class="preview-footnote">Só você vê esta prévia enquanto prepara o envio.</p>
+            <p class="preview-footnote">Só você vê esta prévia até escolher publicar.</p>
+          </section>
+
+          <section class="publish-card" id="publishStep" aria-labelledby="publishTitle" hidden>
+            <div class="publish-card-heading"><span class="section-index">03</span><div><p class="eyebrow">TUDO PRONTO</p><h3 id="publishTitle">Sua reação merece replay.</h3></div></div>
+            <p>Confira o vídeo e os detalhes. Ao publicar, sua figurinha entra para a comunidade.</p>
+            <button id="publishButton" class="button button-publish" type="submit" form="creationForm" disabled>Publicar minha figurinha <span aria-hidden="true">↗</span></button>
+            <p class="publish-note"><span aria-hidden="true">⌁</span> Você entra ou cria uma conta no último passo. O vídeo permanece preparado até lá.</p>
           </section>
 
           <section class="account-card" aria-labelledby="accountTitle">
@@ -159,22 +206,48 @@
             <div id="signedInPanel" class="signed-in-panel" hidden><span id="signedInName"></span><span id="signedInPoints"></span><button id="signOutButton" class="text-button" type="button">Sair</button></div>
           </section>
 
-          <section class="tip-card"><span class="tip-icon" aria-hidden="true">✦</span><div><b>Uma dica que funciona</b><p>Escolha um trecho com uma reação clara e sem muito texto na tela. A figurinha fica mais fácil de reconhecer no WhatsApp.</p></div></section>
+          <section class="tip-card"><span class="tip-icon" aria-hidden="true">✦</span><div><b>Uma dica que funciona</b><p>Uma reação clara e fácil de reconhecer costuma virar a figurinha certa para a conversa.</p></div></section>
         </aside>
       </div>
     </section>
 
     <section class="community-section page-wrap" id="comunidade" aria-labelledby="communityTitle">
-      <div class="section-heading section-heading-small"><div><p class="eyebrow">INSPIRAÇÃO DA COMUNIDADE</p><h2 id="communityTitle">O que já está <span>na conversa.</span></h2></div><a class="text-link" href="/figurinhas">Ver vitrine completa <span aria-hidden="true">↗</span></a></div>
+      <div class="section-heading section-heading-small"><div><p class="eyebrow">CRIADORES QUE JÁ ENTRARAM NA CONVERSA</p><h2 id="communityTitle">A comunidade <span>em movimento.</span></h2></div><a class="text-link" href="/figurinhas">Ver a vitrine completa <span aria-hidden="true">↗</span></a></div>
+
+      <section class="hall-card" aria-labelledby="hallTitle">
+        <div class="hall-heading"><div><p class="hall-kicker">HALL DA FAMA · FABI BOT</p><h3 id="hallTitle">Quem está criando as reações favoritas?</h3><p>Destaques calculados a partir dos pontos e das escolhas retornados pela API.</p></div><span class="hall-emblem" aria-hidden="true">✦</span></div>
+        <ol id="creatorHallList" class="hall-list" aria-busy="true" aria-label="Destaques de criadores entre os dados retornados"><li class="hall-placeholder">Carregando o Hall da Fama…</li></ol>
+        <p class="hall-footnote">Este Hall usa apenas o ranking e as criações públicas retornados pela API nesta consulta; posições e contagens não representam um total completo da comunidade.</p>
+      </section>
+
       <div class="community-grid">
-        <section class="community-card" aria-labelledby="rankTitle"><div class="community-card-heading"><div><h3 id="rankTitle">Em alta</h3><p>As mais escolhidas pela comunidade.</p></div><span class="community-icon" aria-hidden="true">↗</span></div><div id="rankList" class="community-list" aria-busy="true"><p class="list-placeholder">Carregando criações…</p></div></section>
-        <section class="community-card" aria-labelledby="latestTitle"><div class="community-card-heading"><div><h3 id="latestTitle">Acabou de sair</h3><p>Novas reações feitas por criadores.</p></div><span class="community-icon" aria-hidden="true">✳</span></div><div id="latestList" class="community-list" aria-busy="true"><p class="list-placeholder">Buscando novidades…</p></div></section>
+        <section class="community-card" aria-labelledby="rankTitle"><div class="community-card-heading"><div><h3 id="rankTitle">Figurinhas mais escolhidas</h3><p>As reações que já ganharam espaço nas conversas.</p></div><span class="community-icon" aria-hidden="true">↗</span></div><div id="rankList" class="community-list" aria-busy="true"><p class="list-placeholder">Carregando criações…</p></div></section>
+        <section class="community-card" aria-labelledby="latestTitle"><div class="community-card-heading"><div><h3 id="latestTitle">Recém-publicadas</h3><p>Novas reações feitas por criadores.</p></div><span class="community-icon" aria-hidden="true">✳</span></div><div id="latestList" class="community-list" aria-busy="true"><p class="list-placeholder">Buscando novidades…</p></div></section>
       </div>
+
+      <section class="my-creations-section" id="myCreationsSection" aria-labelledby="myCreationsTitle">
+        <div class="my-creations-heading"><div><p class="eyebrow">SUA JORNADA DE CRIADOR</p><h3 id="myCreationsTitle">Minha coleção</h3><p>Suas figurinhas, escolhas e opções de resgate ficam reunidas aqui.</p></div><span class="collection-mark" aria-hidden="true">✦</span></div>
+        <div id="myCreationsGuest" class="my-creations-guest"><p>Entre na sua conta de criador para acompanhar as figurinhas que você publicou.</p><button id="myCreationsSignIn" class="button button-primary" type="button">Entrar e ver minha coleção</button></div>
+        <div id="myCreationsPanel" class="my-creations-panel" hidden>
+          <div class="my-creations-toolbar"><p id="myCreationsSummary">Carregando suas figurinhas…</p><button id="myCreationsRefresh" class="refresh-button" type="button">Atualizar</button></div>
+          <div id="myCreationsList" class="my-creations-list" aria-live="polite" aria-busy="true"><p class="list-placeholder">Buscando sua coleção…</p></div>
+        </div>
+      </section>
     </section>
 
     <section class="how-section page-wrap" aria-labelledby="howTitle">
-      <div><p class="eyebrow">PRONTO PARA A CONVERSA</p><h2 id="howTitle">Fez. Publicou.<br><span>Resgatou no WhatsApp.</span></h2></div>
-      <div class="how-steps"><p><b>01 · Prepare</b><span>Escolha um vídeo de até 10 segundos e personalize as informações.</span></p><p><b>02 · Publique</b><span>Entre ou crie sua conta e envie a figurinha para a vitrine da comunidade.</span></p><p><b>03 · Resgate</b><span>Depois da publicação, abra seu link de resgate para receber a criação no WhatsApp.</span></p></div>
+      <div><p class="eyebrow">DO VÍDEO AO WHATSAPP</p><h2 id="howTitle">Como criar uma figurinha com áudio para WhatsApp</h2><p class="how-intro">Transforme um trecho curto em uma reação original. A prévia ajuda você a conferir tudo antes de publicar.</p></div>
+      <div class="how-steps"><p><b>01 · Escolha</b><span>Envie um vídeo MP4, MOV ou WebM com até 10 segundos e 24 MB.</span></p><p><b>02 · Personalize</b><span>Dê um nome, escolha uma categoria e descreva o momento em que a figurinha combina.</span></p><p><b>03 · Publique</b><span>Entre ou crie sua conta, confira a prévia e publique na comunidade Fabi Bot.</span></p></div>
+    </section>
+
+    <section class="faq-section page-wrap" aria-labelledby="faqTitle">
+      <div class="faq-heading"><p class="eyebrow">DÚVIDAS FREQUENTES</p><h2 id="faqTitle">Criar sua figurinha, sem mistério.</h2></div>
+      <div class="faq-list">
+        <details><summary>Como criar uma figurinha com áudio para WhatsApp?<span aria-hidden="true">＋</span></summary><p>Escolha um vídeo curto, espere a duração ser confirmada, personalize o nome e os detalhes e confira a prévia. A publicação só começa quando você toca em “Publicar minha figurinha”.</p></details>
+        <details><summary>Quais vídeos posso enviar?<span aria-hidden="true">＋</span></summary><p>Aceitamos vídeos MP4, MOV ou WebM com até 10 segundos e 24 MB. O estúdio confirma a duração antes de liberar a etapa de personalização.</p></details>
+        <details><summary>Meu vídeo é enviado assim que eu escolho?<span aria-hidden="true">＋</span></summary><p>Não. A prévia é local enquanto você prepara a figurinha. O arquivo só é enviado ao servidor depois que você entra ou cria uma conta e confirma a publicação.</p></details>
+        <details><summary>Onde vejo as figurinhas que já publiquei?<span aria-hidden="true">＋</span></summary><p>Entre na sua conta e abra “Minha coleção” nesta página. Ali você acompanha suas criações e, quando estiver disponível, pode iniciar o resgate pelo WhatsApp.</p></details>
+      </div>
     </section>
   </main>
 
