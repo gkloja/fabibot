@@ -52,7 +52,7 @@
   <link rel="stylesheet" href="/assets/fabi-bottom-nav.css?v=20261128a">
   <script defer src="/assets/loja-config.js?v=20261127a"></script>
   <script defer src="/assets/loja-api.js?v=20261127c"></script>
-  <script defer src="/assets/creator-page.js?v=20261128g"></script>
+  <script defer src="/assets/creator-page.js?v=20261128h"></script>
 </head>
 <body class="has-fabi-bottom-nav">
   <a class="skip-link" href="#studio">Pular para o estúdio</a>
@@ -156,15 +156,15 @@
                   <div class="preview-window">
                     <div id="previewPlaceholder" class="preview-placeholder"><span class="preview-play" aria-hidden="true">▶</span><img src="/assets/fabi-logo.webp" alt="" width="70" height="70"><b>Sua reação vem aí</b><small id="previewPlaceholderMessage">Escolha um vídeo para começar</small></div>
                     <video id="videoPreview" class="crop-source-video" playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>
-                    <canvas id="cropPreview" class="crop-preview-canvas" width="512" height="512" role="img" aria-label="Prévia quadrada 512 por 512. Arraste para ajustar o enquadramento; use também os controles abaixo." hidden></canvas>
-                    <span id="cropDragHint" class="crop-drag-hint" aria-hidden="true" hidden>Arraste para enquadrar</span>
+                    <canvas id="cropPreview" class="crop-preview-canvas" width="512" height="512" role="img" aria-label="Prévia quadrada 512 por 512. Arraste com um dedo; no celular, use dois dedos para aumentar ou reduzir o zoom." hidden></canvas>
+                    <span id="cropDragHint" class="crop-drag-hint" aria-hidden="true" hidden>Arraste · pinça para zoom</span>
                     <span class="preview-watermark" aria-hidden="true">FABI BOT</span>
                   </div>
                 </div>
                 <div class="preview-caption"><span class="caption-dot" aria-hidden="true"></span><div><b id="previewStickerTitle">Nome da sua figurinha</b><small id="previewAuthor">Criada por você · com áudio</small></div><span class="caption-sound" aria-label="Com áudio">♫</span></div>
                 <section class="frame-editor" id="frameEditor" aria-labelledby="frameTitle" hidden>
                   <div class="frame-editor-heading"><div><p class="frame-kicker">ENQUADRAMENTO 1:1</p><h4 id="frameTitle">Ajuste a imagem na figurinha</h4></div><span class="frame-size-badge">512 × 512</span></div>
-                  <p class="frame-description">A figurinha é quadrada. Arraste a imagem dentro do quadro para escolher o que aparece; a prévia já mostra o resultado, sem barras pretas.</p>
+                  <p class="frame-description">A figurinha é quadrada. Arraste a imagem para escolher o que aparece. No celular, afaste dois dedos para aproximar e junte-os para reduzir o zoom; a prévia mostra o resultado sem barras pretas.</p>
                   <label class="frame-range-label" for="cropZoomRange"><span>Zoom</span><output id="cropZoomOutput" for="cropZoomRange">1,0×</output></label>
                   <input id="cropZoomRange" class="frame-range" type="range" min="1" max="3" step="0.05" value="1" aria-label="Ajustar zoom do enquadramento quadrado">
                   <label class="frame-range-label" for="cropXRange"><span>Posição horizontal</span><output id="cropXOutput" for="cropXRange">50%</output></label>

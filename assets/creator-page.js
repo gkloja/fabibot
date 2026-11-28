@@ -22,7 +22,9 @@
   const cropZoomInput = $('#cropZoomRange');
   const cropXInput = $('#cropXRange');
   const cropYInput = $('#cropYRange');
+  const cropPointers = new Map();
   let cropDrag = null;
+  let cropPinch = null;
 
   function showMessage(text, kind) {
     formMessage.textContent = String(text || '');
@@ -487,6 +489,10 @@
     state.cropZoom = 1;
     if (state.cropAnimationFrame) cancelAnimationFrame(state.cropAnimationFrame);
     state.cropAnimationFrame = 0;
+    cropPointers.clear();
+    cropDrag = null;
+    cropPinch = null;
+    cropCanvas.classList.remove('is-dragging', 'is-zooming');
     preview.onloadedmetadata = null;
     preview.onerror = null;
     preview.pause();
@@ -608,14 +614,65 @@
     updateCropControls();
     refreshCropPreview();
   });
+  function cropPoint(clientX, clientY) {
+    const rect = cropCanvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return { x: 0.5, y: 0.5 };
+    return {
+      x: clamp((clientX - rect.left) / rect.width, 0, 1),
+      y: clamp((clientY - rect.top) / rect.height, 0, 1)
+    };
+  }
+  function startCropPinch() {
+    if (cropPointers.size < 2 || !preview.videoWidth || !preview.videoHeight) return;
+    const [first, second] = Array.from(cropPointers.values()).slice(0, 2);
+    const center = cropPoint((first.x + second.x) / 2, (first.y + second.y) / 2);
+    const side = sourceCropSide();
+    const maxX = Math.max(0, preview.videoWidth - side);
+    const maxY = Math.max(0, preview.videoHeight - side);
+    cropPinch = {
+      distance: Math.max(1, Math.hypot(second.x - first.x, second.y - first.y)),
+      zoom: state.cropZoom,
+      focusX: state.cropX * maxX + center.x * side,
+      focusY: state.cropY * maxY + center.y * side
+    };
+    cropDrag = null;
+    cropCanvas.classList.remove('is-dragging');
+    cropCanvas.classList.add('is-zooming');
+  }
+  function updateCropPinch() {
+    if (!cropPinch || cropPointers.size < 2) return;
+    const [first, second] = Array.from(cropPointers.values()).slice(0, 2);
+    const center = cropPoint((first.x + second.x) / 2, (first.y + second.y) / 2);
+    const distance = Math.max(1, Math.hypot(second.x - first.x, second.y - first.y));
+    state.cropZoom = Math.round(clamp(cropPinch.zoom * distance / cropPinch.distance, 1, 3) * 100) / 100;
+    const side = sourceCropSide();
+    const maxX = Math.max(0, preview.videoWidth - side);
+    const maxY = Math.max(0, preview.videoHeight - side);
+    state.cropX = maxX > 0 ? clamp((cropPinch.focusX - center.x * side) / maxX, 0, 1) : 0.5;
+    state.cropY = maxY > 0 ? clamp((cropPinch.focusY - center.y * side) / maxY, 0, 1) : 0.5;
+    updateCropControls();
+    refreshCropPreview();
+  }
   cropCanvas.addEventListener('pointerdown', event => {
-    if (!state.file || !event.isPrimary) return;
-    cropDrag = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, cropX: state.cropX, cropY: state.cropY, side: sourceCropSide() };
-    cropCanvas.setPointerCapture(event.pointerId);
-    cropCanvas.classList.add('is-dragging');
+    if (!state.file || (event.pointerType !== 'touch' && !event.isPrimary) || cropPointers.size >= 2) return;
+    cropPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    try { cropCanvas.setPointerCapture(event.pointerId); } catch (_) { /* O navegador pode já ter encerrado o ponteiro. */ }
+    if (cropPointers.size === 1) {
+      cropDrag = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, cropX: state.cropX, cropY: state.cropY, side: sourceCropSide() };
+      cropCanvas.classList.add('is-dragging');
+    } else {
+      startCropPinch();
+    }
     event.preventDefault();
   });
   cropCanvas.addEventListener('pointermove', event => {
+    if (!cropPointers.has(event.pointerId)) return;
+    cropPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (cropPinch && cropPointers.size >= 2) {
+      updateCropPinch();
+      event.preventDefault();
+      return;
+    }
     if (!cropDrag || cropDrag.pointerId !== event.pointerId) return;
     const rect = cropCanvas.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
@@ -628,14 +685,26 @@
     updateCropControls();
     refreshCropPreview();
   });
-  function finishCropDrag(event) {
-    if (!cropDrag || cropDrag.pointerId !== event.pointerId) return;
+  function finishCropPointer(event) {
+    if (!cropPointers.has(event.pointerId)) return;
+    cropPointers.delete(event.pointerId);
+    if (cropPinch && cropPointers.size === 1) {
+      cropPinch = null;
+      const [pointerId, point] = cropPointers.entries().next().value;
+      cropDrag = { pointerId, x: point.x, y: point.y, cropX: state.cropX, cropY: state.cropY, side: sourceCropSide() };
+      cropCanvas.classList.remove('is-zooming');
+      cropCanvas.classList.add('is-dragging');
+      return;
+    }
+    if (cropPointers.size > 0) return;
     cropDrag = null;
-    cropCanvas.classList.remove('is-dragging');
-    $('#cropStatus').textContent = 'Enquadramento atualizado. A saída será uma figurinha quadrada de 512 × 512.';
+    cropPinch = null;
+    cropCanvas.classList.remove('is-dragging', 'is-zooming');
+    $('#cropStatus').textContent = 'Enquadramento atualizado. Zoom em ' + state.cropZoom.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 2 }) + '×; saída quadrada de 512 × 512.';
   }
-  cropCanvas.addEventListener('pointerup', finishCropDrag);
-  cropCanvas.addEventListener('pointercancel', finishCropDrag);
+  cropCanvas.addEventListener('pointerup', finishCropPointer);
+  cropCanvas.addEventListener('pointercancel', finishCropPointer);
+  cropCanvas.addEventListener('lostpointercapture', finishCropPointer);
   $('#markTrimStart').addEventListener('click', () => {
     if (!Number.isFinite(state.duration)) return;
     const selectableEnd = Math.floor(state.duration * 10) / 10;
